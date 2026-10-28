@@ -9,5 +9,6 @@ namespace DeathBySeventhsDawn.Knowledge
         public KnowledgeTier tier;
         public int day, loop;
         public bool isKnowledge=true;
+        public bool isRead; // 旧存档缺省为未读，打开对应条目后保存。
     }
 }

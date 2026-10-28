@@ -15,7 +15,7 @@ namespace DeathBySeventhsDawn.Progression
             if(KnowledgeManager.Instance==null) new GameObject("Progression Knowledge").AddComponent<KnowledgeManager>();
             if(LoopManager.Instance==null) new GameObject("Progression Loop").AddComponent<LoopManager>();
             if(Object.FindFirstObjectByType<ProgressionHUD>()==null) {
-                var hud=new GameObject("Progression HUD"); Object.DontDestroyOnLoad(hud); hud.AddComponent<ProgressionHUD>(); hud.AddComponent<DeathBySeventhsDawn.Interaction.FurnitureInteraction>(); hud.AddComponent<DeathBySeventhsDawn.Interaction.StoryJournal>();
+                var hud=new GameObject("Progression HUD"); Object.DontDestroyOnLoad(hud); hud.AddComponent<ProgressionHUD>(); hud.AddComponent<DeathBySeventhsDawn.Interaction.FurnitureInteraction>(); hud.AddComponent<DeathBySeventhsDawn.Interaction.StoryJournal>(); hud.AddComponent<GameplayFeedback>();
             }
         }
     }

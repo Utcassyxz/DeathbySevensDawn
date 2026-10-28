@@ -25,7 +25,7 @@ namespace DeathBySeventhsDawn.Knowledge
             if(game.State.journal==null) game.State.journal=new List<JournalEntry>();
             game.State.journal.Add(new JournalEntry {id=id,title=string.IsNullOrEmpty(title)?"新的发现":title,body=body,imageResource=image,tier=tier,day=TimeSystem.TimeManager.Instance!=null?TimeSystem.TimeManager.Instance.Days:1,loop=game.LoopCount});
             // 知识、日记和属性变化在同一次存档中写入，重复观察不会重复奖励或重复记日记。
-            game.Acquire(effect); return true;
+            game.Acquire(effect); JournalUpdates.NotifyAdded(game.State.journal[game.State.journal.Count-1]); return true;
         }
         public bool Has(string id) => GameManager.Instance.State.knowledgeIds.Contains(id);
         public IReadOnlyCollection<string> GetAll() => GameManager.Instance.State.knowledgeIds.AsReadOnly();

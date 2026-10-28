@@ -56,6 +56,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(page!=Page.None && next==Page.None) blockedThroughFrame=Time.frameCount;
             page=next; modalOpen=next!=Page.None; scroll=Vector2.zero;
+            if(next==Page.Diary) ReadSelectedEntry();
         }
         void Update()
         {
@@ -76,17 +77,24 @@ namespace DeathBySeventhsDawn.Interaction
             if(page==Page.Telescope) { if(interact || cancel) SetPage(Page.None); return; }
             var window=Object.FindAnyObjectByType<WindowLookout2D>();
             if(FurnitureInteraction.IsBusy || (window!=null && window.IsOpen)) { nearby=false; return; }
-            if(diary) { selectedEntry=Mathf.Max(0,game.State.journal.Count-1); SetPage(Page.Diary); return; }
+            if(diary) { selectedEntry=game.State.journal.FindLastIndex(e=>e!=null && !e.isRead); if(selectedEntry<0)selectedEntry=Mathf.Max(0,game.State.journal.Count-1); SetPage(Page.Diary); return; }
             if(player==null) player=GameObject.FindWithTag("Player");
             nearby=telescope!=null && player!=null && Vector2.Distance(player.transform.position,telescope.transform.position)<=content.telescopeRange;
             if(nearby && interact) OpenTelescope();
+        }
+        void ReadSelectedEntry()
+        {
+            var entries=GameManager.Instance.State.journal;
+            if(entries.Count>0) { selectedEntry=Mathf.Clamp(selectedEntry,0,entries.Count-1); JournalUpdates.MarkRead(entries[selectedEntry].id); }
         }
         void WakeUp()
         {
             var state=GameManager.Instance.State;
             state.dreamSeen=true;
-            if(!state.journal.Exists(e=>e!=null && e.id=="opening-dream")) state.journal.Add(new JournalEntry {id="opening-dream",title="梦里的蚁穴",body="我梦见小时候与父母争吵，愤怒中踹塌了一个蚁穴。随后，我看见黑暗里有什么东西抬起了脚。\n\n醒来时，我的心跳仍未平复。",isKnowledge=false,day=1,loop=state.loopCount});
+            bool addedDream=!state.journal.Exists(e=>e!=null && e.id=="opening-dream");
+            if(addedDream) state.journal.Add(new JournalEntry {id="opening-dream",title="梦里的蚁穴",body="我梦见小时候与父母争吵，愤怒中踹塌了一个蚁穴。随后，我看见黑暗里有什么东西抬起了脚。\n\n醒来时，我的心跳仍未平复。",isKnowledge=false,day=1,loop=state.loopCount});
             ProgressionSave.Write(state);
+            if(addedDream) JournalUpdates.NotifyAdded(state.journal[state.journal.Count-1]);
             SetPage(Page.None);
             // 正式新旅程醒在卧室；若未加入构建列表，保持当前场景，不破坏编辑器测试。
             if(Application.CanStreamedLevelBeLoaded("Bedroom")) SceneManager.LoadScene("Bedroom");
@@ -145,7 +153,7 @@ namespace DeathBySeventhsDawn.Interaction
             float width=Screen.width/scale,height=Screen.height/scale;
             try {
                 if(page==Page.None) {
-                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(width-235,12,220,55),"J  翻开日记",text);
+                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,55),JournalUpdates.UnreadCount>0?"J  日记 · "+JournalUpdates.UnreadCount+" 条未读":"J  翻开日记",text);
                     if(nearby) GUI.Label(new Rect(12,height-100,width-24,80),IsNight(TimeManager.Instance.Period)?"E  使用望远镜":"望远镜：傍晚、深夜可用",text);
                     return;
                 }
@@ -168,7 +176,7 @@ namespace DeathBySeventhsDawn.Interaction
                     if(entries.Count==0) GUILayout.Label("纸页还是空白的。",paperText);
                     else {
                         selectedEntry=Mathf.Clamp(selectedEntry,0,entries.Count-1);
-                        for(int i=0;i<entries.Count;i++) if(GUILayout.Button((i==selectedEntry?"▶ ":"")+entries[i].title,button)) selectedEntry=i;
+                        for(int i=0;i<entries.Count;i++) if(GUILayout.Button((i==selectedEntry?"▶ ":"")+(!entries[i].isRead?"● 未读  ":"")+entries[i].title,button)) { selectedEntry=i; ReadSelectedEntry(); }
                         var entry=entries[selectedEntry];
                         GUILayout.Space(20); GUILayout.Label(entry.title,paperTitle);
                         GUILayout.Label($"第 {entry.loop+1} 次旅程 · 第 {entry.day} 天"+(entry.isKnowledge?" · "+(entry.tier==KnowledgeTier.Cosmic?"高级知识（宇宙）":entry.tier==KnowledgeTier.Forbidden?"禁忌知识":"普通知识"):" · 梦境记录"),paperText);

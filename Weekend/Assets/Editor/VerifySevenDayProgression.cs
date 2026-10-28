@@ -17,6 +17,7 @@ public static class VerifySevenDayProgression
             AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<ProgressionSettings>(),"Assets/Resources/SevenDayProgression.asset");
         AssetDatabase.SaveAssets();
     }
+    [MenuItem("Prototype/Validate synced seven day progression")]
     public static void Run()
     {
         CreateSettings();
@@ -51,7 +52,14 @@ public static class VerifySevenDayProgression
             knowledge.Unlock("test-forbidden",KnowledgeTier.Forbidden);
             knowledge.Unlock("test-cosmic",KnowledgeTier.Cosmic);
             Check(game.Knowledge==50 && game.Mutation==28 && game.Sanity<100,"Knowledge effects");
-            Check(game.KnowledgeLevel==2 && game.HasAbility("NightVision") && abilityEvents==2 && sanityEvents>0,"Threshold events");
+            // Sanity is 69.2 here, above the configured unstable threshold 65.
+            Check(game.KnowledgeLevel==2 && game.HasAbility("NightVision") && abilityEvents==2 && sanityEvents==0,"Threshold events");
+            Check(JournalUpdates.UnreadCount==3,"New journal entries are unread and deduplicated");
+            var feedback=UnityEngine.Object.FindAnyObjectByType<DeathBySeventhsDawn.Progression.GameplayFeedback>();
+            Check(feedback!=null && !string.IsNullOrEmpty(feedback.JournalMessage),"Journal update feedback");
+            Check(JournalUpdates.MarkRead("test-ordinary") && !JournalUpdates.MarkRead("test-ordinary") && JournalUpdates.UnreadCount==2,"Read individual entry only once");
+            Check(ProgressionSave.Load().journal.Find(e=>e.id=="test-ordinary").isRead,"Read state saved to disk");
+            Check(feedback.TimeMessage=="第 1 天 · 早晨","Latest time feedback after reset");
             Check(!game.CanUseHumanRoute(25) && game.MeetsKnowledgeRequirement(50),"Route and knowledge gates");
             for(int i=0;i<27;i++) clock.AdvanceTime();
             Check(clock.Days==7 && clock.Period==TimePeriod.Night && game.LoopCount==0,"Seven day boundary");
@@ -68,6 +76,9 @@ public static class VerifySevenDayProgression
             Check(story!=null && story.dreamPages.Length==4,"Opening dream content");
             Check(Resources.Load<Texture2D>(story.ancientGodImageResource)!=null,"Ancient god illustration import");
             Check(loaded.loopCount==2 && loaded.knowledge==50 && loaded.mutation==28 && loaded.knowledgeIds.Count==3,"Disk persistence");
+            Check(JournalUpdates.UnreadCount==2,"Read status retained across loops");
+            knowledge.Unlock("test-sanity-transition",KnowledgeTier.Cosmic);
+            Check(game.Layer!=SanityLayer.Stable && sanityEvents>0,"Sanity transition event at actual threshold");
             // At loop 2 the original default maximum is 90: temporarily use that as the floor.
             float oldFloor=game.Settings.minimumVitality;
             try {
@@ -88,7 +99,8 @@ public static class VerifySevenDayProgression
             Restore(ProgressionSave.PathName,SessionState.GetString(Key+"Save",""));
             Restore(ProgressionSave.PathName+".bak",SessionState.GetString(Key+"Backup",""));
         }
-        EditorApplication.Exit(exit);
+        File.WriteAllText("../seven-day-validation.txt",exit==0?"PASS: seven-day boundary, sleep, death, aging, knowledge, journal, ending and save persistence. Original save restored.":"FAIL: inspect Unity log. Original save restored.");
+        if(Application.isBatchMode) EditorApplication.Exit(exit); else EditorApplication.isPlaying=false;
     }
     static void Restore(string path,string data) { if(data!="") File.WriteAllBytes(path,Convert.FromBase64String(data)); else if(File.Exists(path)) File.Delete(path); }
 }
