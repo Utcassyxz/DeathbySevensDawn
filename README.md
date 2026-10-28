@@ -1,5 +1,13 @@
 # Death by Seventh's Dawn
 
+## Open the current playable apartment
+
+The active Unity project is **`Weekend/`**. Add that folder in Unity Hub using **Unity 6000.6.7f1**, then open `Assets/Scenes/Apartment/LivingRoom.unity` and press Play. Click the Game view and hold WASD or the arrow keys to move; walking into a doorway changes rooms.
+
+The five room scenes are grouped under `Weekend/Assets/Scenes/Apartment/`: LivingRoom, Bedroom, Bathroom, Balcony, and Corridor. The root-level `Assets/Scripts/` contains the earlier foundation; continue gameplay work in `Weekend/`.
+
+See [development log](docs/DEVLOG.md) for the current state and apartment polish milestone.
+
 **Death by Seventh's Dawn** is a narrative-driven cosmic-horror time-loop game built in Unity.
 
 The world is struck by the passing influence of an incomprehensible cosmic entity. Its radiation causes humanity to mutate over seven days. The protagonist dies on Day 7, but Yog-Sothoth takes an interest in him and allows his consciousness to return to Day 1.

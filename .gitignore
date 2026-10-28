@@ -38,3 +38,7 @@ Assets/StreamingAssets/aa/*
 
 # Keep asset meta files in source control
 !/[Aa]ssets/**/*.meta
+
+# Local Unity scene recovery copies
+**/[Aa]ssets/_Recovery/
+**/[Aa]ssets/_Recovery.meta
