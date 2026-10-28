@@ -25,7 +25,8 @@ namespace DeathBySeventhsDawn.Interaction
         bool nearby, revelation;
         string telescopeMessage;
         Texture2D ancientImage;
-        GUIStyle text,title,button,paperText,paperTitle;
+        GUIStyle text,title,button;
+        readonly JournalNotebookUI notebook=new JournalNotebookUI();
         Texture2D whitePixel;
         Sprite square;
         public static bool IsNight(TimePeriod period) => period==TimePeriod.Evening || period==TimePeriod.Night;
@@ -56,7 +57,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(page!=Page.None && next==Page.None) blockedThroughFrame=Time.frameCount;
             page=next; modalOpen=next!=Page.None; scroll=Vector2.zero;
-            if(next==Page.Diary) ReadSelectedEntry();
+            if(next==Page.Diary) { notebook.ResetNavigation(); ReadSelectedEntry(); }
         }
         void Update()
         {
@@ -65,15 +66,15 @@ namespace DeathBySeventhsDawn.Interaction
             if(game.HasEnded) { SetPage(Page.None); return; }
             if(!game.State.dreamSeen && page!=Page.Dream) { dreamPage=0; SetPage(Page.Dream); }
             if(ProgressionHUD.DebugConsoleOpen) return;
-            bool diary=false,interact=false,cancel=false;
+            bool diary=false,interact=false,cancel=false; int diaryStep=0;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
-            if(keyboard!=null) { diary=keyboard.jKey.wasPressedThisFrame; interact=keyboard.eKey.wasPressedThisFrame; cancel=keyboard.escapeKey.wasPressedThisFrame; }
+            if(keyboard!=null) { diary=keyboard.jKey.wasPressedThisFrame; interact=keyboard.eKey.wasPressedThisFrame; cancel=keyboard.escapeKey.wasPressedThisFrame; diaryStep=(keyboard.rightArrowKey.wasPressedThisFrame?1:0)-(keyboard.leftArrowKey.wasPressedThisFrame?1:0); }
 #elif ENABLE_LEGACY_INPUT_MANAGER
-            diary=Input.GetKeyDown(KeyCode.J); interact=Input.GetKeyDown(KeyCode.E); cancel=Input.GetKeyDown(KeyCode.Escape);
+            diary=Input.GetKeyDown(KeyCode.J); interact=Input.GetKeyDown(KeyCode.E); cancel=Input.GetKeyDown(KeyCode.Escape); diaryStep=(Input.GetKeyDown(KeyCode.RightArrow)?1:0)-(Input.GetKeyDown(KeyCode.LeftArrow)?1:0);
 #endif
             if(page==Page.Dream) return;
-            if(page==Page.Diary) { if(diary || cancel) SetPage(Page.None); return; }
+            if(page==Page.Diary) { if(diary || cancel) SetPage(Page.None); else if(diaryStep!=0 && notebook.MoveSelection(game.State.journal,ref selectedEntry,diaryStep)) ReadSelectedEntry(); return; }
             if(page==Page.Telescope) { if(interact || cancel) SetPage(Page.None); return; }
             var window=Object.FindAnyObjectByType<WindowLookout2D>();
             if(FurnitureInteraction.IsBusy || (window!=null && window.IsOpen)) { nearby=false; return; }
@@ -140,8 +141,6 @@ namespace DeathBySeventhsDawn.Interaction
             text=new GUIStyle(GUI.skin.label) {font=font,fontSize=26,wordWrap=true,padding=new RectOffset(18,18,12,12)};
             title=new GUIStyle(text) {fontSize=32,fontStyle=FontStyle.Bold};
             button=new GUIStyle(GUI.skin.button) {font=font,fontSize=24,wordWrap=true,padding=new RectOffset(12,12,14,14)};
-            paperText=new GUIStyle(text); paperText.normal.textColor=new Color(.19f,.12f,.07f);
-            paperTitle=new GUIStyle(title); paperTitle.normal.textColor=new Color(.19f,.12f,.07f);
         }
         void OnGUI()
         {
@@ -152,6 +151,7 @@ namespace DeathBySeventhsDawn.Interaction
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
             float width=Screen.width/scale,height=Screen.height/scale;
             try {
+                if(page==Page.Diary) { GUI.depth=-20; notebook.Draw(game.State.journal,ref selectedEntry,ReadSelectedEntry,()=>SetPage(Page.None),width,height); return; }
                 if(page==Page.None) {
                     if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,55),JournalUpdates.UnreadCount>0?"J  日记 · "+JournalUpdates.UnreadCount+" 条未读":"J  翻开日记",text);
                     if(nearby) GUI.Label(new Rect(12,height-100,width-24,80),IsNight(TimeManager.Instance.Period)?"E  使用望远镜":"望远镜：傍晚、深夜可用",text);
@@ -170,20 +170,6 @@ namespace DeathBySeventhsDawn.Interaction
                     GUILayout.Space(30);
                     bool last=pages==null || dreamPage>=pages.Length-1;
                     if(GUILayout.Button(last?"惊醒":"继续",button)) { if(last) WakeUp(); else {dreamPage++; scroll=Vector2.zero;} }
-                } else if(page==Page.Diary) {
-                    GUILayout.Label("我的日记",paperTitle);
-                    var entries=game.State.journal;
-                    if(entries.Count==0) GUILayout.Label("纸页还是空白的。",paperText);
-                    else {
-                        selectedEntry=Mathf.Clamp(selectedEntry,0,entries.Count-1);
-                        for(int i=0;i<entries.Count;i++) if(GUILayout.Button((i==selectedEntry?"▶ ":"")+(!entries[i].isRead?"● 未读  ":"")+entries[i].title,button)) { selectedEntry=i; ReadSelectedEntry(); }
-                        var entry=entries[selectedEntry];
-                        GUILayout.Space(20); GUILayout.Label(entry.title,paperTitle);
-                        GUILayout.Label($"第 {entry.loop+1} 次旅程 · 第 {entry.day} 天"+(entry.isKnowledge?" · "+(entry.tier==KnowledgeTier.Cosmic?"高级知识（宇宙）":entry.tier==KnowledgeTier.Forbidden?"禁忌知识":"普通知识"):" · 梦境记录"),paperText);
-                        GUILayout.Label(entry.body,paperText);
-                        if(!string.IsNullOrEmpty(entry.imageResource)) DrawImage(Resources.Load<Texture2D>(entry.imageResource),panel-48);
-                    }
-                    if(GUILayout.Button("合上日记（J / Esc）",button)) SetPage(Page.None);
                 } else {
                     GUILayout.Label(revelation?"第二夜 · 天穹后的轮廓":"望远镜",title);
                     if(revelation) DrawImage(ancientImage,panel-48);

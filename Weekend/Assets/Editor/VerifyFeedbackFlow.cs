@@ -85,11 +85,20 @@ public static class VerifyFeedbackFlow
                 case 17:
                     Check(JournalUpdates.UnreadCount==0&&ProgressionSave.Load().journal.Find(e=>e.id==StoryContent.AncientKnowledgeId).isRead,"Read newest entry through diary UI");Release();break;
                 case 18:Capture("ancient-diary");break;
-                case 19:Press(Key.Escape);break;
-                case 20:Release();origin=body.position;Press(Key.D);break;
-                case 21:
+                case 19:Press(Key.RightArrow);break;
+                case 20:Check((int)ReadStoryField("selectedEntry")==0,"Right arrow selects older journal entry");Release();Capture("notebook-older");break;
+                case 21:Press(Key.LeftArrow);break;
+                case 22:Check((int)ReadStoryField("selectedEntry")==1,"Left arrow returns to newest journal entry");Release();break;
+                case 23:Press(Key.Escape);break;
+                case 24:Release();origin=body.position;Press(Key.D);break;
+                case 25:
                     Check(Vector2.Distance(origin,body.position)>.5f,"Movement resumes after reading");Release();
-                    Finish(true,"Window E/Esc, 5-second deferred notices, final sleep time, J read/save, second-night telescope, retained Days/read state, and resumed movement.");return;
+                    SceneManager.LoadScene("Corridor");break;
+                case 26:
+                    Check(GameObject.Find("Room 401 plaque")!=null&&GameObject.Find("Room 402 plaque")!=null&&GameObject.Find("Room 403 plaque")!=null,"Corridor room plaques");
+                    Check(GameObject.Find("Room 402 plaque").transform.position.y<0,"402 remains south");Capture("corridor-402");break;
+                case 27:
+                    Finish(true,"Diary keyboard navigation; 401/402/403 signage; Window E/Esc, 5-second deferred notices, final sleep time, J read/save, second-night telescope, retained Days/read state, and resumed movement.");return;
             }
             phase++;next=EditorApplication.timeSinceStartup+(phase==2?5:.45);
         }
