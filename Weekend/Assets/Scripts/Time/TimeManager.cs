@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace DeathBySeventhsDawn.TimeSystem
 {
@@ -15,7 +16,7 @@ namespace DeathBySeventhsDawn.TimeSystem
     {
         public static TimeManager Instance { get; private set; }
 
-        [field: SerializeField] public int Day { get; private set; } = 1;
+        [field: SerializeField, FormerlySerializedAs("<Day>k__BackingField")] public int Days { get; private set; } = 1;
         [field: SerializeField] public TimePeriod Period { get; private set; } = TimePeriod.Morning;
 
         public event Action<int, TimePeriod> TimeChanged;
@@ -42,12 +43,12 @@ namespace DeathBySeventhsDawn.TimeSystem
             else
             {
                 Period = TimePeriod.Morning;
-                Day++;
+                Days++;
             }
 
-            TimeChanged?.Invoke(Day, Period);
+            TimeChanged?.Invoke(Days, Period);
 
-            if (Day > 7)
+            if (Days > 7)
             {
                 SeventhDayEnded?.Invoke();
             }
@@ -55,9 +56,9 @@ namespace DeathBySeventhsDawn.TimeSystem
 
         public void ResetToDayOne()
         {
-            Day = 1;
+            Days = 1;
             Period = TimePeriod.Morning;
-            TimeChanged?.Invoke(Day, Period);
+            TimeChanged?.Invoke(Days, Period);
         }
     }
 }

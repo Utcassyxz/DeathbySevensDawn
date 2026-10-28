@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be198becd9cd8cc4dad052b7d6222c69, type: 3}
+  m_Name: BedroomWindowViews
+  m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.Interaction.WindowViewSequence
+  dayImages:
+  - {fileID: 2800000, guid: 31789e89c4d70d84b84b702eb6e1041b, type: 3}
+  - {fileID: 2800000, guid: 4c59920d2871ce04d8ea5c947449ec24, type: 3}
+  - {fileID: 2800000, guid: 975ca27f074772f42a6fd024740f9f46, type: 3}
+  - {fileID: 2800000, guid: 3b4cf44c4dc650244b6cd72627e15cea, type: 3}
+  - {fileID: 2800000, guid: aca5324047de8fc48b1a625ffc169d06, type: 3}
+  - {fileID: 2800000, guid: ae42abed2f55faa45aa451a12f6e1145, type: 3}
+  - {fileID: 2800000, guid: c11395b81201a4b489d977a106f0fe08, type: 3}

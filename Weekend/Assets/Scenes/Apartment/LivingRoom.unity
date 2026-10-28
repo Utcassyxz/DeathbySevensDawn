@@ -1251,7 +1251,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8bb21483ac215342b0bd361a1c281a9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.World.RoomDoor2D
   destinationScene: Assets/Scenes/Apartment/Bedroom.unity
   arrivalPosition: {x: 2.65, y: -0.1}
@@ -1544,7 +1544,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8bb21483ac215342b0bd361a1c281a9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.World.RoomDoor2D
   destinationScene: Assets/Scenes/Apartment/Bathroom.unity
   arrivalPosition: {x: -1.75, y: -0.5}
@@ -1761,6 +1761,52 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!1 &765939833
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 765939835}
+  - component: {fileID: 765939834}
+  m_Layer: 0
+  m_Name: Time Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &765939834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765939833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7a4383ec08f0f45a12a45f4be0d6ea, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.TimeSystem.TimeManager
+  <Days>k__BackingField: 1
+  <Period>k__BackingField: 0
+--- !u!4 &765939835
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765939833}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &800000380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1850,10 +1896,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8bb21483ac215342b0bd361a1c281a9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.World.RoomDoor2D
   destinationScene: Assets/Scenes/Apartment/Corridor.unity
-  arrivalPosition: {x: 0, y: 1.05}
+  arrivalPosition: {x: 0, y: -0.95}
 --- !u!1 &800000385
 GameObject:
   m_ObjectHideFlags: 0
@@ -1943,7 +1989,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8bb21483ac215342b0bd361a1c281a9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.World.RoomDoor2D
   destinationScene: Assets/Scenes/Apartment/Balcony.unity
   arrivalPosition: {x: 0, y: 1.05}
@@ -5152,7 +5198,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a749194922d9c4b408265f6ed7845f52, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.Player.PlayerController2D
   moveSpeed: 5.5
 --- !u!50 &1975765174
@@ -5323,3 +5369,4 @@ SceneRoots:
   - {fileID: 910000001}
   - {fileID: 920000001}
   - {fileID: 1049505781}
+  - {fileID: 765939835}

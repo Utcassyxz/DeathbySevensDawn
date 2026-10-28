@@ -52,8 +52,8 @@ public static class PolishApartmentDetails
     Box("North skirting",0,1.48f,13.7f,.08f,Edge);Box("North trim highlight",0,1.53f,13.7f,.025f,Highlight);
     Vertical(-6.82f,-1.8f,1.5f,99,0);Vertical(6.82f,-1.8f,1.5f,99,0);
     foreach(var g in scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<Transform>(true)).Where(t=>t.name=="Wall lamp"))g.position=new Vector3(g.position.x,2.02f,0);
-    foreach(float x in new[]{-4.7f,0,4.7f}){Box("Door left jamb",x-.68f,1.65f,.055f,.56f,Highlight,3);Box("Door right jamb",x+.68f,1.65f,.055f,.56f,Highlight,3);}
-    Box("South skirting",0,-1.83f,13.6f,.055f,Edge);
+    foreach(float x in new[]{-4.7f,0,4.7f}){Box("Door left jamb",x-.68f,x==0?-1.75f:1.65f,.055f,x==0?.25f:.56f,Highlight,3);Box("Door right jamb",x+.68f,x==0?-1.75f:1.65f,.055f,x==0?.25f:.56f,Highlight,3);}
+    Horizontal(-1.83f,-6.8f,6.8f,0,.75f);
    }
    if(room=="Balcony")
    {
