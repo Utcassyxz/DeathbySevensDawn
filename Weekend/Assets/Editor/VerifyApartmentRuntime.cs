@@ -14,7 +14,7 @@ public static class VerifyApartmentRuntime
 {
  const string Key="ApartmentRuntimeVerification";
  static readonly string[] Targets={"Balcony","LivingRoom","Corridor","LivingRoom","Bedroom","LivingRoom","Bathroom","LivingRoom"};
- static int movementStage; static double movementUntil; static Vector2 movementOrigin; static float movedDistance;
+ static Keyboard testKeyboard; static int movementStage; static double movementUntil; static Vector2 movementOrigin; static float movedDistance;
  static int step; static bool awaiting; static double readyAt,deadline; static Vector2 arrival;
  static VerifyApartmentRuntime(){EditorApplication.update+=Tick;}
  [MenuItem("Prototype/Verify current layout")]
@@ -26,8 +26,8 @@ public static class VerifyApartmentRuntime
    double now=EditorApplication.timeSinceStartup;
    if(deadline==0){deadline=now+40;readyAt=now+1;}
    if(now>deadline)throw new Exception("Timeout at route "+step);
-   if(movementStage==0){movementOrigin=GameObject.FindWithTag("Player").transform.position;InputSystem.QueueStateEvent(Keyboard.current,new KeyboardState(UnityEngine.InputSystem.Key.D));movementUntil=now+.6;movementStage=1;return;}
-   if(movementStage==1){if(now<movementUntil)return;InputSystem.QueueStateEvent(Keyboard.current,new KeyboardState());movedDistance=((Vector2)GameObject.FindWithTag("Player").transform.position-movementOrigin).magnitude;if(movedDistance<.5f)throw new Exception("Player did not respond to held D input: distance="+movedDistance);Debug.Log("MOVEMENT_OK distance="+movedDistance);movementStage=2;readyAt=now+.2;return;}
+   if(movementStage==0){testKeyboard=Keyboard.current??InputSystem.AddDevice<Keyboard>("ApartmentVerificationKeyboard");movementOrigin=GameObject.FindWithTag("Player").transform.position;InputSystem.QueueStateEvent(testKeyboard,new KeyboardState(UnityEngine.InputSystem.Key.D));movementUntil=now+.6;movementStage=1;return;}
+   if(movementStage==1){if(now<movementUntil)return;InputSystem.QueueStateEvent(testKeyboard,new KeyboardState());movedDistance=((Vector2)GameObject.FindWithTag("Player").transform.position-movementOrigin).magnitude;if(movedDistance<.5f)throw new Exception("Player did not respond to held D input: distance="+movedDistance);Debug.Log("MOVEMENT_OK distance="+movedDistance);movementStage=2;readyAt=now+.2;return;}
    if(awaiting){
     if(SceneManager.GetActiveScene().name!=Targets[step])return;
     var p=GameObject.FindWithTag("Player");if(p==null||Camera.main==null)throw new Exception("Missing player/camera");
