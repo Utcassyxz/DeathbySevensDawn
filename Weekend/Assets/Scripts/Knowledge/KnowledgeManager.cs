@@ -1,42 +1,34 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using DeathBySeventhsDawn.Core;
+using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Interaction;
 namespace DeathBySeventhsDawn.Knowledge
 {
     public class KnowledgeManager : MonoBehaviour
     {
         public static KnowledgeManager Instance { get; private set; }
-
-        private readonly HashSet<string> unlockedKnowledge = new HashSet<string>();
-
-        private void Awake()
+        StoryContent content;
+        void Awake() { if(Instance!=null && Instance!=this) { Destroy(gameObject); return; } Instance=this; DontDestroyOnLoad(gameObject); content=Resources.Load<StoryContent>("StoryContent"); if(content==null) content=ScriptableObject.CreateInstance<StoryContent>(); }
+        public bool Unlock(string knowledgeId) => Unlock(knowledgeId,KnowledgeTier.Ordinary);
+        public bool Unlock(string id, KnowledgeTier tier)
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            content.Describe(id,out string title,out string body,out string image);
+            return Grant(id,GameManager.Instance.Settings.Effect(tier),tier,title,body,image);
         }
-
-        public bool Unlock(string knowledgeId)
+        public bool Unlock(KnowledgeData data) => data!=null && Grant(data.id,data.overrideEffect?data.effect:GameManager.Instance.Settings.Effect(data.tier),data.tier,data.title,data.description,data.journalImageResource);
+        bool Grant(string id,KnowledgeEffect effect,KnowledgeTier tier,string title,string body,string image)
         {
-            if (string.IsNullOrWhiteSpace(knowledgeId))
-                return false;
-
-            return unlockedKnowledge.Add(knowledgeId);
+            var game=GameManager.Instance;
+            if(game.HasEnded || string.IsNullOrWhiteSpace(id) || effect==null || game.State.knowledgeIds.Contains(id)) return false;
+            game.State.knowledgeIds.Add(id);
+            if(game.State.journal==null) game.State.journal=new List<JournalEntry>();
+            game.State.journal.Add(new JournalEntry {id=id,title=string.IsNullOrEmpty(title)?"新的发现":title,body=body,imageResource=image,tier=tier,day=TimeSystem.TimeManager.Instance!=null?TimeSystem.TimeManager.Instance.Days:1,loop=game.LoopCount});
+            // 知识、日记和属性变化在同一次存档中写入，重复观察不会重复奖励或重复记日记。
+            game.Acquire(effect); return true;
         }
-
-        public bool Has(string knowledgeId)
-        {
-            return unlockedKnowledge.Contains(knowledgeId);
-        }
-
-        public IReadOnlyCollection<string> GetAll()
-        {
-            return unlockedKnowledge;
-        }
+        public bool Has(string id) => GameManager.Instance.State.knowledgeIds.Contains(id);
+        public IReadOnlyCollection<string> GetAll() => GameManager.Instance.State.knowledgeIds.AsReadOnly();
+        void OnDestroy() { if(Instance==this) Instance=null; }
     }
 }

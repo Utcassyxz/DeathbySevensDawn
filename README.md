@@ -17,6 +17,12 @@ The player cannot keep weapons, health, items, or physical progress between loop
 > You do not become stronger because your character remembers.  
 > You become stronger because *you know what will happen next*.
 
+## 最新可玩流程（2026-10-28）
+
+首次旅程以童年蚁穴梦境开场，惊醒后进入卧室。J打开日记，靠近床/电视/窗户/望远镜按E互动。第二夜望远镜可发现古神轮廓。测试界面默认隐藏：~输入1997，本次游戏只需一次，之后~开关。
+
+脚本编译通过，新增玩法尚未完成Play Mode验收。请查看[最新开发存档](docs/开发存档-2026-10-28.md)和[剧情修改说明](docs/日记梦境与望远镜说明.md)。下文为早期设计背景，当前实现以最新存档为准。
+
 ## Visual Direction
 
 The game intentionally uses three visual layers:

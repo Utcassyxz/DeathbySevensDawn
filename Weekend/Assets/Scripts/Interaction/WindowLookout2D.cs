@@ -16,6 +16,7 @@ namespace DeathBySeventhsDawn.Interaction
         private BoxCollider2D area;
         private PlayerController2D movement;
         private bool restoreMovement;
+        private bool discoveredKnowledge;
         private Canvas canvas;
         private GameObject overlay;
         private Text hint, heading, closeInstructions;
@@ -42,6 +43,8 @@ namespace DeathBySeventhsDawn.Interaction
 
         private void Update()
         {
+            if(Core.GameManager.Instance!=null && Core.GameManager.Instance.HasEnded) { CloseView(); if(hint!=null) hint.gameObject.SetActive(false); return; }
+            if(FurnitureInteraction.IsBusy || Progression.ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked) { if(hint!=null) hint.gameObject.SetActive(false); return; }
             bool interact = false, cancel = false;
 #if ENABLE_INPUT_SYSTEM
             var keyboard = Keyboard.current;
@@ -65,6 +68,8 @@ namespace DeathBySeventhsDawn.Interaction
 
         public bool TryOpen()
         {
+            if(Core.GameManager.Instance!=null && Core.GameManager.Instance.HasEnded) return false;
+            if(FurnitureInteraction.IsBusy || Progression.ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked) return false;
             if (IsOpen) return true;
             if (sequence == null || !CanInteract) return false;
             EnsureUI();
@@ -76,6 +81,9 @@ namespace DeathBySeventhsDawn.Interaction
             IsOpen = true;
             hint.gameObject.SetActive(false);
             overlay.SetActive(true);
+            discoveredKnowledge=false;
+            if(TimeManager.Instance!=null && TimeManager.Instance.Days==2 && Knowledge.KnowledgeManager.Instance!=null)
+                discoveredKnowledge=Knowledge.KnowledgeManager.Instance.Unlock("bedroom-window-day2-observation",Progression.KnowledgeTier.Ordinary);
             RefreshView();
             return true;
         }
@@ -99,6 +107,9 @@ namespace DeathBySeventhsDawn.Interaction
                 if (image != null) aspect.aspectRatio = (float)image.width / image.height;
             }
             heading.text = "窗外 · 第 " + DisplayedDay + " 天";
+            closeInstructions.text=discoveredKnowledge
+                ? "获得普通知识：第二天的窗外观察\nE / Esc  返回房间"
+                : "E / Esc  返回房间";
             foreach (var label in new[] { heading, closeInstructions })
             {
                 label.font.RequestCharactersInTexture(label.text, label.fontSize, label.fontStyle);

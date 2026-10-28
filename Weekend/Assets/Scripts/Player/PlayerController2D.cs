@@ -31,6 +31,9 @@ namespace DeathBySeventhsDawn.Player
         }
         private void FixedUpdate()
         {
+            if((Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded) || DeathBySeventhsDawn.Interaction.StoryJournal.WorldBlocked) {
+                rb.linearVelocity=Vector2.zero; return;
+            }
             Vector2 velocity = moveInput * moveSpeed;
             int count = rb.GetContacts(contacts);
             for (int i = 0; i < count; i++)

@@ -21,7 +21,8 @@ namespace DeathBySeventhsDawn.World
   }
   void OnTriggerEnter2D(Collider2D other)
   {
-   if(!other.CompareTag("Player")||Time.unscaledTime<blockedUntil||pendingScene!=null)return;
+   if(DeathBySeventhsDawn.Core.GameManager.Instance != null && DeathBySeventhsDawn.Core.GameManager.Instance.HasEnded)return;
+   if(DeathBySeventhsDawn.Interaction.StoryJournal.WorldBlocked)return; if(!other.CompareTag("Player")||Time.unscaledTime<blockedUntil||pendingScene!=null)return;
    if(!Application.CanStreamedLevelBeLoaded(destinationScene)){Debug.LogError("Door destination missing from scene list: "+destinationScene);return;}
    pendingScene=destinationScene;pendingPosition=arrivalPosition;SceneManager.LoadScene(destinationScene);
   }
