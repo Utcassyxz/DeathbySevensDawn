@@ -56,6 +56,9 @@ namespace DeathBySeventhsDawn.Interaction
 #endif
             if (IsOpen)
             {
+                #if ENABLE_INPUT_SYSTEM
+                if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectObservation();
+#endif
                 if (interact || cancel) CloseView();
                 else RefreshView();
                 return;
@@ -82,12 +85,17 @@ namespace DeathBySeventhsDawn.Interaction
             hint.gameObject.SetActive(false);
             overlay.SetActive(true);
             discoveredKnowledge=false;
-            if(TimeManager.Instance!=null && TimeManager.Instance.Days==2 && Knowledge.KnowledgeManager.Instance!=null)
-                discoveredKnowledge=Knowledge.KnowledgeManager.Instance.Unlock("bedroom-window-day2-observation",Progression.KnowledgeTier.Ordinary);
+
             RefreshView();
             return true;
         }
 
+        public bool CollectObservation()
+        {
+            if(!IsOpen||TimeManager.Instance.Days!=2)return false;
+            discoveredKnowledge=Knowledge.KnowledgeManager.Instance.Unlock(StoryContent.WindowKnowledgeId,Progression.KnowledgeTier.Ordinary);
+            RefreshView();return discoveredKnowledge;
+        }
         public void CloseView()
         {
             if (!IsOpen) return;
@@ -107,9 +115,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (image != null) aspect.aspectRatio = (float)image.width / image.height;
             }
             heading.text = "窗外 · 第 " + DisplayedDay + " 天";
-            closeInstructions.text=discoveredKnowledge
-                ? "获得普通知识：第二天的窗外观察\nE / Esc  返回房间"
-                : "E / Esc  返回房间";
+            closeInstructions.text=DisplayedDay==2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId)?"窗外观察已收录":"R  记录窗外的变化")+"\nE / Esc  返回房间" : "E / Esc  返回房间";
             foreach (var label in new[] { heading, closeInstructions })
             {
                 label.font.RequestCharactersInTexture(label.text, label.fontSize, label.fontStyle);

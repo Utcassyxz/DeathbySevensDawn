@@ -15,7 +15,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame=-1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading;
+        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld;
         enum Page { None, Dream, Diary, Telescope }
         Page page;
         StoryContent content;
@@ -27,6 +27,8 @@ namespace DeathBySeventhsDawn.Interaction
         Texture2D ancientImage;
         GUIStyle text,title,button;
         readonly JournalNotebookUI notebook=new JournalNotebookUI();
+        readonly InvestigationBoardUI board=new InvestigationBoardUI();
+        bool showBoard;
         Texture2D whitePixel;
         Sprite square;
         public bool IsRevelation => page==Page.Telescope && revelation;
@@ -52,7 +54,7 @@ namespace DeathBySeventhsDawn.Interaction
         void ResetJourney()
         {
             dreamPage=0; selectedEntry=0; revelation=false; nearby=false; telescopeMessage=null;
-            notebook.ResetNavigation(); SetPage(Page.Dream);
+            notebook.ResetNavigation(); board.Reset(); showBoard=false; SetPage(Page.Dream);
             blockedThroughFrame=Time.frameCount;
         }
         void OnLoaded(Scene scene,LoadSceneMode mode)
@@ -73,7 +75,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(game==null) return;
             if(game.HasEnded) { SetPage(Page.None); return; }
             if(!game.State.dreamSeen && page!=Page.Dream) { dreamPage=0; SetPage(Page.Dream); }
-            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading) return;
+            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld) return;
             bool diary=false,interact=false,cancel=false; int diaryStep=0;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
@@ -82,8 +84,17 @@ namespace DeathBySeventhsDawn.Interaction
             diary=Input.GetKeyDown(KeyCode.J); interact=Input.GetKeyDown(KeyCode.E); cancel=Input.GetKeyDown(KeyCode.Escape); diaryStep=(Input.GetKeyDown(KeyCode.RightArrow)?1:0)-(Input.GetKeyDown(KeyCode.LeftArrow)?1:0);
 #endif
             if(page==Page.Dream) return;
-            if(page==Page.Diary) { if(diary || cancel) SetPage(Page.None); else if(diaryStep!=0 && notebook.MoveSelection(game.State.journal,ref selectedEntry,diaryStep)) ReadSelectedEntry(); return; }
-            if(page==Page.Telescope) { if(interact || cancel) CloseTelescope(); return; }
+            if(page==Page.Diary) {
+#if ENABLE_INPUT_SYSTEM
+                if(keyboard!=null&&keyboard.bKey.wasPressedThisFrame){showBoard=!showBoard;return;}
+#endif
+                if(diary || cancel) SetPage(Page.None); else if(showBoard)board.KeyboardInput(); else if(diaryStep!=0 && notebook.MoveSelection(game.State.journal,ref selectedEntry,diaryStep)) ReadSelectedEntry(); return; }
+            if(page==Page.Telescope) {
+#if ENABLE_INPUT_SYSTEM
+                if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectTelescopeEvidence();
+                if(!revelation&&keyboard!=null&&keyboard.tKey.wasPressedThisFrame)ObserveTelescope();
+#endif
+                if(interact || cancel) CloseTelescope(); return; }
             var window=Object.FindAnyObjectByType<WindowLookout2D>();
             if(FurnitureInteraction.IsBusy || (window!=null && window.IsOpen)) { nearby=false; return; }
             if(diary) { selectedEntry=game.State.journal.FindLastIndex(e=>e!=null && !e.isRead); if(selectedEntry<0)selectedEntry=Mathf.Max(0,game.State.journal.Count-1); SetPage(Page.Diary); return; }
@@ -115,14 +126,20 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OpenTelescope()
         {
+            revelation=false;telescopeMessage=Investigation.Evidence("apartment-telescope").body;
+            SetPage(Page.Telescope);
+        }
+        public bool CollectTelescopeEvidence()=>page==Page.Telescope&&Investigation.Collect(revelation?StoryContent.AncientKnowledgeId:"apartment-telescope");
+        void ObserveTelescope()
+        {
             var clock=TimeManager.Instance;
             revelation=false;
             if(!IsNight(clock.Period)) telescopeMessage="白天的光太强，镜头里只有刺眼的反光。\n等到傍晚或深夜，再来使用望远镜。";
             else if(clock.Days!=2) telescopeMessage="我调整了焦距。远处只有沉默的楼群与星光。\n今晚，没有发现新的异常。";
             else {
                 revelation=true;
-                bool gained=KnowledgeManager.Instance.Unlock(StoryContent.AncientKnowledgeId,content.ancientGodTier);
-                telescopeMessage=content.discoveryText+ (gained?"\n\n我把那道轮廓记进了日记。":"\n\n又是那道轮廓。我记得它。");
+                bool gained=KnowledgeManager.Instance.Observe(StoryContent.AncientKnowledgeId,content.ancientGodTier);
+                telescopeMessage=content.discoveryText+ (gained?"\n\n我的手在发抖。要趁记忆清楚，画下它的轮廓吗？":"\n\n又是那道轮廓。我可以试着把它画下来。");
             }
             SetPage(Page.Telescope);
         }
@@ -159,17 +176,25 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             var game=GameManager.Instance;
-            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading) return;
+            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld) return;
             Styles(); var matrix=GUI.matrix; var color=GUI.color;
-            float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);
+            float scale=Mathf.Min(Screen.height/900f,Screen.width/1100f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
             float width=Screen.width/scale,height=Screen.height/scale;
             try {
                 if(IsRevelation) { DrawRevelation(width,height); return; }
-                if(page==Page.Diary) { GUI.depth=-20; notebook.Draw(game.State.journal,ref selectedEntry,ReadSelectedEntry,()=>SetPage(Page.None),width,height); return; }
+                if(page==Page.Diary) {
+                    GUI.depth=-20;
+                    if(showBoard)board.Draw(width,height);
+                    else {GUI.BeginGroup(new Rect(0,82,width,height-82));notebook.Draw(game.State.journal,ref selectedEntry,ReadSelectedEntry,()=>SetPage(Page.None),width,height-82);GUI.EndGroup();}
+                    GUI.color=new Color(.07f,.12f,.12f);GUI.DrawTexture(new Rect(0,0,width,82),Texture2D.whiteTexture);GUI.color=color;
+                    if(GUI.Button(new Rect(28,18,190,48),showBoard?"阅读笔记":"● 阅读笔记",button))showBoard=false;
+                    if(GUI.Button(new Rect(230,18,220,48),showBoard?"● 线索连线 · B":"线索连线 · B",button))showBoard=true;
+                    if(GUI.Button(new Rect(width-200,18,170,48),"合上 · J / Esc",button))SetPage(Page.None);
+                    return; }
                 if(page==Page.None) {
                     if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,55),JournalUpdates.UnreadCount>0?"J  日记 · "+JournalUpdates.UnreadCount+" 条未读":"J  翻开日记",text);
-                    if(nearby) GUI.Label(new Rect(12,height-100,width-24,80),IsNight(TimeManager.Instance.Period)?"E  使用望远镜":"望远镜：傍晚、深夜可用",text);
+                    if(nearby) GUI.Label(new Rect(12,height-100,width-24,80),"E  查看望远镜",text);
                     return;
                 }
                 GUI.depth=-20;
@@ -190,6 +215,11 @@ namespace DeathBySeventhsDawn.Interaction
                     GUILayout.Label(revelation?"第二夜 · 天穹后的轮廓":"望远镜",title);
                     if(revelation) DrawImage(ancientImage,panel-48);
                     GUILayout.Label(telescopeMessage,text);
+                    if(!revelation) {
+                        if(!Investigation.Has("apartment-telescope")&&GUILayout.Button("收录望远镜 · R",button))CollectTelescopeEvidence();
+                        else if(Investigation.Has("apartment-telescope"))GUILayout.Label("望远镜已收录",text);
+                        if(GUILayout.Button("透过镜头观察 · T",button))ObserveTelescope();
+                    }
                     if(GUILayout.Button("移开视线（E / Esc）",button)) CloseTelescope();
                 }
                 GUILayout.EndScrollView(); GUILayout.EndArea();
@@ -199,10 +229,12 @@ namespace DeathBySeventhsDawn.Interaction
         {
             GUI.depth=-25;
             GUI.color=Color.black;GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);GUI.color=Color.white;
-            float footer=Mathf.Min(245,height*.34f);
+            float footer=Mathf.Min(310,height*.4f);
             if(ancientImage!=null)GUI.DrawTexture(new Rect(0,0,width,height-footer),ancientImage,ScaleMode.ScaleToFit);
             float panel=Mathf.Min(1150,width-48);GUILayout.BeginArea(new Rect((width-panel)/2,height-footer+8,panel,footer-16));
             scroll=GUILayout.BeginScrollView(scroll);GUILayout.Label("第二夜 · 天穹后的轮廓",title);GUILayout.Label(telescopeMessage,text);GUILayout.EndScrollView();
+            if(!Investigation.Has(StoryContent.AncientKnowledgeId)) { if(GUILayout.Button("画下轮廓，收进笔记 · R",button,GUILayout.Height(48)))CollectTelescopeEvidence(); }
+            else GUILayout.Label("轮廓已收录",text);
             if(GUILayout.Button("移开视线  ·  E / Esc",button,GUILayout.Height(48)))CloseTelescope();GUILayout.EndArea();
         }
         void DrawImage(Texture image,float maxWidth)

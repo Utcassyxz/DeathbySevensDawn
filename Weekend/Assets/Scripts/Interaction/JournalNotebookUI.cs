@@ -106,7 +106,7 @@ namespace DeathBySeventhsDawn.Interaction
             else
             {
                 GUI.Label(new Rect(right.x+40,right.y+130,right.width-80,55),"这一页还没有写下什么。",heading);
-                GUI.Label(new Rect(right.x+40,right.y+204,right.width-80,90),filter==0?"去看看窗外，或留意身边的变化。发现会留在这里。":"这里暂时没有这一类记录。",body);
+                GUI.Label(new Rect(right.x+40,right.y+204,right.width-80,90),filter==0?"去看看窗外，或留意身边的变化。查看后选择收录，才会留在这里。":"这里暂时没有这一类记录。",body);
             }
             Fill(new Rect(right.x+30,right.yMax-70,right.width-60,1),new Color(.73f,.73f,.63f));
             int current=visible.IndexOf(selected);

@@ -74,20 +74,20 @@ public static class VerifyFirstLoopPrologue
                     clock.AdvanceTime();SceneManager.LoadScene("Balcony");break;
                 case 13:Place(Resources.Load<StoryContent>("StoryContent").telescopePosition);Release();break;
                 case 14:Press(Key.E);break;
-                case 15:Check(StoryJournal.WorldBlocked&&KnowledgeManager.Instance.Has(StoryContent.AncientKnowledgeId),"Day 2 evening ancient god discovery");Release();break;
-                case 16:Capture("ancient-god");break;
+                case 15:Check(StoryJournal.WorldBlocked&&!KnowledgeManager.Instance.Has(StoryContent.AncientKnowledgeId),"Telescope inspection does not collect");Press(Key.T);break;
+                case 16:Check(KnowledgeManager.Instance.Experienced(StoryContent.AncientKnowledgeId),"Ancient experience without automatic sketch");Release();Capture("ancient-god");break;
                 case 17:Press(Key.Escape);break;
                 case 18:Check(story.ChapterTitleOpen&&!ProgressionSave.Load().prologueEntered,"Chapter card waits for confirmation");Release();Capture("chapter-card");break;
                 case 19:Press(Key.E);break;
                 case 20:
                     var state=ProgressionSave.Load();
                     Check(!story.ChapterTitleOpen&&state.prologueEntered&&state.neighborFlyersSeen&&state.skt079NewsSeen&&state.neighborBarricadeSeen,"Full first-loop flags saved");
-                    Check(clock.Days==2&&clock.Period==TimePeriod.Evening&&game.LoopCount==0&&state.journal.Count==5,"Chapter entry preserves Days, period, loop and deduplicated journal");Release();break;
+                    Check(clock.Days==2&&clock.Period==TimePeriod.Evening&&game.LoopCount==0&&state.journal.Count==1,"Chapter entry preserves Days, period, loop and deduplicated journal");Release();break;
                 case 21:LoopManager.Instance.RestartLoop();break;
                 case 22:SceneManager.LoadScene("Corridor");break;
                 case 23:
                     Check(game.LoopCount==1&&clock.Days==1&&!story.IsPresenting&&GameObject.Find("401 first-loop story props")==null,"401 intro does not repeat in second loop");
-                    Check(game.Knowledge==30&&ProgressionSave.Load().journal.Count==5,"Knowledge and journal survive loop");
+                    Check(game.Knowledge==30&&ProgressionSave.Load().journal.Count==1,"Knowledge and journal survive loop");
                     clock.SleepUntilNextMorning();Check(!story.WatchNews().Contains("SKT-079")&&!story.BeginPrologue(),"First-loop news and title do not replay");
                     SceneManager.LoadScene("LivingRoom");break;
                 case 24:
@@ -102,7 +102,7 @@ public static class VerifyFirstLoopPrologue
                         var door=UnityEngine.Object.FindObjectsByType<DeathBySeventhsDawn.World.RoomDoor2D>(FindObjectsSortMode.None).Single(d=>d.destinationScene.EndsWith("/"+routes[route]+".unity"));
                         arrival=door.arrivalPosition;Place(door.transform.position);arriving=true;next=now+.3;return;
                     }
-                    Finish(true,"Eight physical door routes; Day 1 flyers/flee + movement lock; Day 2 TV SKT-079 and one-period cost; boarding/re-entry; evening telescope -> confirmed prologue; five journal records; retained Days; second-loop suppression. Original save restored.");return;
+                    Finish(true,"Eight physical door routes; Day 1 flyers/flee + movement lock; Day 2 TV SKT-079 and one-period cost; boarding/re-entry; evening telescope -> confirmed prologue; only the chapter memoir automatically recorded; evidence requires explicit collection; retained Days; second-loop suppression. Original save restored.");return;
             }
             phase++;next=now+wait;
         }

@@ -25,8 +25,15 @@ namespace DeathBySeventhsDawn.Knowledge
             if(game.State.journal==null) game.State.journal=new List<JournalEntry>();
             game.State.journal.Add(new JournalEntry {id=id,title=string.IsNullOrEmpty(title)?"新的发现":title,body=body,imageResource=image,tier=tier,day=TimeSystem.TimeManager.Instance!=null?TimeSystem.TimeManager.Instance.Days:1,loop=game.LoopCount});
             // 知识、日记和属性变化在同一次存档中写入，重复观察不会重复奖励或重复记日记。
-            game.Acquire(effect); JournalUpdates.NotifyAdded(game.State.journal[game.State.journal.Count-1]); return true;
+            game.Acquire(game.State.observedKnowledgeIds.Contains(id)?new KnowledgeEffect(0,0,0):effect); JournalUpdates.NotifyAdded(game.State.journal[game.State.journal.Count-1]); return true;
         }
+        public bool Observe(string id, KnowledgeTier tier)
+        {
+            var game=GameManager.Instance;
+            if(game.HasEnded||game.State.observedKnowledgeIds.Contains(id)||Has(id))return false;
+            game.State.observedKnowledgeIds.Add(id);game.Acquire(game.Settings.Effect(tier));return true;
+        }
+        public bool Experienced(string id)=>Has(id)||GameManager.Instance.State.observedKnowledgeIds.Contains(id);
         public bool Has(string id) => GameManager.Instance.State.knowledgeIds.Contains(id);
         public IReadOnlyCollection<string> GetAll() => GameManager.Instance.State.knowledgeIds.AsReadOnly();
         void OnDestroy() { if(Instance==this) Instance=null; }

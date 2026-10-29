@@ -50,7 +50,7 @@ namespace DeathBySeventhsDawn.Interaction
 #elif ENABLE_LEGACY_INPUT_MANAGER
             pressed=Input.GetKeyDown(KeyCode.E);cancel=Input.GetKeyDown(KeyCode.Escape);
 #endif
-            if(reading){if(pressed||cancel)Close();return;}
+            if(reading){if(k!=null&&k.rKey.wasPressedThisFrame)CollectCurrent();if(pressed||cancel)Close();return;}
             if(StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy){nearby=false;return;}
             var window=Object.FindAnyObjectByType<WindowLookout2D>();if(window!=null&&window.IsOpen){nearby=false;return;}
             if(player==null)player=GameObject.FindWithTag("Player");
@@ -61,9 +61,10 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(!FilterOpen||marker==null||!nearby||StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy||ProgressionHUD.DebugConsoleOpen)return false;
             reading=true;scroll=Vector2.zero;
-            var clue=ScriptableObject.CreateInstance<KnowledgeData>();clue.id=id;clue.title=heading;clue.description=body;clue.tier=KnowledgeTier.Forbidden;clue.overrideEffect=true;clue.effect=new KnowledgeEffect(0,0,0);
-            KnowledgeManager.Instance.Unlock(clue);Destroy(clue);return true;
+            return true;
         }
+        public bool CollectCurrent()=>reading&&Investigation.Collect(id);
+
         public void Close(){reading=false;blockedFrame=Time.frameCount;}
         void OnGUI()
         {
@@ -77,7 +78,9 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.depth=-35;GUI.color=new Color(.025f,.035f,.035f,.96f);GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=color;
                 float width=Mathf.Min(820,w-64);GUILayout.BeginArea(new Rect((w-width)/2,h*.18f,width,h*.68f));scroll=GUILayout.BeginScrollView(scroll);
                 GUILayout.Label(heading,title);GUILayout.Space(28);GUILayout.Label(body,text);GUILayout.EndScrollView();
-                if(GUILayout.Button("记下，移开视线  ·  E / Esc",button,GUILayout.Height(60)))Close();GUILayout.EndArea();
+                if(!Investigation.Has(id)&&GUILayout.Button("抄录到笔记 · R",button,GUILayout.Height(55)))CollectCurrent();
+                if(Investigation.Has(id))GUILayout.Label("已收录",text);
+                if(GUILayout.Button("移开视线  ·  E / Esc",button,GUILayout.Height(60)))Close();GUILayout.EndArea();
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }

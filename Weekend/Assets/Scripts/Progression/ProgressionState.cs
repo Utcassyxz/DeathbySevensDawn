@@ -11,5 +11,7 @@ namespace DeathBySeventhsDawn.Progression
         public List<Knowledge.JournalEntry> journal=new List<Knowledge.JournalEntry>();
         public float knowledge, mutation, sanityBurden;
         public List<string> knowledgeIds=new List<string>();
+        public List<string> observedKnowledgeIds=new List<string>();
+        public List<Knowledge.InvestigationLink> investigationLinks=new List<Knowledge.InvestigationLink>();
     }
 }

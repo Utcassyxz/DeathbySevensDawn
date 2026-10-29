@@ -54,7 +54,7 @@ public static class VerifyFeedbackFlow
                     body.position=new Vector2(-.2f,.95f);Physics2D.SyncTransforms();Press(Key.E);break;
                 case 1:
                     Check(window.IsOpen&&!player.GetComponent<PlayerController2D>().enabled,"E opens window and locks movement");
-                    Check(KnowledgeManager.Instance.Has(StoryContent.WindowKnowledgeId)&&JournalUpdates.UnreadCount==1,"Window adds one unread discovery");
+                    Check(!KnowledgeManager.Instance.Has(StoryContent.WindowKnowledgeId)&&window.CollectObservation()&&JournalUpdates.UnreadCount==1,"Window requires explicit recording");
                     Release();break;
                 case 2:
                     Check(feedback.TimeMessage!=null&&feedback.JournalMessage!=null,"Notifications wait through image panel");
@@ -73,33 +73,35 @@ public static class VerifyFeedbackFlow
                     Check(clock.Days==2&&clock.Period==TimePeriod.Evening,"Days retained on balcony");
                     body.position=Resources.Load<StoryContent>("StoryContent").telescopePosition;player.transform.position=body.position;Physics2D.SyncTransforms();Release();break;
                 case 10: Press(Key.E);break;
-                case 11:
+                case 11:Press(Key.T);break;
+                case 12:
+                    Check(UnityEngine.Object.FindAnyObjectByType<StoryJournal>().CollectTelescopeEvidence(),"Explicit sketch recording");
                     Check(StoryJournal.WorldBlocked&&KnowledgeManager.Instance.Has(StoryContent.AncientKnowledgeId),"Second-night telescope discovery: blocked="+StoryJournal.WorldBlocked+", learned="+KnowledgeManager.Instance.Has(StoryContent.AncientKnowledgeId)+", scene="+SceneManager.GetActiveScene().name+", player="+player.transform.position+", telescope="+(GameObject.Find("阳台望远镜")!=null?GameObject.Find("阳台望远镜").transform.position.ToString():"missing")+", Days="+clock.Days+", period="+clock.Period+", busy="+FurnitureInteraction.IsBusy+", debug="+ProgressionHUD.DebugConsoleOpen+", window="+(window!=null)+", range="+Resources.Load<StoryContent>("StoryContent").telescopeRange+", journalPlayer="+ReadStoryField("player")+", nearby="+ReadStoryField("nearby")+", page="+ReadStoryField("page"));
                     Check(JournalUpdates.UnreadCount==1,"New telescope entry unread, earlier entry remains read");Release();break;
-                case 12:Capture("telescope");break;
-                case 13:Press(Key.Escape);break;
-                case 14:Check(FirstLoopPrologue.Instance.ChapterTitleOpen,"Prologue card follows ancient god");Release();break;
-                case 15:Press(Key.E);break;
-                case 16:
+                case 13:Capture("telescope");break;
+                case 14:Press(Key.Escape);break;
+                case 15:Check(FirstLoopPrologue.Instance.ChapterTitleOpen,"Prologue card follows ancient god");Release();break;
+                case 16:Press(Key.E);break;
+                case 17:
                     Check(!StoryJournal.WorldBlocked&&feedback.JournalMessage!=null,"Discovery notification waits until telescope closes");Release();break;
-                case 17:Capture("notices");break;
-                case 18:Press(Key.J);break;
-                case 19:
+                case 18:Capture("notices");break;
+                case 19:Press(Key.J);break;
+                case 20:
                     Check(JournalUpdates.UnreadCount==1&&ProgressionSave.Load().journal.Find(e=>e.id=="prologue-entry").isRead,"Read newest prologue entry while ancient observation remains unread");Release();break;
-                case 20:Capture("prologue-diary");break;
-                case 21:Press(Key.RightArrow);break;
-                case 22:Check((int)ReadStoryField("selectedEntry")==1 && JournalUpdates.UnreadCount==0 && ProgressionSave.Load().journal.Find(e=>e.id==StoryContent.AncientKnowledgeId).isRead,"Right arrow reads ancient observation after prologue note");Release();Capture("ancient-diary");break;
-                case 23:Press(Key.LeftArrow);break;
-                case 24:Check((int)ReadStoryField("selectedEntry")==2,"Left arrow returns to newest journal entry");Release();break;
-                case 25:Press(Key.Escape);break;
-                case 26:Release();origin=body.position;Press(Key.D);break;
-                case 27:
+                case 21:Capture("prologue-diary");break;
+                case 22:Press(Key.RightArrow);break;
+                case 23:Check((int)ReadStoryField("selectedEntry")==1 && JournalUpdates.UnreadCount==0 && ProgressionSave.Load().journal.Find(e=>e.id==StoryContent.AncientKnowledgeId).isRead,"Right arrow reads ancient observation after prologue note");Release();Capture("ancient-diary");break;
+                case 24:Press(Key.LeftArrow);break;
+                case 25:Check((int)ReadStoryField("selectedEntry")==2,"Left arrow returns to newest journal entry");Release();break;
+                case 26:Press(Key.Escape);break;
+                case 27:Release();origin=body.position;Press(Key.D);break;
+                case 28:
                     Check(Vector2.Distance(origin,body.position)>.5f,"Movement resumes after reading");Release();
                     SceneManager.LoadScene("Corridor");break;
-                case 28:
+                case 29:
                     Check(GameObject.Find("Room 401 plaque")!=null&&GameObject.Find("Room 402 plaque")!=null&&GameObject.Find("Room 403 plaque")!=null,"Corridor room plaques");
                     Check(GameObject.Find("Room 402 plaque").transform.position.y<0,"402 remains south");Capture("corridor-402");break;
-                case 29:
+                case 30:
                     Finish(true,"Diary keyboard navigation; 401/402/403 signage; Window E/Esc, 5-second deferred notices, final sleep time, J read/save, second-night telescope, retained Days/read state, and resumed movement.");return;
             }
             phase++;next=EditorApplication.timeSinceStartup+(phase==2?5:.45);

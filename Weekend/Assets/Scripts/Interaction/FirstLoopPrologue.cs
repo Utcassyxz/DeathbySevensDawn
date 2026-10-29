@@ -44,7 +44,7 @@ namespace DeathBySeventhsDawn.Interaction
             scenery=new GameObject("401 first-loop story props");SceneManager.MoveGameObjectToScene(scenery,scene);
             var floor=GameObject.Find("Corridor tiles");material=floor!=null?floor.GetComponent<SpriteRenderer>().sharedMaterial:null;
             EnsureSquare();
-            if(GameManager.Instance.State.neighborFlyersSeen||TimeManager.Instance.Days==1)BuildFlyers();
+            BuildFlyers();
             if(TimeManager.Instance.Days>=2)BuildBoards(GameManager.Instance.State.neighborBarricadeSeen);
             entryPending=true;
         }
@@ -119,8 +119,8 @@ namespace DeathBySeventhsDawn.Interaction
         void FinishEncounter()
         {
             var state=GameManager.Instance.State;
-            if(clip==Clip.Flyers){state.neighborFlyersSeen=true;Record("401-flyers","401 的传单",content.flyer);}
-            else {state.neighborBarricadeSeen=true;Record("401-barricade","被封死的 401","第二天，401 的住户用木板封住了自己的门。\n他像是在防备门外的什么东西。");}
+            if(clip==Clip.Flyers){state.neighborFlyersSeen=true;ProgressionSave.Write(state);}
+            else {state.neighborBarricadeSeen=true;ProgressionSave.Write(state);}
             clip=Clip.None;blockedUntilFrame=Time.frameCount;if(actor!=null)Destroy(actor);
         }
         // 由电视确认按钮调用；看新闻仍只消耗电视原有的一个时段。
@@ -128,11 +128,11 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(!FirstLoop||TimeManager.Instance.Days!=2)return "新闻与杂音交替闪过。屏幕里暂时没有新的消息。";
             GameManager.Instance.State.skt079NewsSeen=true;
-            Record("skt079-broadcast","SKT-079 新闻",content.news);return content.news;
+            ProgressionSave.Write(GameManager.Instance.State);return content.news;
         }
         public bool BeginPrologue()
         {
-            if(!FirstLoop||GameManager.Instance.State.prologueEntered||TimeManager.Instance.Days!=2||!StoryJournal.IsNight(TimeManager.Instance.Period)||!KnowledgeManager.Instance.Has(StoryContent.AncientKnowledgeId))return false;
+            if(!FirstLoop||GameManager.Instance.State.prologueEntered||TimeManager.Instance.Days!=2||!StoryJournal.IsNight(TimeManager.Instance.Period)||!KnowledgeManager.Instance.Experienced(StoryContent.AncientKnowledgeId))return false;
             titleOpen=true;titleElapsed=0;openedFrame=Time.frameCount;return true;
         }
         public void EnterPrologue()

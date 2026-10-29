@@ -51,7 +51,7 @@ namespace DeathBySeventhsDawn.Core
             Instance=this; DontDestroyOnLoad(gameObject);
             Settings=Resources.Load<ProgressionSettings>("SevenDayProgression");
             if(Settings==null) Settings=ScriptableObject.CreateInstance<ProgressionSettings>();
-            State=ProgressionSave.Load(); Vitality=MaxVitality;
+            State=ProgressionSave.Load(); DeathBySeventhsDawn.Knowledge.Investigation.Normalize(State); Vitality=MaxVitality;
         }
         public bool HasAbility(string id)
         {

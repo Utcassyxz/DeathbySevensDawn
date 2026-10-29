@@ -52,7 +52,7 @@ public static class VerifyPerception
                     Check(clue.FilterOpen&&clue.ClueVisible,"SAN 35 exposes clue");for(int i=0;i<original.Length;i++)Check(original[i].color==colors[i],"Original sprite colors unchanged");
                     Check(UnityEngine.Object.FindObjectsByType<Collider2D>(FindObjectsSortMode.None).Length==colliders,"No collision change");Place(clue.CluePosition);ScreenCapture.CaptureScreenshot("../perception-hidden.png");wait=2;break;
                 case 3:Check(music.HiddenBlend>.9f,"Music responds to low SAN");var loops=music.GetComponents<AudioSource>().Where(s=>s.loop).ToArray();Check(loops.All(s=>s.isPlaying)&&Math.Abs(loops[0].timeSamples-loops[1].timeSamples)<1024,"Music stems play in sync");Press(Key.E);break;
-                case 4:Check(PerceptionClues.IsReading&&KnowledgeManager.Instance.Has(clue.CurrentId),"E reads and records clue");Release();ScreenCapture.CaptureScreenshot("../perception-reading.png");break;
+                case 4:Check(PerceptionClues.IsReading&&!KnowledgeManager.Instance.Has(clue.CurrentId),"E reads without recording");Check(clue.CollectCurrent(),"Explicit clue collection");Release();ScreenCapture.CaptureScreenshot("../perception-reading.png");break;
                 case 5:Press(Key.Escape);break;
                 case 6:Release();break;
                 case 7:Press(Key.E);break;
@@ -61,11 +61,12 @@ public static class VerifyPerception
                 case 10:Check(clue.ClueVisible,"Corridor clue present");SceneManager.LoadScene("Balcony");TimeManager.Instance.SleepUntilNextMorning();TimeManager.Instance.AdvanceTime();TimeManager.Instance.AdvanceTime();State.sanityBurden=0;break;
                 case 11:Place(Resources.Load<StoryContent>("StoryContent").telescopePosition);break;
                 case 12:Press(Key.E);break;
-                case 13:
+                case 13:Press(Key.T);break;
+                case 14:
                     var story=UnityEngine.Object.FindAnyObjectByType<StoryJournal>();Check(story.IsRevelation&&music.RevelationCount==1,"Ancient god invokes realistic cut-in and sound");Check(Resources.Load<Texture2D>("Story/AncientGodRealistic")!=null,"Realistic image loaded");Release();ScreenCapture.CaptureScreenshot("../perception-revelation.png");wait=1;break;
-                case 14:Press(Key.Escape);break;
-                case 15:Release();Check(FirstLoopPrologue.Instance.ChapterTitleOpen,"Existing prologue transition preserved");game.StartNewJourney();break;
-                case 16:
+                case 15:Press(Key.Escape);break;
+                case 16:Release();Check(FirstLoopPrologue.Instance.ChapterTitleOpen,"Existing prologue transition preserved");game.StartNewJourney();break;
+                case 17:
                     Check(!clue.FilterOpen&&!clue.ClueVisible&&State.journal.Count==0&&music.HiddenBlend<.05f&&music.RevelationCount==0,"Reset clears clues, reading and audio state");
                     Check(UnityEngine.Object.FindObjectsByType<ApartmentAudio>(FindObjectsSortMode.None).Length==1&&music.GetComponents<AudioSource>().Length==3,"Scene changes preserve one bounded music system");
                     Check(music.GetComponents<AudioSource>().All(s=>s.outputAudioMixerGroup!=null),"All music sources route through mixer");

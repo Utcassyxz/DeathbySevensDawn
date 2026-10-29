@@ -14,6 +14,7 @@ namespace DeathBySeventhsDawn.Progression
                 if(state==null || state.version!=1 || state.loopCount<0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
                     throw new InvalidDataException("Unsupported or invalid progression save.");
                 state.knowledgeIds=state.knowledgeIds??new System.Collections.Generic.List<string>();
+                Knowledge.Investigation.Normalize(state);
                 return state;
             } catch(Exception ex) { Debug.LogWarning("Progression save could not be read; original file retained: "+ex.Message); return new ProgressionState(); }
         }

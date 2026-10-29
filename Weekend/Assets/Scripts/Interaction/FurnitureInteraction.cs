@@ -45,7 +45,11 @@ namespace DeathBySeventhsDawn.Interaction
 #elif ENABLE_LEGACY_INPUT_MANAGER
             interact=Input.GetKeyDown(KeyCode.E); cancel=Input.GetKeyDown(KeyCode.Escape);
 #endif
-            if(IsBusy) { if(cancel || interact) CloseMenu(); return; }
+            if(IsBusy) {
+#if ENABLE_INPUT_SYSTEM
+                if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectNews();
+#endif
+                if(cancel || interact) CloseMenu(); return; }
             if(player==null) Bind();
             // Give the existing window interaction priority if interaction areas overlap.
             var window=Object.FindAnyObjectByType<WindowLookout2D>();
@@ -67,6 +71,7 @@ namespace DeathBySeventhsDawn.Interaction
             watchingReport=FirstLoopPrologue.Instance!=null?FirstLoopPrologue.Instance.WatchNews():"新闻与杂音交替闪过。";
             watching=true; TimeManager.Instance.AdvanceTime(); return true;
         }
+        public bool CollectNews()=>watching&&GameManager.Instance.State.skt079NewsSeen&&Knowledge.Investigation.Collect("skt079-broadcast");
         void CloseMenu()
         {
             if(restoreMovement && movement!=null) movement.enabled=true;
@@ -108,6 +113,7 @@ namespace DeathBySeventhsDawn.Interaction
                 } else if(watching) {
                     GUILayout.Label(watchingReport,label);
                     GUILayout.Label("已度过一个时段。",label);
+                    if(GameManager.Instance.State.skt079NewsSeen&&!Knowledge.Investigation.Has("skt079-broadcast")&&GUILayout.Button("摘录新闻到笔记 · R",button))CollectNews();
                 } else {
                     GUILayout.Label("屏幕亮着。要坐下来看看电视吗？",label);
                     if(GUILayout.Button("看电视（度过一个时段）",button)) WatchTelevision();
