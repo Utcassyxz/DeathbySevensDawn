@@ -15,7 +15,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame=-1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked;
+        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading;
         enum Page { None, Dream, Diary, Telescope }
         Page page;
         StoryContent content;
@@ -29,6 +29,7 @@ namespace DeathBySeventhsDawn.Interaction
         readonly JournalNotebookUI notebook=new JournalNotebookUI();
         Texture2D whitePixel;
         Sprite square;
+        public bool IsRevelation => page==Page.Telescope && revelation;
         public static bool IsNight(TimePeriod period) => period==TimePeriod.Evening || period==TimePeriod.Night;
         void Awake()
         {
@@ -38,6 +39,7 @@ namespace DeathBySeventhsDawn.Interaction
             // 补齐旧版本已解锁知识的日记，不发放第二次知识奖励。
             var state=GameManager.Instance.State;
             if(state.journal==null) state.journal=new System.Collections.Generic.List<JournalEntry>();
+            foreach(var entry in state.journal) if(entry!=null && entry.id==StoryContent.AncientKnowledgeId && entry.imageResource=="Story/AncientGodDay2") entry.imageResource=content.ancientGodImageResource;
             foreach(string id in state.knowledgeIds) {
                 if(state.journal.Exists(e=>e!=null && e.id==id)) continue;
                 content.Describe(id,out string heading,out string body,out string image);
@@ -71,7 +73,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(game==null) return;
             if(game.HasEnded) { SetPage(Page.None); return; }
             if(!game.State.dreamSeen && page!=Page.Dream) { dreamPage=0; SetPage(Page.Dream); }
-            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked) return;
+            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading) return;
             bool diary=false,interact=false,cancel=false; int diaryStep=0;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
@@ -157,12 +159,13 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             var game=GameManager.Instance;
-            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked) return;
+            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading) return;
             Styles(); var matrix=GUI.matrix; var color=GUI.color;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
             float width=Screen.width/scale,height=Screen.height/scale;
             try {
+                if(IsRevelation) { DrawRevelation(width,height); return; }
                 if(page==Page.Diary) { GUI.depth=-20; notebook.Draw(game.State.journal,ref selectedEntry,ReadSelectedEntry,()=>SetPage(Page.None),width,height); return; }
                 if(page==Page.None) {
                     if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,55),JournalUpdates.UnreadCount>0?"J  日记 · "+JournalUpdates.UnreadCount+" 条未读":"J  翻开日记",text);
@@ -191,6 +194,16 @@ namespace DeathBySeventhsDawn.Interaction
                 }
                 GUILayout.EndScrollView(); GUILayout.EndArea();
             } finally { GUI.matrix=matrix; GUI.color=color; GUI.depth=0; }
+        }
+        void DrawRevelation(float width,float height)
+        {
+            GUI.depth=-25;
+            GUI.color=Color.black;GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);GUI.color=Color.white;
+            float footer=Mathf.Min(245,height*.34f);
+            if(ancientImage!=null)GUI.DrawTexture(new Rect(0,0,width,height-footer),ancientImage,ScaleMode.ScaleToFit);
+            float panel=Mathf.Min(1150,width-48);GUILayout.BeginArea(new Rect((width-panel)/2,height-footer+8,panel,footer-16));
+            scroll=GUILayout.BeginScrollView(scroll);GUILayout.Label("第二夜 · 天穹后的轮廓",title);GUILayout.Label(telescopeMessage,text);GUILayout.EndScrollView();
+            if(GUILayout.Button("移开视线  ·  E / Esc",button,GUILayout.Height(48)))CloseTelescope();GUILayout.EndArea();
         }
         void DrawImage(Texture image,float maxWidth)
         {

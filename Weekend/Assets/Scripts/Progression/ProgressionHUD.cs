@@ -98,10 +98,6 @@ namespace DeathBySeventhsDawn.Progression
             if(game==null || clock==null) return;
             PrepareStyles();
             var previousColor=GUI.color;
-            GUI.color=new Color(.35f,.05f,.5f,(int)game.Layer*.035f);
-            GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);
-            GUI.color=previousColor;
-
             // Scale with resolution, keeping large readable controls on high-DPI game views.
             var previousMatrix=GUI.matrix;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);
