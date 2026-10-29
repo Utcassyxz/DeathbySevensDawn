@@ -19,6 +19,7 @@ namespace DeathBySeventhsDawn.Interaction
         bool restoreMovement, watching;
         GUIStyle label, button, box;
         Vector2 scroll;
+        string watchingReport;
         void OnEnable() { SceneManager.sceneLoaded+=OnSceneLoaded; Bind(); }
         void OnDisable() { SceneManager.sceneLoaded-=OnSceneLoaded; CloseMenu(); }
         void OnSceneLoaded(Scene scene,LoadSceneMode mode) { CloseMenu(); Bind(); }
@@ -57,8 +58,14 @@ namespace DeathBySeventhsDawn.Interaction
                 restoreMovement=movement!=null && movement.enabled;
                 if(restoreMovement) movement.enabled=false;
                 var rb=player.GetComponent<Rigidbody2D>(); if(rb!=null) rb.linearVelocity=Vector2.zero;
-                watching=false; IsBusy=true;
+                watching=false; watchingReport=null; IsBusy=true;
             }
+        }
+        public bool WatchTelevision()
+        {
+            if(!IsBusy || target!=television || watching || StoryJournal.WorldBlocked) return false;
+            watchingReport=FirstLoopPrologue.Instance!=null?FirstLoopPrologue.Instance.WatchNews():"新闻与杂音交替闪过。";
+            watching=true; TimeManager.Instance.AdvanceTime(); return true;
         }
         void CloseMenu()
         {
@@ -89,7 +96,7 @@ namespace DeathBySeventhsDawn.Interaction
                     return;
                 }
                 GUI.color=new Color(0,0,0,.88f); GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture); GUI.color=color;
-                float panelWidth=Mathf.Min(760,width-24), panelHeight=Mathf.Min(480,height-24);
+                float panelWidth=Mathf.Min(760,width-24), panelHeight=Mathf.Min(target==bed?480:620,height-24);
                 GUILayout.BeginArea(new Rect((width-panelWidth)/2,(height-panelHeight)/2,panelWidth,panelHeight),box);
                 scroll=GUILayout.BeginScrollView(scroll);
                 GUILayout.Label(target==bed?"上床休息":"电视",label); GUILayout.Space(20);
@@ -97,11 +104,11 @@ namespace DeathBySeventhsDawn.Interaction
                     GUILayout.Label("要结束今天，睡到明天早晨吗？",label);
                     if(GUILayout.Button("上床睡觉（跳过今天）",button)) { CloseMenu(); TimeManager.Instance.SleepUntilNextMorning(); }
                 } else if(watching) {
-                    GUILayout.Label("你看了一会儿电视。新闻与杂音交替闪过，时间悄然流逝。",label);
+                    GUILayout.Label(watchingReport,label);
                     GUILayout.Label("已度过一个时段。",label);
                 } else {
                     GUILayout.Label("屏幕亮着。要坐下来看看电视吗？",label);
-                    if(GUILayout.Button("看电视（度过一个时段）",button)) { watching=true; TimeManager.Instance.AdvanceTime(); }
+                    if(GUILayout.Button("看电视（度过一个时段）",button)) WatchTelevision();
                 }
                 GUILayout.Space(20);
                 if(GUILayout.Button(watching?"关掉电视，返回":"离开",button)) CloseMenu();

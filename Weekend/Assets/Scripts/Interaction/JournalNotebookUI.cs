@@ -42,7 +42,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             visible.Clear();
             for(int i=entries.Count-1;i>=0;i--)
-                if(entries[i]!=null&&(filter==0||(filter==1?entries[i].isKnowledge:!entries[i].isKnowledge)))visible.Add(i);
+                if(entries[i]!=null&&(filter==0||(filter==1?entries[i].isKnowledge:filter==2?!entries[i].isKnowledge&&!entries[i].IsDream:entries[i].IsDream)))visible.Add(i);
         }
         public bool MoveSelection(IReadOnlyList<JournalEntry> entries,ref int selected,int step)
         {
@@ -67,10 +67,10 @@ namespace DeathBySeventhsDawn.Interaction
             GUI.Label(new Rect(left.x+24,left.y+20,left.width-48,44),"随身日记",heading);
             GUI.Label(new Rect(left.x+25,left.y+70,left.width-50,24),"观察 · 梦境 · 无法遗忘的事",eyebrow);
             GUI.Label(new Rect(left.x+25,left.y+99,left.width-50,22),entries.Count+" 则记录  /  "+JournalUpdates.UnreadCount+" 则未读",small);
-            var tabs=new[]{"全部","发现","梦境"};
-            for(int i=0;i<3;i++)
+            var tabs=new[]{"全部","发现","记事","梦境"};
+            for(int i=0;i<tabs.Length;i++)
             {
-                var rect=new Rect(left.x+20+i*(left.width-40)/3,left.y+139,(left.width-46)/3,36);
+                var rect=new Rect(left.x+20+i*(left.width-40)/tabs.Length,left.y+139,(left.width-46)/tabs.Length,36);
                 if(i==filter)Fill(rect,Accent);
                 if(GUI.Button(rect,tabs[i],i==filter?selectedTab:tab)&&filter!=i)
                 {
@@ -92,7 +92,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if(index==selected)Fill(new Rect(0,rowY,4,rowHeight),Accent);
                 if(!entry.isRead)Fill(new Rect(rowWidth-13,rowY+12,5,5),new Color(.66f,.34f,.16f));
                 GUI.Label(new Rect(14,rowY+10,rowWidth-30,rowHeight-35),entry.title,rowTitle);
-                GUI.Label(new Rect(14,rowY+rowHeight-25,rowWidth-28,20),"第 "+entry.day+" 天 · "+(entry.isKnowledge?"发现":"梦境")+(!entry.isRead?" · 未读":""),rowMeta);
+                GUI.Label(new Rect(14,rowY+rowHeight-25,rowWidth-28,20),"第 "+entry.day+" 天 · "+(entry.isKnowledge?"发现":entry.IsDream?"梦境":"记事")+(!entry.isRead?" · 未读":""),rowMeta);
                 if(GUI.Button(row,GUIContent.none,GUIStyle.none)&&selected!=index){selected=index;articleScroll=Vector2.zero;readSelection();}
                 rowY+=rowHeight+8;
             }
@@ -122,7 +122,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             float contentWidth=viewport.width-22;
             float titleHeight=heading.CalcHeight(new GUIContent(entry.title),contentWidth);
-            string meta="第 "+(entry.loop+1)+" 次旅程   /   第 "+entry.day+" 天   /   "+(entry.isKnowledge?(entry.tier==KnowledgeTier.Cosmic?"宇宙知识":entry.tier==KnowledgeTier.Forbidden?"禁忌知识":"普通知识"):"梦境记录");
+            string meta="第 "+(entry.loop+1)+" 次旅程   /   第 "+entry.day+" 天   /   "+(entry.isKnowledge?(entry.tier==KnowledgeTier.Cosmic?"宇宙知识":entry.tier==KnowledgeTier.Forbidden?"禁忌知识":"普通知识"):entry.IsDream?"梦境记录":"日常记事");
             string prose=string.IsNullOrWhiteSpace(entry.body)?"这一段记忆还没有整理成文字。":entry.body;
             float metaHeight=small.CalcHeight(new GUIContent(meta),contentWidth);
             float bodyHeight=body.CalcHeight(new GUIContent(prose),contentWidth);
