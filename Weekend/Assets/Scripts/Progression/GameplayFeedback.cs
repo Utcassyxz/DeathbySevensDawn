@@ -20,13 +20,20 @@ namespace DeathBySeventhsDawn.Progression
         void OnEnable()
         {
             JournalUpdates.Added+=OnJournalAdded;
+            if(GameManager.Instance!=null)GameManager.Instance.JourneyReset+=ResetJourney;
             clock=TimeManager.Instance;
             if(clock!=null) { previousDay=clock.Days;previousPeriod=clock.Period;clock.TimeChanged+=OnTimeChanged; }
         }
         void OnDisable()
         {
             JournalUpdates.Added-=OnJournalAdded;
+            if(GameManager.Instance!=null)GameManager.Instance.JourneyReset-=ResetJourney;
             if(clock!=null) clock.TimeChanged-=OnTimeChanged;
+        }
+        void ResetJourney()
+        {
+            journalRemaining=timeRemaining=0; journalMessage=timeMessage=null;
+            previousDay=clock.Days;previousPeriod=clock.Period;
         }
         void OnJournalAdded(JournalEntry entry)
         {

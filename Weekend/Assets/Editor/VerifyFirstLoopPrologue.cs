@@ -48,7 +48,7 @@ public static class VerifyFirstLoopPrologue
                     if(!story.IsPresenting)return;
                     background=Application.runInBackground;Application.runInBackground=true;keyboard=InputSystem.AddDevice<Keyboard>("PrologueAcceptanceKeyboard");keyboard.MakeCurrent();origin=body.position;Press(Key.D);Capture("flyers");break;
                 case 1:
-                    Check(StoryJournal.WorldBlocked&&body.linearVelocity.sqrMagnitude<.001f&&Vector2.Distance(origin,body.position)<.05f,"Encounter blocks movement");Release();wait=2.2f;break;
+                    Check(StoryJournal.WorldBlocked&&body.linearVelocity.sqrMagnitude<.001f&&Vector2.Distance(origin,body.position)<.05f,"Encounter blocks movement");Release();wait=4.5f;break;
                 case 2:
                     Check(!story.IsPresenting&&ProgressionSave.Load().neighborFlyersSeen,"Day 1 encounter completion saved");
                     Check(GameObject.Find("401 eccentric neighbor")==null&&clock.Days==1&&clock.Period==TimePeriod.Morning,"Neighbor fled, time unchanged");
@@ -63,7 +63,7 @@ public static class VerifyFirstLoopPrologue
                 case 6:Capture("news");break;
                 case 7:Press(Key.Escape);break;
                 case 8:Check(!FurnitureInteraction.IsBusy,"TV closes");Release();SceneManager.LoadScene("Corridor");wait=1.35f;break;
-                case 9:Check(story.IsPresenting,"Day 2 boarding performance");Capture("boarding");wait=1.8f;break;
+                case 9:Check(story.IsPresenting,"Day 2 boarding performance");Capture("boarding");wait=3.5f;break;
                 case 10:
                     Check(!story.IsPresenting&&ProgressionSave.Load().neighborBarricadeSeen&&BoardCount()==3,"Boarded door saved and visible");
                     Check(GameObject.Find("401 first-loop story props").GetComponentsInChildren<Collider2D>(true).Length==0,"Story props preserve walking clearance");

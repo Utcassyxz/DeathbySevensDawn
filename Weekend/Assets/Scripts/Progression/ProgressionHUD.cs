@@ -48,7 +48,10 @@ namespace DeathBySeventhsDawn.Progression
             if(unlockedThisSession) { debugOpen=true; enteringCode=false; scroll=Vector2.zero; }
             else { enteringCode=true; code=""; }
         }
-        void Close() { DebugConsoleOpen=false; enteringCode=false; debugOpen=false; code=""; }
+        void OnEnable(){if(GameManager.Instance!=null)GameManager.Instance.JourneyReset+=Close;}
+        void OnDisable(){if(GameManager.Instance!=null)GameManager.Instance.JourneyReset-=Close; Close();}
+        void Close() { DebugConsoleOpen=false; enteringCode=false; debugOpen=false; confirmNewJourney=false; code=""; }
+        void RestoreInitialState(){Close();GameManager.Instance.StartNewJourney();}
         void EnterDigit(char digit)
         {
             if(!enteringCode) return;
@@ -105,7 +108,7 @@ namespace DeathBySeventhsDawn.Progression
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
             float width=Screen.width/scale, height=Screen.height/scale;
             try {
-                if(game.HasEnded) {
+                if(game.HasEnded && !debugOpen && !enteringCode) {
                     GUI.color=new Color(0,0,0,.97f);
                     GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);
                     GUI.color=previousColor;
@@ -124,7 +127,7 @@ namespace DeathBySeventhsDawn.Progression
                         if(GUILayout.Button("重新开始旅程",buttonStyle)) confirmNewJourney=true;
                     } else {
                         GUILayout.Label("重新开始会清除本次旅程的知识、变异和轮回进度。",labelStyle);
-                        if(GUILayout.Button("确认重新开始",buttonStyle)) { confirmNewJourney=false; Close(); game.StartNewJourney(); }
+                        if(GUILayout.Button("确认重新开始",buttonStyle)) { RestoreInitialState(); }
                         if(GUILayout.Button("取消",buttonStyle)) confirmNewJourney=false;
                     }
                     GUILayout.EndScrollView(); GUILayout.EndArea();
@@ -141,6 +144,17 @@ namespace DeathBySeventhsDawn.Progression
                     foreach(var ability in game.Settings.abilities)
                         if(ability!=null && game.HasAbility(ability.id)) GUILayout.Label("已解锁能力："+AbilityName(ability.id),labelStyle);
                     GUILayout.Space(12);
+                    if(!confirmNewJourney) {
+                        if(GUILayout.Button("回到初始状态",buttonStyle)) confirmNewJourney=true;
+                    } else {
+                        GUILayout.Label("清空这次旅程的日记、知识、变异、轮回和剧情记录，从第 1 天的开场梦境重新开始。",labelStyle);
+                        GUILayout.BeginHorizontal();
+                        if(GUILayout.Button("确认重置",buttonStyle)) RestoreInitialState();
+                        if(GUILayout.Button("取消",buttonStyle)) confirmNewJourney=false;
+                        GUILayout.EndHorizontal();
+                    }
+                    GUILayout.Space(16);
+                    GUI.enabled=!confirmNewJourney;
                     if(GUILayout.Button("推进时段（每天四个时段）",buttonStyle)) clock.AdvanceTime();
                     if(GUILayout.Button("上床睡觉（跳到次日早晨）",buttonStyle)) clock.SleepUntilNextMorning();
                     if(GUILayout.Button("恢复全部体力",buttonStyle)) game.Heal(game.MaxVitality);
@@ -148,6 +162,7 @@ namespace DeathBySeventhsDawn.Progression
                     if(GUILayout.Button("死亡并开始下一轮",buttonStyle)) LoopManager.Instance.RestartLoop();
                     foreach(KnowledgeTier tier in System.Enum.GetValues(typeof(KnowledgeTier)))
                         if(GUILayout.Button("获得"+TierName(tier)+"知识",buttonStyle)) KnowledgeManager.Instance.Unlock("prototype-"+tier+"-"+System.Guid.NewGuid().ToString("N"),tier);
+                    GUI.enabled=true;
                     GUILayout.EndScrollView();
                     if(GUILayout.Button("关闭",buttonStyle)) Close();
                     GUILayout.EndArea();

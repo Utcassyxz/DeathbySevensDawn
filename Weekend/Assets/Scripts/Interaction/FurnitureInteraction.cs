@@ -20,8 +20,8 @@ namespace DeathBySeventhsDawn.Interaction
         GUIStyle label, button, box;
         Vector2 scroll;
         string watchingReport;
-        void OnEnable() { SceneManager.sceneLoaded+=OnSceneLoaded; Bind(); }
-        void OnDisable() { SceneManager.sceneLoaded-=OnSceneLoaded; CloseMenu(); }
+        void OnEnable() { SceneManager.sceneLoaded+=OnSceneLoaded; if(GameManager.Instance!=null)GameManager.Instance.JourneyReset+=CloseMenu; Bind(); }
+        void OnDisable() { SceneManager.sceneLoaded-=OnSceneLoaded; if(GameManager.Instance!=null)GameManager.Instance.JourneyReset-=CloseMenu; CloseMenu(); }
         void OnSceneLoaded(Scene scene,LoadSceneMode mode) { CloseMenu(); Bind(); }
         void Bind() { bed=GameObject.Find("Bed"); television=GameObject.Find("Television and stand"); player=GameObject.FindWithTag("Player"); }
         float Distance(GameObject item)
@@ -70,14 +70,15 @@ namespace DeathBySeventhsDawn.Interaction
         void CloseMenu()
         {
             if(restoreMovement && movement!=null) movement.enabled=true;
-            restoreMovement=false; movement=null; IsBusy=false; watching=false;
+            restoreMovement=false; movement=null; IsBusy=false; watching=false; watchingReport=null; scroll=Vector2.zero;
         }
         void PrepareStyles()
         {
             if(label!=null) return;
             var font=Font.CreateDynamicFontFromOSFont(new[] {"Microsoft YaHei","SimHei","Noto Sans CJK SC"},26);
             label=new GUIStyle(GUI.skin.label) {font=font,fontSize=26,wordWrap=true,alignment=TextAnchor.MiddleCenter};
-            button=new GUIStyle(GUI.skin.button) {font=font,fontSize=25,wordWrap=true,padding=new RectOffset(16,16,14,14)};
+            button=new GUIStyle(GUIStyle.none) {font=font,fontSize=25,wordWrap=true,padding=new RectOffset(16,16,14,14),alignment=TextAnchor.MiddleCenter};
+            button.normal.textColor=new Color(.74f,.78f,.66f);button.hover.textColor=new Color(.96f,.94f,.82f);button.active.textColor=Color.white;
             box=new GUIStyle(GUI.skin.box) {padding=new RectOffset(24,24,24,24)};
         }
         void OnGUI()
@@ -91,8 +92,9 @@ namespace DeathBySeventhsDawn.Interaction
             float width=Screen.width/scale,height=Screen.height/scale;
             try {
                 if(!IsBusy) {
-                    GUI.Box(new Rect(12,height-95,width-24,80),GUIContent.none,box);
-                    GUI.Label(new Rect(20,height-90,width-40,70),target==bed?"E  与床互动 · 上床睡觉":"E  与电视互动 · 看电视",label);
+                    float hint=Mathf.Min(440,width-32);
+                    GUI.color=new Color(.035f,.055f,.05f,.92f);GUI.DrawTexture(new Rect((width-hint)/2,height-82,hint,54),Texture2D.whiteTexture);GUI.color=color;
+                    GUI.Label(new Rect((width-hint)/2,height-82,hint,54),target==bed?"E  休息":"E  看电视",label);
                     return;
                 }
                 GUI.color=new Color(0,0,0,.88f); GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture); GUI.color=color;
@@ -111,9 +113,10 @@ namespace DeathBySeventhsDawn.Interaction
                     if(GUILayout.Button("看电视（度过一个时段）",button)) WatchTelevision();
                 }
                 GUILayout.Space(20);
+                GUILayout.EndScrollView();
                 if(GUILayout.Button(watching?"关掉电视，返回":"离开",button)) CloseMenu();
                 GUILayout.Label("E / Esc 返回",label);
-                GUILayout.EndScrollView(); GUILayout.EndArea();
+                GUILayout.EndArea();
             } finally { GUI.matrix=matrix; GUI.color=color; }
         }
     }

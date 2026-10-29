@@ -17,7 +17,8 @@ namespace DeathBySeventhsDawn.Interaction
         public bool ChapterTitleOpen => titleOpen;
         enum Clip {None,Flyers,Boards}
         Clip clip;
-        float elapsed;
+        float elapsed,titleElapsed;
+        SpriteRenderer[] actorRenderers;
         bool entryPending,titleOpen;
         int openedFrame,blockedUntilFrame=-1;
         FirstLoopPrologueContent content;
@@ -32,8 +33,9 @@ namespace DeathBySeventhsDawn.Interaction
             Instance=this;content=Resources.Load<FirstLoopPrologueContent>("FirstLoopPrologue");
             if(content==null)content=ScriptableObject.CreateInstance<FirstLoopPrologueContent>();
         }
-        void OnEnable(){SceneManager.sceneLoaded+=OnLoaded;}
-        void OnDisable(){SceneManager.sceneLoaded-=OnLoaded;clip=Clip.None;titleOpen=false;}
+        void OnEnable(){SceneManager.sceneLoaded+=OnLoaded;if(GameManager.Instance!=null)GameManager.Instance.JourneyReset+=ResetJourney;}
+        void OnDisable(){SceneManager.sceneLoaded-=OnLoaded;if(GameManager.Instance!=null)GameManager.Instance.JourneyReset-=ResetJourney;ResetJourney();}
+        void ResetJourney(){clip=Clip.None;titleOpen=entryPending=false;elapsed=titleElapsed=0;blockedUntilFrame=Time.frameCount;if(scenery!=null)Destroy(scenery);actor=null;actorRenderers=null;}
         void OnLoaded(Scene scene,LoadSceneMode mode)
         {
             clip=Clip.None;titleOpen=false;entryPending=false;blockedUntilFrame=-1;
@@ -52,6 +54,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(ProgressionHUD.DebugConsoleOpen)return;
             if(titleOpen)
             {
+                titleElapsed+=Time.unscaledDeltaTime;
                 if(Time.frameCount<=openedFrame+1)return;
                 bool confirm=false;
 #if ENABLE_INPUT_SYSTEM
@@ -66,21 +69,21 @@ namespace DeathBySeventhsDawn.Interaction
                 elapsed+=Time.unscaledDeltaTime;
                 if(clip==Clip.Flyers)
                 {
-                    float run=Mathf.Clamp01((elapsed-1.25f)/.7f);
-                    if(actor!=null){actor.transform.position=Vector3.Lerp(new Vector3(-3.95f,.93f,0),new Vector3(-4.7f,1.65f,0),run);actor.transform.localScale=Vector3.one*Mathf.Lerp(.85f,.15f,run);}
-                    if(elapsed>=2.1f)FinishEncounter();
+                    float run=Mathf.Clamp01((elapsed-2f)/.7f);
+                    MoveActor(new Vector3(-3.95f,.93f,0),run);
+                    if(elapsed>=4.2f)FinishEncounter();
                 }
                 else
                 {
                     if(actor!=null)
                     {
-                        float retreat=Mathf.Clamp01((elapsed-1.3f)/.65f);
-                        actor.transform.position=Vector3.Lerp(new Vector3(-4.1f,.98f,0),new Vector3(-4.7f,1.65f,0),retreat);
-                        actor.transform.localScale=Vector3.one*Mathf.Lerp(.85f,.12f,retreat);
-                        actor.transform.localRotation=Quaternion.Euler(0,0,Mathf.Sin(elapsed*16)*4);
+                        float retreat=Mathf.Clamp01((elapsed-2f)/.8f);
+                        MoveActor(new Vector3(-4.1f,.98f,0),retreat);
+                        var hammer=actor.transform.Find("Hammer head");
+                        if(hammer!=null)hammer.localRotation=Quaternion.Euler(0,0,retreat==0?Mathf.Sin(elapsed*16)*18:0);
                     }
-                    for(int i=0;i<boards.Length;i++)if(boards[i]!=null)boards[i].SetActive(elapsed>(i+1)*.65f);
-                    if(elapsed>=2.6f)FinishEncounter();
+                    for(int i=0;i<boards.Length;i++)if(boards[i]!=null)boards[i].SetActive(elapsed>(i+1)*.8f);
+                    if(elapsed>=4.5f)FinishEncounter();
                 }
                 return;
             }
@@ -88,6 +91,15 @@ namespace DeathBySeventhsDawn.Interaction
             entryPending=false;var state=GameManager.Instance.State;
             if(TimeManager.Instance.Days==1&&!state.neighborFlyersSeen)StartEncounter(Clip.Flyers);
             else if(TimeManager.Instance.Days>=2&&!state.neighborBarricadeSeen)StartEncounter(Clip.Boards);
+        }
+        void MoveActor(Vector3 start,float progress)
+        {
+            if(actor==null)return;
+            float t=Mathf.SmoothStep(0,1,progress);
+            actor.transform.position=Vector3.Lerp(start,new Vector3(-4.7f,1.65f,0),t)+Vector3.up*(Mathf.Sin(progress*Mathf.PI*8)*.018f*(1-t));
+            // Keep human proportions; disappear behind the doorway only at the end.
+            float alpha=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.72f,1,progress));
+            if(actorRenderers!=null)foreach(var renderer in actorRenderers){var color=renderer.color;color.a=alpha;renderer.color=color;}
         }
         void StartEncounter(Clip next)
         {
@@ -102,6 +114,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Part("Hammer grip",.28f,.08f,.045f,.22f,new Color(.40f,.27f,.16f),16,actor.transform,true);
                 Part("Hammer head",.28f,.20f,.18f,.065f,new Color(.40f,.43f,.42f),17,actor.transform,true);
             }
+            actorRenderers=actor.GetComponentsInChildren<SpriteRenderer>();
         }
         void FinishEncounter()
         {
@@ -120,7 +133,7 @@ namespace DeathBySeventhsDawn.Interaction
         public bool BeginPrologue()
         {
             if(!FirstLoop||GameManager.Instance.State.prologueEntered||TimeManager.Instance.Days!=2||!StoryJournal.IsNight(TimeManager.Instance.Period)||!KnowledgeManager.Instance.Has(StoryContent.AncientKnowledgeId))return false;
-            titleOpen=true;openedFrame=Time.frameCount;return true;
+            titleOpen=true;titleElapsed=0;openedFrame=Time.frameCount;return true;
         }
         public void EnterPrologue()
         {
@@ -171,7 +184,8 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},26);
                 text=new GUIStyle(GUI.skin.label){font=font,fontSize=25,wordWrap=true,alignment=TextAnchor.MiddleCenter};
-                title=new GUIStyle(text){fontSize=42,fontStyle=FontStyle.Bold};button=new GUIStyle(GUI.skin.button){font=font,fontSize=25};
+                title=new GUIStyle(text){fontSize=42,fontStyle=FontStyle.Bold};button=new GUIStyle(GUIStyle.none){font=font,fontSize=22,alignment=TextAnchor.MiddleCenter};
+                button.normal.textColor=new Color(.74f,.78f,.66f);button.hover.textColor=new Color(.96f,.94f,.82f);button.active.textColor=Color.white;
             }
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-40;float width=Screen.width/scale,height=Screen.height/scale;
@@ -179,7 +193,7 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if(titleOpen)
                 {
-                    GUI.color=new Color(.025f,.035f,.045f,1);GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);GUI.color=color;
+                    GUI.color=new Color(.025f,.035f,.045f,1);GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);GUI.color=new Color(.88f,.87f,.79f,Mathf.SmoothStep(0,1,titleElapsed/.8f));
                     float panel=Mathf.Min(850,width-48);GUI.Label(new Rect((width-panel)/2,height*.18f,panel,50),"序  章",text);
                     GUI.Label(new Rect((width-panel)/2,height*.29f,panel,80),content.chapterTitle,title);
                     GUI.Label(new Rect((width-panel)/2,height*.44f,panel,180),content.chapterText,text);
@@ -187,8 +201,10 @@ namespace DeathBySeventhsDawn.Interaction
                 }
                 else
                 {
-                    GUI.color=new Color(.035f,.045f,.045f,.96f);GUI.DrawTexture(new Rect(20,height-176,width-40,150),Texture2D.whiteTexture);GUI.color=color;
-                    GUI.Label(new Rect(45,height-163,width-90,120),clip==Clip.Boards?content.boardingCaption:elapsed<1.25f?content.dayOneCaption:content.startledCaption,text);
+                    float panel=Mathf.Min(860,width-48),left=(width-panel)/2;
+                    GUI.color=new Color(.035f,.045f,.045f,.91f);GUI.DrawTexture(new Rect(left,height-148,panel,112),Texture2D.whiteTexture);
+                    GUI.color=new Color(.55f,.60f,.48f,.8f);GUI.DrawTexture(new Rect(left,height-148,3,112),Texture2D.whiteTexture);GUI.color=color;
+                    GUI.Label(new Rect(left+26,height-138,panel-52,92),clip==Clip.Boards?content.boardingCaption:elapsed<2f?content.dayOneCaption:content.startledCaption,text);
                 }
             }
             finally {GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}

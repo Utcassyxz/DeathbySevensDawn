@@ -45,8 +45,14 @@ namespace DeathBySeventhsDawn.Interaction
             }
             ProgressionSave.Write(state);
         }
-        void OnEnable() { SceneManager.sceneLoaded+=OnLoaded; }
-        void OnDisable() { SceneManager.sceneLoaded-=OnLoaded; SetPage(Page.None); }
+        void OnEnable() { SceneManager.sceneLoaded+=OnLoaded; if(GameManager.Instance!=null)GameManager.Instance.JourneyReset+=ResetJourney; }
+        void OnDisable() { SceneManager.sceneLoaded-=OnLoaded; if(GameManager.Instance!=null)GameManager.Instance.JourneyReset-=ResetJourney; SetPage(Page.None); }
+        void ResetJourney()
+        {
+            dreamPage=0; selectedEntry=0; revelation=false; nearby=false; telescopeMessage=null;
+            notebook.ResetNavigation(); SetPage(Page.Dream);
+            blockedThroughFrame=Time.frameCount;
+        }
         void OnLoaded(Scene scene,LoadSceneMode mode)
         {
             if(page!=Page.Dream) SetPage(Page.None);
@@ -114,7 +120,7 @@ namespace DeathBySeventhsDawn.Interaction
             else {
                 revelation=true;
                 bool gained=KnowledgeManager.Instance.Unlock(StoryContent.AncientKnowledgeId,content.ancientGodTier);
-                telescopeMessage=content.discoveryText+ (gained?"\n\n获得高级知识：天穹后的轮廓。已写入日记。":"\n\n这道轮廓已经记在日记里了。没有重复获得知识。");
+                telescopeMessage=content.discoveryText+ (gained?"\n\n我把那道轮廓记进了日记。":"\n\n又是那道轮廓。我记得它。");
             }
             SetPage(Page.Telescope);
         }
@@ -145,7 +151,8 @@ namespace DeathBySeventhsDawn.Interaction
             var font=Font.CreateDynamicFontFromOSFont(new[] {"Microsoft YaHei","SimHei","Noto Sans CJK SC"},26);
             text=new GUIStyle(GUI.skin.label) {font=font,fontSize=26,wordWrap=true,padding=new RectOffset(18,18,12,12)};
             title=new GUIStyle(text) {fontSize=32,fontStyle=FontStyle.Bold};
-            button=new GUIStyle(GUI.skin.button) {font=font,fontSize=24,wordWrap=true,padding=new RectOffset(12,12,14,14)};
+            button=new GUIStyle(GUIStyle.none) {font=font,fontSize=24,wordWrap=true,padding=new RectOffset(12,12,14,14),alignment=TextAnchor.MiddleCenter};
+            button.normal.textColor=new Color(.74f,.78f,.66f);button.hover.textColor=new Color(.96f,.94f,.82f);button.active.textColor=Color.white;
         }
         void OnGUI()
         {
@@ -165,8 +172,9 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.depth=-20;
                 GUI.color=page==Page.Diary?new Color(.87f,.81f,.66f,1):new Color(.025f,.03f,.05f,1);
                 GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture); GUI.color=color;
-                float panel=Mathf.Min(1120,width-24);
-                GUILayout.BeginArea(new Rect((width-panel)/2,12,panel,height-24));
+                float panel=Mathf.Min(page==Page.Dream?880:1120,width-48);
+                float top=page==Page.Dream?height*.16f:12;
+                GUILayout.BeginArea(new Rect((width-panel)/2,top,panel,height-top-24));
                 scroll=GUILayout.BeginScrollView(scroll);
                 if(page==Page.Dream) {
                     GUILayout.Space(50); GUILayout.Label("梦 · 蚁穴",title);
@@ -174,7 +182,7 @@ namespace DeathBySeventhsDawn.Interaction
                     GUILayout.Label(pages!=null && pages.Length>0?pages[Mathf.Clamp(dreamPage,0,pages.Length-1)]:"我从一个关于蚁穴的梦中惊醒。",text);
                     GUILayout.Space(30);
                     bool last=pages==null || dreamPage>=pages.Length-1;
-                    if(GUILayout.Button(last?"惊醒":"继续",button)) { if(last) WakeUp(); else {dreamPage++; scroll=Vector2.zero;} }
+                    if(GUILayout.Button(last?"醒 来  →":"继 续  →",button)) { if(last) WakeUp(); else {dreamPage++; scroll=Vector2.zero;} }
                 } else {
                     GUILayout.Label(revelation?"第二夜 · 天穹后的轮廓":"望远镜",title);
                     if(revelation) DrawImage(ancientImage,panel-48);

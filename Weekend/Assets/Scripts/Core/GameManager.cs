@@ -22,13 +22,16 @@ namespace DeathBySeventhsDawn.Core
             EndingTriggered?.Invoke("bad-ending-1"); Changed?.Invoke();
             return true;
         }
+        public event Action JourneyReset;
         public void StartNewJourney()
         {
             State=new ProgressionState(); Vitality=MaxVitality;
             ProgressionSave.Write(State);
-            TimeSystem.TimeManager.Instance.ResetToDayOne(); Changed?.Invoke();
-            if(UnityEngine.Application.CanStreamedLevelBeLoaded("LivingRoom"))
-                UnityEngine.SceneManagement.SceneManager.LoadScene("LivingRoom");
+            TimeSystem.TimeManager.Instance.ResetToDayOne();
+            World.RoomDoor2D.ClearPendingTravel();
+            JourneyReset?.Invoke(); Changed?.Invoke();
+            if(UnityEngine.Application.CanStreamedLevelBeLoaded("Bedroom"))
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Bedroom");
         }
         public float Knowledge => State.knowledge;
         public float Mutation => State.mutation;
