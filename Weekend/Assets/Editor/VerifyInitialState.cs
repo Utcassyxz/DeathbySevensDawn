@@ -23,6 +23,7 @@ public static class VerifyInitialState
     public static void Run()
     {
         if(EditorApplication.isPlaying)throw new InvalidOperationException("Exit Play first.");
+        SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
         foreach(string suffix in new[]{"",".bak",".tmp"})SessionState.SetString(KeyName+suffix,File.Exists(ProgressionSave.PathName+suffix)?Convert.ToBase64String(File.ReadAllBytes(ProgressionSave.PathName+suffix)):"");
         ProgressionSave.Write(new ProgressionState());
         EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
@@ -95,7 +96,7 @@ public static class VerifyInitialState
         var saved=ProgressionSave.Load();
         Check(SceneManager.GetActiveScene().name=="Bedroom"&&clock.Days==1&&clock.Period==TimePeriod.Morning,"Bedroom Day 1 morning");
         Check(game.LoopCount==0&&game.Knowledge==0&&game.Mutation==0&&!game.HasEnded&&game.Vitality==game.MaxVitality&&game.Sanity==game.Settings.maximumSanity,"Fresh stats");
-        Check(!saved.dreamSeen&&!saved.neighborFlyersSeen&&!saved.neighborBarricadeSeen&&!saved.skt079NewsSeen&&!saved.prologueEntered&&!saved.badEndingOne&&saved.journal.Count==0&&saved.knowledgeIds.Count==0,"Fresh persisted story");
+        Check(!saved.dreamSeen&&!saved.neighborFlyersSeen&&!saved.neighborBarricadeSeen&&!saved.skt079NewsSeen&&!saved.prologueEntered&&!saved.badEndingOne&&!saved.dayOneSupernovaSeen&&saved.journal.Count==0&&saved.knowledgeIds.Count==0,"Fresh persisted story");
         Check(Read(story,"page").ToString()=="Dream"&&(int)Read(story,"dreamPage")==0,"Dream starts from first page");
         Check(!FirstLoopPrologue.Instance.IsPresenting&&!FurnitureInteraction.IsBusy&&!ProgressionHUD.DebugConsoleOpen&&feedback.JournalMessage==null&&feedback.TimeMessage==null,"No old modal or notices");
     }

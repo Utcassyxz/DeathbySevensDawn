@@ -18,6 +18,7 @@ public static class VerifyBedroomWindowInteraction
     [MenuItem("Prototype/Test bedroom window and Days")]
     public static void Run()
     {
+        SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
         phase=0;next=0;deadline=EditorApplication.timeSinceStartup+60;
         SessionState.SetBool(Active,true);
         EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");

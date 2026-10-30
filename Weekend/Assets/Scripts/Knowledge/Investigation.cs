@@ -57,7 +57,18 @@ namespace DeathBySeventhsDawn.Knowledge
             if(left==right||!Has(left)||!Has(right))return null;
             return Array.Find(Catalog.deductions,d=>(d.id!="deduction-warning"||State.neighborFlyersSeen)&&d.relation==relation&&((d.left==left&&d.right==right)||(d.left==right&&d.right==left)));
         }
-        public static InvestigationLink FindLink(string a,string b,string relation)=>State.investigationLinks.Find(l=>l!=null&&l.relation==relation&&((l.left==a&&l.right==b)||(l.left==b&&l.right==a)));
+        public static DeductionDefinition Match(string left,string right)
+        {
+            if(left==right||!Has(left)||!Has(right))return null;
+            return Array.Find(Catalog.deductions,d=>(d.id!="deduction-warning"||State.neighborFlyersSeen)&&((d.left==left&&d.right==right)||(d.left==right&&d.right==left)));
+        }
+        static bool SamePair(InvestigationLink link,string a,string b)=>(link.left==a&&link.right==b)||(link.left==b&&link.right==a);
+        public static InvestigationLink FindLink(string a,string b,string relation)=>State.investigationLinks.Find(l=>l!=null&&l.relation==relation&&SamePair(l,a,b));
+        public static InvestigationLink FindLink(string a,string b)
+        {
+            var links=State.investigationLinks;
+            return links.Find(l=>l!=null&&!string.IsNullOrEmpty(l.conclusion)&&SamePair(l,a,b))??links.Find(l=>l!=null&&SamePair(l,a,b));
+        }
         public static bool Connect(string left,string right,string relation,bool writeConclusion)
         {
             if(GameManager.Instance.HasEnded||left==right||!IsNode(left)||!IsNode(right)||!Has(left)||!Has(right)||!Relations.Contains(relation))return false;
@@ -78,10 +89,52 @@ namespace DeathBySeventhsDawn.Knowledge
             }
             ProgressionSave.Write(State);if(added!=null)JournalUpdates.NotifyAdded(added);return true;
         }
+        public static bool Connect(string left,string right,bool writeConclusion)
+        {
+            if(GameManager.Instance.HasEnded||left==right||!IsNode(left)||!IsNode(right)||!Has(left)||!Has(right))return false;
+            var match=writeConclusion?Match(left,right):null;
+            if(writeConclusion&&match==null)return false;
+            var link=FindLink(left,right);
+            if(link!=null&&(!writeConclusion||!string.IsNullOrEmpty(link.conclusion)))return false;
+            if(link==null)
+            {
+                link=new InvestigationLink{left=left,right=right,relation=Relations[0]};
+                State.investigationLinks.Add(link);
+            }
+            JournalEntry added=null;
+            if(writeConclusion)
+            {
+                link.relation=match.relation;
+                link.conclusion=match.id;
+                // Old saves may contain extra tentative lines for this pair; keep only the one being concluded.
+                for(int i=State.investigationLinks.Count-1;i>=0;i--)
+                {
+                    var other=State.investigationLinks[i];
+                    if(other!=null&&other!=link&&SamePair(other,left,right)&&string.IsNullOrEmpty(other.conclusion))State.investigationLinks.RemoveAt(i);
+                }
+                if(!Has(match.id))
+                {
+                    added=new JournalEntry{id=match.id,title=match.title,body=match.body+"\n\n依据："+Title(left)+" ＋ "+Title(right)+"\n关系："+match.relation,isKnowledge=true,day=TimeManager.Instance.Days,loop=GameManager.Instance.LoopCount};
+                    State.journal.Add(added);
+                }
+            }
+            ProgressionSave.Write(State);if(added!=null)JournalUpdates.NotifyAdded(added);return true;
+        }
         public static bool RemoveTentative(string left,string right,string relation)
         {
             var link=FindLink(left,right,relation);if(link==null||!string.IsNullOrEmpty(link.conclusion))return false;
             State.investigationLinks.Remove(link);ProgressionSave.Write(State);return true;
+        }
+        public static bool RemoveTentative(string left,string right)
+        {
+            bool removed=false;
+            for(int i=State.investigationLinks.Count-1;i>=0;i--)
+            {
+                var link=State.investigationLinks[i];
+                if(link!=null&&SamePair(link,left,right)&&string.IsNullOrEmpty(link.conclusion)){State.investigationLinks.RemoveAt(i);removed=true;}
+            }
+            if(removed)ProgressionSave.Write(State);
+            return removed;
         }
         public static string Title(string id)=>State.journal.Find(e=>e!=null&&e.id==id)?.title??"未收录";
         public static IReadOnlyList<InvestigationLink> Links=>State.investigationLinks;

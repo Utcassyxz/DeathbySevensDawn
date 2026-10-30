@@ -23,6 +23,7 @@ public static class VerifyFeedbackFlow
     public static void Run()
     {
         if(EditorApplication.isPlaying)throw new InvalidOperationException("Exit Play before testing.");
+        SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
         foreach(string suffix in new[]{"",".bak",".tmp"})
             SessionState.SetString(KeyName+suffix,File.Exists(ProgressionSave.PathName+suffix)?Convert.ToBase64String(File.ReadAllBytes(ProgressionSave.PathName+suffix)):"");
         ProgressionSave.Write(new ProgressionState{dreamSeen=true});

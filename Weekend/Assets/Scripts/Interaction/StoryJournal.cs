@@ -15,7 +15,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame=-1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld;
+        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked;
         enum Page { None, Dream, Diary, Telescope }
         Page page;
         StoryContent content;
@@ -28,7 +28,7 @@ namespace DeathBySeventhsDawn.Interaction
         GUIStyle text,title,button;
         readonly JournalNotebookUI notebook=new JournalNotebookUI();
         readonly InvestigationBoardUI board=new InvestigationBoardUI();
-        bool showBoard;
+        bool showBoard,boardReturnToGame;
         Texture2D whitePixel;
         Sprite square;
         public bool IsRevelation => page==Page.Telescope && revelation;
@@ -38,6 +38,7 @@ namespace DeathBySeventhsDawn.Interaction
             content=Resources.Load<StoryContent>("StoryContent");
             if(content==null) content=ScriptableObject.CreateInstance<StoryContent>();
             ancientImage=Resources.Load<Texture2D>(content.ancientGodImageResource);
+            board.CloseRequested=CloseBoard;
             // 补齐旧版本已解锁知识的日记，不发放第二次知识奖励。
             var state=GameManager.Instance.State;
             if(state.journal==null) state.journal=new System.Collections.Generic.List<JournalEntry>();
@@ -54,12 +55,13 @@ namespace DeathBySeventhsDawn.Interaction
         void ResetJourney()
         {
             dreamPage=0; selectedEntry=0; revelation=false; nearby=false; telescopeMessage=null;
-            notebook.ResetNavigation(); board.Reset(); showBoard=false; SetPage(Page.Dream);
+            notebook.ResetNavigation(); board.Reset(); showBoard=false; boardReturnToGame=false; SetPage(Page.Dream);
             blockedThroughFrame=Time.frameCount;
         }
         void OnLoaded(Scene scene,LoadSceneMode mode)
         {
             if(page!=Page.Dream) SetPage(Page.None);
+            showBoard=false; boardReturnToGame=false;
             player=GameObject.FindWithTag("Player"); telescope=null; nearby=false;
             if(scene.name=="Balcony") BuildTelescope(scene);
         }
@@ -67,7 +69,13 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(page!=Page.None && next==Page.None) blockedThroughFrame=Time.frameCount;
             page=next; modalOpen=next!=Page.None; scroll=Vector2.zero;
-            if(next==Page.Diary) { notebook.ResetNavigation(); ReadSelectedEntry(); }
+            if(next==Page.None){showBoard=false;boardReturnToGame=false;}
+            if(next==Page.Diary) { notebook.ResetNavigation(); if(!showBoard)ReadSelectedEntry(); }
+        }
+        void CloseBoard()
+        {
+            showBoard=false;
+            if(boardReturnToGame){boardReturnToGame=false;SetPage(Page.None);}
         }
         void Update()
         {
@@ -75,7 +83,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(game==null) return;
             if(game.HasEnded) { SetPage(Page.None); return; }
             if(!game.State.dreamSeen && page!=Page.Dream) { dreamPage=0; SetPage(Page.Dream); }
-            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld) return;
+            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
             bool diary=false,interact=false,cancel=false; int diaryStep=0;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
@@ -86,9 +94,10 @@ namespace DeathBySeventhsDawn.Interaction
             if(page==Page.Dream) return;
             if(page==Page.Diary) {
 #if ENABLE_INPUT_SYSTEM
-                if(keyboard!=null&&keyboard.bKey.wasPressedThisFrame){showBoard=!showBoard;return;}
+                if(keyboard!=null&&keyboard.bKey.wasPressedThisFrame){ if(showBoard)CloseBoard(); else {showBoard=true;boardReturnToGame=false;} return; }
 #endif
-                if(diary || cancel) SetPage(Page.None); else if(showBoard)board.KeyboardInput(); else if(diaryStep!=0 && notebook.MoveSelection(game.State.journal,ref selectedEntry,diaryStep)) ReadSelectedEntry(); return; }
+                if(diary || cancel){ if(showBoard)CloseBoard(); else SetPage(Page.None); return; }
+                if(showBoard)board.KeyboardInput(); else if(diaryStep!=0 && notebook.MoveSelection(game.State.journal,ref selectedEntry,diaryStep)) ReadSelectedEntry(); return; }
             if(page==Page.Telescope) {
 #if ENABLE_INPUT_SYSTEM
                 if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectTelescopeEvidence();
@@ -97,6 +106,9 @@ namespace DeathBySeventhsDawn.Interaction
                 if(interact || cancel) CloseTelescope(); return; }
             var window=Object.FindAnyObjectByType<WindowLookout2D>();
             if(FurnitureInteraction.IsBusy || (window!=null && window.IsOpen)) { nearby=false; return; }
+#if ENABLE_INPUT_SYSTEM
+            if(keyboard!=null&&keyboard.bKey.wasPressedThisFrame) { selectedEntry=game.State.journal.FindLastIndex(e=>e!=null && !e.isRead); if(selectedEntry<0)selectedEntry=Mathf.Max(0,game.State.journal.Count-1); showBoard=true; boardReturnToGame=true; SetPage(Page.Diary); return; }
+#endif
             if(diary) { selectedEntry=game.State.journal.FindLastIndex(e=>e!=null && !e.isRead); if(selectedEntry<0)selectedEntry=Mathf.Max(0,game.State.journal.Count-1); SetPage(Page.Diary); return; }
             if(player==null) player=GameObject.FindWithTag("Player");
             nearby=telescope!=null && player!=null && Vector2.Distance(player.transform.position,telescope.transform.position)<=content.telescopeRange;
@@ -176,7 +188,7 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             var game=GameManager.Instance;
-            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld) return;
+            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
             Styles(); var matrix=GUI.matrix; var color=GUI.color;
             float scale=Mathf.Min(Screen.height/900f,Screen.width/1100f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
@@ -185,15 +197,14 @@ namespace DeathBySeventhsDawn.Interaction
                 if(IsRevelation) { DrawRevelation(width,height); return; }
                 if(page==Page.Diary) {
                     GUI.depth=-20;
-                    if(showBoard)board.Draw(width,height);
-                    else {GUI.BeginGroup(new Rect(0,82,width,height-82));notebook.Draw(game.State.journal,ref selectedEntry,ReadSelectedEntry,()=>SetPage(Page.None),width,height-82);GUI.EndGroup();}
+                    if(showBoard){board.Draw(width,height);return;}
+                    {GUI.BeginGroup(new Rect(0,82,width,height-82));notebook.Draw(game.State.journal,ref selectedEntry,ReadSelectedEntry,()=>SetPage(Page.None),width,height-82);GUI.EndGroup();}
                     GUI.color=new Color(.07f,.12f,.12f);GUI.DrawTexture(new Rect(0,0,width,82),Texture2D.whiteTexture);GUI.color=color;
-                    if(GUI.Button(new Rect(28,18,190,48),showBoard?"阅读笔记":"● 阅读笔记",button))showBoard=false;
-                    if(GUI.Button(new Rect(230,18,220,48),showBoard?"● 线索连线 · B":"线索连线 · B",button))showBoard=true;
-                    if(GUI.Button(new Rect(width-200,18,170,48),"合上 · J / Esc",button))SetPage(Page.None);
+                    if(GUI.Button(new Rect(28,18,220,48),"● 线索连线 · B",button)){showBoard=true;boardReturnToGame=false;}
+                    if(GUI.Button(new Rect(260,18,190,48),"合上 · J / Esc",button))SetPage(Page.None);
                     return; }
                 if(page==Page.None) {
-                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,55),JournalUpdates.UnreadCount>0?"J  日记 · "+JournalUpdates.UnreadCount+" 条未读":"J  翻开日记",text);
+                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,85),(JournalUpdates.UnreadCount>0?"J  日记 · "+JournalUpdates.UnreadCount+" 条未读":"J  翻开日记")+"\nB  线索连线",text);
                     if(nearby) GUI.Label(new Rect(12,height-100,width-24,80),"E  查看望远镜",text);
                     return;
                 }

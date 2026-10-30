@@ -18,7 +18,7 @@ public static class VerifyApartmentRuntime
  static int step; static bool awaiting; static double readyAt,deadline; static Vector2 arrival;
  static VerifyApartmentRuntime(){EditorApplication.update+=Tick;}
  [MenuItem("Prototype/Verify current layout")]
- public static void Start(){step=0;movementStage=0;awaiting=false;readyAt=0;deadline=0;movementUntil=0;movedDistance=0;SessionState.SetBool(Key,true);EditorSceneManager.OpenScene("Assets/Scenes/Apartment/LivingRoom.unity");EditorApplication.isPlaying=true;}
+ public static void Start(){SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);step=0;movementStage=0;awaiting=false;readyAt=0;deadline=0;movementUntil=0;movedDistance=0;SessionState.SetBool(Key,true);EditorSceneManager.OpenScene("Assets/Scenes/Apartment/LivingRoom.unity");EditorApplication.isPlaying=true;}
  static void Tick()
  {
   if(!SessionState.GetBool(Key,false)||!EditorApplication.isPlaying||EditorApplication.isCompiling)return;

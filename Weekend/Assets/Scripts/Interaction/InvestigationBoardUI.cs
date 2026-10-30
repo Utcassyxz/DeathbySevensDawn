@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,26 +6,18 @@ using DeathBySeventhsDawn.Knowledge;
 
 namespace DeathBySeventhsDawn.Interaction
 {
+    // 独立的全屏线索板：左侧选线索，右侧整理两条线索之间的关系。
+    // 不再把卡片堆成一张自动布局的图；连接以列表记录，避免线越多越乱。
     public sealed class InvestigationBoardUI
     {
-        string first,second,message="先选两张已经收录的卡片，再判断它们有什么关系。";
-        int relation,focus;
-        bool reviewed;
+        public Action CloseRequested;
+        string first,second,message="从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。";
+        int focus,filter;
         Vector2 boardScroll,detailScroll;
-        GUIStyle title,body,small,button,cardTitle;
-        static readonly Color Ink=new Color(.16f,.22f,.21f),Green=new Color(.22f,.42f,.36f),Paper=new Color(.92f,.88f,.75f);
-        public void Reset(){first=second=null;relation=focus=0;reviewed=false;boardScroll=detailScroll=Vector2.zero;message="先选两张已经收录的卡片，再判断它们有什么关系。";}
-        void Styles()
-        {
-            if(body!=null)return;var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei"},24);
-            body=new GUIStyle(GUI.skin.label){font=font,fontSize=20,wordWrap=true};body.normal.textColor=Ink;
-            title=new GUIStyle(body){fontSize=30,fontStyle=FontStyle.Bold};small=new GUIStyle(body){fontSize=16};
-            cardTitle=new GUIStyle(body){fontSize=22,fontStyle=FontStyle.Bold};
-            button=new GUIStyle(body){alignment=TextAnchor.MiddleCenter,padding=new RectOffset(10,10,8,8)};
-            foreach(var style in new[]{body,title,small,cardTitle,button})
-                foreach(var state in new[]{style.normal,style.hover,style.active,style.focused,style.onNormal,style.onHover,style.onActive,style.onFocused})state.textColor=Ink;
-            button.hover.textColor=Green;
-        }
+        GUIStyle title,body,small,cardTitle,rowTitle,rowMeta,tag,button,filterButton,linkRow,headerTitle,headerSmall;
+        static readonly Color Ink=new Color(.16f,.22f,.21f),Muted=new Color(.42f,.43f,.36f),Green=new Color(.22f,.42f,.36f),Paper=new Color(.92f,.88f,.75f),Deep=new Color(.045f,.075f,.075f);
+        static readonly string[] filters={"全部","现场记录","推论","未连接"};
+        public void Reset(){first=second=null;focus=0;filter=0;boardScroll=detailScroll=Vector2.zero;message="从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。";}
         public void Select(string id)
         {
             if(id==first){first=second;second=null;}
@@ -32,97 +25,200 @@ namespace DeathBySeventhsDawn.Interaction
             else if(first==null)first=id;
             else if(second==null)second=id;
             else{first=second;second=id;}
-            reviewed=false;detailScroll=Vector2.zero;
+            detailScroll=Vector2.zero;RefreshMessage();
         }
+        void SelectPair(string a,string b){first=a;second=b;detailScroll=Vector2.zero;RefreshMessage();}
         public void KeyboardInput()
         {
-            var k=Keyboard.current;if(k==null)return;var nodes=Investigation.Nodes();
+            var k=Keyboard.current;if(k==null)return;
+            if(k.tabKey.wasPressedThisFrame){filter=(filter+1)%filters.Length;focus=0;boardScroll=Vector2.zero;return;}
+            var nodes=Filtered();
             if(nodes.Count>0)
             {
-                int step=(k.rightArrowKey.wasPressedThisFrame||k.downArrowKey.wasPressedThisFrame?1:0)-(k.leftArrowKey.wasPressedThisFrame||k.upArrowKey.wasPressedThisFrame?1:0);
-                if(step!=0){focus=(focus+step+nodes.Count)%nodes.Count;boardScroll.y=Mathf.Max(0,(focus/2)*190-150);}
-                focus=Mathf.Clamp(focus,0,nodes.Count-1);if(k.spaceKey.wasPressedThisFrame)Select(nodes[focus].id);
+                int step=(k.downArrowKey.wasPressedThisFrame||k.rightArrowKey.wasPressedThisFrame?1:0)-(k.upArrowKey.wasPressedThisFrame||k.leftArrowKey.wasPressedThisFrame?1:0);
+                if(step!=0){focus=(focus+step+nodes.Count)%nodes.Count;boardScroll.y=Mathf.Max(0,focus*80-90);}
+                focus=Mathf.Clamp(focus,0,nodes.Count-1);
+                if(k.spaceKey.wasPressedThisFrame)Select(nodes[focus].id);
             }
-            if(k.tabKey.wasPressedThisFrame){relation=(relation+1)%Investigation.Relations.Length;reviewed=false;}
-            if(k.enterKey.wasPressedThisFrame&&first!=null&&second!=null){if(!reviewed)Review();else Commit();}
-            if(k.backspaceKey.wasPressedThisFrame){first=second=null;reviewed=false;}
+            if(k.enterKey.wasPressedThisFrame&&first!=null&&second!=null){var link=Investigation.FindLink(first,second);if(link!=null&&!string.IsNullOrEmpty(link.conclusion))Commit();else if(link!=null&&Investigation.Match(first,second)!=null)Commit();else LinkOnly();}
+            else if(k.enterKey.wasPressedThisFrame&&first==null&&nodes.Count>0)Select(nodes[focus].id);
+            else if(k.enterKey.wasPressedThisFrame&&first!=null&&second==null&&nodes.Count>0)Select(nodes[focus].id);
+            if(k.backspaceKey.wasPressedThisFrame){first=second=null;RefreshMessage();}
             if(k.deleteKey.wasPressedThisFrame&&first!=null&&second!=null)Remove();
         }
-        void Review(){reviewed=true;detailScroll=Vector2.zero;message=Investigation.Match(first,second,Investigation.Relations[relation])==null?"现在还没有足够依据。可以留下这条待证联系，之后再回来检查。":"这两条记录支持下面的推论。读完依据，再决定是否写下。";}
+        void RefreshMessage()
+        {
+            if(first==null&&second==null){message="从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。";return;}
+            if(second==null){message="已选择①。再选一条线索，建立你怀疑的联系。";return;}
+            var link=Investigation.FindLink(first,second);
+            if(link!=null&&!string.IsNullOrEmpty(link.conclusion))message="这条推论已经写下了。";
+            else if(link!=null&&Investigation.Match(first,second)!=null)message="这两条记录支持一个结论。";
+            else if(link!=null)message="这条联系还没有依据。可以留着，也可以擦掉。";
+            else message="先把它保留为待证连线，看看这条假设是否成立。";
+        }
+        void LinkOnly()
+        {
+            var rule=Investigation.Match(first,second);
+            bool changed=Investigation.Connect(first,second,false);
+            message=changed?(rule!=null?"已留下待证连线。现在可以得出结论。":"已留下待证连线；它不会被当作事实。"):"这条联系已经保存在笔记里。";
+            detailScroll=Vector2.zero;
+        }
         void Commit()
         {
-            var rule=Investigation.Match(first,second,Investigation.Relations[relation]);
-            bool changed=Investigation.Connect(first,second,Investigation.Relations[relation],rule!=null);
-            message=changed?(rule!=null?"推论已写下。它也可以成为下一条推理的依据。":"已留下待证连线；它不会被当作事实。"):"这条联系已经保存在笔记里。";
+            var rule=Investigation.Match(first,second);
+            var existing=Investigation.FindLink(first,second);
+            bool alreadyWritten=existing!=null&&!string.IsNullOrEmpty(existing.conclusion);
+            bool changed=Investigation.Connect(first,second,rule!=null);
+            if(!changed)message=alreadyWritten?"这条推论已经写下了。":"这条联系已经保存在笔记里。";
+            else message=rule!=null?"推论已写下。它也可以成为下一条推理的依据。":"已留下待证连线；它不会被当作事实。";
+            detailScroll=Vector2.zero;
         }
-        void Remove(){message=Investigation.RemoveTentative(first,second,Investigation.Relations[relation])?"已擦去待证连线。":"只有待证连线可以擦去；已写下的推论保留其依据。";}
-        static void Fill(Rect r,Color c){var old=GUI.color;GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=old;}
-        static void Line(Vector2 a,Vector2 b,Color color,bool dashed)
+        void Remove(){message=Investigation.RemoveTentative(first,second)?"已擦去待证连线。":"只有待证连线可以擦去；已写下的推论保留其依据。";}
+        List<JournalEntry> Filtered()
         {
-            // Axis-aligned pixel strokes keep Unity's scroll clipping intact; rotating GUI.matrix rotates its clip too.
-            if(Event.current.type!=EventType.Repaint)return;
-            float length=Vector2.Distance(a,b);int count=Mathf.Max(1,Mathf.CeilToInt(length/3));
-            for(int i=0;i<=count;i++){if(dashed&&(i/4)%2==1)continue;Vector2 p=Vector2.Lerp(a,b,(float)i/count);Fill(new Rect(p.x,p.y,3,3),color);}
+            var all=Investigation.Nodes();var result=new List<JournalEntry>();
+            foreach(var entry in all)
+            {
+                if(entry==null)continue;
+                bool deduction=Investigation.Evidence(entry.id)==null;
+                if(filter==1&&deduction)continue;
+                if(filter==2&&!deduction)continue;
+                if(filter==3&&Connected(entry.id))continue;
+                result.Add(entry);
+            }
+            return result;
         }
+        static bool Connected(string id)
+        {
+            foreach(var link in Investigation.Links)
+                if(link!=null&&(link.left==id||link.right==id||link.conclusion==id))return true;
+            return false;
+        }
+        static int ConnectionCount(string id)
+        {
+            int count=0;
+            foreach(var link in Investigation.Links)
+                if(link!=null&&(link.left==id||link.right==id||link.conclusion==id))count++;
+            return count;
+        }
+        static string Body(string id)
+        {
+            var entry=Investigation.Nodes().Find(e=>e.id==id);
+            return entry!=null?entry.body:"";
+        }
+        void Styles()
+        {
+            if(body!=null)return;
+            var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},24);
+            body=new GUIStyle(GUI.skin.label){font=font,fontSize=19,wordWrap=true};body.normal.textColor=Ink;
+            title=new GUIStyle(body){fontSize=32,fontStyle=FontStyle.Bold};small=new GUIStyle(body){fontSize=16,wordWrap=true};small.normal.textColor=Muted;
+            cardTitle=new GUIStyle(body){fontSize=23,fontStyle=FontStyle.Bold};
+            rowTitle=new GUIStyle(body){fontSize=19,fontStyle=FontStyle.Bold,wordWrap=true};
+            rowMeta=new GUIStyle(body){fontSize=14,wordWrap=true};rowMeta.normal.textColor=Muted;
+            tag=new GUIStyle(body){fontSize=13,fontStyle=FontStyle.Bold};tag.normal.textColor=Green;
+            button=new GUIStyle(GUI.skin.button){font=font,fontSize=19,wordWrap=true,padding=new RectOffset(14,14,10,10)};
+            filterButton=new GUIStyle(GUI.skin.button){font=font,fontSize=16,padding=new RectOffset(8,8,6,6)};
+            linkRow=new GUIStyle(GUI.skin.button){font=font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft,padding=new RectOffset(12,12,8,8)};
+            headerTitle=new GUIStyle(title){fontSize=34};headerTitle.normal.textColor=new Color(.92f,.88f,.75f);
+            headerSmall=new GUIStyle(small){fontSize=16};headerSmall.normal.textColor=new Color(.62f,.68f,.62f);
+            foreach(var style in new[]{body,title,small,cardTitle,rowTitle,rowMeta,button,linkRow})foreach(var state in new[]{style.normal,style.hover,style.active,style.focused})state.textColor=Ink;
+            small.normal.textColor=Muted;rowMeta.normal.textColor=Muted;
+            button.hover.textColor=Green;filterButton.normal.textColor=Ink;filterButton.hover.textColor=Green;linkRow.hover.textColor=Green;
+        }
+        static void Fill(Rect rect,Color color){var old=GUI.color;GUI.color=color;GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=old;}
 
         public void Draw(float w,float h)
         {
-            Styles();Fill(new Rect(0,82,w,h-82),new Color(.08f,.13f,.13f));
-            float margin=28,side=Mathf.Clamp(w*.3f,320,430),graphWidth=w-side-margin*3;
-            var graph=new Rect(margin,110,graphWidth,h-152);var detail=new Rect(graph.xMax+margin,110,side,h-152);
-            Fill(graph,new Color(.79f,.77f,.66f));Fill(detail,Paper);
-            GUI.Label(new Rect(graph.x+24,graph.y+16,graph.width-48,45),"线索连线",title);
-            GUI.Label(new Rect(graph.x+24,graph.y+62,graph.width-48,46),"实线：已整理的依据  ·  虚线：待证\n只有主动收录的证据与推论会出现在这里。",small);
-            var nodes=Investigation.Nodes();float cw=(graph.width-150)/2;
-            var viewport=new Rect(graph.x+16,graph.y+128,graph.width-32,graph.height-195);
-            var rects=new Dictionary<string,Rect>();
-            for(int i=0;i<nodes.Count;i++)rects[nodes[i].id]=new Rect(12+(i%2)*(cw+86),12+(i/2)*190,cw,150);
-            boardScroll=GUI.BeginScrollView(viewport,boardScroll,new Rect(0,0,viewport.width-20,Mathf.Max(viewport.height-20,((nodes.Count+1)/2)*190+24)));
-            foreach(var link in Investigation.Links)
+            Styles();Fill(new Rect(0,0,w,h),Deep);
+            Fill(new Rect(0,0,w,94),new Color(.07f,.12f,.12f));
+            GUI.Label(new Rect(30,16,520,44),"线索连线",headerTitle);
+            GUI.Label(new Rect(32,58,w-420,24),"选择两条线索；没有依据的组合会留成待证，不会判错。",headerSmall);
+            if(GUI.Button(new Rect(w-232,24,202,44),"合上  ·  B / Esc",button)){CloseRequested?.Invoke();return;}
+            for(int i=0;i<filters.Length;i++)
             {
-                if(link==null||!rects.ContainsKey(link.left)||!rects.ContainsKey(link.right))continue;
-                Line(rects[link.left].center,rects[link.right].center,string.IsNullOrEmpty(link.conclusion)?new Color(.45f,.38f,.28f):Green,string.IsNullOrEmpty(link.conclusion));
-                if(!string.IsNullOrEmpty(link.conclusion)&&rects.ContainsKey(link.conclusion))
-                {Line(rects[link.left].center,rects[link.conclusion].center,Green,false);Line(rects[link.right].center,rects[link.conclusion].center,Green,false);}
+                if(GUI.Button(new Rect(30+i*112,102,104,34),(filter==i?"●  ":"")+filters[i],filterButton)&&filter!=i){filter=i;focus=0;boardScroll=Vector2.zero;}
             }
+            float leftWidth=Mathf.Clamp(w*.34f,300,480);
+            var left=new Rect(28,154,leftWidth,h-184);var right=new Rect(left.xMax+24,154,w-leftWidth-80,h-184);
+            Fill(left,new Color(.82f,.79f,.67f));Fill(right,Paper);
+            var nodes=Filtered();
+            GUI.Label(new Rect(left.x+18,left.y+12,left.width-36,26),"线索 · "+nodes.Count,cardTitle);
+            GUI.Label(new Rect(left.x+18,left.y+40,left.width-36,22),"① 第一条  ② 第二条  ·  点选或方向键 + 空格",small);
+            var viewport=new Rect(left.x+12,left.y+72,left.width-24,left.height-88);
+            float rowWidth=viewport.width-20,contentHeight=Mathf.Max(viewport.height,nodes.Count*80+8);
+            boardScroll=GUI.BeginScrollView(viewport,boardScroll,new Rect(0,0,rowWidth+8,contentHeight));
             for(int i=0;i<nodes.Count;i++)
             {
-                var entry=nodes[i];var rect=rects[entry.id];bool chosen=first==entry.id||second==entry.id;
-                Fill(new Rect(rect.x+4,rect.y+5,rect.width,rect.height),new Color(.13f,.17f,.15f,.2f));Fill(rect,chosen?new Color(.98f,.94f,.79f):Paper);
-                if(i==focus)Fill(new Rect(rect.x,rect.y,rect.width,3),Green);
-                if(chosen)Fill(new Rect(rect.x,rect.y,5,rect.height),Green);
-                bool deduction=Investigation.Evidence(entry.id)==null;
-                GUI.Label(new Rect(rect.x+16,rect.y+12,rect.width-32,26),(chosen?(first==entry.id?"① ":"② "):"")+(deduction?"推论":"现场记录")+" · 第 "+entry.day+" 天",small);
-                GUI.Label(new Rect(rect.x+16,rect.y+47,rect.width-32,72),entry.title,cardTitle);
-                GUI.Label(new Rect(rect.x+16,rect.y+121,rect.width-32,24),deduction?"可继续作为依据":Investigation.Evidence(entry.id).source,small);
-                if(GUI.Button(rect,GUIContent.none,GUIStyle.none)){focus=i;Select(entry.id);}
+                var entry=nodes[i];var row=new Rect(0,i*80,rowWidth,72);bool chosen=first==entry.id||second==entry.id;bool deduction=Investigation.Evidence(entry.id)==null;
+                Fill(row,chosen?new Color(.98f,.94f,.80f):new Color(.90f,.87f,.75f));
+                Fill(new Rect(row.x,row.y,4,row.height),deduction?Green:new Color(.55f,.42f,.25f));
+                if(i==focus)Fill(new Rect(row.x,row.y,row.width,2),Green);
+                if(chosen)Fill(new Rect(row.x,row.y,row.width,2),Green);
+                GUI.Label(new Rect(row.x+14,row.y+8,80,20),deduction?"推论":"现场记录",tag);
+                GUI.Label(new Rect(row.x+14,row.y+26,row.width-24,24),(chosen?(first==entry.id?"① ":"② "):"")+entry.title,rowTitle);
+                GUI.Label(new Rect(row.x+14,row.y+52,row.width-24,18),"第 "+entry.day+" 天  ·  "+ConnectionCount(entry.id)+" 条连线",rowMeta);
+                if(GUI.Button(row,GUIContent.none,GUIStyle.none)){focus=i;Select(entry.id);}
             }
-            if(nodes.Count==0)GUI.Label(new Rect(24,35,viewport.width-65,180),"纸页还是空的。\n\n留意卧室桌上的手记、阳台望远镜和 401 门旁的传单。查看后，选择收录才会留下证据。",body);
+            if(nodes.Count==0)GUI.Label(new Rect(14,18,viewport.width-28,100),"这一栏还没有线索。\n\n先探索房间、查看现场记录并主动收录。",body);
             GUI.EndScrollView();
-            GUI.Label(new Rect(graph.x+22,graph.yMax-56,graph.width-44,50),"鼠标选卡片  /  方向键移动 · 空格选择\nTab 换关系 · Enter 检查/写下 · Backspace 清空选择",small);
-            GUILayout.BeginArea(new Rect(detail.x+22,detail.y+18,detail.width-44,detail.height-36));
+            GUI.Label(new Rect(28,h-24,w-56,20),"方向键移动 · 空格选择 · Enter 建立/得出结论 · Delete 擦除 · Tab 换筛选 · B / Esc 关闭",headerSmall);
+            GUILayout.BeginArea(new Rect(right.x+20,right.y+16,right.width-40,right.height-32));
             detailScroll=GUILayout.BeginScrollView(detailScroll);
-            GUILayout.Label("整理思路",title);GUILayout.Space(16);
-            GUILayout.Space(16);GUILayout.Label(message,small);
-            if(reviewed){var rule=Investigation.Match(first,second,Investigation.Relations[relation]);if(rule!=null){GUILayout.Space(18);GUILayout.Label(rule.title,cardTitle);GUILayout.Label(rule.body,body);}}
-            GUILayout.Space(18);
-            GUILayout.Label("它们之间是什么关系？",body);
-            for(int i=0;i<Investigation.Relations.Length;i++)if(GUILayout.Button((relation==i?"●  ":"○  ")+Investigation.Relations[i],button,GUILayout.MinHeight(42))){relation=i;reviewed=false;}
-            GUILayout.Space(18);
-            foreach(string id in new[]{first,second})
+            GUILayout.Label("整理思路",title);
+            GUILayout.Label(message,small);
+            if(first==null&&second==null)
             {
-                if(id==null){GUILayout.Label("还没有选择这张卡片",small);GUILayout.Space(15);continue;}
-                var entry=nodes.Find(e=>e.id==id);if(entry==null)continue;
-                GUILayout.Label(entry.title,cardTitle);GUILayout.Label(entry.body,small);
-                if(!string.IsNullOrEmpty(entry.imageResource)){var texture=Resources.Load<Texture2D>(entry.imageResource);if(texture!=null){var r=GUILayoutUtility.GetRect(detail.width-70,145);GUI.DrawTexture(r,texture,ScaleMode.ScaleToFit);}}
                 GUILayout.Space(16);
+                GUILayout.Label("从左侧选择一条线索。",cardTitle);
+                GUILayout.Label("选择两条线索后，右侧会出现「留下待证连线」或「得出结论」。你不需要猜关系；系统只在连线成立时提供结论。",body);
+                GUILayout.Space(8);
+                DrawLinks();
             }
-
-            GUILayout.EndScrollView();
-            bool enabled=GUI.enabled;GUI.enabled=first!=null&&second!=null;
-            if(GUILayout.Button(!reviewed?"检查这条联系  ·  Enter":Investigation.Match(first,second,Investigation.Relations[relation])!=null?"写下推论  ·  Enter":"保留待证连线  ·  Enter",button,GUILayout.MinHeight(56))){if(!reviewed)Review();else Commit();}
-            if(GUILayout.Button("擦去这条待证线  ·  Delete",button,GUILayout.MinHeight(42)))Remove();GUI.enabled=enabled;
-            GUILayout.EndArea();
+            else
+            {
+                GUILayout.Space(12);
+                GUILayout.Label("① "+Investigation.Title(first),cardTitle);
+                GUILayout.Label(Body(first),small);
+                if(second!=null)
+                {
+                    GUILayout.Space(10);
+                    GUILayout.Label("② "+Investigation.Title(second),cardTitle);
+                    GUILayout.Label(Body(second),small);
+                    GUILayout.Space(12);
+                    var rule=Investigation.Match(first,second);var link=Investigation.FindLink(first,second);bool concluded=link!=null&&!string.IsNullOrEmpty(link.conclusion);
+                    if(concluded)
+                    {
+                        GUILayout.Label("这条推论已经写下。",small);
+                        if(rule!=null){GUILayout.Label(rule.title,cardTitle);GUILayout.Label(rule.body,body);}
+                    }
+                    else if(link==null)
+                    {
+                        if(GUILayout.Button("留下待证连线  ·  Enter",button,GUILayout.MinHeight(48)))LinkOnly();
+                    }
+                    else if(rule!=null)
+                    {
+                        if(GUILayout.Button("得出结论  ·  Enter",button,GUILayout.MinHeight(50)))Commit();
+                    }
+                    if(link!=null&&!concluded&&GUILayout.Button("擦去这条待证线  ·  Delete",button,GUILayout.MinHeight(42)))Remove();
+                    if(GUILayout.Button("清空选择  ·  Backspace",button,GUILayout.MinHeight(40))){first=second=null;RefreshMessage();}
+                }
+                else GUILayout.Label("再选一条线索，建立你怀疑的联系。",body);
+                GUILayout.Space(18);DrawLinks();
+            }
+            GUILayout.EndScrollView();GUILayout.EndArea();
+        }
+        void DrawLinks()
+        {
+            GUILayout.Label("已整理的连线",cardTitle);
+            int count=0;
+            foreach(var link in Investigation.Links)
+            {
+                if(link==null||!Investigation.IsNode(link.left)||!Investigation.IsNode(link.right))continue;
+                count++;
+                string status=string.IsNullOrEmpty(link.conclusion)?"待证 · 不当作事实":"→ "+Investigation.Title(link.conclusion);
+                if(GUILayout.Button(Investigation.Title(link.left)+"  ↔  "+Investigation.Title(link.right)+"\n"+status,linkRow,GUILayout.MinHeight(50)))SelectPair(link.left,link.right);
+            }
+            if(count==0)GUILayout.Label("还没有连线。选两条线索，建立第一条。",small);
         }
     }
 }

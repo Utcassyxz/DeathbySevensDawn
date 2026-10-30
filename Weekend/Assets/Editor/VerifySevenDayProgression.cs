@@ -20,6 +20,7 @@ public static class VerifySevenDayProgression
     [MenuItem("Prototype/Validate synced seven day progression")]
     public static void Run()
     {
+        SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
         CreateSettings();
         string path=ProgressionSave.PathName;
         // Exercise a clean save without changing the player's progress.

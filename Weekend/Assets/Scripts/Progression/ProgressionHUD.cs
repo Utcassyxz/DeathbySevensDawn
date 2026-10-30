@@ -21,6 +21,8 @@ namespace DeathBySeventhsDawn.Progression
 
         void Update()
         {
+            if(MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked) return;
+            if(DeathBySeventhsDawn.Interaction.InvestigationDevTools.WorldBlocked) return;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
             if(keyboard==null) return;
@@ -96,6 +98,8 @@ namespace DeathBySeventhsDawn.Progression
         {
             var game=GameManager.Instance; var clock=TimeManager.Instance;
             if(game==null || clock==null) return;
+            if(MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked) return;
+            if(DeathBySeventhsDawn.Interaction.InvestigationDevTools.WorldBlocked) return;
             PrepareStyles();
             var previousColor=GUI.color;
             // Scale with resolution, keeping large readable controls on high-DPI game views.
@@ -126,6 +130,8 @@ namespace DeathBySeventhsDawn.Progression
                         if(GUILayout.Button("确认重新开始",buttonStyle)) { RestoreInitialState(); }
                         if(GUILayout.Button("取消",buttonStyle)) confirmNewJourney=false;
                     }
+                    GUILayout.Space(10);
+                    if(GUILayout.Button("回到主页面",buttonStyle)) MainMenuUI.ReturnToMainMenu();
                     GUILayout.EndScrollView(); GUILayout.EndArea();
                 } else if(debugOpen) {
                     GUI.color=new Color(0,0,0,.88f);
@@ -152,6 +158,8 @@ namespace DeathBySeventhsDawn.Progression
                     GUILayout.Space(16);
                     GUI.enabled=!confirmNewJourney;
                     if(GUILayout.Button("推进时段（每天四个时段）",buttonStyle)) clock.AdvanceTime();
+                    if(GUILayout.Button("重播第一天广播",buttonStyle)) DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.Replay();
+                    if(GUILayout.Button("线索开发者面板",buttonStyle)) DeathBySeventhsDawn.Interaction.InvestigationDevTools.Open();
                     if(GUILayout.Button("上床睡觉（跳到次日早晨）",buttonStyle)) clock.SleepUntilNextMorning();
                     if(GUILayout.Button("恢复全部体力",buttonStyle)) game.Heal(game.MaxVitality);
                     if(GUILayout.Button("损失 25 体力（归零后轮回）",buttonStyle)) game.Damage(25);

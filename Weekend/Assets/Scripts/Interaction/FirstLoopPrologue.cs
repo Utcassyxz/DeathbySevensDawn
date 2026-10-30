@@ -126,7 +126,8 @@ namespace DeathBySeventhsDawn.Interaction
         // 由电视确认按钮调用；看新闻仍只消耗电视原有的一个时段。
         public string WatchNews()
         {
-            if(!FirstLoop||TimeManager.Instance.Days!=2)return "新闻与杂音交替闪过。屏幕里暂时没有新的消息。";
+            if(!FirstLoop)return "新闻与杂音交替闪过。屏幕里暂时没有新的消息。";
+            if(TimeManager.Instance.Days!=2)return TimeManager.Instance.Days==1?"电视里只有杂音。屏幕闪了几下，又暗下去。\n\n我总觉得它没有真正关掉。":"新闻与杂音交替闪过。屏幕里暂时没有新的消息。";
             GameManager.Instance.State.skt079NewsSeen=true;
             ProgressionSave.Write(GameManager.Instance.State);return content.news;
         }
