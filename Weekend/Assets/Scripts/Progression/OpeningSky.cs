@@ -56,6 +56,18 @@ namespace DeathBySeventhsDawn.Progression
                     for(int k=-(j/7+1);k<=j/7+1;k++)Dot(x+k,y,c);
                 }
             }
+            float approach=Mathf.SmoothStep(0,1,Mathf.Clamp01((progress-.18f)*1.8f));
+            if(approach>0)for(int y=0;y<H;y++)for(int x=285;x<W;x++)
+            {
+                float mx=560-approach*58,my=220,rx=210,ry=190;
+                float dx=(x-mx)/rx,dy=(y-my)/ry,d=dx*dx+dy*dy;
+                if(d>1)continue;
+                float grain=Mathf.PerlinNoise(x*.065f,y*.065f);
+                bool ridge=Mathf.Abs(Mathf.Sin((x+y*.4f)*.055f+grain*2))<.10f;
+                Dot(x,y,ridge?C(.095f,.115f,.105f):C(.022f+grain*.025f,.035f+grain*.02f,.045f));
+                float ex=(x-420)/33f,ey=(y-170)/12f;
+                if(ex*ex+ey*ey<1){float pupil=Mathf.Abs(x-420);Dot(x,y,pupil<3?C(.005f,.009f,.01f):C(.26f,.29f,.17f));}
+            }
             float fade=Mathf.Clamp01((progress-.88f)/.12f);
             if(fade>0)for(int i=0;i<pixels.Length;i++)pixels[i]=Color.Lerp(pixels[i],Color.black,fade);
             image.SetPixels32(pixels);image.Apply(false);return image;

@@ -18,12 +18,12 @@ namespace DeathBySeventhsDawn.Player
 #if ENABLE_INPUT_SYSTEM
             var keyboard = Keyboard.current;
             moveInput = keyboard == null ? Vector2.zero : new Vector2(
-                (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed ? 1 : 0) -
-                (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed ? 1 : 0),
-                (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed ? 1 : 0) -
-                (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed ? 1 : 0));
+                (keyboard.dKey.isPressed ? 1 : 0) -
+                (keyboard.aKey.isPressed ? 1 : 0),
+                (keyboard.wKey.isPressed ? 1 : 0) -
+                (keyboard.sKey.isPressed ? 1 : 0));
 #elif ENABLE_LEGACY_INPUT_MANAGER
-            moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            moveInput = new Vector2((Input.GetKey(KeyCode.D)?1:0)-(Input.GetKey(KeyCode.A)?1:0),(Input.GetKey(KeyCode.W)?1:0)-(Input.GetKey(KeyCode.S)?1:0));
 #else
             moveInput = Vector2.zero;
 #endif
@@ -52,4 +52,3 @@ namespace DeathBySeventhsDawn.Player
         }
     }
 }
-

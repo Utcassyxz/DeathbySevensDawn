@@ -22,7 +22,7 @@ namespace DeathBySeventhsDawn.Progression
             if(open)
             {
                 var key=Keyboard.current;
-                if(key!=null&&(key.escapeKey.wasPressedThisFrame||key.eKey.wasPressedThisFrame))Close();
+                if(key!=null&&key.escapeKey.wasPressedThisFrame)Close();
                 return;
             }
             if(MainMenuUI.WorldBlocked||MainMenuUI.Suppressed)return;
@@ -47,7 +47,7 @@ namespace DeathBySeventhsDawn.Progression
         void OnGUI()
         {
             if(!open)return;
-            Styles();
+            Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-90;
             float w=Screen.width/scale,h=Screen.height/scale;

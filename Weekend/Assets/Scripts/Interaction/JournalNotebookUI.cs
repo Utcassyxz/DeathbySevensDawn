@@ -13,6 +13,7 @@ namespace DeathBySeventhsDawn.Interaction
         GUIStyle heading, eyebrow, body, small, rowTitle, rowMeta, tab, selectedTab, navigation;
         readonly List<int> visible=new List<int>();
         static readonly Color Ink=new Color(.18f,.22f,.20f), Muted=new Color(.39f,.41f,.36f), Accent=new Color(.20f,.36f,.32f);
+        static Color SelectionInk=>DeathBySeventhsDawn.Core.GameManager.Instance!=null&&DeathBySeventhsDawn.Core.GameManager.Instance.Sanity<50?new Color(.65f,.08f,.08f):new Color(.07f,.07f,.06f);
         public void ResetNavigation(){filter=0;indexScroll=Vector2.zero;articleScroll=Vector2.zero;}
         void Prepare()
         {
@@ -26,13 +27,14 @@ namespace DeathBySeventhsDawn.Interaction
             tab=new GUIStyle(GUIStyle.none){font=font,fontSize=17,alignment=TextAnchor.MiddleCenter,padding=new RectOffset(8,8,8,8)};
             foreach(var state in new[]{tab.normal,tab.hover,tab.active,tab.focused,tab.onNormal,tab.onHover,tab.onActive,tab.onFocused})state.background=null;
             tab.normal.textColor=Ink;tab.hover.textColor=Accent;
-            selectedTab=new GUIStyle(tab);selectedTab.normal.textColor=new Color(.98f,.94f,.83f);selectedTab.fontStyle=FontStyle.Bold;selectedTab.hover.textColor=selectedTab.active.textColor=selectedTab.focused.textColor=selectedTab.normal.textColor;
+            selectedTab=new GUIStyle(tab);selectedTab.normal.textColor=Ink;selectedTab.fontStyle=FontStyle.Bold;selectedTab.hover.textColor=selectedTab.active.textColor=selectedTab.focused.textColor=selectedTab.normal.textColor;
             navigation=new GUIStyle(tab){fontSize=18};
+            foreach(var style in new[]{tab,selectedTab,navigation})foreach(var state in new[]{style.normal,style.hover,style.active,style.focused,style.onNormal,style.onHover,style.onActive,style.onFocused})state.textColor=Ink;
         }
         static GUIStyle Style(Font font,int size,Color color)
         {
             var result=new GUIStyle(GUI.skin.label){font=font,fontSize=size,padding=new RectOffset(0,0,0,0)};
-            result.normal.textColor=color;return result;
+            foreach(var state in new[]{result.normal,result.hover,result.active,result.focused,result.onNormal,result.onHover,result.onActive,result.onFocused}){state.textColor=color;state.background=null;}return result;
         }
         static void Fill(Rect rect,Color color)
         {
@@ -71,7 +73,7 @@ namespace DeathBySeventhsDawn.Interaction
             for(int i=0;i<tabs.Length;i++)
             {
                 var rect=new Rect(left.x+20+i*(left.width-40)/tabs.Length,left.y+139,(left.width-46)/tabs.Length,36);
-                if(i==filter)Fill(rect,Accent);
+                if(i==filter)Fill(new Rect(rect.x,rect.yMax-3,rect.width,3),SelectionInk);
                 if(GUI.Button(rect,tabs[i],i==filter?selectedTab:tab)&&filter!=i)
                 {
                     filter=i;Collect(entries);indexScroll=articleScroll=Vector2.zero;
@@ -89,7 +91,7 @@ namespace DeathBySeventhsDawn.Interaction
                 var entry=entries[index];float rowHeight=Mathf.Max(86,rowTitle.CalcHeight(new GUIContent(DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id,entry.title)),rowWidth-30)+40);
                 var row=new Rect(0,rowY,rowWidth,rowHeight);
                 Fill(row,index==selected?new Color(.94f,.92f,.83f):new Color(.80f,.78f,.67f));
-                if(index==selected)Fill(new Rect(0,rowY,4,rowHeight),Accent);
+                if(index==selected)Fill(new Rect(0,rowY,5,rowHeight),SelectionInk);
                 if(!entry.isRead)Fill(new Rect(rowWidth-13,rowY+12,5,5),new Color(.66f,.34f,.16f));
                 GUI.Label(new Rect(14,rowY+10,rowWidth-30,rowHeight-35),DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id,entry.title),rowTitle);
                 GUI.Label(new Rect(14,rowY+rowHeight-25,rowWidth-28,20),DeathBySeventhsDawn.Story.StoryText.Local("第 ","Day ")+entry.day+" 天 · "+(entry.isKnowledge?DeathBySeventhsDawn.Story.StoryText.Local("发现","Findings"):entry.IsDream?DeathBySeventhsDawn.Story.StoryText.Local("梦境","Dreams"):DeathBySeventhsDawn.Story.StoryText.Local("记事","Notes"))+(!entry.isRead?DeathBySeventhsDawn.Story.StoryText.Local(" · 未读"," \u00b7 Unread"):""),rowMeta);

@@ -16,7 +16,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame=-1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked;
+        public static bool WorldBlocked => modalOpen || CultNeighbor.WorldBlocked || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked;
         enum Page { None, Dream, Diary, Telescope }
         Page page;
         StoryContent content;
@@ -86,7 +86,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(game==null) return;
             if(game.HasEnded) { SetPage(Page.None); return; }
             if(!game.State.dreamSeen && page!=Page.Dream) { dreamPage=0; SetPage(Page.Dream); }
-            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
+            if(CultNeighbor.WorldBlocked || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
             bool diary=false,interact=false,cancel=false; int diaryStep=0;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
@@ -94,19 +94,19 @@ namespace DeathBySeventhsDawn.Interaction
 #elif ENABLE_LEGACY_INPUT_MANAGER
             diary=Input.GetKeyDown(KeyCode.J); interact=Input.GetKeyDown(KeyCode.E); cancel=Input.GetKeyDown(KeyCode.Escape); diaryStep=(Input.GetKeyDown(KeyCode.RightArrow)?1:0)-(Input.GetKeyDown(KeyCode.LeftArrow)?1:0);
 #endif
-            if(page==Page.Dream) return;
+            if(page==Page.Dream){if(interact){if(dreamPage<StoryText.Current.dream.pages.Length-1)dreamPage++;else WakeUp();}return;}
             if(page==Page.Diary) {
 #if ENABLE_INPUT_SYSTEM
-                if(keyboard!=null&&keyboard.bKey.wasPressedThisFrame){ if(showBoard)CloseBoard(); else {showBoard=true;boardReturnToGame=false;} return; }
+                if(keyboard!=null&&keyboard.bKey.wasPressedThisFrame){ if(!showBoard){showBoard=true;boardReturnToGame=false;} return; }
 #endif
-                if(diary || cancel){ if(showBoard)CloseBoard(); else SetPage(Page.None); return; }
+                if(cancel){ if(showBoard)CloseBoard(); else SetPage(Page.None); return; }
                 if(showBoard)board.KeyboardInput(); else if(diaryStep!=0 && notebook.MoveSelection(game.State.journal,ref selectedEntry,diaryStep)) ReadSelectedEntry(); return; }
             if(page==Page.Telescope) {
 #if ENABLE_INPUT_SYSTEM
                 if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectTelescopeEvidence();
                 if(!revelation&&keyboard!=null&&keyboard.tKey.wasPressedThisFrame)ObserveTelescope();
 #endif
-                if(interact || cancel) CloseTelescope(); return; }
+                if(cancel) CloseTelescope(); return; }
             var window=Object.FindAnyObjectByType<WindowLookout2D>();
             if(FurnitureInteraction.IsBusy || (window!=null && window.IsOpen)) { nearby=false; return; }
 #if ENABLE_INPUT_SYSTEM
@@ -195,9 +195,10 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
+            if(CultNeighbor.WorldBlocked)return;
             var game=GameManager.Instance;
             if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
-            Styles(); var matrix=GUI.matrix; var color=GUI.color;
+            Styles(); DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);var matrix=GUI.matrix; var color=GUI.color;
             float scale=Mathf.Min(Screen.height/900f,Screen.width/1100f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
             float width=Screen.width/scale,height=Screen.height/scale;
@@ -209,10 +210,10 @@ namespace DeathBySeventhsDawn.Interaction
                     {GUI.BeginGroup(new Rect(0,82,width,height-82));notebook.Draw(game.State.journal,ref selectedEntry,ReadSelectedEntry,()=>SetPage(Page.None),width,height-82);GUI.EndGroup();}
                     GUI.color=new Color(.07f,.12f,.12f);GUI.DrawTexture(new Rect(0,0,width,82),Texture2D.whiteTexture);GUI.color=color;
                     if(GUI.Button(new Rect(28,18,220,48),"● 线索连线 · B",button)){showBoard=true;boardReturnToGame=false;}
-                    if(GUI.Button(new Rect(260,18,190,48),"合上 · J / Esc",button))SetPage(Page.None);
+                    if(GUI.Button(new Rect(260,18,190,48),"合上 · Esc",button))SetPage(Page.None);
                     return; }
                 if(page==Page.None) {
-                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,85),(JournalUpdates.UnreadCount>0?DeathBySeventhsDawn.Story.StoryText.Local("J  日记 · ","J  Journal \u00b7 ")+JournalUpdates.UnreadCount+DeathBySeventhsDawn.Story.StoryText.Local(" 条未读"," unread"):DeathBySeventhsDawn.Story.StoryText.Local("J  翻开日记","J  Journal"))+DeathBySeventhsDawn.Story.StoryText.Local("\nB  线索连线","\nB  Evidence board"),text);
+                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-375),12,360,130),(JournalUpdates.UnreadCount>0?DeathBySeventhsDawn.Story.StoryText.Local("J  日记 · ","J  Journal \u00b7 ")+JournalUpdates.UnreadCount+DeathBySeventhsDawn.Story.StoryText.Local(" 条未读"," unread"):DeathBySeventhsDawn.Story.StoryText.Local("J  翻开日记","J  Journal"))+DeathBySeventhsDawn.Story.StoryText.Local("\nB  线索连线\nI  背包","\nB  Evidence board\nI  Inventory"),text);
                     if(nearby) GUI.Label(new Rect(12,height-100,width-24,80),"E  查看望远镜",text);
                     return;
                 }

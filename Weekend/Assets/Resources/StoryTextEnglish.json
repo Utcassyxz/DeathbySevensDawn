@@ -36,10 +36,10 @@
     "collect": "Record the telescope · R",
     "collected": "Telescope recorded",
     "observe": "Look through the lens · T",
-    "close": "Look away · E / Esc",
+    "close": "Look away · Esc",
     "revelationCollect": "Sketch the outline · R",
     "revelationCollected": "Sketch recorded",
-    "revelationClose": "Look away · E / Esc"
+    "revelationClose": "Look away · Esc"
   },
   "firstLoop": {
     "news": "SKT-079 is expected to sweep past Earth. Some disruption to electronic signals is anticipated. Monitoring continues.\n\nThe voice warps. A line cuts across the screen.\n\nI look towards the balcony. The telescope is where I left it.",
@@ -67,15 +67,15 @@
     ],
     "journalTitle": "The first-day broadcast",
     "journalBody": "The television switched itself on at noon. SKT-079, seven days. Stay inside. Cover the windows.\nA star blinked on the screen. Two taps came from the glass.",
-    "continuePrompt": "Continue · E / Space",
-    "closePrompt": "Switch off · E / Space",
+    "continuePrompt": "Continue · E",
+    "closePrompt": "Switch off · E",
     "liveLabel": "● LIVE"
   },
   "perception": {
     "prompt": "E  Examine the marks",
     "collect": "Record · R",
     "collected": "Recorded",
-    "close": "Look away · E / Esc",
+    "close": "Look away · Esc",
     "bedroom": {
       "id": "filter-bedroom-margins",
       "title": "Writing in the margin",
@@ -122,7 +122,7 @@
       {
         "id": "401-barricade",
         "title": "401 boarded shut",
-        "body": "Day two. Fresh boards over the door. Even the gaps are covered.\nHe did not answer me.",
+        "body": "Fresh boards cover the door. I heard the hammer through the wall on day one. Even the gaps have been covered.",
         "source": "Corridor · 401"
       },
       {
@@ -196,6 +196,12 @@
         "title": "Dust beneath 403",
         "body": "A thin line of dust. No footprints.\nA chair scraped across the floor inside. When I knocked, it stopped.",
         "source": "Corridor · 403"
+      },
+      {
+        "id": "cult-door-note",
+        "title": "A second note from 401",
+        "body": "DON’T ANSWER IT.\nIf it has already spoken, knock twice.\nThe last line has been scratched out.",
+        "source": "Corridor · Day two"
       }
     ],
     "deductions": [
@@ -261,26 +267,26 @@
     "speakerDay3": "Inside the tank",
     "speakerDay6": "001",
     "day3Pages": [
-      "The filter hums. An eye presses against the glass.",
-      "“Quietly.”\n\nI have not touched the tank.",
-      "“You asked yesterday.”\n\nA few bubbles reach the surface.",
-      "“Leave the light above us off.”"
+      "I stop by the tank. The filter draws a thin line of bubbles.",
+      "“Move your hand.”\nMy hand is resting on the lid.",
+      "I ask if it can breathe.\n“Can you?”",
+      "I lift my hand. The bubbles stop."
     ],
     "day5Pages": [
-      "A hand rests on the rim. Water runs over the extension lead. The power light is still on.",
-      "“Move that.”\n\nIt points beside the cabinet.",
-      "I ask where it came from.\n\n“Bring a towel first.”",
-      "The old waterline is higher than its hand."
+      "The cabinet door will not close. Two fingers hold it from inside.",
+      "“The towel.”\nI ask which towel.\n“The one you put away.”",
+      "It rubs the dry waterline with a thumb. The stain does not come off.",
+      "“You keep moving things back.”"
     ],
     "day6Pages": [
-      "The tank is empty.\n\nIt stands beside the cabinet. No water under its feet.",
-      "“001. Write that.”",
-      "“You do not hide that book very well.”",
-      "I ask how many times it has read it.\n\nIt watches me. It does not count."
+      "It stands beside the empty tank, facing the cabinet.",
+      "“001.”\nI wait.\n“That is what you wrote last time.”",
+      "I ask why it is still here.\nIt touches the edge of the tank.",
+      "“You haven’t moved this.”"
     ],
     "question": "Ask: Have you read my book?",
-    "answerGap": "It holds up two fingers.\n\n“You only found two pages?”",
-    "answerDefault": "“Bring it. Look for yourself.”"
+    "answerGap": "“Two stubs. You counted them before.”",
+    "answerDefault": "“On the desk. Same place.”"
   },
   "mainMenu": {
     "title": "SEVENTH DAWN",
@@ -297,7 +303,7 @@
     "resume": "Resume",
     "returnToTitle": "Return to title",
     "quit": "Quit",
-    "hint": "Esc / E Resume"
+    "hint": "Esc Resume"
   },
   "ending": {
     "title": "Ending 1 · Too late",
@@ -312,5 +318,26 @@
     "confirm": "Confirm restart",
     "cancel": "Cancel",
     "returnToTitle": "Return to title"
+  },
+  "cult": {
+    "sound": "Three knocks through the wall. A pause. Then the hammer again.\nIt is coming from 401.",
+    "dayOne": [
+      "“Inside. Go back inside.”",
+      "He keeps the hammer between us.",
+      "“Don’t come out. Don’t turn on the television.”",
+      "I ask what happened. He looks past my shoulder.",
+      "“You heard me. Go.”"
+    ],
+    "note": "DON’T ANSWER IT.\nIf it has already spoken, knock twice.\nThe last line has been scratched out.",
+    "door": [
+      "“Who?”",
+      "His eye moves down to my hand.",
+      "“You. Get back inside.”",
+      "“It isn’t safe here. They can see us whenever they want.”",
+      "“Take this. Keep it folded.”"
+    ],
+    "refusal": "No answer. Something slides across the other side of the door.",
+    "itemTitle": "Folded foil triangle",
+    "itemBody": "Folded three times. One corner is warm.\nI have left it closed."
   }
 }

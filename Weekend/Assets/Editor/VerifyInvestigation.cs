@@ -73,7 +73,7 @@ public static class VerifyInvestigation
         Check(State.skt079NewsSeen&&!Investigation.Has("skt079-broadcast"),"News not automatically excerpted");Check(furniture.CollectNews(),"Manually excerpt news");
         Press(Key.Escape);yield return .4f;Release();SceneManager.LoadScene("Corridor");yield return 5f;
         Check(State.neighborBarricadeSeen&&!Investigation.Has("401-barricade"),"Boarding does not automatically record evidence");
-        Place(new Vector2(-4.7f,1.0f));yield return .4f;Press(Key.E);yield return .4f;Release();
+        Place(new Vector2(-4.35f,.35f));yield return .4f;Press(Key.E);yield return .4f;Release();
         Check(EvidenceInspection.Instance.CurrentId=="401-barricade"&&EvidenceInspection.Instance.CollectCurrent(),"Inspect and record boarded door");EvidenceInspection.Instance.Close();
         State.sanityBurden=65;Place(new Vector2(-3.45f,1.05f));yield return .4f;Press(Key.E);yield return .4f;Release();
         Check(PerceptionClues.Instance.CollectCurrent(),"Collect hidden underprint deliberately");PerceptionClues.Instance.Close();State.sanityBurden=0;

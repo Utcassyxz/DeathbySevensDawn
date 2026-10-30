@@ -103,7 +103,7 @@ namespace DeathBySeventhsDawn.Progression
             if(MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked) return;
             if(DeathBySeventhsDawn.Interaction.InvestigationDevTools.WorldBlocked) return;
             if(DeathBySeventhsDawn.Interaction.AquariumEntity.WorldBlocked) return;
-            PrepareStyles();
+            PrepareStyles();PrototypeButtons.Apply(buttonStyle);
             var previousColor=GUI.color;
             // Scale with resolution, keeping large readable controls on high-DPI game views.
             var previousMatrix=GUI.matrix;

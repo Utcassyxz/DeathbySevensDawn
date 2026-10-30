@@ -79,6 +79,7 @@ namespace DeathBySeventhsDawn.Knowledge
         static ProgressionState State => GameManager.Instance.State;
         public static void Normalize(ProgressionState state)
         {
+            if(state.inventory==null)state.inventory=new List<string>();
             if(state.journal==null)state.journal=new List<JournalEntry>();
             if(state.observedKnowledgeIds==null)state.observedKnowledgeIds=new List<string>();
             if(state.investigationLinks==null)state.investigationLinks=new List<InvestigationLink>();

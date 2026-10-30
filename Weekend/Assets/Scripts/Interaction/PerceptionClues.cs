@@ -53,7 +53,7 @@ namespace DeathBySeventhsDawn.Interaction
 #elif ENABLE_LEGACY_INPUT_MANAGER
             pressed=Input.GetKeyDown(KeyCode.E);cancel=Input.GetKeyDown(KeyCode.Escape);
 #endif
-            if(reading){if(k!=null&&k.rKey.wasPressedThisFrame)CollectCurrent();if(pressed||cancel)Close();return;}
+            if(reading){if(k!=null&&k.rKey.wasPressedThisFrame)CollectCurrent();if(cancel)Close();return;}
             if(StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy){nearby=false;return;}
             var window=Object.FindAnyObjectByType<WindowLookout2D>();if(window!=null&&window.IsOpen){nearby=false;return;}
             if(player==null)player=GameObject.FindWithTag("Player");
@@ -73,7 +73,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(ProgressionHUD.DebugConsoleOpen||(!reading&&!nearby))return;
             if(text==null){var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},24);text=new GUIStyle(GUI.skin.label){font=font,fontSize=24,wordWrap=true};title=new GUIStyle(text){fontSize=30,fontStyle=FontStyle.Bold};button=new GUIStyle(text){alignment=TextAnchor.MiddleCenter};button.normal.textColor=new Color(.78f,.80f,.65f);}
-            var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
+            DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float w=Screen.width/scale,h=Screen.height/scale;
             try
             {
@@ -84,7 +84,7 @@ namespace DeathBySeventhsDawn.Interaction
                 var perception=StoryText.Current.perception;
                 if(!Investigation.Has(id)&&GUILayout.Button(perception?.collect??"抄录到笔记 · R",button,GUILayout.Height(55)))CollectCurrent();
                 if(Investigation.Has(id))GUILayout.Label(perception?.collected??"已收录",text);
-                if(GUILayout.Button(perception?.close??"移开视线  ·  E / Esc",button,GUILayout.Height(60)))Close();GUILayout.EndArea();
+                if(GUILayout.Button(perception?.close??"移开视线  ·  Esc",button,GUILayout.Height(60)))Close();GUILayout.EndArea();
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }

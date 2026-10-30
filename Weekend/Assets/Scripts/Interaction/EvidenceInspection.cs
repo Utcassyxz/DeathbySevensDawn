@@ -36,7 +36,7 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if(Time.frameCount<=openedFrame)return;
                 if(k!=null&&k.rKey.wasPressedThisFrame)CollectCurrent();
-                if(k!=null&&(k.escapeKey.wasPressedThisFrame||k.eKey.wasPressedThisFrame))Close();
+                if(k!=null&&k.escapeKey.wasPressedThisFrame)Close();
                 return;
             }
             target=null;
@@ -48,18 +48,19 @@ namespace DeathBySeventhsDawn.Interaction
             if(scene=="Corridor"&&GameManager.Instance.LoopCount==0)
             {
                 if(Vector2.Distance(pos,new Vector2(-3.45f,1.25f))<.95f&&(GameManager.Instance.State.neighborFlyersSeen||TimeManager.Instance.Days>=2))target="401-flyers";
-                else if(Vector2.Distance(pos,new Vector2(-4.7f,1.15f))<1f&&TimeManager.Instance.Days>=2)target="401-barricade";
+                else if(Vector2.Distance(pos,new Vector2(-4.35f,.35f))<.65f&&TimeManager.Instance.Days>=2)target="401-barricade";
             }
             if(scene=="LivingRoom"&&TimeManager.Instance.Days<3){var tank=GameObject.Find("Aquarium and cabinet");if(tank!=null&&Vector2.Distance(pos,tank.transform.position)<2.05f)target="tank-label";}
             if(scene=="Bedroom"&&target=="my-observation-notes"&&Investigation.Has(target)&&TimeManager.Instance.Days>=2)target="notes-gap";
             if(scene=="Corridor"&&Vector2.Distance(pos,new Vector2(4.7f,1.15f))<1f)target="403-silence";
+            if(scene=="Corridor"&&TimeManager.Instance.Days==2&&target=="401-flyers")target="cult-door-note";
             if(target!=null&&k!=null&&k.eKey.wasPressedThisFrame)TryOpen(target);
         }
         void OnGUI()
         {
             if(ProgressionHUD.DebugConsoleOpen||(target==null&&!IsOpen)||(GameManager.Instance==null||GameManager.Instance.HasEnded))return;
             if(text==null){var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei"},24);text=new GUIStyle(GUI.skin.label){font=font,fontSize=24,wordWrap=true};title=new GUIStyle(text){fontSize=32,fontStyle=FontStyle.Bold};button=new GUIStyle(text){alignment=TextAnchor.MiddleCenter};button.normal.textColor=new Color(.79f,.83f,.68f);}
-            var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
+            DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Min(Screen.height/900f,Screen.width/1000f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float w=Screen.width/scale,h=Screen.height/scale;
             try
             {
@@ -70,7 +71,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.EndScrollView();
                 if(Investigation.Has(opened))GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("已收录。可以在笔记的「线索连线」页整理它。","Recorded. Open the evidence board to connect it."),text);
                 else if(GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("R  抄录到笔记","R  Record in journal"),button,GUILayout.Height(60)))CollectCurrent();
-                if(GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("先放回原处  ·  E / Esc","Leave it here \u00b7 E / Esc"),button,GUILayout.Height(55)))Close();GUILayout.EndArea();
+                if(GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("先放回原处  ·  Esc","Leave it here \u00b7 Esc"),button,GUILayout.Height(55)))Close();GUILayout.EndArea();
             }finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }
         void OnDestroy(){if(Instance==this)Instance=null;}

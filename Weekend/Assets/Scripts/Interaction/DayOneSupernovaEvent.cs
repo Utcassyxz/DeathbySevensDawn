@@ -84,9 +84,9 @@ namespace DeathBySeventhsDawn.Interaction
             bool advance=false;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
-            advance=keyboard!=null&&(keyboard.eKey.wasPressedThisFrame||keyboard.spaceKey.wasPressedThisFrame||keyboard.enterKey.wasPressedThisFrame);
+            advance=keyboard!=null&&(keyboard.eKey.wasPressedThisFrame);
 #elif ENABLE_LEGACY_INPUT_MANAGER
-            advance=Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.Space)||Input.GetKeyDown(KeyCode.Return);
+            advance=Input.GetKeyDown(KeyCode.E);
 #endif
             if(Time.frameCount<=openedFrame+2||elapsed<.25f)advance=false;
             if(!advance)return;
@@ -191,7 +191,7 @@ namespace DeathBySeventhsDawn.Interaction
                 var pages=StoryText.Pages(broadcast?.pages,fallbackPages);
                 GUILayout.Label(late?(broadcast?.kickerLate??"第一天 · 稍后"):(broadcast?.kicker??"第一天 · 正午"),small);GUILayout.Label(broadcast?.title??"紧 急 广 播",title);GUILayout.Space(8);
                 GUILayout.Label(late&&page==0?(broadcast?.lateFirstPage??""):pages[Mathf.Clamp(page,0,pages.Length-1)],body);
-                GUILayout.FlexibleSpace();GUILayout.Label(page>=pages.Length-1?(broadcast?.closePrompt??"关掉电视 · E / Space"):(broadcast?.continuePrompt??"继续 · E / Space"),small);
+                GUILayout.FlexibleSpace();GUILayout.Label(page>=pages.Length-1?(broadcast?.closePrompt??"关掉电视 · E"):(broadcast?.continuePrompt??"继续 · E"),small);
                 GUILayout.EndArea();
                 GUI.Label(new Rect(28,20,150,26),broadcast?.liveLabel??"●  LIVE",small);
             }

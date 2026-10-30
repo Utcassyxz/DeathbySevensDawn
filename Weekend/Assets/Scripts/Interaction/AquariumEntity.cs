@@ -163,9 +163,9 @@ namespace DeathBySeventhsDawn.Interaction
             if(UnityEngine.InputSystem.Keyboard.current!=null&&UnityEngine.InputSystem.Keyboard.current.rKey.wasPressedThisFrame)Investigation.Collect(visualDay>=6?"001-name":visualDay>=5?"tank-overflow":"tank-eye");
 #if ENABLE_INPUT_SYSTEM
             var k=Keyboard.current;
-            if(k!=null){advance=k.eKey.wasPressedThisFrame||k.spaceKey.wasPressedThisFrame||k.enterKey.wasPressedThisFrame;close=k.escapeKey.wasPressedThisFrame;}
+            if(k!=null){advance=k.eKey.wasPressedThisFrame;close=k.escapeKey.wasPressedThisFrame;}
 #elif ENABLE_LEGACY_INPUT_MANAGER
-            advance=Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.Space)||Input.GetKeyDown(KeyCode.Return);
+            advance=Input.GetKeyDown(KeyCode.E);
             close=Input.GetKeyDown(KeyCode.Escape);
 #endif
             if(close){CloseDialogue();return;}
@@ -182,7 +182,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(!talking&&!nearby)return;
             if(talking&&(ProgressionHUD.DebugConsoleOpen||MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked))return;
-            Styles();
+            Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);
             float w=Screen.width/scale,h=Screen.height/scale;
@@ -205,7 +205,7 @@ namespace DeathBySeventhsDawn.Interaction
                 string evidence=visualDay>=6?"001-name":visualDay>=5?"tank-overflow":"tank-eye";
                 if(GUILayout.Button(StoryText.Local(Investigation.Has(evidence)?"已记录":"R  记下这次观察",Investigation.Has(evidence)?"Recorded":"R  Record this observation"),button))Investigation.Collect(evidence);
                 if(GUILayout.Button(StoryText.Current.aquarium.question,button)){pages=new[]{Investigation.Has("notes-gap")?StoryText.Current.aquarium.answerGap:StoryText.Current.aquarium.answerDefault};page=0;}
-                GUILayout.Label(StoryText.Local("E / Space 继续  ·  Esc 关闭","E / Space Continue · Esc Close"),small);
+                GUILayout.Label(StoryText.Local("E 继续  ·  Esc 关闭","E Continue · Esc Close"),small);
                 GUILayout.EndArea();
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}

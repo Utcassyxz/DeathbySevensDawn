@@ -49,7 +49,7 @@ namespace DeathBySeventhsDawn.Interaction
 #if ENABLE_INPUT_SYSTEM
                 if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectNews();
 #endif
-                if(cancel || interact) CloseMenu(); return; }
+                if(cancel) CloseMenu(); return; }
             if(player==null) Bind();
             // Give the existing window interaction priority if interaction areas overlap.
             var window=Object.FindAnyObjectByType<WindowLookout2D>();
@@ -90,7 +90,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(GameManager.Instance==null || GameManager.Instance.HasEnded || ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked) return;
             if(target==null && !IsBusy) return;
-            PrepareStyles();
+            PrepareStyles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix=GUI.matrix; var color=GUI.color;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
@@ -121,7 +121,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Space(20);
                 GUILayout.EndScrollView();
                 if(GUILayout.Button(watching?DeathBySeventhsDawn.Story.StoryText.Local("关掉电视，返回","Switch off and return"):DeathBySeventhsDawn.Story.StoryText.Local("离开","Leave"),button)) CloseMenu();
-                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("E / Esc 返回","E / Esc Back"),label);
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("Esc 返回","Esc Back"),label);
                 GUILayout.EndArea();
             } finally { GUI.matrix=matrix; GUI.color=color; }
         }

@@ -41,8 +41,6 @@ namespace DeathBySeventhsDawn.Interaction
                 if(k.spaceKey.wasPressedThisFrame)Select(nodes[focus].id);
             }
             if(k.enterKey.wasPressedThisFrame&&first!=null&&second!=null){var link=Investigation.FindLink(first,second);if(link!=null&&!string.IsNullOrEmpty(link.conclusion))Commit();else if(link!=null&&Investigation.Match(first,second)!=null)Commit();else LinkOnly();}
-            else if(k.enterKey.wasPressedThisFrame&&first==null&&nodes.Count>0)Select(nodes[focus].id);
-            else if(k.enterKey.wasPressedThisFrame&&first!=null&&second==null&&nodes.Count>0)Select(nodes[focus].id);
             if(k.backspaceKey.wasPressedThisFrame){first=second=null;RefreshMessage();}
             if(k.deleteKey.wasPressedThisFrame&&first!=null&&second!=null)Remove();
         }
@@ -129,7 +127,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         public void Draw(float w,float h)
         {
-            RefreshMessage();Styles();Fill(new Rect(0,0,w,h),Deep);
+            RefreshMessage();Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(filterButton);DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(linkRow);linkRow.fixedHeight=0;Fill(new Rect(0,0,w,h),Deep);
             Fill(new Rect(0,0,w,94),new Color(.07f,.12f,.12f));
             GUI.Label(new Rect(30,16,520,44),DeathBySeventhsDawn.Story.StoryText.Local("线索连线","Evidence board"),headerTitle);
             GUI.Label(new Rect(32,58,w-420,24),DeathBySeventhsDawn.Story.StoryText.Local("选择两条线索；没有依据的组合会留成待证，不会判错。","Select two clues. Unsupported links stay tentative."),headerSmall);
@@ -153,7 +151,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Fill(row,chosen?new Color(.98f,.94f,.80f):new Color(.90f,.87f,.75f));
                 Fill(new Rect(row.x,row.y,4,row.height),deduction?Green:new Color(.55f,.42f,.25f));
                 if(i==focus)Fill(new Rect(row.x,row.y,row.width,2),Green);
-                if(chosen)Fill(new Rect(row.x,row.y,row.width,2),Green);
+                if(chosen)Fill(new Rect(row.x,row.y,5,row.height),DeathBySeventhsDawn.Core.GameManager.Instance.Sanity<50?new Color(.65f,.08f,.08f):Color.black);
                 GUI.Label(new Rect(row.x+14,row.y+8,80,20),deduction?DeathBySeventhsDawn.Story.StoryText.Local("推论","Deductions"):DeathBySeventhsDawn.Story.StoryText.Local("现场记录","Evidence"),tag);
                 GUI.Label(new Rect(row.x+14,row.y+26,row.width-24,24),(chosen?(first==entry.id?"① ":"② "):"")+DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id,entry.title),rowTitle);
                 GUI.Label(new Rect(row.x+14,row.y+52,row.width-24,18),DeathBySeventhsDawn.Story.StoryText.Local("第 "+entry.day+" 天  ·  "+ConnectionCount(entry.id)+" 条连线","Day "+entry.day+" · "+ConnectionCount(entry.id)+" links"),rowMeta);

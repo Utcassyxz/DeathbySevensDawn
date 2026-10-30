@@ -46,7 +46,7 @@ namespace DeathBySeventhsDawn.Interaction
             var floor=GameObject.Find("Corridor tiles");material=floor!=null?floor.GetComponent<SpriteRenderer>().sharedMaterial:null;
             EnsureSquare();
             BuildFlyers();
-            if(TimeManager.Instance.Days>=2)BuildBoards(GameManager.Instance.State.neighborBarricadeSeen);
+            if(TimeManager.Instance.Days>=1)BuildBoards(GameManager.Instance.State.neighborBarricadeSeen);
             entryPending=true;
         }
         void Update()
@@ -59,15 +59,16 @@ namespace DeathBySeventhsDawn.Interaction
                 if(Time.frameCount<=openedFrame+1)return;
                 bool confirm=false;
 #if ENABLE_INPUT_SYSTEM
-                var keyboard=Keyboard.current;confirm=keyboard!=null&&(keyboard.eKey.wasPressedThisFrame||keyboard.enterKey.wasPressedThisFrame);
+                var keyboard=Keyboard.current;confirm=keyboard!=null&&(keyboard.eKey.wasPressedThisFrame);
 #elif ENABLE_LEGACY_INPUT_MANAGER
-                confirm=Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.Return);
+                confirm=Input.GetKeyDown(KeyCode.E);
 #endif
                 if(confirm)EnterPrologue();return;
             }
             if(clip!=Clip.None)
             {
                 elapsed+=Time.unscaledDeltaTime;
+                if(CultNeighbor.Instance!=null)CultNeighbor.Instance.Hammer();
                 if(clip==Clip.Flyers)
                 {
                     float run=Mathf.Clamp01((elapsed-2f)/.7f);
@@ -78,7 +79,7 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     if(actor!=null)
                     {
-                        float retreat=Mathf.Clamp01((elapsed-2f)/.8f);
+                        float retreat=TimeManager.Instance.Days==1?0:Mathf.Clamp01((elapsed-2f)/.8f);
                         MoveActor(new Vector3(-4.1f,.98f,0),retreat);
                         var hammer=actor.transform.Find("Hammer head");
                         if(hammer!=null)hammer.localRotation=Quaternion.Euler(0,0,retreat==0?Mathf.Sin(elapsed*16)*18:0);
@@ -90,7 +91,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if(!entryPending||StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy)return;
             entryPending=false;var state=GameManager.Instance.State;
-            if(TimeManager.Instance.Days==1&&!state.neighborFlyersSeen)StartEncounter(Clip.Flyers);
+            if(TimeManager.Instance.Days==1&&!state.neighborFlyersSeen)StartEncounter(Clip.Boards);
             else if(TimeManager.Instance.Days>=2&&!state.neighborBarricadeSeen)StartEncounter(Clip.Boards);
         }
         void MoveActor(Vector3 start,float progress)
@@ -121,8 +122,8 @@ namespace DeathBySeventhsDawn.Interaction
         {
             var state=GameManager.Instance.State;
             if(clip==Clip.Flyers){state.neighborFlyersSeen=true;ProgressionSave.Write(state);}
-            else {state.neighborBarricadeSeen=true;if(boards[3]!=null)boards[3].SetActive(true);ProgressionSave.Write(state);}
-            clip=Clip.None;blockedUntilFrame=Time.frameCount;if(actor!=null)Destroy(actor);
+            else {if(TimeManager.Instance.Days==1)state.neighborFlyersSeen=true;state.neighborBarricadeSeen=true;if(boards[3]!=null)boards[3].SetActive(true);ProgressionSave.Write(state);}
+            clip=Clip.None;blockedUntilFrame=Time.frameCount;if(actor!=null){if(TimeManager.Instance.Days==1){actor.transform.position=new Vector3(-4.1f,.98f,0);foreach(var r in actorRenderers){var c=r.color;c.a=1;r.color=c;}}else Destroy(actor);}
         }
         // 由电视确认按钮调用；看新闻仍只消耗电视原有的一个时段。
         public string WatchNews()
@@ -195,7 +196,7 @@ namespace DeathBySeventhsDawn.Interaction
                 title=new GUIStyle(text){fontSize=42,fontStyle=FontStyle.Bold};button=new GUIStyle(GUIStyle.none){font=font,fontSize=22,alignment=TextAnchor.MiddleCenter};
                 button.normal.textColor=new Color(.74f,.78f,.66f);button.hover.textColor=new Color(.96f,.94f,.82f);button.active.textColor=Color.white;
             }
-            var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);
+            DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-40;float width=Screen.width/scale,height=Screen.height/scale;
             try
             {
@@ -205,7 +206,7 @@ namespace DeathBySeventhsDawn.Interaction
                     float panel=Mathf.Min(850,width-48);GUI.Label(new Rect((width-panel)/2,height*.18f,panel,50),"序  章",text);
                     GUI.Label(new Rect((width-panel)/2,height*.29f,panel,80),StoryText.Current.firstLoop?.chapterTitle??"天穹之后",title);
                     GUI.Label(new Rect((width-panel)/2,height*.44f,panel,180),StoryText.Current.firstLoop?.chapterText??"",text);
-                    if(GUI.Button(new Rect(width/2-160,height*.78f,320,58),"进入序章  ·  E / Enter",button))EnterPrologue();
+                    if(GUI.Button(new Rect(width/2-160,height*.78f,320,58),"进入序章  ·  E",button))EnterPrologue();
                 }
                 else
                 {

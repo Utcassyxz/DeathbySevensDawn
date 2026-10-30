@@ -52,7 +52,7 @@ public static class VerifyFirstLoopPrologue
                     Check(StoryJournal.WorldBlocked&&body.linearVelocity.sqrMagnitude<.001f&&Vector2.Distance(origin,body.position)<.05f,"Encounter blocks movement");Release();wait=4.5f;break;
                 case 2:
                     Check(!story.IsPresenting&&ProgressionSave.Load().neighborFlyersSeen,"Day 1 encounter completion saved");
-                    Check(GameObject.Find("401 eccentric neighbor")==null&&clock.Days==1&&clock.Period==TimePeriod.Morning,"Neighbor fled, time unchanged");
+                    Check(GameObject.Find("401 eccentric neighbor")!=null&&clock.Days==1&&clock.Period==TimePeriod.Morning,"Neighbor remains available for day-one conversation; time unchanged");
                     SceneManager.LoadScene("LivingRoom");break;
                 case 3:clock.SleepUntilNextMorning();Place(new Vector2(-3.65f,-1.65f));Release();break;
                 case 4:Press(Key.E);break;
@@ -64,14 +64,14 @@ public static class VerifyFirstLoopPrologue
                 case 6:Capture("news");break;
                 case 7:Press(Key.Escape);break;
                 case 8:Check(!FurnitureInteraction.IsBusy,"TV closes");Release();SceneManager.LoadScene("Corridor");wait=1.35f;break;
-                case 9:Check(story.IsPresenting,"Day 2 boarding performance");Capture("boarding");wait=3.5f;break;
+                case 9:Check(!story.IsPresenting,"Day 2 retains day-one boarding without replay");Capture("boarding");wait=3.5f;break;
                 case 10:
-                    Check(!story.IsPresenting&&ProgressionSave.Load().neighborBarricadeSeen&&BoardCount()==3,"Boarded door saved and visible");
+                    Check(!story.IsPresenting&&ProgressionSave.Load().neighborBarricadeSeen&&BoardCount()==4,"Boarded door saved and visible");
                     Check(GameObject.Find("401 first-loop story props").GetComponentsInChildren<Collider2D>(true).Length==0,"Story props preserve walking clearance");
                     SceneManager.LoadScene("Bedroom");break;
                 case 11:SceneManager.LoadScene("Corridor");break;
                 case 12:
-                    Check(!story.IsPresenting&&GameObject.Find("401 eccentric neighbor")==null&&BoardCount()==3,"Re-entry retains boards without replay");
+                    Check(!story.IsPresenting&&GameObject.Find("401 eccentric neighbor")==null&&BoardCount()==4,"Re-entry retains boards without replay");
                     clock.AdvanceTime();SceneManager.LoadScene("Balcony");break;
                 case 13:Place(Resources.Load<StoryContent>("StoryContent").telescopePosition);Release();break;
                 case 14:Press(Key.E);break;
@@ -103,7 +103,7 @@ public static class VerifyFirstLoopPrologue
                         var door=UnityEngine.Object.FindObjectsByType<DeathBySeventhsDawn.World.RoomDoor2D>(FindObjectsSortMode.None).Single(d=>d.destinationScene.EndsWith("/"+routes[route]+".unity"));
                         arrival=door.arrivalPosition;Place(door.transform.position);arriving=true;next=now+.3;return;
                     }
-                    Finish(true,"Eight physical door routes; Day 1 flyers/flee + movement lock; Day 2 TV SKT-079 and one-period cost; boarding/re-entry; evening telescope -> confirmed prologue; only the chapter memoir automatically recorded; evidence requires explicit collection; retained Days; second-loop suppression. Original save restored.");return;
+                    Finish(true,"Eight physical door routes; Day 1 boarding + movement lock; Day 2 TV SKT-079 and one-period cost; boarding/re-entry; evening telescope -> confirmed prologue; only the chapter memoir automatically recorded; evidence requires explicit collection; retained Days; second-loop suppression. Original save restored.");return;
             }
             phase++;next=now+wait;
         }

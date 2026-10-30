@@ -22,7 +22,7 @@ public static class VerifySevenDayProgression
     public static void Run()
     {
         SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
-        CreateSettings();
+        SessionState.SetInt(Key+"Language",PlayerPrefs.GetInt("Story.Language",0));PlayerPrefs.SetInt("Story.Language",0);CreateSettings();
         string path=ProgressionSave.PathName;
         // Exercise a clean save without changing the player's progress.
         SessionState.SetString(Key+"Save",File.Exists(path)?Convert.ToBase64String(File.ReadAllBytes(path)):"");
@@ -97,7 +97,7 @@ public static class VerifySevenDayProgression
             } finally { game.Settings.minimumVitality=oldFloor; }
             Debug.Log("SEVEN_DAY_PROGRESSION_PASS: boundary, death, aging, rewards, deduplication, levels, ability/sanity events, gates and disk persistence.");
         } catch(Exception e) { Debug.LogException(e); exit=1; }
-        finally {
+        finally { PlayerPrefs.SetInt("Story.Language",SessionState.GetInt(Key+"Language",0));PlayerPrefs.Save();
             Restore(ProgressionSave.PathName,SessionState.GetString(Key+"Save",""));
             Restore(ProgressionSave.PathName+".bak",SessionState.GetString(Key+"Backup",""));
         }

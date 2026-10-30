@@ -26,7 +26,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(!open)return;
             if(GameManager.Instance==null){Close();return;}
             var k=Keyboard.current;
-            if(k!=null&&Time.frameCount>openedFrame+1&&(k.escapeKey.wasPressedThisFrame||k.eKey.wasPressedThisFrame))Close();
+            if(k!=null&&Time.frameCount>openedFrame+1&&k.escapeKey.wasPressedThisFrame)Close();
         }
         void Styles()
         {
@@ -45,7 +45,7 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             if(!open)return;
-            Styles();
+            Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-60;
             float w=Screen.width/scale,h=Screen.height/scale;
@@ -56,7 +56,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.Label(new Rect(30,58,w-760,24),"只读视图 + 一键发放：每个线索指向哪些推论、全部配方与当前连接。仅开发用。",small);
                 if(GUI.Button(new Rect(w-676,20,200,42),"获得全部线索和连接",button)){GrantAll();scroll=Vector2.zero;}
                 if(GUI.Button(new Rect(w-466,20,190,42),confirmClear?"再次点击确认清空":"清空全部推理数据",button)){if(confirmClear){ClearAll();confirmClear=false;scroll=Vector2.zero;}else confirmClear=true;}
-                if(GUI.Button(new Rect(w-266,20,230,42),"关闭  ·  E / Esc",button)){Close();return;}
+                if(GUI.Button(new Rect(w-266,20,230,42),"关闭  ·  Esc",button)){Close();return;}
                 for(int i=0;i<3;i++)
                 {
                     string label=i==0?"线索总览":i==1?"全部连接":"配方规则";

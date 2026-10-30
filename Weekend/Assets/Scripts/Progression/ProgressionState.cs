@@ -9,6 +9,8 @@ namespace DeathBySeventhsDawn.Progression
         public bool badEndingOne, dreamSeen;
         public bool neighborFlyersSeen, skt079NewsSeen, neighborBarricadeSeen, prologueEntered;
         public bool dayOneSupernovaSeen;
+        public bool cultDayOneTalked,cultTokenOffered;
+        public List<string> inventory=new List<string>();
         public List<Knowledge.JournalEntry> journal=new List<Knowledge.JournalEntry>();
         public float knowledge, mutation, sanityBurden;
         public List<string> knowledgeIds=new List<string>();

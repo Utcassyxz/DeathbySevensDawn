@@ -59,7 +59,7 @@ namespace DeathBySeventhsDawn.Interaction
                 #if ENABLE_INPUT_SYSTEM
                 if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectObservation();
 #endif
-                if (interact || cancel) CloseView();
+                if (cancel) CloseView();
                 else RefreshView();
                 return;
             }
@@ -115,7 +115,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (image != null) aspect.aspectRatio = (float)image.width / image.height;
             }
             heading.text = DeathBySeventhsDawn.Story.StoryText.Local("窗外 · 第 ","Outside \u00b7 Day ") + DisplayedDay + DeathBySeventhsDawn.Story.StoryText.Local(" 天","");
-            closeInstructions.text=DisplayedDay==2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId)?DeathBySeventhsDawn.Story.StoryText.Local("窗外观察已收录","Observation recorded"):DeathBySeventhsDawn.Story.StoryText.Local("R  记录窗外的变化","R  Record the view"))+DeathBySeventhsDawn.Story.StoryText.Local("\nE / Esc  返回房间","\nE / Esc Back to room") : DeathBySeventhsDawn.Story.StoryText.Local("E / Esc  返回房间","E / Esc Back to room");
+            closeInstructions.text=DisplayedDay==2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId)?DeathBySeventhsDawn.Story.StoryText.Local("窗外观察已收录","Observation recorded"):DeathBySeventhsDawn.Story.StoryText.Local("R  记录窗外的变化","R  Record the view"))+DeathBySeventhsDawn.Story.StoryText.Local("\nEsc  返回房间","\nEsc Back to room") : DeathBySeventhsDawn.Story.StoryText.Local("Esc  返回房间","Esc Back to room");
             foreach (var label in new[] { heading, closeInstructions })
             {
                 label.font.RequestCharactersInTexture(label.text, label.fontSize, label.fontStyle);
@@ -150,7 +150,7 @@ namespace DeathBySeventhsDawn.Interaction
             picture.raycastTarget = false;
             aspect = imageObject.AddComponent<AspectRatioFitter>();
             aspect.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-            closeInstructions = MakeText("Close instructions", overlay.transform, font, DeathBySeventhsDawn.Story.StoryText.Local("E / Esc  返回房间","E / Esc Back to room"), 23,
+            closeInstructions = MakeText("Close instructions", overlay.transform, font, DeathBySeventhsDawn.Story.StoryText.Local("Esc  返回房间","Esc Back to room"), 23,
                 new Vector2(.06f, .02f), new Vector2(.94f, .12f));
             overlay.SetActive(false);
             hint.gameObject.SetActive(false);
