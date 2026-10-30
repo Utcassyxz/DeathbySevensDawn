@@ -31,12 +31,24 @@
 
 存档升级为版本 2。版本 1 已有日记的记录保留，并保留日记和调查访问权；新旅程重置教程、新闻和冰箱状态。第一次完整体验请从新游戏开始。
 
-## 验证与待复核
+## 验证结果
 
 - Unity 6000.6.7f1 独立工程编译通过。
 - 独立运行的 63 项流程逻辑检查通过：设置读写、字体选择、剧情顺序、新闻去重与中断恢复、初始信息去重、调查与推理、旧存档迁移、完整重置。
 - 七日边界、睡眠、死亡、衰老、知识奖励、结局和存档回归通过。
 - 邪教线 24 项独立检查通过：首日对话门槛、次日纸条与敲门、赠物手动拾取、背包去重与保存、电视下方通行。批量运行出现 UnityEditor.Search.SearchDatabase 索引异常，未计为游戏运行时异常；实际画面仍待解锁复核。
 - 打开冰箱的贴图与预留传单 Prefab 已导入，柜体锚点与闭合贴图对齐。
-- 当前电脑锁屏，原工程的实际按键和画面复核尚未完成。Unity 批量模式不能可靠处理编辑器模拟按键，未将那些失败尝试计为通过。
-- 解锁后在 Prototype → Test full first-day onboarding and settings 执行完整交互验收；再复核中英文设置、冰箱开合、沙发姿势和初次日记布局。逻辑报告保存在 `docs/validation/onboarding/`。
+- 解锁后在原工程运行完整新手教程与设置验收，62 项交互检查通过。修复设置面板接收 IMGUI Esc 事件的返回路径后，重新运行仍为 62 项通过。测试备份并还原原存档、语言和音量。
+- 手动点击语言按钮、拖动音量 100% → 50% → 100%、切回中文与 Esc 返回主菜单均通过。已核对中英文菜单、新闻、首次日记和调查教学的渲染画面。
+- 批量模式不能可靠处理编辑器模拟按键，先前失败尝试未计为通过；本轮交互结果来自原工程的编辑器运行。
+- 可复跑 Prototype → Test full first-day onboarding and settings。报告和关键截图保存在 `docs/validation/onboarding/`。
+
+### 关键画面
+
+![英文主菜单](validation/onboarding/images/title-english.png)
+
+![音量与语言设置](validation/onboarding/images/settings-english.png)
+
+![首次日记](validation/onboarding/images/first-journal.png)
+
+![调查教学](validation/onboarding/images/investigation-lesson.png)

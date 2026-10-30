@@ -20,6 +20,8 @@ namespace DeathBySeventhsDawn.Progression
         void Reset(){if(open)Hide();}
         void Update(){if(open&&Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame)Hide();}
         void OnGUI(){if(!open)return;
+            // IMGUI also receives editor keyboard events when the native input backend does not.
+            if(Event.current.type==EventType.KeyDown&&Event.current.keyCode==KeyCode.Escape){Hide();Event.current.Use();return;}
             if(label==null){label=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=24,wordWrap=true};title=new GUIStyle(label){fontSize=38,fontStyle=FontStyle.Bold};button=new GUIStyle(GUI.skin.button){font=GameTypography.Current,fontSize=23,padding=new RectOffset(15,15,12,12)};}
             GameTypography.Use(title,label,button);PrototypeButtons.Apply(button);
             var matrix=GUI.matrix;var color=GUI.color;var depth=GUI.depth;float scale=Mathf.Min(Screen.width/1100f,Screen.height/800f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-200;
