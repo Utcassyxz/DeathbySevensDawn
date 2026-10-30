@@ -1,0 +1,1 @@
+PASS: final runtime and editor assemblies compiled using the installed Unity .NET SDK; 0 errors.

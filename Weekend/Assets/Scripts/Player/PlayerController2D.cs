@@ -1,3 +1,4 @@
+// 职责：二维移动和动画输入；剧情弹窗与终局时停止移动。
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -12,7 +13,10 @@ namespace DeathBySeventhsDawn.Player
         private Rigidbody2D rb;
         private Vector2 moveInput;
         private readonly ContactPoint2D[] contacts = new ContactPoint2D[12];
-        private void Awake() { rb = GetComponent<Rigidbody2D>(); }
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
         private void Update()
         {
 #if ENABLE_INPUT_SYSTEM
@@ -31,24 +35,29 @@ namespace DeathBySeventhsDawn.Player
         }
         private void FixedUpdate()
         {
-            if((Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded) || DeathBySeventhsDawn.Interaction.StoryJournal.WorldBlocked) {
-                rb.linearVelocity=Vector2.zero; return;
+            if ((Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded) || DeathBySeventhsDawn.Interaction.StoryJournal.WorldBlocked)
+            {
+                rb.linearVelocity = Vector2.zero;
+                return;
             }
             Vector2 velocity = moveInput * moveSpeed;
             int count = rb.GetContacts(contacts);
             for (int i = 0; i < count; i++)
             {
                 float intoSurface = Vector2.Dot(velocity, contacts[i].normal);
-                if (intoSurface < 0f) velocity -= contacts[i].normal * intoSurface;
+                if (intoSurface < 0f)
+                    velocity -= contacts[i].normal * intoSurface;
             }
             // Keep diagonal input responsive while sliding along a solid edge.
-            if (velocity.sqrMagnitude > .001f) velocity = velocity.normalized * moveInput.magnitude * moveSpeed;
+            if (velocity.sqrMagnitude > .001f)
+                velocity = velocity.normalized * moveInput.magnitude * moveSpeed;
             rb.linearVelocity = velocity;
         }
         private void OnDisable()
         {
             moveInput = Vector2.zero;
-            if (rb != null) rb.linearVelocity = Vector2.zero;
+            if (rb != null)
+                rb.linearVelocity = Vector2.zero;
         }
     }
 }

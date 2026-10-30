@@ -1,0 +1,484 @@
+// 职责：鱼缸的逐日形态、对话及锡纸封缸；封缸后不再生成生物。
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using DeathBySeventhsDawn.Core;
+using DeathBySeventhsDawn.Knowledge;
+using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Story;
+using DeathBySeventhsDawn.TimeSystem;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
+namespace DeathBySeventhsDawn.Interaction
+{
+    // 客厅鱼缸的逐日异变；第三天开始可以对话，第六天成为 NPC 001。
+    public sealed class AquariumEntity : MonoBehaviour
+    {
+        public const string NpcCode = "001";
+        static Color C(double r, double g, double b, double a = 1) => new Color((float)r, (float)g, (float)b, (float)a);
+        public static AquariumEntity Instance
+        {
+            get; private set;
+        }
+        public static bool WorldBlocked => Instance != null && (Instance.talking || Time.frameCount <= Instance.blockedUntilFrame);
+        public bool IsTalking => talking;
+        GameObject tank, formRoot, player;
+        SpriteRenderer tankRenderer;
+        Color tankOriginal;
+        bool hasOriginal;
+        int visualDay = -1, page, openedFrame;
+        int blockedUntilFrame = -1;
+        bool talking, nearby;
+        float range = 2.05f;
+        Sprite square, circle;
+        Texture2D pixel, circleTexture;
+        string[] pages;
+        string speaker;
+        GUIStyle text, title, button, small;
+        void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(this);
+                return;
+            }
+            Instance = this;
+        }
+        void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnLoaded;
+            if (TimeManager.Instance != null)
+                TimeManager.Instance.TimeChanged += OnTimeChanged;
+            if (GameManager.Instance != null)
+                GameManager.Instance.JourneyReset += ResetEntity;
+        }
+        void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnLoaded;
+            if (TimeManager.Instance != null)
+                TimeManager.Instance.TimeChanged -= OnTimeChanged;
+            if (GameManager.Instance != null)
+                GameManager.Instance.JourneyReset -= ResetEntity;
+            CloseDialogue();
+            DestroyForm();
+        }
+        void Start()
+        {
+            Setup(SceneManager.GetActiveScene());
+        }
+        void OnLoaded(Scene scene, LoadSceneMode mode)
+        {
+            Setup(scene);
+        }
+        void Setup(Scene scene)
+        {
+            CloseDialogue();
+            DestroyForm();
+            RestoreTank();
+            tank = null;
+            tankRenderer = null;
+            player = null;
+            visualDay = -1;
+            nearby = false;
+            if (scene.name != "LivingRoom")
+                return;
+            tank = GameObject.Find("Aquarium and cabinet");
+            if (tank == null)
+                return;
+            tankRenderer = tank.GetComponent<SpriteRenderer>();
+            if (tankRenderer != null)
+            {
+                tankOriginal = tankRenderer.color;
+                hasOriginal = true;
+            }
+            player = GameObject.FindWithTag("Player");
+            RefreshForm();
+        }
+        void OnTimeChanged(int day, TimePeriod period)
+        {
+            if (day != visualDay)
+                RefreshForm();
+        }
+        void ResetEntity()
+        {
+            CloseDialogue();
+            DestroyForm();
+            RestoreTank();
+            visualDay = -1;
+            nearby = false;
+        }
+        void RefreshForm()
+        {
+            if (tank == null)
+                return;
+            int day = TimeManager.Instance != null ? TimeManager.Instance.Days : 1;
+            DestroyForm();
+            RestoreTank();
+            visualDay = day;
+            if (day < 3 || GameManager.Instance.AquariumSealed)
+                return;
+            EnsureSprites();
+            formRoot = new GameObject("Aquarium entity form");
+            formRoot.transform.SetParent(tank.transform, false);
+            formRoot.transform.localPosition = Vector3.zero;
+            if (day >= 6)
+                BuildNpc();
+            else if (day >= 5)
+                BuildHalfBody();
+            else
+                BuildDayThree();
+        }
+        void BuildDayThree()
+        {
+            if (tankRenderer != null)
+                tankRenderer.color = Color.Lerp(tankOriginal, C(.38f, .58, .47f), .55f);
+            Part("body in glass", new Vector3(0, -.2f, 0), new Vector2(.62f, 1.1f), C(.12f, .22, .19f), 1);
+            Circle("left eye white", new Vector3(-.13f, .12f, 0), new Vector2(.28f, .28f), C(.82f, .82, .66f), 2);
+            Circle("left eye", new Vector3(-.13f, .12f, 0), new Vector2(.12f, .12f), C(.05f, .08, .06f), 3);
+            Circle("right eye white", new Vector3(.15f, .1f, 0), new Vector2(.22f, .22f), C(.78f, .78, .62f), 2);
+            Circle("right eye", new Vector3(.15f, .1f, 0), new Vector2(.09f, .09f), C(.05f, .08, .06f), 3);
+            Part("tendril a", new Vector3(-.45f, -.75f, 0), new Vector2(.07f, .9f), C(.24f, .38, .30f), 1);
+            Part("tendril b", new Vector3(.42f, -.7f, 0), new Vector2(.06f, .75f), C(.20f, .33, .26f), 1);
+        }
+        void BuildHalfBody()
+        {
+            if (tankRenderer != null)
+                tankRenderer.color = Color.Lerp(tankOriginal, C(.28f, .47, .39f), .72f);
+            Part("torso", new Vector3(0, .78f, 0), new Vector2(.85f, 1.35f), C(.16f, .27, .23f), 2);
+            Part("left arm", new Vector3(-.55f, .72f, 0), new Vector2(.18f, .85f), C(.14f, .24, .21f), 3);
+            Part("right arm", new Vector3(.58f, .88f, 0), new Vector2(.18f, .95f), C(.14f, .24, .21f), 3);
+            Circle("head", new Vector3(0, 1.58f, 0), new Vector2(.55f, .55f), C(.25f, .38, .32f), 4);
+            Circle("eye", new Vector3(.08f, 1.65f, 0), new Vector2(.13f, .13f), C(.86f, .83, .61f), 5);
+            Circle("pupil", new Vector3(.08f, 1.65f, 0), new Vector2(.055f, .055f), C(.04f, .06, .05f), 6);
+            Part("water line", new Vector3(0, 1.02f, 0), new Vector2(1.1f, .045f), C(.55f, .72, .64f), 7);
+        }
+        void BuildNpc()
+        {
+            if (tankRenderer != null)
+                tankRenderer.color = Color.Lerp(tankOriginal, C(.24f, .40, .35f), .48f);
+            // 001 站在鱼缸右侧，脚踩在地板上。
+            Vector3 root = new Vector3(1.42f, -1.05f, 0);
+            Part("001 left leg", root + new Vector3(-.16f, .45f, 0), new Vector2(.22f, .95f), C(.12f, .21, .18f), 8);
+            Part("001 right leg", root + new Vector3(.17f, .45f, 0), new Vector2(.22f, .95f), C(.12f, .21, .18f), 8);
+            Part("001 torso", root + new Vector3(0, 1.3f, 0), new Vector2(.62f, .95f), C(.16f, .27, .23f), 9);
+            Part("001 left arm", root + new Vector3(-.42f, 1.25f, 0), new Vector2(.16f, .9f), C(.13f, .23, .20f), 9);
+            Part("001 right arm", root + new Vector3(.43f, 1.22f, 0), new Vector2(.16f, .92f), C(.13f, .23, .20f), 9);
+            Circle("001 head", root + new Vector3(0, 2.05f, 0), new Vector2(.48f, .48f), C(.24f, .37, .31f), 10);
+            Circle("001 eye left", root + new Vector3(-.1f, 2.09f, 0), new Vector2(.10f, .10f), C(.88f, .84, .62f), 11);
+            Circle("001 eye right", root + new Vector3(.1f, 2.07f, 0), new Vector2(.08f, .08f), C(.88f, .84, .62f), 11);
+            Part("001 water drip", root + new Vector3(.3f, .72f, 0), new Vector2(.05f, .55f), C(.40f, .55, .50f, 0.65f), 7);
+        }
+        void Update()
+        {
+            if (GameManager.Instance == null || GameManager.Instance.HasEnded)
+            {
+                nearby = false;
+                CloseDialogue();
+                return;
+            }
+            if (GameManager.Instance.AquariumSealed)
+            {
+                if (formRoot != null)
+                    DestroyForm();
+                nearby = false;
+                if (talking)
+                    TickDialogue();
+                return;
+            }
+            if (TutorialGate.IsBlocked("aquarium"))
+            {
+                nearby = false;
+                return;
+            }
+            if (talking)
+            {
+                TickDialogue();
+                return;
+            }
+            if (TimeManager.Instance != null && TimeManager.Instance.Days != visualDay)
+                RefreshForm();
+            if (tank == null || TimeManager.Instance == null || (TimeManager.Instance.Days < 3 && !HasFoil))
+            {
+                nearby = false;
+                return;
+            }
+            if (ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
+            {
+                nearby = false;
+                return;
+            }
+            var window = Object.FindAnyObjectByType<WindowLookout2D>();
+            if (window != null && window.IsOpen)
+            {
+                nearby = false;
+                return;
+            }
+            if (player == null)
+                player = GameObject.FindWithTag("Player");
+            Vector2 point = InteractionPoint();
+            nearby = player != null && Vector2.Distance(player.transform.position, point) <= range;
+            if (nearby && InteractPressed())
+            {
+                if (HasFoil)
+                    OpenOffer();
+                else
+                    OpenDialogue();
+            }
+        }
+        Vector2 InteractionPoint()
+        {
+            if (tank == null)
+                return Vector2.zero;
+            Vector3 point = tank.transform.position;
+            if (visualDay >= 6)
+                point += new Vector3(1.42f, -.35f, 0);
+            return point;
+        }
+        bool InteractPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var k=Keyboard.current;return k!=null&&k.eKey.wasPressedThisFrame;
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            return Input.GetKeyDown(KeyCode.E);
+#else
+            return false;
+#endif
+        }
+        public bool HasFoil => GameManager.Instance != null && GameManager.Instance.State.inventory.Contains(CultNeighbor.Token);
+        public bool FormVisible => formRoot != null && !GameManager.Instance.AquariumSealed;
+        void OpenOffer()
+        {
+            pages = new[] { TimeManager.Instance.Days < 3 ? StoryText.Current.aquarium.offerBefore : StoryText.Current.aquarium.offer };
+            speaker = StoryText.Current.aquarium.sealedTitle;
+            page = 0;
+            openedFrame = Time.frameCount;
+            talking = true;
+        }
+        /// <summary>Consume exactly one token only while standing at the tank; the seal survives reloads and loops.</summary>
+        public bool ThrowFoil()
+        {
+            var game = GameManager.Instance;
+            if (game == null || game.HasEnded || game.AquariumSealed || TutorialGate.IsBlocked("aquarium") || !HasFoil || tank == null || player == null || Vector2.Distance(player.transform.position, InteractionPoint()) > range)
+                return false;
+            game.State.inventory.Remove(CultNeighbor.Token);
+            game.State.aquariumSealed = true;
+            ProgressionSave.Write(game.State);
+            DestroyForm();
+            RestoreTank();
+            pages = new[] { TimeManager.Instance.Days < 3 ? StoryText.Current.aquarium.sealedBefore : StoryText.Current.aquarium.sealedBody };
+            speaker = StoryText.Current.aquarium.sealedTitle;
+            page = 0;
+            openedFrame = Time.frameCount;
+            talking = true;
+            return true;
+        }
+        void OpenDialogue()
+        {
+            if (GameManager.Instance.HasEnded || GameManager.Instance.AquariumSealed || TutorialGate.IsBlocked("aquarium"))
+                return;
+            var aq = StoryText.Current.aquarium;
+            pages = visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : aq?.day3Pages;
+            if (pages == null || pages.Length == 0)
+                return;
+            speaker = visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : (aq?.speakerDay3 ?? "鱼缸里的东西");
+            page = 0;
+            openedFrame = Time.frameCount;
+            talking = true;
+        }
+        void TickDialogue()
+        {
+            if (pages == null || pages.Length == 0)
+            {
+                CloseDialogue();
+                return;
+            }
+            if (Time.frameCount <= openedFrame + 2)
+                return;
+            bool advance = false, close = false;
+            if (HasFoil && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+            {
+                ThrowFoil();
+                return;
+            }
+            if (!GameManager.Instance.AquariumSealed && visualDay >= 3 && UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.rKey.wasPressedThisFrame)
+                Investigation.Collect(visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye");
+#if ENABLE_INPUT_SYSTEM
+            var k=Keyboard.current;
+            if(k!=null){advance=k.eKey.wasPressedThisFrame;close=k.escapeKey.wasPressedThisFrame;}
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            advance=Input.GetKeyDown(KeyCode.E);
+            close=Input.GetKeyDown(KeyCode.Escape);
+#endif
+            if (close)
+            {
+                CloseDialogue();
+                return;
+            }
+            if (!advance)
+                return;
+            page++;
+            if (page >= pages.Length)
+                CloseDialogue();
+        }
+        void CloseDialogue()
+        {
+            if (talking)
+                blockedUntilFrame = Time.frameCount;
+            talking = false;
+            page = 0;
+            pages = null;
+        }
+        void OnGUI()
+        {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(text, title, button, small);
+            if (GameManager.Instance == null || GameManager.Instance.HasEnded || (!talking && !nearby))
+                return;
+            if (talking && (ProgressionHUD.DebugConsoleOpen || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked))
+                return;
+            Styles();
+            DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
+            var matrix = GUI.matrix;
+            var color = GUI.color;
+            int depth = GUI.depth;
+            float scale = Mathf.Clamp(Screen.height / 900f, .8f, 2.4f);
+            GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
+            float w = Screen.width / scale, h = Screen.height / scale;
+            try
+            {
+                if (!talking)
+                {
+                    var aq = StoryText.Current.aquarium;
+                    string prompt = HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : (aq?.promptDay3 ?? "E  和鱼缸里的东西说话");
+                    GUI.Label(new Rect(w / 2 - 260, h - 88, 520, 60), prompt, button);
+                    return;
+                }
+                GUI.depth = -30;
+                GUI.color = C(.015f, .03f, .03f, .93f);
+                GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
+                GUI.color = color;
+                float panel = Mathf.Min(860, w - 56);
+                GUILayout.BeginArea(new Rect((w - panel) / 2, h * .16f, panel, h * .68f));
+                GUILayout.Label(speaker, title);
+                GUILayout.Space(6);
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("第 ", "Day ") + visualDay + DeathBySeventhsDawn.Story.StoryText.Local(" 天", ""), small);
+                GUILayout.Space(22);
+                GUILayout.Label(pages != null ? pages[Mathf.Clamp(page, 0, pages.Length - 1)] : "", text);
+                GUILayout.FlexibleSpace();
+                string evidence = visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
+                if (HasFoil && GUILayout.Button(StoryText.Current.aquarium.throwFoil, button))
+                    ThrowFoil();
+                if (!GameManager.Instance.AquariumSealed && visualDay >= 3)
+                {
+                    if (GUILayout.Button(StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R  记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R  Record this observation"), button))
+                        Investigation.Collect(evidence);
+                    if (GUILayout.Button(StoryText.Current.aquarium.question, button))
+                    {
+                        pages = new[] { Investigation.Has("notes-gap") ? StoryText.Current.aquarium.answerGap : StoryText.Current.aquarium.answerDefault };
+                        page = 0;
+                    }
+                }
+                GUILayout.Label(StoryText.Local("E 继续  ·  Esc 关闭", "E Continue · Esc Close"), small);
+                GUILayout.EndArea();
+            }
+            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+        }
+        void Styles()
+        {
+            if (text != null)
+                return;
+            var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
+            text = new GUIStyle(GUI.skin.label) { font = font, fontSize = 25, wordWrap = true };
+            text.normal.textColor = C(.92f, .89, .80f);
+            title = new GUIStyle(text) { fontSize = 38, fontStyle = FontStyle.Bold };
+            title.normal.textColor = C(.72f, .86, .74f);
+            small = new GUIStyle(text) { fontSize = 17 };
+            small.normal.textColor = C(.58f, .68, .60f);
+            button = new GUIStyle(GUIStyle.none) { font = font, fontSize = 23, alignment = TextAnchor.MiddleCenter };
+            button.normal.textColor = C(.78f, .82, .68f);
+        }
+        void EnsureSprites()
+        {
+            if (square == null)
+            {
+                pixel = new Texture2D(1, 1);
+                pixel.SetPixel(0, 0, Color.white);
+                pixel.Apply();
+                square = Sprite.Create(pixel, new Rect(0, 0, 1, 1), new Vector2(.5f, .5f), 1);
+            }
+            if (circle == null)
+            {
+                circleTexture = new Texture2D(64, 64, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+                for (int y = 0; y < 64; y++)
+                    for (int x = 0; x < 64; x++)
+                    {
+                        float dx = (x - 31.5f) / 31.5f, dy = (y - 31.5f) / 31.5f;
+                        float a = Mathf.Clamp01(1 - Mathf.Sqrt(dx * dx + dy * dy));
+                        circleTexture.SetPixel(x, y, C(1, 1, 1, a));
+                    }
+                circleTexture.Apply(false);
+                circle = Sprite.Create(circleTexture, new Rect(0, 0, 64, 64), new Vector2(.5f, .5f), 64);
+            }
+        }
+        void Part(string name, Vector3 localPosition, Vector2 size, Color color, int order)
+        {
+            var part = new GameObject(name);
+            part.transform.SetParent(formRoot.transform, false);
+            part.transform.localPosition = localPosition;
+            part.transform.localScale = new Vector3(size.x, size.y, 1);
+            var renderer = part.AddComponent<SpriteRenderer>();
+            renderer.sprite = square;
+            renderer.color = color;
+            ApplyRenderer(renderer, order);
+        }
+        void Circle(string name, Vector3 localPosition, Vector2 size, Color color, int order)
+        {
+            var part = new GameObject(name);
+            part.transform.SetParent(formRoot.transform, false);
+            part.transform.localPosition = localPosition;
+            part.transform.localScale = new Vector3(size.x, size.y, 1);
+            var renderer = part.AddComponent<SpriteRenderer>();
+            renderer.sprite = circle;
+            renderer.color = color;
+            ApplyRenderer(renderer, order);
+        }
+        void ApplyRenderer(SpriteRenderer renderer, int order)
+        {
+            if (tankRenderer != null)
+            {
+                renderer.sortingLayerID = tankRenderer.sortingLayerID;
+                renderer.sortingOrder = tankRenderer.sortingOrder + order;
+                if (tankRenderer.sharedMaterial != null)
+                    renderer.sharedMaterial = tankRenderer.sharedMaterial;
+            }
+            else
+                renderer.sortingOrder = order;
+        }
+        void DestroyForm()
+        {
+            if (formRoot != null)
+                Destroy(formRoot);
+            formRoot = null;
+            if (tankRenderer != null && hasOriginal)
+                tankRenderer.color = tankOriginal;
+        }
+        void RestoreTank()
+        {
+            if (tankRenderer != null && hasOriginal)
+                tankRenderer.color = tankOriginal;
+        }
+        void OnDestroy()
+        {
+            if (Instance == this)
+                Instance = null;
+            DestroyForm();
+            if (square != null)
+                Destroy(square);
+            if (circle != null)
+                Destroy(circle);
+            if (pixel != null)
+                Destroy(pixel);
+            if (circleTexture != null)
+                Destroy(circleTexture);
+        }
+    }
+}

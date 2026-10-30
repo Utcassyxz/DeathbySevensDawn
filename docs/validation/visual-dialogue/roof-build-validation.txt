@@ -1,0 +1,1 @@
+PASS: detailed pixel rooftop rebuilt; collision paths and interaction positions retained; all room cameras clear to real black.

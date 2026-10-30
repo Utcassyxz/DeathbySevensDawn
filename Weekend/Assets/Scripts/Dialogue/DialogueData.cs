@@ -1,3 +1,4 @@
+// 职责：对白行与知识条件的 ScriptableObject 数据。
 using System;
 using UnityEngine;
 

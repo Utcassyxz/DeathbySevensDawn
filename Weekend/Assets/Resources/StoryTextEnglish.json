@@ -2,10 +2,10 @@
   "dream": {
     "title": "Dream · The anthill",
     "pages": [
-      "They are arguing again.\nHe stands beside the road, holding half an ice lolly.",
-      "An anthill beside his shoe.\nAn ant drags a white husk across the entrance.",
-      "He kicks it.\nSoil sticks to his shoe. Ants crawl into his sock.",
-      "A knock. Then another.\n\nHe opens his eyes."
+      "As a child, Hugo watched his parents argue across the road.\nHis ice lolly melted over his hand. The adults had no time for sticky problems.",
+      "An ant hole beside Hugo’s shoe.\nThe ants were dragging a shell too big for the entrance. Nobody gave way. A familiar family atmosphere.",
+      "Hugo stamped down.\nThe entrance filled with mud.\n\nAt least one argument had been resolved.",
+      "Knocking beneath Hugo’s sole.\nOnce. Again.\n\nHe tried to lift his foot. It did not move."
     ],
     "images": [
       "Story/Dream/dream-01",
@@ -14,22 +14,22 @@
       "Story/Dream/dream-04"
     ],
     "journalTitle": "The anthill dream",
-    "journalBody": "The road. His parents arguing. He kicked an anthill.\nThen a shadow covered them both. He woke with his feet curled up.",
-    "fallbackPage": "He woke from a dream about an anthill."
+    "journalBody": "Hugo dreamed of stamping on an ant hole as a child. The knocking continued after he woke.\nDream and reality divided the work: one underfoot, the other next door.",
+    "fallbackPage": "The sound beneath Hugo’s shoe has not stopped."
   },
   "knowledge": {
     "ancientTitle": "A shape behind the sky",
-    "ancientBody": "The stars bent along its edge.\nHe took his eye away before he could find the other end.",
+    "ancientBody": "Hugo adjusts the telescope on the fifth-floor roof. Stars bend along a curve.\nThe curve moves too.\nHugo lets go of the focus ring. His other hand takes longer.",
     "windowTitle": "The view on day two",
-    "windowBody": "Something has changed between the buildings. He wrote down what he could see.",
+    "windowBody": "Hugo remembers a window on the third floor opposite. The sheet is still hanging there. The window is gone.\nHe writes it down. The architect can explain later.",
     "fallbackTitle": "A finding",
-    "fallbackBodyPrefix": "Recorded clue: "
+    "fallbackBodyPrefix": "Hugo records the following:\n"
   },
   "telescope": {
     "title": "Telescope",
     "revelationTitle": "Second night · Behind the sky",
-    "nightOnly": "Glare fills the lens.\nCome back after sunset.",
-    "wrongDay": "He turns the focus ring. Rooftops and stars.\nNothing else tonight.",
+    "nightOnly": "Hugo adjusts the focus. The daylight glare reveals one thing: the lens needs cleaning.\nTry again tonight.",
+    "wrongDay": "Hugo can see a clothes rack and the eaves blocking the sky.\nThe focus ring cannot move a building.\n\nAfter finishing his observation notes, he can press F to pack the telescope and take the stairs from the fourth-floor corridor to the fifth-floor roof.",
     "gainedSuffix": "\n\nHis hand is shaking. Can he still draw the edge?",
     "repeatSuffix": "\n\nThat edge again. He could try drawing it.",
     "imageMissing": "Image unavailable.",
@@ -42,32 +42,40 @@
     "revelationClose": "Look away · Esc"
   },
   "firstLoop": {
-    "news": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
-    "flyer": "COVER YOUR WINDOWS.\nDo not trust the calm voices.\nSomething is coming from above.",
-    "dayOneCaption": "The man from 401 presses a flyer against the wall. His lips keep moving.",
-    "startledCaption": "The hammer stops. The neighbour turns towards the man at the door of 402.",
-    "boardingCaption": "The tenant of 401 is hammering a board across his door.",
+    "news": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.\n\nMiyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.\n\nPolice advise residents not to give the Triangle Church their address, photograph or hair.\n\nThe observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline.",
+    "flyer": "Cover the windows. Lights off.\nUnplug the television.\n\nAdded with another pen: do not look up to find it.",
+    "dayOneCaption": "401 adds another board. Hugo is still in slippers. A clear difference in preparedness.",
+    "startledCaption": "The hammer stops. Hugo’s prepared complaint cannot find an opening.",
+    "boardingCaption": "Hugo notices the last nail is bent. The tenant leaves it. Each man lets one thing go.",
     "chapterTitle": "Behind the sky",
-    "chapterText": "He takes his eye away.\n\nThe balcony is still here. So is the building opposite.\n\nHe does not touch the focus ring again.",
-    "newsDay1": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
-    "newsDefault": "The local bulletin repeats."
+    "chapterText": "Hugo moves his eye away from the telescope.\nThe roof is still quiet. Hugo is not prepared to vouch for that quiet.",
+    "newsDay1": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.\n\nMiyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.\n\nPolice advise residents not to give the Triangle Church their address, photograph or hair.\n\nThe observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline.",
+    "newsDefault": "The television is showing some boring programs. Hugo has better things to do."
   },
   "dayOneBroadcast": {
     "kicker": "LOCAL NEWS",
     "kickerLate": "LOCAL NEWS",
     "title": "Today in the city",
-    "lateFirstPage": "The Will Circus brings its national tour to our city this week.",
+    "lateFirstPage": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.",
     "pages": [
-      "The Will Circus brings its national tour to our city this week.",
-      "Mr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.",
-      "Authorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.",
-      "A supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky."
+      "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.",
+      "Miyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.",
+      "Police advise residents not to give the Triangle Church their address, photograph or hair.",
+      "The observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline."
     ],
     "journalTitle": "Local news extract",
-    "journalBody": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
+    "journalBody": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.\n\nMiyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.\n\nPolice advise residents not to give the Triangle Church their address, photograph or hair.\n\nThe observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline.",
     "continuePrompt": "E  Continue",
     "closePrompt": "E  Finish listening",
-    "liveLabel": "NEWS"
+    "liveLabel": "NEWS",
+    "images": [
+      "News/Circus",
+      "News/Sushi",
+      "News/Warning",
+      "News/Supernova"
+    ],
+    "narrator": "Narrator",
+    "boring": "The television is showing some boring programs. Hugo has better things to do."
   },
   "perception": {
     "prompt": "E  Examine the marks",
@@ -76,192 +84,192 @@
     "close": "Look away · Esc",
     "bedroom": {
       "id": "filter-bedroom-margins",
-      "title": "Writing in the margin",
-      "body": "Old scratches at the desk edge.\n“Not stars moving. Its eyes.”\nThe grooves catch under his nail."
+      "title": "Writing on the desk",
+      "body": "Carved: the stars did not move. The eye did.\nDust deep in the grooves. Not fresh."
     },
     "corridor": {
       "id": "filter-401-underprint",
-      "title": "Beneath the flyer",
-      "body": "Writing beneath the wallpaper.\n“Boards will not stop it. I just do not want to see.”\nWhy could he not read this before?"
+      "title": "Under the wallpaper",
+      "body": "The boards will not stop it. I just do not want to see it again.\nThat wallpaper is years old. When was this written?"
     },
     "balcony": {
       "id": "filter-railing-tally",
-      "title": "Marks on the railing",
-      "body": "Seven shallow cuts. The last crosses the others.\nBelow them: “Stop counting.”"
+      "title": "Seven marks",
+      "body": "Six upright. A seventh across them. Below: do not count.\nToo late."
     }
   },
   "investigation": {
     "relations": [
-      "习惯与身份",
-      "观察工具",
-      "时间关联",
-      "行为动机",
-      "交叉印证"
+      "Habit and identity",
+      "Observation tool",
+      "Time connection",
+      "Behavior and motive",
+      "Cross-check"
     ],
     "evidence": [
       {
         "id": "my-observation-notes",
         "title": "Old observation records",
-        "body": "Months of star positions, cloud cover and observing times fill the loose sheets on the desk. The calibration marks match those on the telescope. These are his own records.",
+        "body": "Three months of star positions, clouds and times. Electricity bill worked out in the corner.\nHugo’s handwriting. The overdue notice recognizes me too.",
         "source": "Bedroom · Desk"
       },
       {
         "id": "apartment-telescope",
-        "title": "The balcony telescope",
-        "body": "A polished focus ring. A north mark beside the tripod. His calibration marks on the tube match the book.",
+        "title": "Balcony telescope",
+        "body": "A chip in the focus ring. Tape on the north leg matches the old records.\nApparently Hugo used to take this seriously.",
         "source": "Balcony · Telescope"
       },
       {
         "id": "401-flyers",
-        "title": "Notice-board flyer",
-        "body": "COVER YOUR WINDOWS. Do not trust the calm voices. Something is coming from above.\nFresh paper. Tape still tacky at the corners.",
+        "title": "The leaflet",
+        "body": "Cover windows. Lights off. Unplug the TV.\nAdded: do not look up to find it.\nThe pen went through the paper.",
         "source": "Ground floor · notice board (reserved)"
       },
       {
         "id": "401-barricade",
-        "title": "401 boarded shut",
-        "body": "Fresh boards cover the door. He heard the hammer through the wall on day one. Even the gaps have been covered.",
+        "title": "Boards over 401",
+        "body": "Even the cracks are covered. The last nail is bent.\nDefinitely not decorative.",
         "source": "Corridor · 401"
       },
       {
         "id": "skt079-broadcast",
-        "title": "Local news extract",
-        "body": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
+        "title": "Local bulletin",
+        "body": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.\n\nMiyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.\n\nPolice advise residents not to give the Triangle Church their address, photograph or hair.\n\nThe observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline.",
         "source": "Living room · Television"
       },
       {
         "id": "balcony-telescope-day2-ancient-outline",
-        "title": "The outline · A memory sketch",
-        "body": "Second night. A shape through the telescope. He drew what he remembered. Stars bent around the edge.\nA memory, not a photograph. He has no second observation.",
-        "source": "Balcony · Second night"
+        "title": "Rooftop observation",
+        "body": "Hugo adjusts the telescope on the fifth-floor roof. Stars bend along a curve.\nThe curve moves too.\nHugo lets go of the focus ring. His other hand takes longer.",
+        "source": "Fifth floor · Rooftop telescope"
       },
       {
         "id": "bedroom-window-day2-observation",
-        "title": "The view on day two",
-        "body": "The skyline looks different today. He recorded the view. No measurements to compare.",
+        "title": "The opposite window",
+        "body": "Sheet still there. Window gone.\nWhat if Hugo misremembers the sheet?",
         "source": "Bedroom · Window"
       },
       {
         "id": "filter-bedroom-margins",
-        "title": "Writing in the margin",
-        "body": "Old writing at the desk edge: “Not stars moving. Its eyes.”\nHe could only read it when he was unwell.",
+        "title": "Writing on the desk",
+        "body": "Carved: the stars did not move. The eye did.\nDust deep in the grooves. Not fresh.",
         "source": "Bedroom · Desk edge"
       },
       {
         "id": "filter-401-underprint",
-        "title": "Beneath the flyer",
-        "body": "Beneath the wallpaper: “Boards will not stop it. I just do not want to see.”\nHe does not know who wrote it.",
+        "title": "Under the wallpaper",
+        "body": "The boards will not stop it. Hugo just do not want to see it again.\nThat wallpaper is years old. When was this written?",
         "source": "Corridor · Hidden writing"
       },
       {
         "id": "filter-railing-tally",
-        "title": "Marks on the railing",
-        "body": "Seven shallow cuts. The last crosses the others. “Stop counting.”\nNo name. No date.",
+        "title": "Seven marks",
+        "body": "Six upright. A seventh across them. Below: do not count.\nToo late.",
         "source": "Balcony · Railing"
       },
       {
         "id": "tank-label",
-        "title": "Tank label",
-        "body": "Water changes: Sundays. The last tick is in his handwriting.\nThe pump cable crosses the paper. There is no crease beneath it.",
+        "title": "Water-change label",
+        "body": "The label says to change the water on Sundays. The last tick is Hugo’s.\nThe fish are still fish. A useful thing to write down, apparently.",
         "source": "Living room · Cabinet"
       },
       {
         "id": "tank-eye",
-        "title": "An eye behind the glass",
-        "body": "Day three. An eye pressed against the inside of the glass.\nIt did not follow when he moved left. When he turned away, a voice said: Quietly.",
+        "title": "An eye in the tank",
+        "body": "On day three, Hugo finds an extra eye in the tank. It speaks.\nThe foil triangle might finally have a use.",
         "source": "Living room · Day three"
       },
       {
         "id": "tank-overflow",
-        "title": "The old waterline",
-        "body": "Day five. A dry tide mark crosses the cabinet, above the hand resting on the tank.\nThe wood above it is dry.",
+        "title": "Cabinet water stain",
+        "body": "Day five. Stain higher than its hand.\nIt offered to pay. No payment details.",
         "source": "Living room · Day five"
       },
       {
         "id": "001-name",
-        "title": "The name 001",
-        "body": "Day six. Outside the tank, it asked him to write down 001.\nIt said he hid his observation book badly. It never gave him a name.",
+        "title": "001",
+        "body": "Day six. Says it is 001. Says Hugo wrote that number.\nCannot find it in the book.",
         "source": "Living room · 001"
       },
       {
         "id": "notes-gap",
         "title": "Missing pages",
-        "body": "Two paper stubs remain in the binding. Saturday on either side.\nThe cloud cover, times, even the crossed-out number are identical.",
+        "body": "Two torn stubs. Saturday on both sides, same crossed-out number.\nSince when was Hugo’s memory that good?",
         "source": "Bedroom · Book revisited"
       },
       {
         "id": "403-silence",
-        "title": "Dust beneath 403",
-        "body": "A thin line of dust. No footprints.\nA chair scraped across the floor inside. When he knocked, it stopped.",
+        "title": "Dust under 403",
+        "body": "Chair scrapes inside. Stops when Hugo knock. Dust under the door undisturbed.\nHope the floor just carries sound.",
         "source": "Corridor · 403"
       },
       {
         "id": "cult-door-note",
-        "title": "A second note from 401",
-        "body": "DON’T ANSWER IT.\nIf it has already spoken, knock twice.\nThe last line has been scratched out.",
+        "title": "Note from 401",
+        "body": "Knock twice if you need something.\nCome alone.\n\nThe note is taped low. Hugo bends to read it. His knees complain first.",
         "source": "Corridor · Day two"
       },
       {
         "id": "401-warning",
-        "title": "The warning from 401",
-        "body": "He stopped hammering when the door of 402 opened. “Go back. Stay inside. Leave the television off.” Then he shut his door.",
+        "title": "The neighbor’s warning",
+        "body": "The tenant told Hugo to go inside, close the windows and leave the television off.\nHe did not say why.",
         "source": "Day 1 · corridor"
       }
     ],
     "deductions": [
       {
         "id": "deduction-astronomy",
-        "relation": "习惯与身份",
-        "title": "An amateur astronomer",
-        "body": "The months of observations and the well-used telescope point to a longstanding interest in astronomy."
+        "relation": "Habit and identity",
+        "title": "An astronomy habit",
+        "body": "Marks in the records match the telescope. Apparently Hugo bought it for more than dust."
       },
       {
         "id": "deduction-optical",
-        "relation": "观察工具",
-        "title": "An observation through the telescope",
-        "body": "The sketch records a view through this telescope, not an image from the news.\nIt does not rule out a faulty lens or a faulty memory."
+        "relation": "Observation tool",
+        "title": "A sketch through glass",
+        "body": "Lens-edge marks on the sketch. A telescope view. Not proof of what is in the sky."
       },
       {
         "id": "deduction-deliberate",
-        "relation": "交叉印证",
-        "title": "He chose to look",
-        "body": "He knew the instrument. He went looking.\nThat does not make what he saw reliable. He needs another witness."
+        "relation": "Cross-check",
+        "title": "I went looking",
+        "body": "Nobody made me look. Hugo knows how to focus it.\nDoes not mean Hugo knows what Hugo saw."
       },
       {
         "id": "deduction-warning",
-        "relation": "时间关联",
-        "title": "His warning and the bulletin",
-        "body": "The tenant warned against the television, yet the bulletin sounded ordinary. His warning and the news do not explain one another."
+        "relation": "Time connection",
+        "title": "What did he know?",
+        "body": "Warning first. Bulletin later.\nIf he meant the astronomy item, why not say so?"
       },
       {
         "id": "deduction-sealing",
-        "relation": "行为动机",
-        "title": "A warning made tangible",
-        "body": "The tenant warned him to stay inside, then sealed the doorway. The behaviour matches the warning; the reason remains unknown."
+        "relation": "Behavior and motive",
+        "title": "Sealing the door",
+        "body": "Sent me home. Boarded up his own door.\nAt least it was not just a way to shut me up."
       },
       {
         "id": "deduction-not-looking",
-        "relation": "交叉印证",
-        "title": "Perhaps he did not want to see",
-        "body": "The writing fits the covered gaps. He may be avoiding the sight of something.\nHe does not know who wrote it."
+        "relation": "Cross-check",
+        "title": "Blocking the view",
+        "body": "Boards cover every crack. The writing says it does not want to see.\nCould be a coincidence. Do not speak for him yet."
       },
       {
         "id": "deduction-tank-resident",
-        "relation": "交叉印证",
-        "title": "Something in his tank",
-        "body": "He maintained this tank. Something in it now speaks.\nThe label says nothing about it. It does not tell him when it arrived."
+        "relation": "Cross-check",
+        "title": "An extra tenant",
+        "body": "Hugo changed the water. Now something in it talks.\nThe label tracks water changes, not move-in dates."
       },
       {
         "id": "deduction-waterline",
-        "relation": "时间关联",
-        "title": "Before it left the tank",
-        "body": "The day-five waterline was higher than its exposed hand. On day six it stood outside.\nIt may have climbed out earlier. The stain could also be older."
+        "relation": "Time connection",
+        "title": "Out before?",
+        "body": "Stain higher than its hand. Next day it is outside.\nMaybe it was out earlier. Maybe Hugo spilled the water."
       },
       {
         "id": "deduction-book-reader",
-        "relation": "交叉印证",
+        "relation": "Cross-check",
         "title": "Another reader",
-        "body": "001 knows about the book. Pages have been torn out.\nHe should ask about them. Knowing the book exists does not make it responsible."
+        "body": "It knows the book. Pages missing.\nAsk. Do not start by shouting."
       }
     ]
   },
@@ -271,30 +279,37 @@
     "speakerDay3": "Inside the tank",
     "speakerDay6": "001",
     "day3Pages": [
-      "He stops by the tank. The filter draws a thin line of bubbles.",
-      "“Move your hand.”\nHis hand is resting on the lid.",
-      "He asks if it can breathe.\n“Can you?”",
-      "He lift his hand. The bubbles stop."
+      "Hugo stops at the tank. An extra eye inside.\nThe water-change label has no record of this tenant.",
+      "“Hand off.”\nHugo looks at his hand on the lid.\n“You first. Out of my fish tank.”",
+      "No answer from the water.\nHugo puts the fish food away. The landlord will not cover feeding the wrong thing."
     ],
     "day5Pages": [
-      "The cabinet door will not close. Two fingers hold it from inside.",
-      "“The towel.”\nHe asks which towel.\n“The one you put away.”",
-      "It rubs the dry waterline with a thumb. The stain does not come off.",
-      "“You keep moving things back.”"
+      "Two fingers hold the cabinet open.\nHugo pushes. Something pushes back.",
+      "“Lend me a towel.”\n“Get out of my cabinet first.”\n“Hence the towel.”",
+      "The water stain is above the handle now.\nIt rubs the mark with its thumb. Some paint comes off.",
+      "“The landlord will keep the deposit.”\n“Put it on my bill.”\n\nEasy for it to say."
     ],
     "day6Pages": [
-      "It stands beside the empty tank, facing the cabinet.",
-      "“001.”\nHe waits.\n“That is what you wrote last time.”",
-      "He asks why it is still here.\nIt touches the edge of the tank.",
-      "“You haven’t moved this.”"
+      "It stands outside the tank. A small puddle on the floor.\nHugo walks around it.",
+      "“What do I call you?”\n“001.”\n“You have numbers?”\n“You wrote it.”",
+      "It looks toward the bedroom.\n“Stop leaving that book open.”\nHugo remembers closing it.",
+      "“How long are you staying?”\nIt rests a hand on the tank.\n\nHugo starts working out the water bill."
     ],
-    "question": "Ask: Have you read his book?",
-    "answerGap": "“Two stubs. You counted them before.”",
-    "answerDefault": "“On the desk. Same place.”"
+    "question": "Hugo asks: have you been reading my book?",
+    "answerGap": "“With pages torn out like that, do I need to?”\nIt withdraws its hand.",
+    "answerDefault": "“You left it on the desk.”\n\nNot an answer.",
+    "offerPrompt": "E  Check the water",
+    "offer": "Hugo looks at the eye in the water, then at the foil.\nThe neighbor’s one-sentence instructions are proving more useful than most manuals.",
+    "throwFoil": "F  Drop the foil triangle into the tank",
+    "sealedTitle": "The tank",
+    "sealedBody": "Hugo drops the foil triangle into the water. The eye retreats behind the weeds. The extra fingers disappear with it.\nThe filter keeps humming.\n\nHugo does not reach in to check. Today he has learned when to stop.",
+    "offerBefore": "The fish swim between the weeds, occupied with being fish.\nHugo feels the foil triangle in his pocket. The neighbor said it could go in water. He neglected to say why.\n\nHugo can try it now, or keep it.",
+    "waterPrompt": "E  Examine the aquarium",
+    "sealedBefore": "Hugo drops the foil triangle into the tank. It sinks behind the weeds.\nThe fish swim away. The filter keeps humming.\n\nNo applause. Fish rarely handle that part."
   },
   "mainMenu": {
     "title": "SEVEN DAY",
-    "subtitle": "七日",
+    "subtitle": "SEVEN DAYS",
     "tagline": "",
     "start": "BEGIN A NEW GAME",
     "quit": "Quit",
@@ -303,18 +318,18 @@
   },
   "pause": {
     "title": "PAUSED",
-    "subtitle": "The room waits.",
+    "subtitle": "Take a breath.",
     "resume": "Resume",
     "returnToTitle": "Return to title",
     "quit": "Quit",
     "hint": "Esc Resume"
   },
   "ending": {
-    "title": "Ending 1 · Too late",
+    "title": "BAD END · JUST A MINUTE",
     "lines": [
-      "Day seven. You remember how it happens.",
-      "Your hand will not close around the handle.",
-      "Outside, the light changes."
+      "Hugo remembers the way. His body does not keep up.",
+      "While Hugo rests on the stairs, the fire reaches the third floor.",
+      "This time Hugo does not get up."
     ],
     "summary": "{0} loops. Stamina limit: {1:0.#}.\nJourney ended and saved.",
     "confirmWarning": "Restarting clears this journey, including collected knowledge.",
@@ -324,42 +339,350 @@
     "returnToTitle": "Return to title"
   },
   "cult": {
-    "sound": "Three knocks through the wall. A pause. Then the hammer again.\nIt is coming from 401.",
+    "sound": "Three more blows next door.\nHugo turns over. 401 has apparently not scheduled a day off.",
     "dayOne": [
-      "“Go back. Now.”",
-      "The neighbour looks past him, down the corridor.",
-      "“Stay inside. And leave the television off.”",
-      "He backs into 401 and pulls the door shut."
+      "“Go back inside.”\n\nHugo has not said hello. The neighbor has already planned his day.",
+      "“Renovating?”\nThe tenant hides the hammer behind his leg. The head sticks out. Uncooperative tool.",
+      "“Stay in today. Leave the television off.”\nHugo looks at his keys. He came to complain, not collect house rules.",
+      "No explanation.\n“Windows too.”\nThe door closes. Hugo’s complaint remains undelivered."
     ],
-    "note": "DON’T ANSWER IT.\nIf it has already spoken, knock twice.\nThe last line has been scratched out.",
+    "note": "Knock twice if you need something.\nCome alone.\n\nThe note is taped low. Hugo bends to read it. His knees complain first.",
     "door": [
-      "“Who?”",
-      "The eye drops to the visitor’s hands.",
-      "“You. Get back inside.”",
-      "“It isn’t safe here. They can see us whenever they want.”",
-      "“Take this. Keep it folded.”"
+      "“Who?”\nAn eye appears in the crack first.",
+      "“402. Hugo. Yesterday you—”\n“I know about yesterday.”",
+      "The eye checks Hugo’s hands.\nHugo shows his keys. His only available credentials.",
+      "“Take it. Do not unwrap it. It can go in water.”\nA foil triangle squeezes through.",
+      "The door shuts before Hugo can ask what it is for.\nEnd of instructions."
     ],
-    "refusal": "No answer. Something slides across the other side of the door.",
+    "refusal": "Someone inhales behind the door. Then silence.\nHugo waits. A complete silence. No contribution required.",
     "itemTitle": "Folded foil triangle",
-    "itemBody": "Folded three times. One corner is warm.\nHe has left it closed."
+    "itemBody": "Several folds of foil. Hugo squeezes it. Something hard inside.\nThe neighbor said not to unwrap it. So far, a manageable instruction."
   },
   "morning": {
     "continueDream": "Enter  Continue",
-    "wake": "Someone is hammering next door.",
-    "neighbor": "Find out what is happening next door.",
-    "food": "Go home. Find something to eat.",
-    "kitchen": "Check the fridge in the kitchen.",
+    "wake": "Hugo is awake. The hammer next door is not finished.\nThe alarm clock has lost its job. The neighbor has not.",
+    "neighbor": "Hugo should check on the neighbor first.\nAt this rate, the wall might get into the corridor before he does.",
+    "food": "Hugo should go home and find something to eat first.",
+    "kitchen": "Hugo needs to check the fridge first.\nComplaints do not count as breakfast. Even this many.",
     "fridgePrompt": "E  Open the fridge",
-    "fridgeOpen": "The seal comes free. The television starts in the next room.",
-    "afterNews": "The room falls quiet.",
-    "sofa": "Rest on the living-room sofa.",
-    "nap": "The television grows distant. He falls asleep on the sofa.\nWhen he wakes, dusk has filled the room.",
-    "desk": "Dusk. He wants to put the day into words.\nGo to the desk in the bedroom.",
-    "writing": "He opens a blank notebook and starts with the morning.",
-    "telescope": "The journal is ready. Take a look through the telescope on the balcony.",
-    "investigate": "R records the telescope as evidence.\nThis is the first investigation; nothing is recorded automatically.",
-    "connect": "Esc → B: Link the records and telescope.\nSave a tentative link, then confirm a conclusion.",
+    "fridgeOpen": "Hugo opens the fridge. A few slices of bread. Half a carton of milk.\nBehind him, the television comes on.",
+    "afterNews": "Hugo has a few news items to get through first.\nThe remote is missing. The television has plans of its own.",
+    "sofa": "Hugo wants a short rest on the sofa first.\nA dependable plan. It has never once ended on schedule.",
+    "nap": "Hugo lies on the sofa. Something hard is under the cushion.\nHe leaves that problem for the Hugo who wakes up.",
+    "desk": "Hugo wants to write today down at the desk first.\nOne less way to deny it tomorrow.",
+    "writing": "Hugo opens the notebook and writes the date.\nThe pen tears the paper. The first official record of his day: a hole.",
+    "telescope": "Hugo should check the balcony telescope first.\nNow that there is a notebook, some evidence would be useful.",
+    "investigate": "Hugo recognizes the old calibration marks.\nPress R to record the observation.",
+    "connect": "Hugo still has two records to connect.\nEsc closes this page; B opens the board. Link the old records and telescope, mark it tentative, then confirm the deduction.",
     "journalTitle": "The first evening",
-    "journalBody": "The tenant of 401 boarded up his door and warned him to stay inside. The television carried ordinary local news.\n\nHe woke on the sofa at dusk and put the day into words. The newspaper items and the neighbour’s warning follow on the next pages."
-  }
+    "journalBody": "Hugo woke to the hammer in 401. The tenant told him to close his windows, stay inside, and leave the television off.\nHugo went in. The television switched itself on. He ate some bread and slept on the sofa until evening.\n\nThe neighbor probably would not applaud this level of compliance.",
+    "breadMeal": "Hugo eats a few slices of bread and shuts the fridge.\nNo accompaniments. The bread raises no objection.",
+    "fridgeEmpty": "Hugo checks the fridge again, then closes it.\nThe bread has not grown back. A necessary investigation.",
+    "sofaFree": "Hugo can rest here and let some time pass.\nThe sofa guarantees a place to sit. Quality of rest is not covered."
+  },
+  "worldEnd": {
+    "title": "BAD END · BUSINESS AS USUAL",
+    "lines": [
+      "On the seventh day, they are still charging for parking downstairs.",
+      "Fire climbs out of the drains. Someone reaches for the hydrant. Their arm coils twice before it gets there.",
+      "The broadcast tells everyone to remain indoors. When the announcer takes a breath, another voice carries on.",
+      "Hugo never went up to the roof. The stairs are gone now."
+    ],
+    "summary": "Day Seven. The world ends.\nHugo never saw what was above it.",
+    "confirmWarning": "Restarting clears this journey, including collected knowledge.",
+    "restart": "Begin again",
+    "confirm": "Confirm restart",
+    "cancel": "Cancel",
+    "returnToTitle": "Return to title"
+  },
+  "rooftop": {
+    "floorFour": "4F · Hugo’s floor",
+    "floorFive": "5F · Rooftop",
+    "up": "E  Take the stairs to the fifth-floor roof",
+    "down": "E  Return to the fourth floor",
+    "carry": "F  Pack the telescope for the roof",
+    "carried": "Hugo folds the tripod. It is heavier than it looked from the sofa.\nThe stairs are at the west end of the fourth-floor corridor.",
+    "place": "E  Set up the telescope",
+    "placed": "Hugo sets the tripod on the mat. Five floors, three legs, one reasonably level patch of concrete.",
+    "missing": "Hugo needs his telescope from the balcony. F packs it away.",
+    "observe": "E  Look through the rooftop telescope",
+    "daylight": "Hugo finds the far side of the city. Daylight has left very little room for stars.",
+    "firstNight": "A bright point over the rooftops. Hugo checks the time against the bulletin.\nFor once, the television appears to have got something right.",
+    "revelation": "Hugo turns the focus ring. The stars bend around something that does not fit inside the lens.\nIt moves.\nHugo stops adjusting. A little late to pretend he was looking for weather.",
+    "title": "Above the fifth floor",
+    "narrator": "Narrator",
+    "record": "R  Record what Hugo saw",
+    "recorded": "Observation recorded",
+    "close": "E / Esc  Step away"
+  },
+  "ui": [
+    {
+      "key": "序  章",
+      "text": "PROLOGUE"
+    },
+    {
+      "key": "进入序章  ·  E",
+      "text": "Enter prologue · E"
+    },
+    {
+      "key": "合上 · Esc",
+      "text": "Close · Esc"
+    },
+    {
+      "key": "E  查看望远镜",
+      "text": "E  Examine telescope"
+    },
+    {
+      "key": "新的发现",
+      "text": "New discovery"
+    },
+    {
+      "key": "\n\n依据：",
+      "text": "\n\nSources: "
+    },
+    {
+      "key": "\n关系：",
+      "text": "\nRelation: "
+    },
+    {
+      "key": "调试面板",
+      "text": "Developer panel"
+    },
+    {
+      "key": "本次游戏已解锁全部测试功能 · 按 ~ 或 Esc 关闭",
+      "text": "Testing controls unlocked · ~ / Esc Close"
+    },
+    {
+      "key": "已解锁能力：",
+      "text": "Ability unlocked: "
+    },
+    {
+      "key": "回到初始状态",
+      "text": "Reset journey"
+    },
+    {
+      "key": "清空这次旅程的日记、知识、变异、轮回和剧情记录，从第 1 天的开场梦境重新开始。",
+      "text": "Clear this journey’s journal, knowledge, mutation, loops and story progress. Start again with the opening dream."
+    },
+    {
+      "key": "确认重置",
+      "text": "Confirm reset"
+    },
+    {
+      "key": "取消",
+      "text": "Cancel"
+    },
+    {
+      "key": "推进时段（每天四个时段）",
+      "text": "Advance time (four periods per day)"
+    },
+    {
+      "key": "重播第一天广播",
+      "text": "Replay first-day bulletin"
+    },
+    {
+      "key": "线索开发者面板",
+      "text": "Evidence developer panel"
+    },
+    {
+      "key": "上床睡觉（跳到次日早晨）",
+      "text": "Sleep until the next morning"
+    },
+    {
+      "key": "恢复全部体力",
+      "text": "Restore vitality"
+    },
+    {
+      "key": "损失 25 体力（归零后轮回）",
+      "text": "Lose 25 vitality (loop at zero)"
+    },
+    {
+      "key": "死亡并开始下一轮",
+      "text": "Die and start another loop"
+    },
+    {
+      "key": "获得",
+      "text": "Gain "
+    },
+    {
+      "key": "知识",
+      "text": " knowledge"
+    },
+    {
+      "key": "关闭",
+      "text": "Close"
+    },
+    {
+      "key": "输入口令：",
+      "text": "Passphrase: "
+    },
+    {
+      "key": "输入正确后自动打开 · Esc 取消",
+      "text": "Opens after the correct passphrase · Esc Cancel"
+    },
+    {
+      "key": "夜视",
+      "text": "Night vision"
+    },
+    {
+      "key": "异化听觉",
+      "text": "Aberrant hearing"
+    },
+    {
+      "key": "血肉再生",
+      "text": "Regeneration"
+    },
+    {
+      "key": "空间感知",
+      "text": "Spatial perception"
+    },
+    {
+      "key": "非人形态",
+      "text": "Nonhuman form"
+    },
+    {
+      "key": "早晨",
+      "text": "Morning"
+    },
+    {
+      "key": "下午",
+      "text": "Afternoon"
+    },
+    {
+      "key": "傍晚",
+      "text": "Evening"
+    },
+    {
+      "key": "深夜",
+      "text": "Night"
+    },
+    {
+      "key": "清醒",
+      "text": "Stable"
+    },
+    {
+      "key": "动摇",
+      "text": "Unstable"
+    },
+    {
+      "key": "破碎",
+      "text": "Fractured"
+    },
+    {
+      "key": "启示",
+      "text": "Revelation"
+    },
+    {
+      "key": "普通",
+      "text": "Ordinary"
+    },
+    {
+      "key": "禁忌",
+      "text": "Forbidden"
+    },
+    {
+      "key": "宇宙",
+      "text": "Cosmic"
+    },
+    {
+      "key": "只读视图 + 一键发放：每个线索指向哪些推论、全部配方与当前连接。仅开发用。",
+      "text": "Inspect evidence, deductions, recipes and current links. For development only."
+    },
+    {
+      "key": "获得全部线索和连接",
+      "text": "Grant all evidence and links"
+    },
+    {
+      "key": "再次点击确认清空",
+      "text": "Click again to confirm clearing"
+    },
+    {
+      "key": "清空全部推理数据",
+      "text": "Clear all investigation data"
+    },
+    {
+      "key": "关闭  ·  Esc",
+      "text": "Close · Esc"
+    },
+    {
+      "key": "线索总览",
+      "text": "Evidence overview"
+    },
+    {
+      "key": "全部连接",
+      "text": "All links"
+    },
+    {
+      "key": "配方规则",
+      "text": "Deduction recipes"
+    },
+    {
+      "key": "所有线索（即使未获得也显示）",
+      "text": "All evidence, including uncollected records"
+    },
+    {
+      "key": "[现场] ",
+      "text": "[Evidence] "
+    },
+    {
+      "key": "已获得",
+      "text": "Collected"
+    },
+    {
+      "key": "未获得",
+      "text": "Not collected"
+    },
+    {
+      "key": "来源：",
+      "text": "Source: "
+    },
+    {
+      "key": "[推论] ",
+      "text": "[Deduction] "
+    },
+    {
+      "key": "由：",
+      "text": "From: "
+    },
+    {
+      "key": "全部配方",
+      "text": "All recipes"
+    },
+    {
+      "key": "[已成立] ",
+      "text": "[Confirmed] "
+    },
+    {
+      "key": "[未建立] ",
+      "text": "[Not established] "
+    },
+    {
+      "key": "当前连线",
+      "text": "Current links"
+    },
+    {
+      "key": "待证",
+      "text": "Tentative"
+    },
+    {
+      "key": "当前没有任何连线。",
+      "text": "No links yet."
+    },
+    {
+      "key": "配方规则（数据来自 Investigation.json）",
+      "text": "Deduction recipes (Investigation.json)"
+    },
+    {
+      "key": "结果：",
+      "text": "Result: "
+    },
+    {
+      "key": "指向：",
+      "text": "Supports: "
+    },
+    {
+      "key": "指向：没有更多配方",
+      "text": "Supports: no further recipes"
+    }
+  ]
 }

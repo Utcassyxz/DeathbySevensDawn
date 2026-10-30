@@ -1,0 +1,1 @@
+PASS: 40 checks; tutorial policy, token proximity/consumption, early and late sealing, daily forms, room reload, save round-trip, legacy evidence, healthy day-seven ending, automatic transition, reset and awakened loop. Original player save restored.

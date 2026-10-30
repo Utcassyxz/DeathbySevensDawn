@@ -1,3 +1,4 @@
+// 职责：中英文文案目录加载、切换和反序列化结构；剧情文字统一从资源读取。
 using System;
 using UnityEngine;
 namespace DeathBySeventhsDawn.Story
@@ -17,41 +18,72 @@ namespace DeathBySeventhsDawn.Story
     // ============================================================================
     public static class StoryText
     {
-        public const string ResourcePath="StoryText";
+        public const string ResourcePath = "StoryText";
         static StoryTextData data;
         static bool english; public static bool English => english;
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] static void LoadLanguage(){english=PlayerPrefs.GetInt("Story.Language",0)==1;Reload();DeathBySeventhsDawn.Knowledge.Investigation.ReloadLanguage();}
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void LoadLanguage()
+        {
+            english = PlayerPrefs.GetInt("Story.Language", 0) == 1;
+            Reload();
+            DeathBySeventhsDawn.Knowledge.Investigation.ReloadLanguage();
+        }
         public static event Action LanguageChanged;
-        public static string Local(string chinese,string english)=>English?english:chinese;
-        public static void ToggleLanguage(){english=!english;PlayerPrefs.SetInt("Story.Language",english?1:0);PlayerPrefs.Save();Reload();DeathBySeventhsDawn.Knowledge.Investigation.ReloadLanguage();LanguageChanged?.Invoke();}
+        public static string Local(string chinese, string english) => English ? english : chinese;
+        public static string UI(string key)
+        {
+            var entries = Current.ui;
+            if (entries != null)
+                foreach (var entry in entries)
+                    if (entry.key == key)
+                        return entry.text;
+            return key;
+        }
+        public static void ToggleLanguage()
+        {
+            english = !english;
+            PlayerPrefs.SetInt("Story.Language", english ? 1 : 0);
+            PlayerPrefs.Save();
+            Reload();
+            DeathBySeventhsDawn.Knowledge.Investigation.ReloadLanguage();
+            LanguageChanged?.Invoke();
+        }
         public static StoryTextData Current
         {
             get
             {
-                if(data==null)
+                if (data == null)
                 {
-                    var asset=Resources.Load<TextAsset>(English?"StoryTextEnglish":ResourcePath);
-                    if(asset==null)
+                    var asset = Resources.Load<TextAsset>(English ? "StoryTextEnglish" : ResourcePath);
+                    if (asset == null)
                     {
                         Debug.LogError("StoryText.json 未找到：Assets/Resources/StoryText.json");
-                        data=new StoryTextData();
+                        data = new StoryTextData();
                     }
                     else
                     {
-                        try { data=JsonUtility.FromJson<StoryTextData>(asset.text); }
-                        catch(Exception ex) { Debug.LogError("StoryText.json 解析失败："+ex.Message); }
-                        if(data==null)data=new StoryTextData();
+                        try
+                        {
+                            data = JsonUtility.FromJson<StoryTextData>(asset.text);
+                        }
+                        catch (Exception ex) { Debug.LogError("StoryText.json 解析失败：" + ex.Message); }
+                        if (data == null)
+                            data = new StoryTextData();
                     }
                 }
                 return data;
             }
         }
-        public static void Reload(){data=null;}
-        public static string Value(string value,string fallback)=>string.IsNullOrEmpty(value)?fallback:value;
-        public static string[] Pages(string[] pages,params string[] fallback)=>pages!=null&&pages.Length>0?pages:fallback;
+        public static void Reload()
+        {
+            data = null;
+        }
+        public static string Value(string value, string fallback) => string.IsNullOrEmpty(value) ? fallback : value;
+        public static string[] Pages(string[] pages, params string[] fallback) => pages != null && pages.Length > 0 ? pages : fallback;
     }
 
-    [Serializable] public sealed class StoryTextData
+    [Serializable]
+    public sealed class StoryTextData
     {
         public MorningText morning;
         public CultText cult;
@@ -66,9 +98,13 @@ namespace DeathBySeventhsDawn.Story
         public MainMenuText mainMenu;
         public PauseText pause;
         public EndingText ending;
+        public EndingText worldEnd;
+        public RooftopText rooftop;
+        public UiTranslation[] ui;
     }
 
-    [Serializable] public sealed class DreamText
+    [Serializable]
+    public sealed class DreamText
     {
         public string title;
         public string[] pages;
@@ -78,7 +114,8 @@ namespace DeathBySeventhsDawn.Story
         public string fallbackPage;
     }
 
-    [Serializable] public sealed class KnowledgeText
+    [Serializable]
+    public sealed class KnowledgeText
     {
         public string ancientTitle;
         public string ancientBody;
@@ -88,7 +125,8 @@ namespace DeathBySeventhsDawn.Story
         public string fallbackBodyPrefix;
     }
 
-    [Serializable] public sealed class TelescopeText
+    [Serializable]
+    public sealed class TelescopeText
     {
         public string title;
         public string revelationTitle;
@@ -106,7 +144,8 @@ namespace DeathBySeventhsDawn.Story
         public string revelationClose;
     }
 
-    [Serializable] public sealed class FirstLoopText
+    [Serializable]
+    public sealed class FirstLoopText
     {
         public string news;
         public string flyer;
@@ -119,13 +158,16 @@ namespace DeathBySeventhsDawn.Story
         public string newsDefault;
     }
 
-    [Serializable] public sealed class BroadcastText
+    [Serializable]
+    public sealed class BroadcastText
     {
         public string kicker;
         public string kickerLate;
         public string title;
         public string lateFirstPage;
         public string[] pages;
+        public string[] images;
+        public string boring, narrator;
         public string journalTitle;
         public string journalBody;
         public string continuePrompt;
@@ -133,14 +175,16 @@ namespace DeathBySeventhsDawn.Story
         public string liveLabel;
     }
 
-    [Serializable] public sealed class PerceptionClueText
+    [Serializable]
+    public sealed class PerceptionClueText
     {
         public string id;
         public string title;
         public string body;
     }
 
-    [Serializable] public sealed class PerceptionText
+    [Serializable]
+    public sealed class PerceptionText
     {
         public string prompt;
         public string collect;
@@ -151,7 +195,8 @@ namespace DeathBySeventhsDawn.Story
         public PerceptionClueText balcony;
     }
 
-    [Serializable] public sealed class InvestigationEvidenceText
+    [Serializable]
+    public sealed class InvestigationEvidenceText
     {
         public string id;
         public string title;
@@ -159,7 +204,8 @@ namespace DeathBySeventhsDawn.Story
         public string source;
     }
 
-    [Serializable] public sealed class InvestigationDeductionText
+    [Serializable]
+    public sealed class InvestigationDeductionText
     {
         public string id;
         public string relation;
@@ -167,16 +213,19 @@ namespace DeathBySeventhsDawn.Story
         public string body;
     }
 
-    [Serializable] public sealed class InvestigationText
+    [Serializable]
+    public sealed class InvestigationText
     {
         public string[] relations;
         public InvestigationEvidenceText[] evidence;
         public InvestigationDeductionText[] deductions;
     }
 
-    [Serializable] public sealed class AquariumText
+    [Serializable]
+    public sealed class AquariumText
     {
-        public string question,answerGap,answerDefault;
+        public string question, answerGap, answerDefault;
+        public string offer, offerPrompt, throwFoil, sealedTitle, sealedBody, offerBefore, sealedBefore, waterPrompt;
         public string promptDay3;
         public string promptDay6;
         public string speakerDay3;
@@ -186,7 +235,8 @@ namespace DeathBySeventhsDawn.Story
         public string[] day6Pages;
     }
 
-    [Serializable] public sealed class MainMenuText
+    [Serializable]
+    public sealed class MainMenuText
     {
         public string title;
         public string subtitle;
@@ -197,7 +247,8 @@ namespace DeathBySeventhsDawn.Story
         public string footer;
     }
 
-    [Serializable] public sealed class PauseText
+    [Serializable]
+    public sealed class PauseText
     {
         public string title;
         public string subtitle;
@@ -207,7 +258,8 @@ namespace DeathBySeventhsDawn.Story
         public string hint;
     }
 
-    [Serializable] public sealed class EndingText
+    [Serializable]
+    public sealed class EndingText
     {
         public string title;
         public string[] lines;
@@ -218,4 +270,10 @@ namespace DeathBySeventhsDawn.Story
         public string cancel;
         public string returnToTitle;
     }
+}
+
+[Serializable]
+public sealed class UiTranslation
+{
+    public string key, text;
 }
