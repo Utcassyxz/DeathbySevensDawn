@@ -25,7 +25,7 @@ def save(name,a,peak):
  return {'seconds':len(a)/SR,'peak':float(np.max(np.abs(a))),'rms':float(np.sqrt(np.mean(a*a)))}
 music*=1.65
 stats={'TitleOrbit':save('TitleOrbit',music,.32)}
-t=np.arange(SR*12)/SR;p=np.clip((t-.25)/10,0,1);rng=np.random.default_rng(709)
+t=np.arange(SR*11)/SR;p=np.clip((t-1.4)/4.2,0,1);rng=np.random.default_rng(709)
 voices=np.zeros((len(t),2))
 for v in range(5):
  f=(180+v*37)+(210+v*19)*p+11*np.sin(t*(4.7+v*.17));phase=2*np.pi*np.cumsum(f)/SR
@@ -35,11 +35,16 @@ for v in range(5):
   hz=f*harmonic;weight=np.exp(-((hz-900)/340)**2)+.65*np.exp(-((hz-2400)/650)**2)
   vocal+=np.sin(phase*harmonic+v*.41)*weight/harmonic
  vocal+=rng.standard_normal(len(t))*.018*p
- envelope=(p**2.1)*np.minimum(1,np.maximum(0,(12-t)/1.1))*(.72+.14*np.sin(t*7+v))
+ release=np.clip((t-5.7)/2.4,0,1);release=1-release*release*(3-2*release)
+ envelope=(p**1.8)*release*(.72+.14*np.sin(t*7+v))
  voices[:,v%2]+=vocal*envelope*.17
 voices[:,0]+=np.roll(voices[:,1],int(.029*SR))*.2
 voices[:,1]+=np.roll(voices[:,0],int(.041*SR))*.2
+dry_voices=voices.copy()
+for delay,gain in [(.19,.23),(.43,.18),(.79,.13),(1.17,.09),(1.63,.06),(2.19,.035),(2.65,.018)]:
+ offset=int(delay*SR);voices[offset:]+=dry_voices[:-offset,::-1]*gain
+end=np.clip((11-t)/.6,0,1);voices*= (end*end*(3-2*end))[:,None]
 stats['OpeningScream']=save('OpeningScream',voices,.38)
-stats['crescendo_rms']=[float(np.sqrt(np.mean(voices[int(a*SR):int(b*SR)]**2))) for a,b in [(0,2),(4,6),(8,10)]]
-(OUT/'ENTRY_SCORE.md').write_text('# Entry audio\n\nTitleOrbit is a distinct 36-second, 80 BPM, 3/4 arrangement. Its chord cycle and E–G–A–G motif match the apartment score. All three loops start on the same DSP timestamp and keep running silently across menus. Equal-power gains crossfade for 4.5 seconds; beginning a journey never resets the shared music clock.\n\nOpeningScream is a layered, wordless synthetic vocal effect, with rising pitch and loudness, followed by a release tail. It is not a recording of a person. Both assets are original synthesis without external samples.\n\n'+json.dumps(stats,indent=2),encoding='utf-8')
+stats['crescendo_rms']=[float(np.sqrt(np.mean(voices[int(a*SR):int(b*SR)]**2))) for a,b in [(0,2),(3,5),(5.5,6.5),(9.5,11)]]
+(OUT/'ENTRY_SCORE.md').write_text('# Entry audio\n\nTitleOrbit is a distinct 36-second, 80 BPM, 3/4 arrangement. Its chord cycle and E–G–A–G motif match the apartment score. All three loops start on the same DSP timestamp and keep running silently across menus. Equal-power gains crossfade for 4.5 seconds; beginning a journey never resets the shared music clock.\n\nOpeningScream is a layered, wordless synthetic vocal effect, with a shorter rising vocal body (1.4–5.7s), a 2.4-second smooth release, and a decaying stereo echo tail that ends before the scene change. Skipping also fades the source over 1.8 seconds. It is not a recording of a person. Both assets are original synthesis without external samples.\n\n'+json.dumps(stats,indent=2),encoding='utf-8')
 print(json.dumps(stats))

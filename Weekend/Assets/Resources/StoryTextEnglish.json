@@ -45,8 +45,8 @@
     "news": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
     "flyer": "COVER YOUR WINDOWS.\nDo not trust the calm voices.\nSomething is coming from above.",
     "dayOneCaption": "The man from 401 presses a flyer against the wall. His lips keep moving.",
-    "startledCaption": "He sees me.\nThe tape sticks to his finger. He pulls it free and runs inside.",
-    "boardingCaption": "Another nail. Another board.\nHe does not answer.",
+    "startledCaption": "The hammer stops. He turns and looks straight at me.",
+    "boardingCaption": "The tenant of 401 is hammering a board across his door.",
     "chapterTitle": "Behind the sky",
     "chapterText": "I take my eye away.\n\nThe balcony is still here. So is the building opposite.\n\nI do not touch the focus ring again.",
     "newsDay1": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
@@ -287,9 +287,9 @@
     "answerDefault": "“On the desk. Same place.”"
   },
   "mainMenu": {
-    "title": "SEVENTH DAWN",
-    "subtitle": "DEATH BY SEVENTH’S DAWN",
-    "tagline": "One small light. Seven days.",
+    "title": "seven day",
+    "subtitle": "七日",
+    "tagline": "",
     "start": "BEGIN A NEW GAME",
     "quit": "Quit",
     "hint": "A new game erases the previous journey.",
@@ -320,11 +320,10 @@
   "cult": {
     "sound": "Three knocks through the wall. A pause. Then the hammer again.\nIt is coming from 401.",
     "dayOne": [
-      "“Inside. Go back inside.”",
-      "He keeps the hammer between us.",
-      "“Don’t come out. Don’t turn on the television.”",
-      "I ask what happened. He looks past my shoulder.",
-      "“You heard me. Go.”"
+      "“Go back. Now.”",
+      "His eyes pass over my shoulder, down the corridor.",
+      "“Stay inside. And leave the television off.”",
+      "He backs into 401 and pulls the door shut."
     ],
     "note": "DON’T ANSWER IT.\nIf it has already spoken, knock twice.\nThe last line has been scratched out.",
     "door": [

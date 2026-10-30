@@ -20,7 +20,8 @@ namespace DeathBySeventhsDawn.Progression
         float openingStarted;
         OpeningSky sky=new OpeningSky();
         int blockedUntilFrame=-1;
-        GUIStyle title,subtitle,tagline,button,small;
+        GUIStyle title,subtitle,button,small;
+        Texture2D plateNormal,plateHover,platePressed;
         Texture2D gradient,halo;
         Vector2[] stars;
         static readonly Color Ink=new Color(.91f,.89f,.80f),Muted=new Color(.62f,.66f,.60f),Gold=new Color(.78f,.68f,.42f);
@@ -78,15 +79,59 @@ namespace DeathBySeventhsDawn.Progression
             var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},32);
             title=new GUIStyle(GUI.skin.label){font=font,fontSize=62,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};title.normal.textColor=Ink;
             subtitle=new GUIStyle(title){fontSize=20,fontStyle=FontStyle.Normal};subtitle.normal.textColor=Gold;
-            tagline=new GUIStyle(title){fontSize=22,fontStyle=FontStyle.Normal};tagline.normal.textColor=Muted;
             button=new GUIStyle(GUI.skin.button){font=font,fontSize=23,alignment=TextAnchor.MiddleCenter,padding=new RectOffset(18,18,12,12)};
+            plateNormal=MakePlate(false,false);plateHover=MakePlate(true,false);platePressed=MakePlate(true,true);
+            button.border=new RectOffset(8,8,8,8);
+            button.normal.background=plateNormal;button.hover.background=plateHover;button.focused.background=plateHover;button.active.background=platePressed;
+            button.normal.textColor=Ink;button.hover.textColor=new Color(1,.96f,.81f);button.focused.textColor=button.hover.textColor;button.active.textColor=Gold;
             small=new GUIStyle(GUI.skin.label){font=font,fontSize=16,alignment=TextAnchor.MiddleCenter,wordWrap=true};small.normal.textColor=Muted;
+        }
+        // Small nine-sliced metal plates: a raised rim, recessed face and deterministic grain.
+        static Texture2D MakePlate(bool hover,bool pressed)
+        {
+            const int width=128,height=64;
+            var texture=new Texture2D(width,height,TextureFormat.RGBA32,false){filterMode=FilterMode.Point,wrapMode=TextureWrapMode.Clamp};
+            for(int y=0;y<height;y++)for(int x=0;x<width;x++)
+            {
+                int edge=Mathf.Min(Mathf.Min(x,width-1-x),Mathf.Min(y,height-1-y));
+                bool top=y>height/2;
+                float grain=(((x*73+y*137+x*y*3)%29)/28f-.5f)*.026f;
+                Color c=Color.Lerp(new Color(.075f,.105f,.105f),new Color(.19f,.23f,.22f),y/(float)(height-1));
+                if(hover)c+=new Color(.035f,.032f,.012f,0);
+                c+=new Color(grain,grain,grain,0);
+                if(edge==0)c=new Color(.035f,.035f,.03f);
+                else if(edge==1)c=new Color(.36f,.31f,.20f);
+                else if(edge<=3)c=top?new Color(.65f,.57f,.37f):new Color(.22f,.19f,.12f);
+                else if(edge==4)c=top?new Color(.10f,.12f,.11f):new Color(.34f,.34f,.26f);
+                else if(edge==5)c=new Color(.045f,.06f,.06f);
+                if(pressed){c=Color.Lerp(c,Color.black,.21f);if(edge>=2&&edge<=4)c=top?new Color(.14f,.13f,.10f):new Color(.46f,.40f,.27f);}
+                if(hover&&edge==2)c=Color.Lerp(c,new Color(.84f,.74f,.49f),.28f);
+                if((x<2||x>=width-2)&&(y<2||y>=height-2))c=Color.clear;
+                texture.SetPixel(x,y,c);
+            }
+            texture.Apply(false);return texture;
+        }
+        bool PlateButton(Rect rect,string text)
+        {
+            bool pressed=rect.Contains(Event.current.mousePosition)&&Mouse.current!=null&&Mouse.current.leftButton.isPressed;
+            Fill(new Rect(rect.x+3,rect.y+6,rect.width,rect.height),new Color(0,0,0,.55f));
+            Fill(new Rect(rect.x+2,rect.y+rect.height-2,rect.width-4,6),new Color(.10f,.085f,.055f));
+            button.contentOffset=pressed?new Vector2(0,2):Vector2.zero;
+            bool clicked=GUI.Button(rect,text,button);
+            foreach(float x in new[]{rect.x+13,rect.xMax-16})
+            {
+                var bolt=new Rect(x,rect.center.y-2+(pressed?2:0),3,3);
+                Fill(new Rect(bolt.x,bolt.y+1,3,3),new Color(.025f,.035f,.035f));
+                Fill(bolt,new Color(.44f,.40f,.28f));
+                Fill(new Rect(bolt.x,bolt.y,2,1),new Color(.68f,.60f,.41f));
+            }
+            return clicked;
         }
         static void Fill(Rect r,Color c){var old=GUI.color;GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=old;}
         void OnGUI()
         {
             if(!visible)return;
-            Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
+            Styles();
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Min(Screen.height/900f,Screen.width/1100f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-100;
             float w=Screen.width/scale,h=Screen.height/scale;
@@ -96,13 +141,12 @@ namespace DeathBySeventhsDawn.Progression
                 float progress=starting?Mathf.Clamp01((Time.unscaledTime-openingStarted)/11f):0;
                 GUI.DrawTexture(new Rect(0,0,w,h),sky.Render(Time.unscaledTime,progress),ScaleMode.ScaleAndCrop);
                 if(starting){GUI.Label(new Rect(0,h-45,w,30),StoryText.Local("跳过 · Esc","Skip · Esc"),small);if(Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame)FinishOpening();return;}
-                if(GUI.Button(new Rect(w-210,25,180,40),StoryText.English?"中文":"English",button))StoryText.ToggleLanguage();
-                GUI.Label(new Rect(0,h*.10f,w,90),StoryText.Current.mainMenu?.title??"第七日黎明",title);
-                GUI.Label(new Rect(0,h*.10f+86,w,32),StoryText.Current.mainMenu?.subtitle??"DEATH BY SEVENTH'S DAWN",subtitle);
-                GUI.Label(new Rect(0,h*.10f+128,w,34),StoryText.Current.mainMenu?.tagline??"时间会重置。知识不会。",tagline);
+                if(PlateButton(new Rect(w-210,25,180,44),StoryText.English?"中文":"English"))StoryText.ToggleLanguage();
+                GUI.Label(new Rect(0,h*.10f,w,90),StoryText.Current.mainMenu?.title??"七日",title);
+                GUI.Label(new Rect(0,h*.10f+86,w,32),StoryText.Current.mainMenu?.subtitle??"seven day",subtitle);
                 float bw=Mathf.Min(300,w-80);
-                if(GUI.Button(new Rect((w-bw)/2,h*.70f,bw,52),StoryText.Current.mainMenu?.start??"开 始 新 游 戏",button))StartGame();
-                if(GUI.Button(new Rect((w-220)/2,h*.70f+68,220,44),StoryText.Current.mainMenu?.quit??"退出游戏",button))QuitGame();
+                if(PlateButton(new Rect((w-bw)/2,h*.70f,bw,58),StoryText.Current.mainMenu?.start??"开 始 新 游 戏"))StartGame();
+                if(PlateButton(new Rect((w-bw)/2,h*.70f+78,bw,52),StoryText.Current.mainMenu?.quit??"退出游戏"))QuitGame();
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }
@@ -112,6 +156,7 @@ namespace DeathBySeventhsDawn.Progression
 #if UNITY_EDITOR
             UnityEditor.SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,false);
 #endif
+            if(plateNormal!=null)Destroy(plateNormal);if(plateHover!=null)Destroy(plateHover);if(platePressed!=null)Destroy(platePressed);
             sky.Dispose();if(gradient!=null)Destroy(gradient);if(halo!=null)Destroy(halo);
         }
     }

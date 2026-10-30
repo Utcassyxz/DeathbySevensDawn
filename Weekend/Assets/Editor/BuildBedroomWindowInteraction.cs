@@ -62,8 +62,8 @@ public static class BuildBedroomWindowInteraction
         var bedroom=EditorSceneManager.OpenScene(Rooms+"Bedroom.unity");
         var point=GameObject.Find("Bedroom window interaction");
         if(point==null)point=new GameObject("Bedroom window interaction");
-        point.transform.position=new Vector3(-.2f,1.10f,0);
-        var area=point.GetComponent<BoxCollider2D>();if(area==null)area=point.AddComponent<BoxCollider2D>();area.isTrigger=true;area.size=new Vector2(2.8f,1.3f);
+        point.transform.position=new Vector3(.55f,1.85f,0);
+        var area=point.GetComponent<BoxCollider2D>();if(area==null)area=point.AddComponent<BoxCollider2D>();area.isTrigger=true;area.size=new Vector2(1.25f,.4f);
         var lookout=point.GetComponent<WindowLookout2D>();if(lookout==null)lookout=point.AddComponent<WindowLookout2D>();lookout.Configure(sequence);
         EnsureTime();EditorSceneManager.MarkSceneDirty(bedroom);EditorSceneManager.SaveScene(bedroom);
         var living=EditorSceneManager.OpenScene(Rooms+"LivingRoom.unity");EnsureTime();

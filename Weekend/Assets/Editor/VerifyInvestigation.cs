@@ -55,6 +55,7 @@ public static class VerifyInvestigation
         background=Application.runInBackground;Application.runInBackground=true;keyboard=InputSystem.AddDevice<Keyboard>("InvestigationAcceptanceKeyboard");keyboard.MakeCurrent();
         yield return 5f;
         Check(State.neighborFlyersSeen&&!Investigation.Has("401-flyers"),"Encounter must not collect flyer");
+        for(int i=0;i<DeathBySeventhsDawn.Story.StoryText.Current.cult.dayOne.Length;i++)CultNeighbor.Instance.Advance();
         Place(new Vector2(-3.45f,1.05f));yield return .4f;Press(Key.E);yield return .4f;Release();
         Check(EvidenceInspection.Instance.IsOpen&&!Investigation.Has("401-flyers"),"Viewing flyer is not collection");Capture("flyer-before-collection");yield return .4f;
         Press(Key.Escape);yield return .4f;Release();yield return .3f;

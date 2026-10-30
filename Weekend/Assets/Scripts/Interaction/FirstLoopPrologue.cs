@@ -68,7 +68,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(clip!=Clip.None)
             {
                 elapsed+=Time.unscaledDeltaTime;
-                if(CultNeighbor.Instance!=null)CultNeighbor.Instance.Hammer();
+                if(clip==Clip.Boards&&elapsed<(TimeManager.Instance.Days==1?1.3f:2f))CultNeighbor.Instance?.Hammer();
                 if(clip==Clip.Flyers)
                 {
                     float run=Mathf.Clamp01((elapsed-2f)/.7f);
@@ -81,8 +81,9 @@ namespace DeathBySeventhsDawn.Interaction
                     {
                         float retreat=TimeManager.Instance.Days==1?0:Mathf.Clamp01((elapsed-2f)/.8f);
                         MoveActor(new Vector3(-4.1f,.98f,0),retreat);
+                        var head=actor.transform.Find("Head");if(head!=null&&TimeManager.Instance.Days==1)head.localRotation=Quaternion.Euler(0,0,elapsed>1.3f?-10:0);
                         var hammer=actor.transform.Find("Hammer head");
-                        if(hammer!=null)hammer.localRotation=Quaternion.Euler(0,0,retreat==0?Mathf.Sin(elapsed*16)*18:0);
+                        if(hammer!=null)hammer.localRotation=Quaternion.Euler(0,0,retreat==0&&elapsed<1.3f?Mathf.Sin(elapsed*16)*18:0);
                     }
                     for(int i=0;i<3;i++)if(boards[i]!=null)boards[i].SetActive(elapsed>(i+1)*.8f);
                     if(elapsed>=4.5f)FinishEncounter();
@@ -91,7 +92,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if(!entryPending||StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy)return;
             entryPending=false;var state=GameManager.Instance.State;
-            if(TimeManager.Instance.Days==1&&!state.neighborFlyersSeen)StartEncounter(Clip.Boards);
+            if(TimeManager.Instance.Days==1&&!state.cultDayOneTalked)StartEncounter(Clip.Boards);
             else if(TimeManager.Instance.Days>=2&&!state.neighborBarricadeSeen)StartEncounter(Clip.Boards);
         }
         void MoveActor(Vector3 start,float progress)
@@ -124,6 +125,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(clip==Clip.Flyers){state.neighborFlyersSeen=true;ProgressionSave.Write(state);}
             else {if(TimeManager.Instance.Days==1)state.neighborFlyersSeen=true;state.neighborBarricadeSeen=true;if(boards[3]!=null)boards[3].SetActive(true);ProgressionSave.Write(state);}
             clip=Clip.None;blockedUntilFrame=Time.frameCount;if(actor!=null){if(TimeManager.Instance.Days==1){actor.transform.position=new Vector3(-4.1f,.98f,0);foreach(var r in actorRenderers){var c=r.color;c.a=1;r.color=c;}}else Destroy(actor);}
+            if(TimeManager.Instance.Days==1&&!state.cultDayOneTalked)CultNeighbor.Instance?.TalkDayOne();
         }
         // 由电视确认按钮调用；看新闻仍只消耗电视原有的一个时段。
         public string WatchNews()
@@ -214,7 +216,7 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.color=new Color(.035f,.045f,.045f,.91f);GUI.DrawTexture(new Rect(left,height-148,panel,112),Texture2D.whiteTexture);
                     GUI.color=new Color(.55f,.60f,.48f,.8f);GUI.DrawTexture(new Rect(left,height-148,3,112),Texture2D.whiteTexture);GUI.color=color;
                     var loopText=StoryText.Current.firstLoop;
-                    GUI.Label(new Rect(left+26,height-138,panel-52,92),clip==Clip.Boards?(loopText?.boardingCaption??""):elapsed<2f?(loopText?.dayOneCaption??""):(loopText?.startledCaption??""),text);
+                    GUI.Label(new Rect(left+26,height-138,panel-52,92),clip==Clip.Boards?(TimeManager.Instance.Days==1&&elapsed>=1.3f?(loopText?.startledCaption??""):(loopText?.boardingCaption??"")):elapsed<2f?(loopText?.dayOneCaption??""):(loopText?.startledCaption??""),text);
                 }
             }
             finally {GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}

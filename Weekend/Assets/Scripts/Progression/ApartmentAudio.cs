@@ -30,7 +30,7 @@ namespace DeathBySeventhsDawn.Progression
             float angle=menuBlend*Mathf.PI*.5f,gameGain=Mathf.Cos(angle)*master*duck;
             home.volume=Mathf.Cos(blend*Mathf.PI*.5f)*gameGain;hidden.volume=Mathf.Sin(blend*Mathf.PI*.5f)*gameGain;
             float targetDuck=MainMenuUI.IsOpening?Mathf.Lerp(1,.38f,MainMenuUI.OpeningProgress):MainMenuUI.IsVisible?1:cinematicDuck;cinematicDuck=Mathf.MoveTowards(cinematicDuck,targetDuck,dt*.15f);title.volume=Mathf.Sin(angle)*master*.83f*cinematicDuck;
-            float screamTarget=opening?.7f:0;scream.volume=Mathf.MoveTowards(scream.volume,screamTarget,dt*(opening?.3f:2));if(!opening&&scream.volume<.001f&&scream.isPlaying)scream.Stop();
+            float screamTarget=opening?.7f:0;scream.volume=Mathf.MoveTowards(scream.volume,screamTarget,dt*(opening?.3f:.39f));if(!opening&&scream.volume<.001f&&scream.isPlaying)scream.Stop();
             if(!revelation)reveal.volume=Mathf.MoveTowards(reveal.volume,0,dt*.8f);
         }
         void OnDestroy(){if(Instance==this)Instance=null;}
