@@ -2,72 +2,66 @@
   "evidence": [
     {
       "id": "my-observation-notes",
-      "title": "我的观测手记",
-      "body": "书桌上的旧册子里，记着数月的星位、云量和观测时间。页角写着：“调焦环转半格，记得先遮住阳台灯。”\n\n笔迹是我的。时间记录断断续续，却一直没有停过。",
-      "source": "卧室 · 书桌",
       "image": ""
     },
     {
       "id": "apartment-telescope",
-      "title": "阳台的望远镜",
-      "body": "调焦环已被磨得发亮，三脚架脚边贴着对准北方的旧标记。镜筒上留着我的校准字迹，与桌上的观测记录相同。\n\n它不像临时摆在这里的装饰。我很熟悉它。",
-      "source": "阳台 · 望远镜",
       "image": ""
     },
     {
       "id": "401-flyers",
-      "title": "401 的传单",
-      "body": "传单上的字写得很用力：\n\n把窗户遮起来。不要相信那些平静的声音。\n天上有什么东西要来了。\n\n纸是新的，角落还留着刚按上去的胶带。",
-      "source": "走廊 · 401 门旁",
       "image": ""
     },
     {
       "id": "401-barricade",
-      "title": "被封死的 401",
-      "body": "第二天，401 的住户用木板封住了自己的门。木板是新钉的，缝隙也被遮住。\n\n他究竟是在阻挡别人进来，还是阻止自己看到外面？",
-      "source": "走廊 · 401 门口",
       "image": ""
     },
     {
       "id": "skt079-broadcast",
-      "title": "SKT-079 新闻摘录",
-      "body": "第二天新闻：代号 SKT-079 的超新星脉冲预计将扫过地球，可能带来不同程度的电子信号波动。\n\n播报中途声音失真，画面闪过横纹。新闻只提到信号，并没有提到活物。",
-      "source": "客厅 · 电视新闻",
       "image": ""
     },
     {
       "id": "balcony-telescope-day2-ancient-outline",
-      "title": "古神轮廓 · 回忆素描",
-      "body": "第二夜，我透过望远镜看见了天穹后的巨大轮廓。我试着凭记忆画下来，星点似乎沿它的边缘弯折。\n\n这是我当时所见的回忆，不是照片。它是什么，是否真实存在，都还没有独立证据。",
-      "source": "阳台 · 第二夜观测",
       "image": "Story/AncientOutlineSketch"
     },
     {
       "id": "bedroom-window-day2-observation",
-      "title": "第二天的窗外观察",
-      "body": "楼群和远处的天空似乎与第一天不同。我留下了观察记录，但没有仪器数据，尚不能确定变化的原因。",
-      "source": "卧室 · 窗户",
       "image": ""
     },
     {
       "id": "filter-bedroom-margins",
-      "title": "写在边缘的字",
-      "body": "桌角的旧刻痕：“不是星星在移动。是它的眼睛。”\n\n字迹在精神不稳定时才显露。不能把自己的感知直接当作事实。",
-      "source": "卧室 · 桌角",
       "image": ""
     },
     {
       "id": "filter-401-underprint",
-      "title": "传单的背面",
-      "body": "401 门旁的墙纸底下：“木板挡不住它。我只是不想再看见。”\n\n为什么刚才看不到？这句话的作者仍未确定。",
-      "source": "走廊 · 隐藏字迹",
       "image": ""
     },
     {
       "id": "filter-railing-tally",
-      "title": "栏杆上的刻痕",
-      "body": "七道很浅的刻痕，最后一道划过其余六道。下面刻着：“别数。”\n\n刻痕的含义和留下它的人都还不清楚。",
-      "source": "阳台 · 栏杆",
+      "image": ""
+    },
+    {
+      "id": "tank-label",
+      "image": ""
+    },
+    {
+      "id": "tank-eye",
+      "image": ""
+    },
+    {
+      "id": "tank-overflow",
+      "image": ""
+    },
+    {
+      "id": "001-name",
+      "image": ""
+    },
+    {
+      "id": "notes-gap",
+      "image": ""
+    },
+    {
+      "id": "403-silence",
       "image": ""
     }
   ],
@@ -75,50 +69,47 @@
     {
       "id": "deduction-astronomy",
       "left": "my-observation-notes",
-      "right": "apartment-telescope",
-      "relation": "习惯与身份",
-      "title": "我爱好天文",
-      "body": "连续数月的观测记录、熟悉的笔迹，以及经常调整的望远镜相互对应。这是我长期进行的爱好，并非今晚临时起意。"
+      "right": "apartment-telescope"
     },
     {
       "id": "deduction-optical",
       "left": "balcony-telescope-day2-ancient-outline",
-      "right": "apartment-telescope",
-      "relation": "观察工具",
-      "title": "轮廓来自一次望远镜观测",
-      "body": "素描回忆的是第二夜透过这台望远镜看到的轮廓，而非新闻中的图片。观察渠道明确了，但仪器误差、记忆失真和外界真实存在仍未区分。"
+      "right": "apartment-telescope"
     },
     {
       "id": "deduction-deliberate",
       "left": "deduction-astronomy",
-      "right": "deduction-optical",
-      "relation": "交叉印证",
-      "title": "我主动寻找了那片天空",
-      "body": "长期的天文爱好解释了我为什么会拿起望远镜。那次目击来自主动观测，然而熟悉仪器不等于不会看错。需要另一位目击者或独立记录。"
+      "right": "deduction-optical"
     },
     {
       "id": "deduction-warning",
       "left": "401-flyers",
-      "right": "skt079-broadcast",
-      "relation": "时间关联",
-      "title": "警告早于新闻",
-      "body": "第一天的传单早于第二天的新闻，两者都提及天空。401 可能提前听到了某种消息；目前不能断定他知道 SKT-079，更不能认定两件事有因果关系。"
+      "right": "skt079-broadcast"
     },
     {
       "id": "deduction-sealing",
       "left": "401-flyers",
-      "right": "401-barricade",
-      "relation": "行为动机",
-      "title": "他在照着自己的警告行动",
-      "body": "传单要求遮住窗户，第二天他又封住自己的门。文字与行动一致，但我们还不知道他究竟害怕什么。"
+      "right": "401-barricade"
     },
     {
       "id": "deduction-not-looking",
       "left": "401-barricade",
-      "right": "filter-401-underprint",
-      "relation": "交叉印证",
-      "title": "封门也许是为了不再看见",
-      "body": "隐藏的句子与遮住缝隙的行为相符，提示一种不同动机：回避目击。但字迹作者未知，我的精神状态也不稳定，这仍是一项有待核实的解释。"
+      "right": "filter-401-underprint"
+    },
+    {
+      "id": "deduction-tank-resident",
+      "left": "tank-label",
+      "right": "tank-eye"
+    },
+    {
+      "id": "deduction-waterline",
+      "left": "tank-overflow",
+      "right": "001-name"
+    },
+    {
+      "id": "deduction-book-reader",
+      "left": "notes-gap",
+      "right": "001-name"
     }
   ]
 }

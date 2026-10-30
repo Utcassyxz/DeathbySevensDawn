@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Interaction;
+using DeathBySeventhsDawn.Story;
 
 namespace DeathBySeventhsDawn.Progression
 {
@@ -53,14 +54,16 @@ namespace DeathBySeventhsDawn.Progression
             try
             {
                 GUI.color=new Color(.015f,.025f,.03f,.76f);GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=color;
-                float pw=Mathf.Min(430,w-48);var panel=new Rect((w-pw)/2,(h-380)/2,pw,380);
+                float pw=Mathf.Min(430,w-48);var panel=new Rect((w-pw)/2,(h-450)/2,pw,450);
                 GUI.color=new Color(.06f,.09f,.09f,.98f);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.color=color;
                 GUILayout.BeginArea(new Rect(panel.x+24,panel.y+22,panel.width-48,panel.height-44),box);
-                GUILayout.Label("暂  停",title);GUILayout.Space(8);GUILayout.Label("时间仍然停在这一刻。",small);GUILayout.Space(18);
-                if(GUILayout.Button("继续游戏",button,GUILayout.MinHeight(48)))Close();
-                if(GUILayout.Button("回到主页面",button,GUILayout.MinHeight(48)))ReturnToMain();
-                if(GUILayout.Button("退出游戏",button,GUILayout.MinHeight(48)))MainMenuUI.QuitGame();
-                GUILayout.Space(10);GUILayout.Label("Esc / E 继续",small);
+                var text=StoryText.Current.pause;
+                GUILayout.Label(text?.title??"暂  停",title);GUILayout.Space(8);GUILayout.Label(text?.subtitle??"时间仍然停在这一刻。",small);GUILayout.Space(18);
+                if(GUILayout.Button(text?.resume??"继续游戏",button,GUILayout.MinHeight(48)))Close();
+                if(GUILayout.Button(text?.returnToTitle??"回到主页面",button,GUILayout.MinHeight(48)))ReturnToMain();
+                if(GUILayout.Button(text?.quit??"退出游戏",button,GUILayout.MinHeight(48)))MainMenuUI.QuitGame();
+                if(GUILayout.Button(StoryText.English?"中文":"English",button,GUILayout.MinHeight(40)))StoryText.ToggleLanguage();
+                GUILayout.Space(10);GUILayout.Label(text?.hint??"Esc / E 继续",small);
                 GUILayout.EndArea();
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}

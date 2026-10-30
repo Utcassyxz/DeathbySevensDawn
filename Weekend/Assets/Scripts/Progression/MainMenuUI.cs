@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using DeathBySeventhsDawn.Core;
+using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
 
 namespace DeathBySeventhsDawn.Progression
@@ -13,6 +14,8 @@ namespace DeathBySeventhsDawn.Progression
         public static bool WorldBlocked => Instance!=null && (Instance.visible || Time.frameCount<=Instance.blockedUntilFrame);
         public static bool Suppressed => DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.Suppressed;
         bool visible,starting;
+        float openingStarted;
+        OpeningSky sky=new OpeningSky();
         int blockedUntilFrame=-1;
         GUIStyle title,subtitle,tagline,button,small;
         Texture2D gradient,halo;
@@ -32,17 +35,22 @@ namespace DeathBySeventhsDawn.Progression
         }
         void Update()
         {
-            if(!visible||starting)return;
+            if(!visible)return;
+            if(starting){if(Time.unscaledTime-openingStarted>=11f)FinishOpening();return;}
             var k=Keyboard.current;
             if(k!=null&&(k.enterKey.wasPressedThisFrame||k.spaceKey.wasPressedThisFrame))StartGame();
         }
         public void StartGame()
         {
-            if(!visible||starting)return;starting=true;visible=false;blockedUntilFrame=Time.frameCount;
+            if(!visible||starting)return;starting=true;openingStarted=Time.unscaledTime;
+        }
+        void FinishOpening()
+        {
+            visible=false;blockedUntilFrame=Time.frameCount;
             DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.ResetForNewRun();
             var game=GameManager.Instance;
-            if(game!=null&&game.HasEnded){game.StartNewJourney();starting=false;return;}
-            if(game!=null)game.Heal(game.MaxVitality);
+            // 新的一轮游戏：清空旧存档、知识、线索、剧情标记和轮回进度。
+            if(game!=null){game.StartNewJourney();starting=false;return;}
             if(TimeManager.Instance!=null)TimeManager.Instance.ResetToDayOne();
             if(Application.CanStreamedLevelBeLoaded("Bedroom"))SceneManager.LoadScene("Bedroom");
             else if(Application.CanStreamedLevelBeLoaded("LivingRoom"))SceneManager.LoadScene("LivingRoom");
@@ -77,22 +85,24 @@ namespace DeathBySeventhsDawn.Progression
             if(!visible)return;
             Styles();
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
-            float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-100;
+            float scale=Mathf.Min(Screen.height/900f,Screen.width/1100f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-100;
             float w=Screen.width/scale,h=Screen.height/scale;
             try
             {
-                GUI.color=Color.white;GUI.DrawTexture(new Rect(0,0,w,h),gradient);
-                var old=GUI.color;GUI.color=new Color(.62f,.72f,.86f,.10f);GUI.DrawTexture(new Rect(w*.5f-h*.55f,h*.18f-h*.5f,h*1.1f,h*1.1f),halo,ScaleMode.ScaleToFit);GUI.color=old;
-                for(int i=0;i<stars.Length;i++){float twinkle=.22f+.18f*Mathf.Sin(Time.unscaledTime*.7f+i*1.7f);Fill(new Rect(stars[i].x*w,stars[i].y*h*.78f,2,2),new Color(.82f,.84f,.78f,twinkle));}
-                GUI.Label(new Rect(0,h*.16f,w,90),"第七日黎明",title);
-                GUI.Label(new Rect(0,h*.16f+86,w,32),"DEATH BY SEVENTH'S DAWN",subtitle);
-                GUI.Label(new Rect(0,h*.16f+128,w,34),"时间会重置。知识不会。",tagline);
+                GUI.color=Color.white;
+                float progress=starting?Mathf.Clamp01((Time.unscaledTime-openingStarted)/11f):0;
+                GUI.DrawTexture(new Rect(0,0,w,h),sky.Render(Time.unscaledTime,progress),ScaleMode.ScaleAndCrop);
+                if(starting){GUI.Label(new Rect(0,h-45,w,30),StoryText.Local("跳过 · Esc","Skip · Esc"),small);if(Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame)FinishOpening();return;}
+                if(GUI.Button(new Rect(w-210,25,180,40),StoryText.English?"中文":"English",button))StoryText.ToggleLanguage();
+                GUI.Label(new Rect(0,h*.10f,w,90),StoryText.Current.mainMenu?.title??"第七日黎明",title);
+                GUI.Label(new Rect(0,h*.10f+86,w,32),StoryText.Current.mainMenu?.subtitle??"DEATH BY SEVENTH'S DAWN",subtitle);
+                GUI.Label(new Rect(0,h*.10f+128,w,34),StoryText.Current.mainMenu?.tagline??"时间会重置。知识不会。",tagline);
                 float bw=Mathf.Min(360,w-80);
-                if(GUI.Button(new Rect((w-bw)/2,h*.52f,bw,64),"开 始 游 戏",button))StartGame();
-                if(GUI.Button(new Rect((w-220)/2,h*.52f+82,220,46),"退出游戏",button))QuitGame();
-                string hint=GameManager.Instance!=null&&GameManager.Instance.HasEnded?"上次旅程已经结束。开始游戏会清除本轮进度，重新开始。":"开始后从第一天早晨继续；已经获得的知识会保留。";
-                GUI.Label(new Rect((w-Mathf.Min(720,w-60))/2,h*.52f+142,Mathf.Min(720,w-60),54),hint,small);
-                GUI.Label(new Rect(0,h-38,w,24),"游戏中按 Esc 暂停 · J 日记 · B 线索连线",small);
+                if(GUI.Button(new Rect((w-bw)/2,h*.70f,bw,64),StoryText.Current.mainMenu?.start??"开 始 新 游 戏",button))StartGame();
+                if(GUI.Button(new Rect((w-220)/2,h*.70f+82,220,46),StoryText.Current.mainMenu?.quit??"退出游戏",button))QuitGame();
+                string hint=StoryText.Current.mainMenu?.hint??"开始新游戏会清除之前的所有数据。";
+                GUI.Label(new Rect((w-Mathf.Min(720,w-60))/2,h*.70f+142,Mathf.Min(720,w-60),54),hint,small);
+                GUI.Label(new Rect(0,h-38,w,24),StoryText.Current.mainMenu?.footer??"游戏中按 Esc 暂停 · J 日记 · B 线索连线",small);
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }
@@ -102,7 +112,7 @@ namespace DeathBySeventhsDawn.Progression
 #if UNITY_EDITOR
             UnityEditor.SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,false);
 #endif
-            if(gradient!=null)Destroy(gradient);if(halo!=null)Destroy(halo);
+            sky.Dispose();if(gradient!=null)Destroy(gradient);if(halo!=null)Destroy(halo);
         }
     }
 }

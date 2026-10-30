@@ -1,6 +1,7 @@
 using UnityEngine;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
+using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -23,6 +24,7 @@ namespace DeathBySeventhsDawn.Progression
         {
             if(MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked) return;
             if(DeathBySeventhsDawn.Interaction.InvestigationDevTools.WorldBlocked) return;
+            if(DeathBySeventhsDawn.Interaction.AquariumEntity.WorldBlocked) return;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
             if(keyboard==null) return;
@@ -100,6 +102,7 @@ namespace DeathBySeventhsDawn.Progression
             if(game==null || clock==null) return;
             if(MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked) return;
             if(DeathBySeventhsDawn.Interaction.InvestigationDevTools.WorldBlocked) return;
+            if(DeathBySeventhsDawn.Interaction.AquariumEntity.WorldBlocked) return;
             PrepareStyles();
             var previousColor=GUI.color;
             // Scale with resolution, keeping large readable controls on high-DPI game views.
@@ -115,23 +118,22 @@ namespace DeathBySeventhsDawn.Progression
                     float endingWidth=Mathf.Min(820,width-24);
                     GUILayout.BeginArea(new Rect((width-endingWidth)/2,24,endingWidth,height-48),boxStyle);
                     scroll=GUILayout.BeginScrollView(scroll);
-                    GUILayout.Label("坏结局 1：无能的勇者",titleStyle);
+                    var ending=StoryText.Current.ending;
+                    GUILayout.Label(ending?.title??"坏结局 1：无能的勇者",titleStyle);
                     GUILayout.Space(24);
-                    GUILayout.Label("第七天终于到来。你记得每一次失败，也知道灾难将如何降临。",labelStyle);
-                    GUILayout.Label("但衰老已经耗尽了你的力量。你再也无法迈出拯救世界的那一步。",labelStyle);
-                    GUILayout.Label("勇者知道了一切，却什么也做不到。",labelStyle);
+                    if(ending?.lines!=null)foreach(var line in ending.lines)GUILayout.Label(line,labelStyle);
                     GUILayout.Space(20);
-                    GUILayout.Label($"历经 {game.LoopCount} 次轮回，体力上限 {game.MaxVitality:0.#}。\n本次旅程已结束，结局已保存。",labelStyle);
+                    GUILayout.Label(string.Format(ending?.summary??"历经 {0} 次轮回，体力上限 {1:0.#}。",game.LoopCount,game.MaxVitality),labelStyle);
                     GUILayout.Space(20);
                     if(!confirmNewJourney) {
-                        if(GUILayout.Button("重新开始旅程",buttonStyle)) confirmNewJourney=true;
+                        if(GUILayout.Button(ending?.restart??"重新开始旅程",buttonStyle)) confirmNewJourney=true;
                     } else {
-                        GUILayout.Label("重新开始会清除本次旅程的知识、变异和轮回进度。",labelStyle);
-                        if(GUILayout.Button("确认重新开始",buttonStyle)) { RestoreInitialState(); }
-                        if(GUILayout.Button("取消",buttonStyle)) confirmNewJourney=false;
+                        GUILayout.Label(ending?.confirmWarning??"重新开始会清除本次旅程的知识、变异和轮回进度。",labelStyle);
+                        if(GUILayout.Button(ending?.confirm??"确认重新开始",buttonStyle)) { RestoreInitialState(); }
+                        if(GUILayout.Button(ending?.cancel??"取消",buttonStyle)) confirmNewJourney=false;
                     }
                     GUILayout.Space(10);
-                    if(GUILayout.Button("回到主页面",buttonStyle)) MainMenuUI.ReturnToMainMenu();
+                    if(GUILayout.Button(ending?.returnToTitle??"回到主页面",buttonStyle)) MainMenuUI.ReturnToMainMenu();
                     GUILayout.EndScrollView(); GUILayout.EndArea();
                 } else if(debugOpen) {
                     GUI.color=new Color(0,0,0,.88f);

@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -23,7 +24,7 @@ namespace DeathBySeventhsDawn.Interaction
         int openedFrame,blockedUntilFrame=-1;
         FirstLoopPrologueContent content;
         GameObject scenery,actor;
-        readonly GameObject[] boards=new GameObject[3];
+        readonly GameObject[] boards=new GameObject[4];
         Sprite square;Texture2D pixel;Material material;
         GUIStyle text,title,button;
         bool FirstLoop => GameManager.Instance!=null&&GameManager.Instance.LoopCount==0&&!GameManager.Instance.HasEnded;
@@ -82,7 +83,7 @@ namespace DeathBySeventhsDawn.Interaction
                         var hammer=actor.transform.Find("Hammer head");
                         if(hammer!=null)hammer.localRotation=Quaternion.Euler(0,0,retreat==0?Mathf.Sin(elapsed*16)*18:0);
                     }
-                    for(int i=0;i<boards.Length;i++)if(boards[i]!=null)boards[i].SetActive(elapsed>(i+1)*.8f);
+                    for(int i=0;i<3;i++)if(boards[i]!=null)boards[i].SetActive(elapsed>(i+1)*.8f);
                     if(elapsed>=4.5f)FinishEncounter();
                 }
                 return;
@@ -120,16 +121,17 @@ namespace DeathBySeventhsDawn.Interaction
         {
             var state=GameManager.Instance.State;
             if(clip==Clip.Flyers){state.neighborFlyersSeen=true;ProgressionSave.Write(state);}
-            else {state.neighborBarricadeSeen=true;ProgressionSave.Write(state);}
+            else {state.neighborBarricadeSeen=true;if(boards[3]!=null)boards[3].SetActive(true);ProgressionSave.Write(state);}
             clip=Clip.None;blockedUntilFrame=Time.frameCount;if(actor!=null)Destroy(actor);
         }
         // 由电视确认按钮调用；看新闻仍只消耗电视原有的一个时段。
         public string WatchNews()
         {
-            if(!FirstLoop)return "新闻与杂音交替闪过。屏幕里暂时没有新的消息。";
-            if(TimeManager.Instance.Days!=2)return TimeManager.Instance.Days==1?"电视里只有杂音。屏幕闪了几下，又暗下去。\n\n我总觉得它没有真正关掉。":"新闻与杂音交替闪过。屏幕里暂时没有新的消息。";
+            var text=StoryText.Current.firstLoop;
+            if(!FirstLoop)return text?.newsDefault??"新闻与杂音交替闪过。屏幕里暂时没有新的消息。";
+            if(TimeManager.Instance.Days!=2)return TimeManager.Instance.Days==1?(text?.newsDay1??"电视里只有杂音。"):(text?.newsDefault??"新闻与杂音交替闪过。");
             GameManager.Instance.State.skt079NewsSeen=true;
-            ProgressionSave.Write(GameManager.Instance.State);return content.news;
+            ProgressionSave.Write(GameManager.Instance.State);return text?.news??"";
         }
         public bool BeginPrologue()
         {
@@ -140,7 +142,8 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(!titleOpen)return;
             GameManager.Instance.State.prologueEntered=true;titleOpen=false;blockedUntilFrame=Time.frameCount;
-            Record("prologue-entry","天穹之后",content.chapterText);
+            var text=StoryText.Current.firstLoop;
+            Record("prologue-entry",text?.chapterTitle??"天穹之后",text?.chapterText??"");
         }
         void Record(string id,string heading,string body)
         {
@@ -169,6 +172,10 @@ namespace DeathBySeventhsDawn.Interaction
                 boards[i]=plank;plank.SetActive(visible);
                 for(int nail=0;nail<2;nail++)Part("Nail",i==2?0:(nail==0?-.58f:.58f),i==2?(nail==0?-.21f:.21f):0,.028f,.028f,new Color(.18f,.19f,.18f),15,plank.transform,true);
             }
+            // 邻居钉完门后，门下方又会多出一块从里面补上的木板。
+            var extra=Part("401 barricade plank extra",-4.48f,1.16f,1.08f,.12f,new Color(.38f,.25f,.14f),14,scenery.transform);
+            boards[3]=extra;extra.SetActive(visible);
+            Part("Nail",-4.05f,1.16f,.028f,.028f,new Color(.18f,.19f,.18f),15,extra.transform,true);
         }
         GameObject Part(string name,float x,float y,float width,float height,Color color,int order,Transform parent,bool local=false)
         {
@@ -196,8 +203,8 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     GUI.color=new Color(.025f,.035f,.045f,1);GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture);GUI.color=new Color(.88f,.87f,.79f,Mathf.SmoothStep(0,1,titleElapsed/.8f));
                     float panel=Mathf.Min(850,width-48);GUI.Label(new Rect((width-panel)/2,height*.18f,panel,50),"序  章",text);
-                    GUI.Label(new Rect((width-panel)/2,height*.29f,panel,80),content.chapterTitle,title);
-                    GUI.Label(new Rect((width-panel)/2,height*.44f,panel,180),content.chapterText,text);
+                    GUI.Label(new Rect((width-panel)/2,height*.29f,panel,80),StoryText.Current.firstLoop?.chapterTitle??"天穹之后",title);
+                    GUI.Label(new Rect((width-panel)/2,height*.44f,panel,180),StoryText.Current.firstLoop?.chapterText??"",text);
                     if(GUI.Button(new Rect(width/2-160,height*.78f,320,58),"进入序章  ·  E / Enter",button))EnterPrologue();
                 }
                 else
@@ -205,7 +212,8 @@ namespace DeathBySeventhsDawn.Interaction
                     float panel=Mathf.Min(860,width-48),left=(width-panel)/2;
                     GUI.color=new Color(.035f,.045f,.045f,.91f);GUI.DrawTexture(new Rect(left,height-148,panel,112),Texture2D.whiteTexture);
                     GUI.color=new Color(.55f,.60f,.48f,.8f);GUI.DrawTexture(new Rect(left,height-148,3,112),Texture2D.whiteTexture);GUI.color=color;
-                    GUI.Label(new Rect(left+26,height-138,panel-52,92),clip==Clip.Boards?content.boardingCaption:elapsed<2f?content.dayOneCaption:content.startledCaption,text);
+                    var loopText=StoryText.Current.firstLoop;
+                    GUI.Label(new Rect(left+26,height-138,panel-52,92),clip==Clip.Boards?(loopText?.boardingCaption??""):elapsed<2f?(loopText?.dayOneCaption??""):(loopText?.startledCaption??""),text);
                 }
             }
             finally {GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}

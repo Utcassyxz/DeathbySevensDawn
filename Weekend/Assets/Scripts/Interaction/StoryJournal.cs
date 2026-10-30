@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -15,7 +16,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame=-1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked;
+        public static bool WorldBlocked => modalOpen || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked;
         enum Page { None, Dream, Diary, Telescope }
         Page page;
         StoryContent content;
@@ -25,6 +26,8 @@ namespace DeathBySeventhsDawn.Interaction
         bool nearby, revelation;
         string telescopeMessage;
         Texture2D ancientImage;
+        Texture2D[] dreamImages;
+        bool dreamImagesLoaded;
         GUIStyle text,title,button;
         readonly JournalNotebookUI notebook=new JournalNotebookUI();
         readonly InvestigationBoardUI board=new InvestigationBoardUI();
@@ -83,7 +86,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(game==null) return;
             if(game.HasEnded) { SetPage(Page.None); return; }
             if(!game.State.dreamSeen && page!=Page.Dream) { dreamPage=0; SetPage(Page.Dream); }
-            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
+            if(ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
             bool diary=false,interact=false,cancel=false; int diaryStep=0;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
@@ -124,7 +127,11 @@ namespace DeathBySeventhsDawn.Interaction
             var state=GameManager.Instance.State;
             state.dreamSeen=true;
             bool addedDream=!state.journal.Exists(e=>e!=null && e.id=="opening-dream");
-            if(addedDream) state.journal.Add(new JournalEntry {id="opening-dream",title="梦里的蚁穴",body="我梦见小时候与父母争吵，愤怒中踹塌了一个蚁穴。随后，我看见黑暗里有什么东西抬起了脚。\n\n醒来时，我的心跳仍未平复。",isKnowledge=false,day=1,loop=state.loopCount});
+            if(addedDream)
+            {
+                var dream=StoryText.Current.dream;
+                state.journal.Add(new JournalEntry {id="opening-dream",title=dream?.journalTitle??"梦里的蚁穴",body=dream?.journalBody??"",isKnowledge=false,day=1,loop=state.loopCount});
+            }
             ProgressionSave.Write(state);
             if(addedDream) JournalUpdates.NotifyAdded(state.journal[state.journal.Count-1]);
             SetPage(Page.None);
@@ -145,13 +152,14 @@ namespace DeathBySeventhsDawn.Interaction
         void ObserveTelescope()
         {
             var clock=TimeManager.Instance;
+            var text=StoryText.Current.telescope;
             revelation=false;
-            if(!IsNight(clock.Period)) telescopeMessage="白天的光太强，镜头里只有刺眼的反光。\n等到傍晚或深夜，再来使用望远镜。";
-            else if(clock.Days!=2) telescopeMessage="我调整了焦距。远处只有沉默的楼群与星光。\n今晚，没有发现新的异常。";
+            if(!IsNight(clock.Period)) telescopeMessage=text?.nightOnly??"白天的光太强，镜头里只有刺眼的反光。";
+            else if(clock.Days!=2) telescopeMessage=text?.wrongDay??"我调整了焦距。远处只有沉默的楼群与星光。";
             else {
                 revelation=true;
                 bool gained=KnowledgeManager.Instance.Observe(StoryContent.AncientKnowledgeId,content.ancientGodTier);
-                telescopeMessage=content.discoveryText+ (gained?"\n\n我的手在发抖。要趁记忆清楚，画下它的轮廓吗？":"\n\n又是那道轮廓。我可以试着把它画下来。");
+                telescopeMessage=(StoryText.Current.knowledge?.ancientBody??"")+(gained?(text?.gainedSuffix??""):(text?.repeatSuffix??""));
             }
             SetPage(Page.Telescope);
         }
@@ -188,7 +196,7 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             var game=GameManager.Instance;
-            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
+            if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
             Styles(); var matrix=GUI.matrix; var color=GUI.color;
             float scale=Mathf.Min(Screen.height/900f,Screen.width/1100f);
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
@@ -204,7 +212,7 @@ namespace DeathBySeventhsDawn.Interaction
                     if(GUI.Button(new Rect(260,18,190,48),"合上 · J / Esc",button))SetPage(Page.None);
                     return; }
                 if(page==Page.None) {
-                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,85),(JournalUpdates.UnreadCount>0?"J  日记 · "+JournalUpdates.UnreadCount+" 条未读":"J  翻开日记")+"\nB  线索连线",text);
+                    if(!FurnitureInteraction.IsBusy) GUI.Label(new Rect(Mathf.Max(12,width-335),12,320,85),(JournalUpdates.UnreadCount>0?DeathBySeventhsDawn.Story.StoryText.Local("J  日记 · ","J  Journal \u00b7 ")+JournalUpdates.UnreadCount+DeathBySeventhsDawn.Story.StoryText.Local(" 条未读"," unread"):DeathBySeventhsDawn.Story.StoryText.Local("J  翻开日记","J  Journal"))+DeathBySeventhsDawn.Story.StoryText.Local("\nB  线索连线","\nB  Evidence board"),text);
                     if(nearby) GUI.Label(new Rect(12,height-100,width-24,80),"E  查看望远镜",text);
                     return;
                 }
@@ -216,22 +224,25 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.BeginArea(new Rect((width-panel)/2,top,panel,height-top-24));
                 scroll=GUILayout.BeginScrollView(scroll);
                 if(page==Page.Dream) {
-                    GUILayout.Space(50); GUILayout.Label("梦 · 蚁穴",title);
-                    var pages=content.dreamPages;
-                    GUILayout.Label(pages!=null && pages.Length>0?pages[Mathf.Clamp(dreamPage,0,pages.Length-1)]:"我从一个关于蚁穴的梦中惊醒。",text);
+                    var dream=StoryText.Current.dream;
+                    GUILayout.Space(50); GUILayout.Label(dream?.title??"梦 · 蚁穴",title);
+                    DrawDreamImage(panel-48);
+                    var pages=StoryText.Pages(dream?.pages,dream?.fallbackPage??"我从一个关于蚁穴的梦中惊醒。");
+                    GUILayout.Label(pages[Mathf.Clamp(dreamPage,0,pages.Length-1)],text);
                     GUILayout.Space(30);
-                    bool last=pages==null || dreamPage>=pages.Length-1;
+                    bool last=dreamPage>=pages.Length-1;
                     if(GUILayout.Button(last?"醒 来  →":"继 续  →",button)) { if(last) WakeUp(); else {dreamPage++; scroll=Vector2.zero;} }
                 } else {
-                    GUILayout.Label(revelation?"第二夜 · 天穹后的轮廓":"望远镜",title);
+                    var telescopeText=StoryText.Current.telescope;
+                    GUILayout.Label(revelation?(telescopeText?.revelationTitle??"第二夜 · 天穹后的轮廓"):(telescopeText?.title??"望远镜"),title);
                     if(revelation) DrawImage(ancientImage,panel-48);
                     GUILayout.Label(telescopeMessage,text);
                     if(!revelation) {
-                        if(!Investigation.Has("apartment-telescope")&&GUILayout.Button("收录望远镜 · R",button))CollectTelescopeEvidence();
-                        else if(Investigation.Has("apartment-telescope"))GUILayout.Label("望远镜已收录",text);
-                        if(GUILayout.Button("透过镜头观察 · T",button))ObserveTelescope();
+                        if(!Investigation.Has("apartment-telescope")&&GUILayout.Button(telescopeText?.collect??"收录望远镜 · R",button))CollectTelescopeEvidence();
+                        else if(Investigation.Has("apartment-telescope"))GUILayout.Label(telescopeText?.collected??"望远镜已收录",text);
+                        if(GUILayout.Button(telescopeText?.observe??"透过镜头观察 · T",button))ObserveTelescope();
                     }
-                    if(GUILayout.Button("移开视线（E / Esc）",button)) CloseTelescope();
+                    if(GUILayout.Button(telescopeText?.close??"移开视线（E / Esc）",button)) CloseTelescope();
                 }
                 GUILayout.EndScrollView(); GUILayout.EndArea();
             } finally { GUI.matrix=matrix; GUI.color=color; GUI.depth=0; }
@@ -243,14 +254,29 @@ namespace DeathBySeventhsDawn.Interaction
             float footer=Mathf.Min(310,height*.4f);
             if(ancientImage!=null)GUI.DrawTexture(new Rect(0,0,width,height-footer),ancientImage,ScaleMode.ScaleToFit);
             float panel=Mathf.Min(1150,width-48);GUILayout.BeginArea(new Rect((width-panel)/2,height-footer+8,panel,footer-16));
-            scroll=GUILayout.BeginScrollView(scroll);GUILayout.Label("第二夜 · 天穹后的轮廓",title);GUILayout.Label(telescopeMessage,text);GUILayout.EndScrollView();
-            if(!Investigation.Has(StoryContent.AncientKnowledgeId)) { if(GUILayout.Button("画下轮廓，收进笔记 · R",button,GUILayout.Height(48)))CollectTelescopeEvidence(); }
-            else GUILayout.Label("轮廓已收录",text);
-            if(GUILayout.Button("移开视线  ·  E / Esc",button,GUILayout.Height(48)))CloseTelescope();GUILayout.EndArea();
+            var telescopeText=StoryText.Current.telescope;
+            scroll=GUILayout.BeginScrollView(scroll);GUILayout.Label(telescopeText?.revelationTitle??"第二夜 · 天穹后的轮廓",title);GUILayout.Label(telescopeMessage,text);GUILayout.EndScrollView();
+            if(!Investigation.Has(StoryContent.AncientKnowledgeId)) { if(GUILayout.Button(telescopeText?.revelationCollect??"画下轮廓，收进笔记 · R",button,GUILayout.Height(48)))CollectTelescopeEvidence(); }
+            else GUILayout.Label(telescopeText?.revelationCollected??"轮廓已收录",text);
+            if(GUILayout.Button(telescopeText?.revelationClose??"移开视线  ·  E / Esc",button,GUILayout.Height(48)))CloseTelescope();GUILayout.EndArea();
+        }
+        void DrawDreamImage(float maxWidth)
+        {
+            if(!dreamImagesLoaded)
+            {
+                dreamImagesLoaded=true;
+                var paths=StoryText.Current.dream?.images;
+                dreamImages=new Texture2D[paths?.Length??0];
+                for(int i=0;i<dreamImages.Length;i++) if(!string.IsNullOrEmpty(paths[i])) dreamImages[i]=Resources.Load<Texture2D>(paths[i]);
+            }
+            if(dreamImages==null||dreamImages.Length==0)return;
+            var image=dreamImages[Mathf.Clamp(dreamPage,0,dreamImages.Length-1)];
+            if(image!=null) DrawImage(image,maxWidth);
+            else GUILayout.Label("（梦境占位图未加载）",text);
         }
         void DrawImage(Texture image,float maxWidth)
         {
-            if(image==null) { GUILayout.Label("古神图像未加载，请检查 Resources/Story/AncientGodDay2。",text); return; }
+            if(image==null) { GUILayout.Label(StoryText.Current.telescope?.imageMissing??"图像未加载。",text); return; }
             float imageHeight=Mathf.Min(420,maxWidth*image.height/image.width);
             var rect=GUILayoutUtility.GetRect(maxWidth,imageHeight);
             GUI.DrawTexture(rect,image,ScaleMode.ScaleToFit);

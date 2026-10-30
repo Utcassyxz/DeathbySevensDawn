@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
 
 namespace DeathBySeventhsDawn.Knowledge
@@ -29,8 +30,52 @@ namespace DeathBySeventhsDawn.Knowledge
     public static class Investigation
     {
         static InvestigationCatalog catalog;
-        public static InvestigationCatalog Catalog => catalog ?? (catalog=JsonUtility.FromJson<InvestigationCatalog>(Resources.Load<TextAsset>("Investigation").text));
-        public static readonly string[] Relations={"习惯与身份","观察工具","时间关联","行为动机","交叉印证"};
+        public static void ReloadLanguage(){catalog=null;}
+        public static string LocalTitle(string id,string fallback){var e=Evidence(id);if(e!=null)return e.title;var d=Array.Find(Catalog.deductions,x=>x.id==id);if(d!=null)return d.title;var s=StoryText.Current;if(id=="opening-dream")return s.dream.journalTitle;if(id.Contains("broadcast"))return s.dayOneBroadcast.journalTitle;return fallback;}
+        public static string LocalBody(string id,string fallback){var e=Evidence(id);if(e!=null)return e.body;var d=Array.Find(Catalog.deductions,x=>x.id==id);if(d!=null)return d.body;var s=StoryText.Current;if(id=="opening-dream")return s.dream.journalBody;return fallback;}
+        public static InvestigationCatalog Catalog
+        {
+            get
+            {
+                if(catalog!=null)return catalog;
+                var asset=Resources.Load<TextAsset>("Investigation");
+                catalog=asset!=null?JsonUtility.FromJson<InvestigationCatalog>(asset.text):new InvestigationCatalog();
+                if(catalog==null)catalog=new InvestigationCatalog();
+                ApplyStoryText(catalog);
+                return catalog;
+            }
+        }
+        static void ApplyStoryText(InvestigationCatalog target)
+        {
+            // 文案统一放在 Resources/StoryText.json；Investigation.json 只保留结构 id。
+            var text=StoryText.Current.investigation;
+            if(text==null)return;
+            if(target.evidence!=null&&text.evidence!=null)
+                foreach(var entry in target.evidence)
+                {
+                    if(entry==null)continue;
+                    var copy=Array.Find(text.evidence,e=>e!=null&&e.id==entry.id);
+                    if(copy==null)continue;
+                    entry.title=copy.title;entry.body=copy.body;entry.source=copy.source;
+                }
+            if(target.deductions!=null&&text.deductions!=null)
+                foreach(var entry in target.deductions)
+                {
+                    if(entry==null)continue;
+                    var copy=Array.Find(text.deductions,d=>d!=null&&d.id==entry.id);
+                    if(copy==null)continue;
+                    entry.relation=copy.relation;entry.title=copy.title;entry.body=copy.body;
+                }
+        }
+        static readonly string[] FallbackRelations={"习惯与身份","观察工具","时间关联","行为动机","交叉印证"};
+        public static string[] Relations
+        {
+            get
+            {
+                var relations=StoryText.Current.investigation?.relations;
+                return relations!=null&&relations.Length>0?relations:FallbackRelations;
+            }
+        }
         static ProgressionState State => GameManager.Instance.State;
         public static void Normalize(ProgressionState state)
         {
@@ -136,7 +181,7 @@ namespace DeathBySeventhsDawn.Knowledge
             if(removed)ProgressionSave.Write(State);
             return removed;
         }
-        public static string Title(string id)=>State.journal.Find(e=>e!=null&&e.id==id)?.title??"未收录";
+        public static string Title(string id)=>LocalTitle(id,State.journal.Find(e=>e!=null&&e.id==id)?.title??StoryText.Local("未收录","Not recorded"));
         public static IReadOnlyList<InvestigationLink> Links=>State.investigationLinks;
     }
 }

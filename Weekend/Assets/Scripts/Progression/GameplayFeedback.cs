@@ -37,19 +37,19 @@ namespace DeathBySeventhsDawn.Progression
         }
         void OnJournalAdded(JournalEntry entry)
         {
-            journalMessage="日记已更新："+entry.title+"  · J 查看";
+            journalMessage=DeathBySeventhsDawn.Story.StoryText.Local("日记已更新：","Journal updated: ")+Investigation.LocalTitle(entry.id,entry.title)+DeathBySeventhsDawn.Story.StoryText.Local("  · J 查看"," · J Read");
             journalRemaining=Duration;
         }
         void OnTimeChanged(int day,TimePeriod period)
         {
             if(day==previousDay && period==previousPeriod)return;
             previousDay=day;previousPeriod=period;
-            timeMessage="第 "+day+" 天 · "+PeriodName(period);
+            timeMessage=DeathBySeventhsDawn.Story.StoryText.Local("第 ","Day ")+day+DeathBySeventhsDawn.Story.StoryText.Local(" 天 · "," · ")+PeriodName(period);
             timeRemaining=Duration;
         }
         public static string PeriodName(TimePeriod period)
         {
-            switch(period) { case TimePeriod.Morning:return "早晨";case TimePeriod.Afternoon:return "午后";case TimePeriod.Evening:return "傍晚";default:return "深夜"; }
+            switch(period) { case TimePeriod.Morning:return DeathBySeventhsDawn.Story.StoryText.Local("早晨","Morning");case TimePeriod.Afternoon:return DeathBySeventhsDawn.Story.StoryText.Local("午后","Afternoon");case TimePeriod.Evening:return DeathBySeventhsDawn.Story.StoryText.Local("傍晚","Evening");default:return DeathBySeventhsDawn.Story.StoryText.Local("深夜","Night"); }
         }
         bool Hidden()
         {

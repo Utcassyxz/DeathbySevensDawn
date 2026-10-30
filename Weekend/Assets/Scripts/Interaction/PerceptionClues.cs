@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Story;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -26,13 +27,15 @@ namespace DeathBySeventhsDawn.Interaction
         void Loaded(Scene scene,LoadSceneMode mode)
         {
             ResetReading();if(marker!=null)Destroy(marker);marker=null;id=null;player=GameObject.FindWithTag("Player");
+            PerceptionClueText clue=null;
             switch(scene.name)
             {
-                case "Bedroom":id="filter-bedroom-margins";heading="写在边缘的字";position=new Vector2(1.8f,-1.45f);body="桌角那几道划痕，原来是一行挤在一起的小字。\n\n“不是星星在移动。是它的眼睛。”\n\n我用手指沿着字迹摸了一遍。刻痕已经很旧了。";break;
-                case "Corridor":id="filter-401-underprint";heading="传单的背面";position=new Vector2(-3.45f,1.25f);body="401 门旁的墙纸底下，还有一层字。\n\n“木板挡不住它。我只是不想再看见。”\n\n传单上的墨迹没有变，为什么刚才我读不到这一句？";break;
-                case "Balcony":id="filter-railing-tally";heading="栏杆上的刻痕";position=new Vector2(-1.5f,-1.1f);body="栏杆上有七道很浅的刻痕。最后一道划过其余六道。\n\n下面刻着两个字：\n\n“别数。”";break;
+                case "Bedroom":clue=StoryText.Current.perception?.bedroom;position=new Vector2(1.8f,-1.45f);break;
+                case "Corridor":clue=StoryText.Current.perception?.corridor;position=new Vector2(-3.45f,1.25f);break;
+                case "Balcony":clue=StoryText.Current.perception?.balcony;position=new Vector2(-1.5f,-1.1f);break;
             }
-            if(id==null)return;
+            if(clue==null||string.IsNullOrEmpty(clue.id))return;
+            id=clue.id;heading=clue.title;body=clue.body;
             marker=new GameObject("Perception clue - "+id);SceneManager.MoveGameObjectToScene(marker,scene);marker.transform.position=position;
             if(sprite==null){pixel=new Texture2D(1,1);pixel.SetPixel(0,0,Color.white);pixel.Apply();sprite=Sprite.Create(pixel,new Rect(0,0,1,1),Vector2.one*.5f,1);}
             // Pixel-sized scratches only: no scene palette, camera or collider changes.
@@ -74,13 +77,14 @@ namespace DeathBySeventhsDawn.Interaction
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float w=Screen.width/scale,h=Screen.height/scale;
             try
             {
-                if(!reading){GUI.Label(new Rect(w/2-210,h-80,420,60),"E  辨认那些痕迹",button);return;}
+                if(!reading){var prompt=StoryText.Current.perception?.prompt??"E  辨认那些痕迹";GUI.Label(new Rect(w/2-210,h-80,420,60),prompt,button);return;}
                 GUI.depth=-35;GUI.color=new Color(.025f,.035f,.035f,.96f);GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=color;
                 float width=Mathf.Min(820,w-64);GUILayout.BeginArea(new Rect((w-width)/2,h*.18f,width,h*.68f));scroll=GUILayout.BeginScrollView(scroll);
                 GUILayout.Label(heading,title);GUILayout.Space(28);GUILayout.Label(body,text);GUILayout.EndScrollView();
-                if(!Investigation.Has(id)&&GUILayout.Button("抄录到笔记 · R",button,GUILayout.Height(55)))CollectCurrent();
-                if(Investigation.Has(id))GUILayout.Label("已收录",text);
-                if(GUILayout.Button("移开视线  ·  E / Esc",button,GUILayout.Height(60)))Close();GUILayout.EndArea();
+                var perception=StoryText.Current.perception;
+                if(!Investigation.Has(id)&&GUILayout.Button(perception?.collect??"抄录到笔记 · R",button,GUILayout.Height(55)))CollectCurrent();
+                if(Investigation.Has(id))GUILayout.Label(perception?.collected??"已收录",text);
+                if(GUILayout.Button(perception?.close??"移开视线  ·  E / Esc",button,GUILayout.Height(60)))Close();GUILayout.EndArea();
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }

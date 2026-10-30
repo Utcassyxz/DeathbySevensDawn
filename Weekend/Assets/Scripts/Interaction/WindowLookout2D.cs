@@ -65,7 +65,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             bool nearby = CanInteract;
             if (nearby) EnsureUI();
-            if (hint != null) hint.gameObject.SetActive(nearby);
+            if (hint != null){hint.text=DeathBySeventhsDawn.Story.StoryText.Local("E  查看窗外","E  Look outside");hint.gameObject.SetActive(nearby);}
             if (nearby && interact) TryOpen();
         }
 
@@ -114,8 +114,8 @@ namespace DeathBySeventhsDawn.Interaction
                 picture.texture = image;
                 if (image != null) aspect.aspectRatio = (float)image.width / image.height;
             }
-            heading.text = "窗外 · 第 " + DisplayedDay + " 天";
-            closeInstructions.text=DisplayedDay==2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId)?"窗外观察已收录":"R  记录窗外的变化")+"\nE / Esc  返回房间" : "E / Esc  返回房间";
+            heading.text = DeathBySeventhsDawn.Story.StoryText.Local("窗外 · 第 ","Outside \u00b7 Day ") + DisplayedDay + DeathBySeventhsDawn.Story.StoryText.Local(" 天","");
+            closeInstructions.text=DisplayedDay==2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId)?DeathBySeventhsDawn.Story.StoryText.Local("窗外观察已收录","Observation recorded"):DeathBySeventhsDawn.Story.StoryText.Local("R  记录窗外的变化","R  Record the view"))+DeathBySeventhsDawn.Story.StoryText.Local("\nE / Esc  返回房间","\nE / Esc Back to room") : DeathBySeventhsDawn.Story.StoryText.Local("E / Esc  返回房间","E / Esc Back to room");
             foreach (var label in new[] { heading, closeInstructions })
             {
                 label.font.RequestCharactersInTexture(label.text, label.fontSize, label.fontStyle);
@@ -135,7 +135,7 @@ namespace DeathBySeventhsDawn.Interaction
             scaler.referenceResolution = new Vector2(1280, 720);
             scaler.matchWidthOrHeight = .5f;
             var font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "Noto Sans CJK SC", "Arial Unicode MS", "Arial" }, 28);
-            hint = MakeText("Window hint", root.transform, font, "E  查看窗外", 25,
+            hint = MakeText("Window hint", root.transform, font, DeathBySeventhsDawn.Story.StoryText.Local("E  查看窗外","E  Look outside"), 25,
                 new Vector2(.1f, .02f), new Vector2(.9f, .11f));
             overlay = MakeRect("Window view", root.transform, Vector2.zero, Vector2.one);
             var backdrop = overlay.AddComponent<Image>();
@@ -150,7 +150,7 @@ namespace DeathBySeventhsDawn.Interaction
             picture.raycastTarget = false;
             aspect = imageObject.AddComponent<AspectRatioFitter>();
             aspect.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-            closeInstructions = MakeText("Close instructions", overlay.transform, font, "E / Esc  返回房间", 23,
+            closeInstructions = MakeText("Close instructions", overlay.transform, font, DeathBySeventhsDawn.Story.StoryText.Local("E / Esc  返回房间","E / Esc Back to room"), 23,
                 new Vector2(.06f, .02f), new Vector2(.94f, .12f));
             overlay.SetActive(false);
             hint.gameObject.SetActive(false);

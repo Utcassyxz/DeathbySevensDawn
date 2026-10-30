@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -23,14 +24,7 @@ namespace DeathBySeventhsDawn.Interaction
 #else
         public static bool Suppressed => false;
 #endif
-        static readonly string[] pages={
-            "中午刚过，客厅的电视自己亮了。\n\n没有遥控器，也没有开机声。屏幕先是一片刺眼的白，白得像有人把太阳塞进了墙里。",
-            "白光褪去。新闻主播坐在那里，可他的脸被拉得很长，嘴角停在同一个位置。\n\n“紧急消息。代号 SKT-079 的超新星脉冲正在接近地球。”",
-            "“……预计将在七天内扫过。请居民留在室内，遮住窗户。重复，遮住窗户。”\n\n画面开始抖动。主播的嘴型对不上声音。",
-            "新闻结束后，屏幕没有熄灭。\n\n它显示着一片星空。星星的位置，和我昨晚在阳台上看到的不一样。其中一颗，正缓慢地眨了一下。",
-            "我伸手去关电视。\n\n指尖碰到屏幕的一瞬间，我听见很远的地方，有什么东西轻轻敲了一下玻璃。\n\n一下。又一下。",
-            "屏幕黑了。\n\n客厅安静得像是从来没有开过电视。\n\n可我知道，七天已经开始了。"
-        };
+        static readonly string[] fallbackPages={"广播文本缺失：请检查 Resources/StoryText.json。"};
         bool presenting,pending,late,tvColorSaved;
         int page,openedFrame,blockedUntilFrame=-1;
         float flash,elapsed;
@@ -96,6 +90,8 @@ namespace DeathBySeventhsDawn.Interaction
 #endif
             if(Time.frameCount<=openedFrame+2||elapsed<.25f)advance=false;
             if(!advance)return;
+            var pages=StoryText.Current.dayOneBroadcast?.pages;
+            if(pages==null||pages.Length==0){Finish();return;}
             page++;
             if(page>=pages.Length)Finish();
         }
@@ -108,7 +104,8 @@ namespace DeathBySeventhsDawn.Interaction
             bool added=entry==null;
             if(added)
             {
-                entry=new JournalEntry{id="day-one-supernova",title="第一天的紧急广播",body="第一天中午，客厅的电视自己亮了。\n\n紧急新闻称，代号 SKT-079 的超新星脉冲将在七天内扫过地球，并反复警告居民留在室内、遮住窗户。\n\n新闻结束后，屏幕没有立刻熄灭。星空里有一颗星，眨了一下。",isKnowledge=false,day=1,loop=GameManager.Instance.LoopCount};
+                var text=StoryText.Current.dayOneBroadcast;
+                entry=new JournalEntry{id="day-one-supernova",title=text?.journalTitle??"第一天的紧急广播",body=text?.journalBody??"",isKnowledge=false,day=1,loop=GameManager.Instance.LoopCount};
                 state.journal.Add(entry);
             }
             ProgressionSave.Write(state);if(added)JournalUpdates.NotifyAdded(entry);
@@ -190,11 +187,13 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.color=new Color(.025f,.03f,.038f,.82f);GUI.DrawTexture(area,Texture2D.whiteTexture);
                 GUI.color=new Color(.86f,.74f,.45f,.9f);GUI.DrawTexture(new Rect(area.x,area.y,3,area.height),Texture2D.whiteTexture);GUI.color=color;
                 GUILayout.BeginArea(new Rect(area.x+26,area.y+16,area.width-52,area.height-32));
-                GUILayout.Label(late?"第一天 · 稍后":"第一天 · 正午",small);GUILayout.Label("紧 急 广 播",title);GUILayout.Space(8);
-                GUILayout.Label(late&&page==0?"电视还亮着。\n\n屏幕上反复重播着中午的紧急新闻。":pages[Mathf.Clamp(page,0,pages.Length-1)],body);
-                GUILayout.FlexibleSpace();GUILayout.Label(page>=pages.Length-1?"关掉电视 · E / Space":"继续 · E / Space",small);
+                var broadcast=StoryText.Current.dayOneBroadcast;
+                var pages=StoryText.Pages(broadcast?.pages,fallbackPages);
+                GUILayout.Label(late?(broadcast?.kickerLate??"第一天 · 稍后"):(broadcast?.kicker??"第一天 · 正午"),small);GUILayout.Label(broadcast?.title??"紧 急 广 播",title);GUILayout.Space(8);
+                GUILayout.Label(late&&page==0?(broadcast?.lateFirstPage??""):pages[Mathf.Clamp(page,0,pages.Length-1)],body);
+                GUILayout.FlexibleSpace();GUILayout.Label(page>=pages.Length-1?(broadcast?.closePrompt??"关掉电视 · E / Space"):(broadcast?.continuePrompt??"继续 · E / Space"),small);
                 GUILayout.EndArea();
-                GUI.Label(new Rect(28,20,150,26),"●  LIVE",small);
+                GUI.Label(new Rect(28,20,150,26),broadcast?.liveLabel??"●  LIVE",small);
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }

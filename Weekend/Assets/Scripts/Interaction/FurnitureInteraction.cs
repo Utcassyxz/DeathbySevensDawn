@@ -99,29 +99,29 @@ namespace DeathBySeventhsDawn.Interaction
                 if(!IsBusy) {
                     float hint=Mathf.Min(440,width-32);
                     GUI.color=new Color(.035f,.055f,.05f,.92f);GUI.DrawTexture(new Rect((width-hint)/2,height-82,hint,54),Texture2D.whiteTexture);GUI.color=color;
-                    GUI.Label(new Rect((width-hint)/2,height-82,hint,54),target==bed?"E  休息":"E  看电视",label);
+                    GUI.Label(new Rect((width-hint)/2,height-82,hint,54),target==bed?DeathBySeventhsDawn.Story.StoryText.Local("E  休息","E  Rest"):DeathBySeventhsDawn.Story.StoryText.Local("E  看电视","E  Television"),label);
                     return;
                 }
                 GUI.color=new Color(0,0,0,.88f); GUI.DrawTexture(new Rect(0,0,width,height),Texture2D.whiteTexture); GUI.color=color;
                 float panelWidth=Mathf.Min(760,width-24), panelHeight=Mathf.Min(target==bed?480:620,height-24);
                 GUILayout.BeginArea(new Rect((width-panelWidth)/2,(height-panelHeight)/2,panelWidth,panelHeight),box);
                 scroll=GUILayout.BeginScrollView(scroll);
-                GUILayout.Label(target==bed?"上床休息":"电视",label); GUILayout.Space(20);
+                GUILayout.Label(target==bed?DeathBySeventhsDawn.Story.StoryText.Local("上床休息","Rest"):DeathBySeventhsDawn.Story.StoryText.Local("电视","Television"),label); GUILayout.Space(20);
                 if(target==bed) {
-                    GUILayout.Label("要结束今天，睡到明天早晨吗？",label);
-                    if(GUILayout.Button("上床睡觉（跳过今天）",button)) { CloseMenu(); TimeManager.Instance.SleepUntilNextMorning(); }
+                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("要结束今天，睡到明天早晨吗？","End today and sleep until morning?"),label);
+                    if(GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("上床睡觉（跳过今天）","Sleep until tomorrow"),button)) { CloseMenu(); TimeManager.Instance.SleepUntilNextMorning(); }
                 } else if(watching) {
                     GUILayout.Label(watchingReport,label);
-                    GUILayout.Label("已度过一个时段。",label);
-                    if(GameManager.Instance.State.skt079NewsSeen&&!Knowledge.Investigation.Has("skt079-broadcast")&&GUILayout.Button("摘录新闻到笔记 · R",button))CollectNews();
+                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("已度过一个时段。","One period has passed."),label);
+                    if(GameManager.Instance.State.skt079NewsSeen&&!Knowledge.Investigation.Has("skt079-broadcast")&&GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("摘录新闻到笔记 · R","Record news extract \u00b7 R"),button))CollectNews();
                 } else {
-                    GUILayout.Label("屏幕亮着。要坐下来看看电视吗？",label);
-                    if(GUILayout.Button("看电视（度过一个时段）",button)) WatchTelevision();
+                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("屏幕亮着。要坐下来看看电视吗？","The screen is on. Sit down and watch?"),label);
+                    if(GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("看电视（度过一个时段）","Watch television (one period)"),button)) WatchTelevision();
                 }
                 GUILayout.Space(20);
                 GUILayout.EndScrollView();
-                if(GUILayout.Button(watching?"关掉电视，返回":"离开",button)) CloseMenu();
-                GUILayout.Label("E / Esc 返回",label);
+                if(GUILayout.Button(watching?DeathBySeventhsDawn.Story.StoryText.Local("关掉电视，返回","Switch off and return"):DeathBySeventhsDawn.Story.StoryText.Local("离开","Leave"),button)) CloseMenu();
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("E / Esc 返回","E / Esc Back"),label);
                 GUILayout.EndArea();
             } finally { GUI.matrix=matrix; GUI.color=color; }
         }

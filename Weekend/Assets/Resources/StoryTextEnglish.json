@@ -1,0 +1,316 @@
+{
+  "dream": {
+    "title": "Dream · The anthill",
+    "pages": [
+      "I am on that road again. Father holds his car keys. Mother turns away.\n\nI shout something. Neither looks back.",
+      "An anthill beside my shoe. An ant drags a white husk, stuck at the entrance.\n\nI crouch down. The argument continues behind me.",
+      "I kick it.\n\nWet soil sticks to my shoe. Ants crawl onto my sock. I stamp my foot.",
+      "The light goes.\n\nA shadow covers the road. Covers both of them.\n\nWhen I wake, my toes are still curled under the blanket."
+    ],
+    "images": [
+      "Story/Dream/dream-01",
+      "Story/Dream/dream-02",
+      "Story/Dream/dream-03",
+      "Story/Dream/dream-04"
+    ],
+    "journalTitle": "The anthill dream",
+    "journalBody": "The road. My parents arguing. I kicked an anthill.\nThen a shadow covered them both. I woke with my feet curled up.",
+    "fallbackPage": "I woke from a dream about an anthill."
+  },
+  "knowledge": {
+    "ancientTitle": "A shape behind the sky",
+    "ancientBody": "The stars bent along its edge.\nI took my eye away before I could find the other end.",
+    "windowTitle": "The view on day two",
+    "windowBody": "Something has changed between the buildings. I wrote down what I could see.",
+    "fallbackTitle": "A finding",
+    "fallbackBodyPrefix": "Recorded clue: "
+  },
+  "telescope": {
+    "title": "Telescope",
+    "revelationTitle": "Second night · Behind the sky",
+    "nightOnly": "Glare fills the lens.\nCome back after sunset.",
+    "wrongDay": "I turn the focus ring. Rooftops and stars.\nNothing else tonight.",
+    "gainedSuffix": "\n\nMy hand is shaking. Can I still draw the edge?",
+    "repeatSuffix": "\n\nThat edge again. I could try drawing it.",
+    "imageMissing": "Image unavailable.",
+    "collect": "Record the telescope · R",
+    "collected": "Telescope recorded",
+    "observe": "Look through the lens · T",
+    "close": "Look away · E / Esc",
+    "revelationCollect": "Sketch the outline · R",
+    "revelationCollected": "Sketch recorded",
+    "revelationClose": "Look away · E / Esc"
+  },
+  "firstLoop": {
+    "news": "SKT-079 is expected to sweep past Earth. Some disruption to electronic signals is anticipated. Monitoring continues.\n\nThe voice warps. A line cuts across the screen.\n\nI look towards the balcony. The telescope is where I left it.",
+    "flyer": "COVER YOUR WINDOWS.\nDo not trust the calm voices.\nSomething is coming from above.",
+    "dayOneCaption": "The man from 401 presses a flyer against the wall. His lips keep moving.",
+    "startledCaption": "He sees me.\nThe tape sticks to his finger. He pulls it free and runs inside.",
+    "boardingCaption": "Another nail. Another board.\nHe does not answer.",
+    "chapterTitle": "Behind the sky",
+    "chapterText": "I take my eye away.\n\nThe balcony is still here. So is the building opposite.\n\nI do not touch the focus ring again.",
+    "newsDay1": "Static. The screen flashes, then goes dark.\nThe power light stays on.",
+    "newsDefault": "News between bursts of static. Nothing new."
+  },
+  "dayOneBroadcast": {
+    "kicker": "Day one · Noon",
+    "kickerLate": "Day one · Later",
+    "title": "EMERGENCY BROADCAST",
+    "lateFirstPage": "The television is still on.\nThe noon bulletin is repeating.",
+    "pages": [
+      "The television comes on. The remote is still under the magazine.\n\nWhite first. Then a newsreader.",
+      "“We interrupt this programme. Supernova pulse SKT-079 has entered monitoring range.”\n\nHis lips keep moving after the sound stops.",
+      "“Expected within seven days. Remain indoors. Cover your windows.”\n\n“Repeat. Cover your windows.”\n\nA different voice says the last three words.",
+      "A star field.\n\nThe clock in the corner has stopped.\n\nOne star goes out. Comes back.",
+      "I touch the power button.\n\nTwo soft taps from inside the glass.\n\nI pull my hand back.",
+      "The screen goes black.\n\nMy reflection stands there.\n\nI take a step to the side."
+    ],
+    "journalTitle": "The first-day broadcast",
+    "journalBody": "The television switched itself on at noon. SKT-079, seven days. Stay inside. Cover the windows.\nA star blinked on the screen. Two taps came from the glass.",
+    "continuePrompt": "Continue · E / Space",
+    "closePrompt": "Switch off · E / Space",
+    "liveLabel": "● LIVE"
+  },
+  "perception": {
+    "prompt": "E  Examine the marks",
+    "collect": "Record · R",
+    "collected": "Recorded",
+    "close": "Look away · E / Esc",
+    "bedroom": {
+      "id": "filter-bedroom-margins",
+      "title": "Writing in the margin",
+      "body": "Old scratches at the desk edge.\n“Not stars moving. Its eyes.”\nThe grooves catch under my nail."
+    },
+    "corridor": {
+      "id": "filter-401-underprint",
+      "title": "Beneath the flyer",
+      "body": "Writing beneath the wallpaper.\n“Boards will not stop it. I just do not want to see.”\nWhy could I not read this before?"
+    },
+    "balcony": {
+      "id": "filter-railing-tally",
+      "title": "Marks on the railing",
+      "body": "Seven shallow cuts. The last crosses the others.\nBelow them: “Stop counting.”"
+    }
+  },
+  "investigation": {
+    "relations": [
+      "习惯与身份",
+      "观察工具",
+      "时间关联",
+      "行为动机",
+      "交叉印证"
+    ],
+    "evidence": [
+      {
+        "id": "my-observation-notes",
+        "title": "My observation book",
+        "body": "Months of star positions, cloud cover and times. A note: half a turn on the focus ring; balcony light off first.\nMy handwriting. The dates have gaps, but the notes keep going.",
+        "source": "Bedroom · Desk"
+      },
+      {
+        "id": "apartment-telescope",
+        "title": "The balcony telescope",
+        "body": "A polished focus ring. A north mark beside the tripod. My calibration marks on the tube match the book.",
+        "source": "Balcony · Telescope"
+      },
+      {
+        "id": "401-flyers",
+        "title": "The flyer from 401",
+        "body": "COVER YOUR WINDOWS. Do not trust the calm voices. Something is coming from above.\nFresh paper. Tape still tacky at the corners.",
+        "source": "Corridor · 401"
+      },
+      {
+        "id": "401-barricade",
+        "title": "401 boarded shut",
+        "body": "Day two. Fresh boards over the door. Even the gaps are covered.\nHe did not answer me.",
+        "source": "Corridor · 401"
+      },
+      {
+        "id": "skt079-broadcast",
+        "title": "SKT-079 news extract",
+        "body": "Day two: SKT-079 may disrupt electronic signals. The voice warps halfway through.\nNo mention of anything alive.",
+        "source": "Living room · Television"
+      },
+      {
+        "id": "balcony-telescope-day2-ancient-outline",
+        "title": "The outline · A memory sketch",
+        "body": "Second night. A shape through the telescope. I drew what I remembered. Stars bent around the edge.\nA memory, not a photograph. I have no second observation.",
+        "source": "Balcony · Second night"
+      },
+      {
+        "id": "bedroom-window-day2-observation",
+        "title": "The view on day two",
+        "body": "The skyline looks different today. I recorded the view. No measurements to compare.",
+        "source": "Bedroom · Window"
+      },
+      {
+        "id": "filter-bedroom-margins",
+        "title": "Writing in the margin",
+        "body": "Old writing at the desk edge: “Not stars moving. Its eyes.”\nI could only read it when I was unwell.",
+        "source": "Bedroom · Desk edge"
+      },
+      {
+        "id": "filter-401-underprint",
+        "title": "Beneath the flyer",
+        "body": "Beneath the wallpaper: “Boards will not stop it. I just do not want to see.”\nI do not know who wrote it.",
+        "source": "Corridor · Hidden writing"
+      },
+      {
+        "id": "filter-railing-tally",
+        "title": "Marks on the railing",
+        "body": "Seven shallow cuts. The last crosses the others. “Stop counting.”\nNo name. No date.",
+        "source": "Balcony · Railing"
+      },
+      {
+        "id": "tank-label",
+        "title": "Tank label",
+        "body": "Water changes: Sundays. The last tick is in my handwriting.\nThe pump cable crosses the paper. There is no crease beneath it.",
+        "source": "Living room · Cabinet"
+      },
+      {
+        "id": "tank-eye",
+        "title": "An eye behind the glass",
+        "body": "Day three. An eye pressed against the inside of the glass.\nIt did not follow when I moved left. When I turned away, a voice said: Quietly.",
+        "source": "Living room · Day three"
+      },
+      {
+        "id": "tank-overflow",
+        "title": "The old waterline",
+        "body": "Day five. A dry tide mark crosses the cabinet, above the hand resting on the tank.\nThe wood above it is dry.",
+        "source": "Living room · Day five"
+      },
+      {
+        "id": "001-name",
+        "title": "The name 001",
+        "body": "Day six. Outside the tank, it asked me to write down 001.\nIt said I hid my observation book badly. It never gave me a name.",
+        "source": "Living room · 001"
+      },
+      {
+        "id": "notes-gap",
+        "title": "Missing pages",
+        "body": "Two paper stubs remain in the binding. Saturday on either side.\nThe cloud cover, times, even the crossed-out number are identical.",
+        "source": "Bedroom · Book revisited"
+      },
+      {
+        "id": "403-silence",
+        "title": "Dust beneath 403",
+        "body": "A thin line of dust. No footprints.\nA chair scraped across the floor inside. When I knocked, it stopped.",
+        "source": "Corridor · 403"
+      }
+    ],
+    "deductions": [
+      {
+        "id": "deduction-astronomy",
+        "relation": "习惯与身份",
+        "title": "Astronomy is my hobby",
+        "body": "Months of records match the worn telescope. I have been doing this for a while."
+      },
+      {
+        "id": "deduction-optical",
+        "relation": "观察工具",
+        "title": "An observation through the telescope",
+        "body": "The sketch records a view through this telescope, not an image from the news.\nIt does not rule out a faulty lens or a faulty memory."
+      },
+      {
+        "id": "deduction-deliberate",
+        "relation": "交叉印证",
+        "title": "I chose to look",
+        "body": "I knew the instrument. I went looking.\nThat does not make what I saw reliable. I need another witness."
+      },
+      {
+        "id": "deduction-warning",
+        "relation": "时间关联",
+        "title": "The warning came first",
+        "body": "The day-one flyer predates the day-two bulletin. Both mention the sky.\nThe noon broadcast also warned about windows. Did 401 hear something earlier still?"
+      },
+      {
+        "id": "deduction-sealing",
+        "relation": "行为动机",
+        "title": "He followed his own warning",
+        "body": "He told people to cover windows. Then he covered his own door.\nI still do not know what frightened him."
+      },
+      {
+        "id": "deduction-not-looking",
+        "relation": "交叉印证",
+        "title": "Perhaps he did not want to see",
+        "body": "The writing fits the covered gaps. He may be avoiding the sight of something.\nI do not know who wrote it."
+      },
+      {
+        "id": "deduction-tank-resident",
+        "relation": "交叉印证",
+        "title": "Something in my tank",
+        "body": "I maintained this tank. Something in it now speaks.\nThe label says nothing about it. It does not tell me when it arrived."
+      },
+      {
+        "id": "deduction-waterline",
+        "relation": "时间关联",
+        "title": "Before it left the tank",
+        "body": "The day-five waterline was higher than its exposed hand. On day six it stood outside.\nIt may have climbed out earlier. The stain could also be older."
+      },
+      {
+        "id": "deduction-book-reader",
+        "relation": "交叉印证",
+        "title": "Another reader",
+        "body": "001 knows about the book. Pages have been torn out.\nI should ask about them. Knowing the book exists does not make it responsible."
+      }
+    ]
+  },
+  "aquarium": {
+    "promptDay3": "E  Speak to the thing in the tank",
+    "promptDay6": "E  Speak to 001",
+    "speakerDay3": "Inside the tank",
+    "speakerDay6": "001",
+    "day3Pages": [
+      "The filter hums. An eye presses against the glass.",
+      "“Quietly.”\n\nI have not touched the tank.",
+      "“You asked yesterday.”\n\nA few bubbles reach the surface.",
+      "“Leave the light above us off.”"
+    ],
+    "day5Pages": [
+      "A hand rests on the rim. Water runs over the extension lead. The power light is still on.",
+      "“Move that.”\n\nIt points beside the cabinet.",
+      "I ask where it came from.\n\n“Bring a towel first.”",
+      "The old waterline is higher than its hand."
+    ],
+    "day6Pages": [
+      "The tank is empty.\n\nIt stands beside the cabinet. No water under its feet.",
+      "“001. Write that.”",
+      "“You do not hide that book very well.”",
+      "I ask how many times it has read it.\n\nIt watches me. It does not count."
+    ],
+    "question": "Ask: Have you read my book?",
+    "answerGap": "It holds up two fingers.\n\n“You only found two pages?”",
+    "answerDefault": "“Bring it. Look for yourself.”"
+  },
+  "mainMenu": {
+    "title": "SEVENTH DAWN",
+    "subtitle": "DEATH BY SEVENTH’S DAWN",
+    "tagline": "One small light. Seven days.",
+    "start": "BEGIN A NEW GAME",
+    "quit": "Quit",
+    "hint": "A new game erases the previous journey.",
+    "footer": "Esc Pause · J Journal · B Evidence board"
+  },
+  "pause": {
+    "title": "PAUSED",
+    "subtitle": "The room waits.",
+    "resume": "Resume",
+    "returnToTitle": "Return to title",
+    "quit": "Quit",
+    "hint": "Esc / E Resume"
+  },
+  "ending": {
+    "title": "Ending 1 · Too late",
+    "lines": [
+      "Day seven. You remember how it happens.",
+      "Your hand will not close around the handle.",
+      "Outside, the light changes."
+    ],
+    "summary": "{0} loops. Stamina limit: {1:0.#}.\nJourney ended and saved.",
+    "confirmWarning": "Restarting clears this journey, including collected knowledge.",
+    "restart": "Begin again",
+    "confirm": "Confirm restart",
+    "cancel": "Cancel",
+    "returnToTitle": "Return to title"
+  }
+}

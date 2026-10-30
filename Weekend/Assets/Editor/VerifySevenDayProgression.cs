@@ -6,6 +6,7 @@ using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Progression;
 using DeathBySeventhsDawn.TimeSystem;
 using DeathBySeventhsDawn.Knowledge;
+using DeathBySeventhsDawn.Story;
 public static class VerifySevenDayProgression
 {
     const string Key="VerifySevenDayProgression";
@@ -74,7 +75,7 @@ public static class VerifySevenDayProgression
             Check(DeathBySeventhsDawn.Interaction.StoryJournal.IsNight(TimePeriod.Evening) && DeathBySeventhsDawn.Interaction.StoryJournal.IsNight(TimePeriod.Night),"Telescope evening/night availability");
             Check(!DeathBySeventhsDawn.Interaction.StoryJournal.IsNight(TimePeriod.Morning) && !DeathBySeventhsDawn.Interaction.StoryJournal.IsNight(TimePeriod.Afternoon),"Telescope daytime restriction");
             var story=Resources.Load<DeathBySeventhsDawn.Interaction.StoryContent>("StoryContent");
-            Check(story!=null && story.dreamPages.Length==4,"Opening dream content");
+            Check(story!=null && StoryText.Current.dream!=null && StoryText.Current.dream.pages.Length==4,"Opening dream content");
             Check(Resources.Load<Texture2D>(story.ancientGodImageResource)!=null,"Ancient god illustration import");
             Check(loaded.loopCount==2 && loaded.knowledge==50 && loaded.mutation==28 && loaded.knowledgeIds.Count==3,"Disk persistence");
             Check(JournalUpdates.UnreadCount==2,"Read status retained across loops");
