@@ -23,7 +23,7 @@ public static class VerifyExpansion
             Check(cat.evidence.Select(x=>x.id).Distinct().Count()==17,"Unique evidence IDs");
             foreach(var d in cat.deductions){Check(Investigation.IsNode(d.left)&&Investigation.IsNode(d.right),"Valid rule references");Check(!string.IsNullOrEmpty(d.relation),"Stable relation key");}
             StoryText.ToggleLanguage();var en=StoryText.Current;
-            Check(en.dream.pages.Length==4&&en.dayOneBroadcast.pages.Length==6,"Localized story page counts");
+            Check(en.dream.pages.Length==4&&en.dayOneBroadcast.pages.Length==4,"Localized story page counts");
             Check(en.investigation.evidence.Length==17&&en.investigation.deductions.Length==9,"English catalog parity");
             Check(Investigation.Evidence("notes-gap").title=="Missing pages","Catalog refreshes language");
             Check(en.aquarium.day6Pages.All(x=>!string.IsNullOrEmpty(x)),"English NPC dialogue");

@@ -1,0 +1,1 @@
+PASS: Partial dream, diary, corridor cutscene, chapter card, television, window and ending reset; fresh Days/loop/stats/flags/journal; no stale notifications; movement and Day 1 encounter restored. Original save restored.

@@ -2,10 +2,10 @@
   "dream": {
     "title": "Dream · The anthill",
     "pages": [
-      "I am on that road again. Father holds his car keys. Mother turns away.\n\nI shout something. Neither looks back.",
-      "An anthill beside my shoe. An ant drags a white husk, stuck at the entrance.\n\nI crouch down. The argument continues behind me.",
-      "I kick it.\n\nWet soil sticks to my shoe. Ants crawl onto my sock. I stamp my foot.",
-      "The light goes.\n\nA shadow covers the road. Covers both of them.\n\nWhen I wake, my toes are still curled under the blanket."
+      "They are arguing again.\nI stand beside the road, holding half an ice lolly.",
+      "An anthill beside my shoe.\nAn ant drags a white husk across the entrance.",
+      "I kick it.\nSoil sticks to my shoe. Ants crawl into my sock.",
+      "A knock. Then another.\n\nI open my eyes."
     ],
     "images": [
       "Story/Dream/dream-01",
@@ -42,34 +42,32 @@
     "revelationClose": "Look away · Esc"
   },
   "firstLoop": {
-    "news": "SKT-079 is expected to sweep past Earth. Some disruption to electronic signals is anticipated. Monitoring continues.\n\nThe voice warps. A line cuts across the screen.\n\nI look towards the balcony. The telescope is where I left it.",
+    "news": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
     "flyer": "COVER YOUR WINDOWS.\nDo not trust the calm voices.\nSomething is coming from above.",
     "dayOneCaption": "The man from 401 presses a flyer against the wall. His lips keep moving.",
     "startledCaption": "He sees me.\nThe tape sticks to his finger. He pulls it free and runs inside.",
     "boardingCaption": "Another nail. Another board.\nHe does not answer.",
     "chapterTitle": "Behind the sky",
     "chapterText": "I take my eye away.\n\nThe balcony is still here. So is the building opposite.\n\nI do not touch the focus ring again.",
-    "newsDay1": "Static. The screen flashes, then goes dark.\nThe power light stays on.",
-    "newsDefault": "News between bursts of static. Nothing new."
+    "newsDay1": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
+    "newsDefault": "The local bulletin repeats."
   },
   "dayOneBroadcast": {
-    "kicker": "Day one · Noon",
-    "kickerLate": "Day one · Later",
-    "title": "EMERGENCY BROADCAST",
-    "lateFirstPage": "The television is still on.\nThe noon bulletin is repeating.",
+    "kicker": "LOCAL NEWS",
+    "kickerLate": "LOCAL NEWS",
+    "title": "Today in the city",
+    "lateFirstPage": "The Will Circus brings its national tour to our city this week.",
     "pages": [
-      "The television comes on. The remote is still under the magazine.\n\nWhite first. Then a newsreader.",
-      "“We interrupt this programme. Supernova pulse SKT-079 has entered monitoring range.”\n\nHis lips keep moving after the sound stops.",
-      "“Expected within seven days. Remain indoors. Cover your windows.”\n\n“Repeat. Cover your windows.”\n\nA different voice says the last three words.",
-      "A star field.\n\nThe clock in the corner has stopped.\n\nOne star goes out. Comes back.",
-      "I touch the power button.\n\nTwo soft taps from inside the glass.\n\nI pull my hand back.",
-      "The screen goes black.\n\nMy reflection stands there.\n\nI take a step to the side."
+      "The Will Circus brings its national tour to our city this week.",
+      "Mr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.",
+      "Authorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.",
+      "A supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky."
     ],
-    "journalTitle": "The first-day broadcast",
-    "journalBody": "The television switched itself on at noon. SKT-079, seven days. Stay inside. Cover the windows.\nA star blinked on the screen. Two taps came from the glass.",
-    "continuePrompt": "Continue · E",
-    "closePrompt": "Switch off · E",
-    "liveLabel": "● LIVE"
+    "journalTitle": "Local news extract",
+    "journalBody": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
+    "continuePrompt": "E  Continue",
+    "closePrompt": "E  Finish listening",
+    "liveLabel": "NEWS"
   },
   "perception": {
     "prompt": "E  Examine the marks",
@@ -127,8 +125,8 @@
       },
       {
         "id": "skt079-broadcast",
-        "title": "SKT-079 news extract",
-        "body": "Day two: SKT-079 may disrupt electronic signals. The voice warps halfway through.\nNo mention of anything alive.",
+        "title": "Local news extract",
+        "body": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
         "source": "Living room · Television"
       },
       {
@@ -226,8 +224,8 @@
       {
         "id": "deduction-warning",
         "relation": "时间关联",
-        "title": "The warning came first",
-        "body": "The day-one flyer predates the day-two bulletin. Both mention the sky.\nThe noon broadcast also warned about windows. Did 401 hear something earlier still?"
+        "title": "His warning and the bulletin",
+        "body": "The flyer warns about the sky. The news presents tonight as an opportunity to watch it.\nThe tenant of 401 seems to expect something else."
       },
       {
         "id": "deduction-sealing",
@@ -339,5 +337,15 @@
     "refusal": "No answer. Something slides across the other side of the door.",
     "itemTitle": "Folded foil triangle",
     "itemBody": "Folded three times. One corner is warm.\nI have left it closed."
+  },
+  "morning": {
+    "continueDream": "Enter  Continue",
+    "wake": "Someone is hammering next door.",
+    "neighbor": "Find out what is happening next door.",
+    "food": "Go home. Find something to eat.",
+    "kitchen": "Check the fridge in the kitchen.",
+    "fridgePrompt": "E  Open the fridge",
+    "fridgeOpen": "The seal comes free. The television starts in the next room.",
+    "afterNews": "There should still be something in the fridge."
   }
 }

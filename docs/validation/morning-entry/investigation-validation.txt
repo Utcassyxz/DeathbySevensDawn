@@ -1,0 +1,1 @@
+PASS: 47 assertions: explicit collection; no auto flyer/news/outline entries; optional sketch; valid and unsupported links; chained deductions; no duplicate rewards; save/load, legacy and loop retention; complete reset. Original save restored.

@@ -87,7 +87,7 @@ public static class VerifyInitialState
                     Check(FirstLoopPrologue.Instance.IsPresenting,"First-loop encounter replays after reset");
                     Finish(true,"Partial dream, diary, corridor cutscene, chapter card, television, window and ending reset; fresh Days/loop/stats/flags/journal; no stale notifications; movement and Day 1 encounter restored. Original save restored.");return;
             }
-            stage++;next=now+.35;
+            stage++;next=now+(stage==2||stage==6?4f:.35f);
         }
         catch(Exception error){Finish(false,"Stage "+stage+" scenario "+scenario+": "+error);}
     }
@@ -96,7 +96,7 @@ public static class VerifyInitialState
         var saved=ProgressionSave.Load();
         Check(SceneManager.GetActiveScene().name=="Bedroom"&&clock.Days==1&&clock.Period==TimePeriod.Morning,"Bedroom Day 1 morning");
         Check(game.LoopCount==0&&game.Knowledge==0&&game.Mutation==0&&!game.HasEnded&&game.Vitality==game.MaxVitality&&game.Sanity==game.Settings.maximumSanity,"Fresh stats");
-        Check(!saved.dreamSeen&&!saved.neighborFlyersSeen&&!saved.neighborBarricadeSeen&&!saved.skt079NewsSeen&&!saved.prologueEntered&&!saved.badEndingOne&&!saved.dayOneSupernovaSeen&&saved.journal.Count==0&&saved.knowledgeIds.Count==0,"Fresh persisted story");
+        Check(!saved.dreamSeen&&!saved.neighborFlyersSeen&&!saved.neighborBarricadeSeen&&!saved.skt079NewsSeen&&!saved.prologueEntered&&!saved.badEndingOne&&!saved.dayOneSupernovaSeen&&saved.journal.Count==0&&saved.knowledgeIds.Count==0&&saved.morningStage==0&&!saved.fridgeOpened&&saved.inventory.Count==0,"Fresh persisted story");
         Check(Read(story,"page").ToString()=="Dream"&&(int)Read(story,"dreamPage")==0,"Dream starts from first page");
         Check(!FirstLoopPrologue.Instance.IsPresenting&&!FurnitureInteraction.IsBusy&&!ProgressionHUD.DebugConsoleOpen&&feedback.JournalMessage==null&&feedback.TimeMessage==null,"No old modal or notices");
     }

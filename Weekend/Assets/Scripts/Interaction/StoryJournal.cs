@@ -16,7 +16,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame=-1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => modalOpen || CultNeighbor.WorldBlocked || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked;
+        public static bool WorldBlocked => modalOpen || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || Time.frameCount<=blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked;
         enum Page { None, Dream, Diary, Telescope }
         Page page;
         StoryContent content;
@@ -45,6 +45,7 @@ namespace DeathBySeventhsDawn.Interaction
             // 补齐旧版本已解锁知识的日记，不发放第二次知识奖励。
             var state=GameManager.Instance.State;
             if(state.journal==null) state.journal=new System.Collections.Generic.List<JournalEntry>();
+            state.journal.RemoveAll(e=>e!=null&&(e.id=="opening-dream"||e.id=="day-one-supernova"));
             foreach(var entry in state.journal) if(entry!=null && entry.id==StoryContent.AncientKnowledgeId && entry.imageResource=="Story/AncientGodDay2") entry.imageResource=content.ancientGodImageResource;
             foreach(string id in state.knowledgeIds) {
                 if(state.journal.Exists(e=>e!=null && e.id==id)) continue;
@@ -86,7 +87,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(game==null) return;
             if(game.HasEnded) { SetPage(Page.None); return; }
             if(!game.State.dreamSeen && page!=Page.Dream) { dreamPage=0; SetPage(Page.Dream); }
-            if(CultNeighbor.WorldBlocked || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
+            if(MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
             bool diary=false,interact=false,cancel=false; int diaryStep=0;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
@@ -94,7 +95,7 @@ namespace DeathBySeventhsDawn.Interaction
 #elif ENABLE_LEGACY_INPUT_MANAGER
             diary=Input.GetKeyDown(KeyCode.J); interact=Input.GetKeyDown(KeyCode.E); cancel=Input.GetKeyDown(KeyCode.Escape); diaryStep=(Input.GetKeyDown(KeyCode.RightArrow)?1:0)-(Input.GetKeyDown(KeyCode.LeftArrow)?1:0);
 #endif
-            if(page==Page.Dream){if(interact){if(dreamPage<StoryText.Current.dream.pages.Length-1)dreamPage++;else WakeUp();}return;}
+            if(page==Page.Dream){if(Keyboard.current!=null&&Keyboard.current.enterKey.wasPressedThisFrame){if(dreamPage<StoryText.Current.dream.pages.Length-1)dreamPage++;else WakeUp();}return;}
             if(page==Page.Diary) {
 #if ENABLE_INPUT_SYSTEM
                 if(keyboard!=null&&keyboard.bKey.wasPressedThisFrame){ if(!showBoard){showBoard=true;boardReturnToGame=false;} return; }
@@ -126,14 +127,8 @@ namespace DeathBySeventhsDawn.Interaction
         {
             var state=GameManager.Instance.State;
             state.dreamSeen=true;
-            bool addedDream=!state.journal.Exists(e=>e!=null && e.id=="opening-dream");
-            if(addedDream)
-            {
-                var dream=StoryText.Current.dream;
-                state.journal.Add(new JournalEntry {id="opening-dream",title=dream?.journalTitle??"梦里的蚁穴",body=dream?.journalBody??"",isKnowledge=false,day=1,loop=state.loopCount});
-            }
             ProgressionSave.Write(state);
-            if(addedDream) JournalUpdates.NotifyAdded(state.journal[state.journal.Count-1]);
+            MorningRoutine.Instance?.QueueWake();
             SetPage(Page.None);
             // 正式新旅程醒在卧室；若未加入构建列表，保持当前场景，不破坏编辑器测试。
             if(Application.CanStreamedLevelBeLoaded("Bedroom")) SceneManager.LoadScene("Bedroom");
@@ -195,7 +190,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
-            if(CultNeighbor.WorldBlocked)return;
+            if(MorningRoutine.WorldBlocked||CultNeighbor.WorldBlocked)return;
             var game=GameManager.Instance;
             if(game==null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked) return;
             Styles(); DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);var matrix=GUI.matrix; var color=GUI.color;
@@ -203,6 +198,7 @@ namespace DeathBySeventhsDawn.Interaction
             GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
             float width=Screen.width/scale,height=Screen.height/scale;
             try {
+                if(page==Page.Dream){DrawDream(width,height);return;}
                 if(IsRevelation) { DrawRevelation(width,height); return; }
                 if(page==Page.Diary) {
                     GUI.depth=-20;
@@ -231,8 +227,7 @@ namespace DeathBySeventhsDawn.Interaction
                     var pages=StoryText.Pages(dream?.pages,dream?.fallbackPage??"我从一个关于蚁穴的梦中惊醒。");
                     GUILayout.Label(pages[Mathf.Clamp(dreamPage,0,pages.Length-1)],text);
                     GUILayout.Space(30);
-                    bool last=dreamPage>=pages.Length-1;
-                    if(GUILayout.Button(last?"醒 来  →":"继 续  →",button)) { if(last) WakeUp(); else {dreamPage++; scroll=Vector2.zero;} }
+                    GUILayout.Label(StoryText.Current.morning.continueDream,text);
                 } else {
                     var telescopeText=StoryText.Current.telescope;
                     GUILayout.Label(revelation?(telescopeText?.revelationTitle??"第二夜 · 天穹后的轮廓"):(telescopeText?.title??"望远镜"),title);
@@ -260,6 +255,16 @@ namespace DeathBySeventhsDawn.Interaction
             if(!Investigation.Has(StoryContent.AncientKnowledgeId)) { if(GUILayout.Button(telescopeText?.revelationCollect??"画下轮廓，收进笔记 · R",button,GUILayout.Height(48)))CollectTelescopeEvidence(); }
             else GUILayout.Label(telescopeText?.revelationCollected??"轮廓已收录",text);
             if(GUILayout.Button(telescopeText?.revelationClose??"移开视线  ·  E / Esc",button,GUILayout.Height(48)))CloseTelescope();GUILayout.EndArea();
+        }
+        void DrawDream(float w,float h)
+        {
+            GUI.depth=-30;GUI.color=Color.black;GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=Color.white;
+            var dream=StoryText.Current.dream;
+            if(!dreamImagesLoaded){dreamImagesLoaded=true;var paths=dream.images;dreamImages=new Texture2D[paths.Length];for(int i=0;i<paths.Length;i++)dreamImages[i]=Resources.Load<Texture2D>(paths[i]);}
+            var image=dreamImages.Length>0?dreamImages[Mathf.Clamp(dreamPage,0,dreamImages.Length-1)]:null;
+            if(image!=null){float drift=Mathf.Sin(Time.unscaledTime*.18f)*4;GUI.color=new Color(.65f,.65f,.65f);GUI.DrawTextureWithTexCoords(new Rect(w*.16f+drift,h*.07f,w*.68f,h*.52f),image,new Rect(.08f,.22f,.84f,.60f));GUI.color=Color.white;}
+            GUI.Label(new Rect(w*.18f,h*.66f,w*.64f,h*.22f),dream.pages[Mathf.Clamp(dreamPage,0,dream.pages.Length-1)],text);
+            GUI.Label(new Rect(w*.18f,h*.88f,w*.64f,80),StoryText.Current.morning.continueDream,text);
         }
         void DrawDreamImage(float maxWidth)
         {

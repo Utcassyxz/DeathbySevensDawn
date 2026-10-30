@@ -5,7 +5,7 @@
 | 按键 | 唯一职责 / Purpose |
 |---|---|
 | WASD | 移动 / Move |
-| E | 与面前对象互动；对话/梦境继续；赠物后拾取 / Interact, advance dialogue, take offered item |
+| E | 与面前对象互动；对话继续；赠物后拾取 / Interact, advance dialogue, take offered item |
 | R | 将正在查看的线索主动收录 / Record the inspected evidence |
 | Esc | 关闭当前页面、退出对话；游戏中暂停；开场跳过 / Back, pause in world, skip opening |
 | J | 打开日记 / Open journal |
@@ -14,13 +14,13 @@
 | T | 望远镜检查页中开始观测 / Observe through telescope |
 | 方向键 | 日记翻页、线索板焦点 / Journal pages, board focus (不移动角色) |
 | Space | 在线索板选中焦点条目 / Select focused board record |
-| Enter | 主菜单开始；在线索板提交待证连线或推论 / Start game; commit board connection |
+| Enter | 主菜单开始、梦境继续；在线索板提交待证连线或推论 / Start game, advance opening dream, commit board connection |
 | Tab | 线索板切换筛选 / Cycle board filter |
 | Delete | 删除选中的待证线 / Erase tentative link |
 | Backspace | 清空线索板选择 / Clear board selection |
 | ~，首次输入 1997 | 开发面板 / Developer console |
 
-J、B、I 只负责打开，统一用 Esc 关闭。E 不再兼任关闭；Space、Enter 不再兼任对话继续。鼠标按钮与键盘操作共享同一行为。
+J、B、I 只负责打开，统一用 Esc 关闭。E 不再兼任关闭；Space 不再兼任对话继续；开场梦境按用户指定使用 Enter，对话仍为 E。鼠标按钮与键盘操作共享同一行为。
 
 ## 邪教线前置
 

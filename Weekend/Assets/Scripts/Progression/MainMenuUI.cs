@@ -12,6 +12,9 @@ namespace DeathBySeventhsDawn.Progression
     {
         public static MainMenuUI Instance {get;private set;}
         public static bool WorldBlocked => Instance!=null && (Instance.visible || Time.frameCount<=Instance.blockedUntilFrame);
+        public static bool IsVisible=>Instance!=null&&Instance.visible;
+        public static float OpeningProgress=>Instance!=null&&Instance.starting?Mathf.Clamp01((Time.unscaledTime-Instance.openingStarted)/11f):0;
+        public static bool IsOpening=>Instance!=null&&Instance.starting;
         public static bool Suppressed => DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.Suppressed;
         bool visible,starting;
         float openingStarted;
@@ -42,11 +45,11 @@ namespace DeathBySeventhsDawn.Progression
         }
         public void StartGame()
         {
-            if(!visible||starting)return;starting=true;openingStarted=Time.unscaledTime;
+            if(!visible||starting)return;starting=true;openingStarted=Time.unscaledTime;ApartmentAudio.Instance?.BeginOpening();
         }
         void FinishOpening()
         {
-            visible=false;blockedUntilFrame=Time.frameCount;
+            visible=false;blockedUntilFrame=Time.frameCount;ApartmentAudio.Instance?.EndOpening();
             DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.ResetForNewRun();
             var game=GameManager.Instance;
             // 新的一轮游戏：清空旧存档、知识、线索、剧情标记和轮回进度。

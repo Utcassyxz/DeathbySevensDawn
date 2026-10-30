@@ -53,6 +53,7 @@ namespace DeathBySeventhsDawn.Story
 
     [Serializable] public sealed class StoryTextData
     {
+        public MorningText morning;
         public CultText cult;
         public DreamText dream;
         public KnowledgeText knowledge;
