@@ -100,9 +100,6 @@ namespace DeathBySeventhsDawn.Progression
                 float bw=Mathf.Min(300,w-80);
                 if(GUI.Button(new Rect((w-bw)/2,h*.70f,bw,52),StoryText.Current.mainMenu?.start??"开 始 新 游 戏",button))StartGame();
                 if(GUI.Button(new Rect((w-220)/2,h*.70f+68,220,44),StoryText.Current.mainMenu?.quit??"退出游戏",button))QuitGame();
-                string hint=StoryText.Current.mainMenu?.hint??"开始新游戏会清除之前的所有数据。";
-                GUI.Label(new Rect((w-Mathf.Min(720,w-60))/2,h*.70f+122,Mathf.Min(720,w-60),54),hint,small);
-                GUI.Label(new Rect(0,h-38,w,24),StoryText.Current.mainMenu?.footer??"游戏中按 Esc 暂停 · J 日记 · B 线索连线",small);
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }
