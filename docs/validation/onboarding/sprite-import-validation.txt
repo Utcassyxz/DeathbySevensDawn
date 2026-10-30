@@ -1,0 +1,1 @@
+PASS: Unity batch import exited successfully; FridgeOpen sprite loaded at 32 pixels per unit with its cabinet-centre pivot checked at 51.5 pixels; lobby flyer prefab rebuilt successfully.

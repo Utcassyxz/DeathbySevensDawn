@@ -65,10 +65,11 @@ namespace DeathBySeventhsDawn.Progression
         }
         void OnGUI()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(style);
             if(Hidden() || (journalRemaining<=0 && timeRemaining<=0))return;
             if(style==null)
             {
-                var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},23);
+                var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
                 style=new GUIStyle(GUI.skin.box){font=font,fontSize=23,alignment=TextAnchor.MiddleCenter,wordWrap=true,padding=new RectOffset(18,18,8,8)};
                 style.normal.textColor=new Color(.94f,.91f,.79f);
             }

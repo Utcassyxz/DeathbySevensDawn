@@ -23,6 +23,7 @@ namespace DeathBySeventhsDawn.Knowledge
             if(game.HasEnded || string.IsNullOrWhiteSpace(id) || effect==null || game.State.knowledgeIds.Contains(id)) return false;
             game.State.knowledgeIds.Add(id);
             if(game.State.journal==null) game.State.journal=new List<JournalEntry>();
+            if(!game.State.journalUnlocked){if(!game.State.initialEvidenceIds.Contains(id))game.State.initialEvidenceIds.Add(id);game.Acquire(effect);return true;}
             game.State.journal.Add(new JournalEntry {id=id,title=string.IsNullOrEmpty(title)?"新的发现":title,body=body,imageResource=image,tier=tier,day=TimeSystem.TimeManager.Instance!=null?TimeSystem.TimeManager.Instance.Days:1,loop=game.LoopCount});
             // 知识、日记和属性变化在同一次存档中写入，重复观察不会重复奖励或重复记日记。
             game.Acquire(game.State.observedKnowledgeIds.Contains(id)?new KnowledgeEffect(0,0,0):effect); JournalUpdates.NotifyAdded(game.State.journal[game.State.journal.Count-1]); return true;

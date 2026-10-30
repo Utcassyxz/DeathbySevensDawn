@@ -68,7 +68,7 @@ namespace DeathBySeventhsDawn.Progression
         {
             if(labelStyle!=null) return;
             // A dynamic OS font provides Chinese glyphs missing from the default IMGUI font.
-            var chineseFont=Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "Arial Unicode MS" },24);
+            var chineseFont=DeathBySeventhsDawn.Progression.GameTypography.Current;
             labelStyle=new GUIStyle(GUI.skin.label) { fontSize=23, wordWrap=true, padding=new RectOffset(10,10,5,5) };
             titleStyle=new GUIStyle(labelStyle) { fontSize=29, fontStyle=FontStyle.Bold };
             buttonStyle=new GUIStyle(GUI.skin.button) { fontSize=23, wordWrap=true, padding=new RectOffset(14,14,12,12) };
@@ -98,6 +98,7 @@ namespace DeathBySeventhsDawn.Progression
         }
         void OnGUI()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(labelStyle,titleStyle,buttonStyle,boxStyle);
             var game=GameManager.Instance; var clock=TimeManager.Instance;
             if(game==null || clock==null) return;
             if(MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked) return;

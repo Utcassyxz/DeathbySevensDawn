@@ -23,7 +23,7 @@ namespace DeathBySeventhsDawn.Interaction
             image="";
             if(id==AncientKnowledgeId) { title=text?.ancientTitle??"天穹后的轮廓"; body=text?.ancientBody??""; image=ancientGodImageResource; }
             else if(id==WindowKnowledgeId) { title=text?.windowTitle??"第二天的窗外观察"; body=text?.windowBody??""; }
-            else { title=text?.fallbackTitle??"新的发现"; body=(text?.fallbackBodyPrefix??"我记下了一条线索。\n\n线索编号：")+id; }
+            else { title=text?.fallbackTitle??"新的发现"; body=(text?.fallbackBodyPrefix??"他记下了一条线索。\n\n线索编号：")+id; }
         }
     }
 }

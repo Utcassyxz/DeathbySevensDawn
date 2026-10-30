@@ -1,0 +1,1 @@
+PASS: 24 checks. Day-one gate; note gate; missed-route refusal; eye closeup; animated handover; manual pickup; inventory dedup/save; bilingual item; TV footprint; giant pixel render; full reset; no runtime errors.

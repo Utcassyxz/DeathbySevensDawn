@@ -31,8 +31,8 @@ namespace DeathBySeventhsDawn.Knowledge
     {
         static InvestigationCatalog catalog;
         public static void ReloadLanguage(){catalog=null;}
-        public static string LocalTitle(string id,string fallback){var e=Evidence(id);if(e!=null)return e.title;var d=Array.Find(Catalog.deductions,x=>x.id==id);if(d!=null)return d.title;var s=StoryText.Current;if(id=="opening-dream")return s.dream.journalTitle;if(id.Contains("broadcast"))return s.dayOneBroadcast.journalTitle;return fallback;}
-        public static string LocalBody(string id,string fallback){var e=Evidence(id);if(e!=null)return e.body;var d=Array.Find(Catalog.deductions,x=>x.id==id);if(d!=null)return d.body;var s=StoryText.Current;if(id=="opening-dream")return s.dream.journalBody;return fallback;}
+        public static string LocalTitle(string id,string fallback){if(id=="prologue-entry")return StoryText.Current.firstLoop.chapterTitle;if(id=="first-evening-journal")return StoryText.Current.morning.journalTitle;var e=Evidence(id);if(e!=null)return e.title;var d=Array.Find(Catalog.deductions,x=>x.id==id);if(d!=null)return d.title;var s=StoryText.Current;if(id=="opening-dream")return s.dream.journalTitle;if(id.Contains("broadcast"))return s.dayOneBroadcast.journalTitle;return fallback;}
+        public static string LocalBody(string id,string fallback){if(id=="prologue-entry")return StoryText.Current.firstLoop.chapterText;if(id=="first-evening-journal")return StoryText.Current.morning.journalBody;var e=Evidence(id);if(e!=null)return e.body;var d=Array.Find(Catalog.deductions,x=>x.id==id);if(d!=null)return d.body;var s=StoryText.Current;if(id=="opening-dream")return s.dream.journalBody;return fallback;}
         public static InvestigationCatalog Catalog
         {
             get
@@ -79,6 +79,9 @@ namespace DeathBySeventhsDawn.Knowledge
         static ProgressionState State => GameManager.Instance.State;
         public static void Normalize(ProgressionState state)
         {
+            if(state.version==1){if(state.journal!=null&&state.journal.Count>0){state.journalUnlocked=state.investigationUnlocked=state.tutorialComplete=true;state.morningStage=10;}state.version=2;}
+            if(!state.tutorialComplete&&state.morningStage==4&&state.dayOneSupernovaSeen)state.morningStage=5;
+            if(state.initialEvidenceIds==null)state.initialEvidenceIds=new List<string>();
             if(state.inventory==null)state.inventory=new List<string>();
             if(state.journal==null)state.journal=new List<JournalEntry>();
             if(state.observedKnowledgeIds==null)state.observedKnowledgeIds=new List<string>();
@@ -91,7 +94,7 @@ namespace DeathBySeventhsDawn.Knowledge
         public static bool Collect(string id)
         {
             var definition=Evidence(id);
-            if(definition==null||Has(id)||GameManager.Instance.HasEnded)return false;
+            if(!State.investigationUnlocked||definition==null||Has(id)||GameManager.Instance.HasEnded)return false;
             var entry=new JournalEntry{id=id,title=definition.title,body=definition.body,imageResource=definition.image,isKnowledge=true,day=TimeManager.Instance.Days,loop=GameManager.Instance.LoopCount};
             // Collecting evidence never adds a second cosmic exposure reward.
             State.journal.Add(entry);
@@ -117,7 +120,7 @@ namespace DeathBySeventhsDawn.Knowledge
         }
         public static bool Connect(string left,string right,string relation,bool writeConclusion)
         {
-            if(GameManager.Instance.HasEnded||left==right||!IsNode(left)||!IsNode(right)||!Has(left)||!Has(right)||!Relations.Contains(relation))return false;
+            if(!State.investigationUnlocked||GameManager.Instance.HasEnded||left==right||!IsNode(left)||!IsNode(right)||!Has(left)||!Has(right)||!Relations.Contains(relation))return false;
             var match=Match(left,right,relation);
             if(writeConclusion&&match==null)return false;
             var link=FindLink(left,right,relation);
@@ -137,7 +140,7 @@ namespace DeathBySeventhsDawn.Knowledge
         }
         public static bool Connect(string left,string right,bool writeConclusion)
         {
-            if(GameManager.Instance.HasEnded||left==right||!IsNode(left)||!IsNode(right)||!Has(left)||!Has(right))return false;
+            if(!State.investigationUnlocked||GameManager.Instance.HasEnded||left==right||!IsNode(left)||!IsNode(right)||!Has(left)||!Has(right))return false;
             var match=writeConclusion?Match(left,right):null;
             if(writeConclusion&&match==null)return false;
             var link=FindLink(left,right);

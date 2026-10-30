@@ -180,6 +180,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(text,title,button,small);
             if(!talking&&!nearby)return;
             if(talking&&(ProgressionHUD.DebugConsoleOpen||MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked))return;
             Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
@@ -213,7 +214,7 @@ namespace DeathBySeventhsDawn.Interaction
         void Styles()
         {
             if(text!=null)return;
-            var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},26);
+            var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
             text=new GUIStyle(GUI.skin.label){font=font,fontSize=25,wordWrap=true};text.normal.textColor=C(.92f,.89,.80f);
             title=new GUIStyle(text){fontSize=38,fontStyle=FontStyle.Bold};title.normal.textColor=C(.72f,.86,.74f);
             small=new GUIStyle(text){fontSize=17};small.normal.textColor=C(.58f,.68,.60f);

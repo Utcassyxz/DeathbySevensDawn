@@ -41,6 +41,7 @@ public static class VerifySevenDayProgression
         try {
             var game=GameManager.Instance; var clock=TimeManager.Instance; var knowledge=KnowledgeManager.Instance;
             Check(clock.Days==1 && game.LoopCount==0,"Initial state");
+            var advanced=(ProgressionState)typeof(GameManager).GetProperty("State",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).GetValue(game);advanced.journalUnlocked=advanced.investigationUnlocked=advanced.tutorialComplete=true;
             foreach(TimePeriod period in Enum.GetValues(typeof(TimePeriod))) {
                 clock.ResetToDayOne();
                 for(int p=0;p<(int)period;p++) clock.AdvanceTime();

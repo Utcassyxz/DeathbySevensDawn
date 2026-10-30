@@ -118,7 +118,7 @@ namespace DeathBySeventhsDawn.Interaction
             closeInstructions.text=DisplayedDay==2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId)?DeathBySeventhsDawn.Story.StoryText.Local("窗外观察已收录","Observation recorded"):DeathBySeventhsDawn.Story.StoryText.Local("R  记录窗外的变化","R  Record the view"))+DeathBySeventhsDawn.Story.StoryText.Local("\nEsc  返回房间","\nEsc Back to room") : DeathBySeventhsDawn.Story.StoryText.Local("Esc  返回房间","Esc Back to room");
             foreach (var label in new[] { heading, closeInstructions })
             {
-                label.font.RequestCharactersInTexture(label.text, label.fontSize, label.fontStyle);
+                label.font=DeathBySeventhsDawn.Progression.GameTypography.Current;label.font.RequestCharactersInTexture(label.text, label.fontSize, label.fontStyle);
                 label.SetAllDirty();
             }
         }
@@ -134,7 +134,7 @@ namespace DeathBySeventhsDawn.Interaction
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1280, 720);
             scaler.matchWidthOrHeight = .5f;
-            var font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "Noto Sans CJK SC", "Arial Unicode MS", "Arial" }, 28);
+            var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
             hint = MakeText("Window hint", root.transform, font, DeathBySeventhsDawn.Story.StoryText.Local("E  查看窗外","E  Look outside"), 25,
                 new Vector2(.1f, .02f), new Vector2(.9f, .11f));
             overlay = MakeRect("Window view", root.transform, Vector2.zero, Vector2.one);

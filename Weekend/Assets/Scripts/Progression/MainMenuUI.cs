@@ -39,14 +39,14 @@ namespace DeathBySeventhsDawn.Progression
         }
         void Update()
         {
-            if(!visible)return;
+            if(!visible||GameSettingsUI.WorldBlocked)return;
             if(starting){if(Time.unscaledTime-openingStarted>=11f)FinishOpening();return;}
             var k=Keyboard.current;
             if(k!=null&&k.enterKey.wasPressedThisFrame)StartGame();
         }
         public void StartGame()
         {
-            if(!visible||starting)return;starting=true;openingStarted=Time.unscaledTime;ApartmentAudio.Instance?.BeginOpening();
+            if(!visible||starting||GameSettingsUI.WorldBlocked)return;starting=true;openingStarted=Time.unscaledTime;ApartmentAudio.Instance?.BeginOpening();
         }
         void FinishOpening()
         {
@@ -76,7 +76,7 @@ namespace DeathBySeventhsDawn.Progression
         void Styles()
         {
             if(title!=null)return;
-            var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},32);
+            var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
             title=new GUIStyle(GUI.skin.label){font=font,fontSize=62,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};title.normal.textColor=Ink;
             subtitle=new GUIStyle(title){fontSize=20,fontStyle=FontStyle.Normal};subtitle.normal.textColor=Gold;
             button=new GUIStyle(GUI.skin.button){font=font,fontSize=23,alignment=TextAnchor.MiddleCenter,padding=new RectOffset(18,18,12,12)};
@@ -130,8 +130,9 @@ namespace DeathBySeventhsDawn.Progression
         static void Fill(Rect r,Color c){var old=GUI.color;GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=old;}
         void OnGUI()
         {
-            if(!visible)return;
-            Styles();
+            DeathBySeventhsDawn.Progression.GameTypography.Use(title,subtitle,button,small);
+            if(!visible||GameSettingsUI.IsOpen)return;
+            Styles();title.font=StoryText.English?GameTypography.English:GameTypography.Chinese;subtitle.font=StoryText.English?GameTypography.Chinese:GameTypography.English;
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Min(Screen.height/900f,Screen.width/1100f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-100;
             float w=Screen.width/scale,h=Screen.height/scale;
@@ -141,12 +142,12 @@ namespace DeathBySeventhsDawn.Progression
                 float progress=starting?Mathf.Clamp01((Time.unscaledTime-openingStarted)/11f):0;
                 GUI.DrawTexture(new Rect(0,0,w,h),sky.Render(Time.unscaledTime,progress),ScaleMode.ScaleAndCrop);
                 if(starting){GUI.Label(new Rect(0,h-45,w,30),StoryText.Local("跳过 · Esc","Skip · Esc"),small);if(Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame)FinishOpening();return;}
-                if(PlateButton(new Rect(w-210,25,180,44),StoryText.English?"中文":"English"))StoryText.ToggleLanguage();
                 GUI.Label(new Rect(0,h*.10f,w,90),StoryText.Current.mainMenu?.title??"七日",title);
-                GUI.Label(new Rect(0,h*.10f+86,w,32),StoryText.Current.mainMenu?.subtitle??"seven day",subtitle);
+                GUI.Label(new Rect(0,h*.10f+86,w,32),StoryText.Current.mainMenu?.subtitle??"SEVEN DAY",subtitle);
                 float bw=Mathf.Min(300,w-80);
                 if(PlateButton(new Rect((w-bw)/2,h*.70f,bw,58),StoryText.Current.mainMenu?.start??"开 始 新 游 戏"))StartGame();
-                if(PlateButton(new Rect((w-bw)/2,h*.70f+78,bw,52),StoryText.Current.mainMenu?.quit??"退出游戏"))QuitGame();
+                if(PlateButton(new Rect((w-bw)/2,h*.70f+78,bw,52),StoryText.Local("设置","Settings")))GameSettingsUI.Show();
+                if(PlateButton(new Rect((w-bw)/2,h*.70f+152,bw,52),StoryText.Current.mainMenu?.quit??"退出游戏"))QuitGame();
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }

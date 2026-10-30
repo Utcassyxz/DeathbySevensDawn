@@ -25,7 +25,7 @@ public static class VerifyPerception
         if(EditorApplication.isPlaying)throw new InvalidOperationException("Exit Play first.");
         SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
         foreach(string suffix in new[]{"",".bak",".tmp"})SessionState.SetString(KeyName+suffix,File.Exists(ProgressionSave.PathName+suffix)?Convert.ToBase64String(File.ReadAllBytes(ProgressionSave.PathName+suffix)):"");
-        ProgressionSave.Write(new ProgressionState{dreamSeen=true});EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
+        ProgressionSave.Write(new ProgressionState{dreamSeen=true,journalUnlocked=true,investigationUnlocked=true,tutorialComplete=true});EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
         phase=0;next=deadline=0;error=null;SessionState.SetBool(KeyName,true);EditorApplication.isPlaying=true;
     }
     static void Check(bool ok,string message){if(!ok)throw new Exception(message);}

@@ -55,6 +55,7 @@ public static class VerifyInitialState
                 case 1:
                     CheckFresh(game,clock,story,feedback);Call(story,"WakeUp");break;
                 case 2:
+                    var advanced=(ProgressionState)typeof(GameManager).GetProperty("State",Flags).GetValue(game);advanced.journalUnlocked=advanced.investigationUnlocked=advanced.tutorialComplete=true;
                     Check(!StoryJournal.WorldBlocked&&GameObject.FindWithTag("Player").GetComponent<DeathBySeventhsDawn.Player.PlayerController2D>().enabled,"Wake restores controls");
                     if(scenario==0)Press(Key.J);
                     if(scenario==1)SceneManager.LoadScene("Corridor");
@@ -96,7 +97,7 @@ public static class VerifyInitialState
         var saved=ProgressionSave.Load();
         Check(SceneManager.GetActiveScene().name=="Bedroom"&&clock.Days==1&&clock.Period==TimePeriod.Morning,"Bedroom Day 1 morning");
         Check(game.LoopCount==0&&game.Knowledge==0&&game.Mutation==0&&!game.HasEnded&&game.Vitality==game.MaxVitality&&game.Sanity==game.Settings.maximumSanity,"Fresh stats");
-        Check(!saved.dreamSeen&&!saved.neighborFlyersSeen&&!saved.neighborBarricadeSeen&&!saved.skt079NewsSeen&&!saved.prologueEntered&&!saved.badEndingOne&&!saved.dayOneSupernovaSeen&&saved.journal.Count==0&&saved.knowledgeIds.Count==0&&saved.morningStage==0&&!saved.fridgeOpened&&saved.inventory.Count==0,"Fresh persisted story");
+        Check(!saved.dreamSeen&&!saved.neighborFlyersSeen&&!saved.neighborBarricadeSeen&&!saved.skt079NewsSeen&&!saved.prologueEntered&&!saved.badEndingOne&&!saved.dayOneSupernovaSeen&&saved.journal.Count==0&&saved.knowledgeIds.Count==0&&saved.morningStage==0&&!saved.fridgeOpened&&saved.inventory.Count==0&&!saved.journalUnlocked&&!saved.investigationUnlocked&&!saved.tutorialComplete&&!saved.dayOneNewsStarted&&!saved.fridgeDoorOpen,"Fresh persisted story");
         Check(Read(story,"page").ToString()=="Dream"&&(int)Read(story,"dreamPage")==0,"Dream starts from first page");
         Check(!FirstLoopPrologue.Instance.IsPresenting&&!FurnitureInteraction.IsBusy&&!ProgressionHUD.DebugConsoleOpen&&feedback.JournalMessage==null&&feedback.TimeMessage==null,"No old modal or notices");
     }

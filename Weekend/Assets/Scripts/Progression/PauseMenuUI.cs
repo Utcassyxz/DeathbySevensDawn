@@ -19,6 +19,7 @@ namespace DeathBySeventhsDawn.Progression
         void OnDisable(){Close();}
         void Update()
         {
+            if(GameSettingsUI.WorldBlocked)return;
             if(open)
             {
                 var key=Keyboard.current;
@@ -38,7 +39,7 @@ namespace DeathBySeventhsDawn.Progression
         void Styles()
         {
             if(body!=null)return;
-            var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},24);
+            var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
             body=new GUIStyle(GUI.skin.label){font=font,fontSize=19,wordWrap=true,alignment=TextAnchor.MiddleCenter};body.normal.textColor=Ink;
             title=new GUIStyle(body){fontSize=36,fontStyle=FontStyle.Bold};small=new GUIStyle(body){fontSize=14};small.normal.textColor=Muted;
             box=new GUIStyle(GUI.skin.box){padding=new RectOffset(24,24,20,20)};
@@ -46,7 +47,8 @@ namespace DeathBySeventhsDawn.Progression
         }
         void OnGUI()
         {
-            if(!open)return;
+            DeathBySeventhsDawn.Progression.GameTypography.Use(title,body,small,button,box);
+            if(!open||GameSettingsUI.IsOpen)return;
             Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-90;
@@ -62,7 +64,7 @@ namespace DeathBySeventhsDawn.Progression
                 if(GUILayout.Button(text?.resume??"继续游戏",button,GUILayout.MinHeight(48)))Close();
                 if(GUILayout.Button(text?.returnToTitle??"回到主页面",button,GUILayout.MinHeight(48)))ReturnToMain();
                 if(GUILayout.Button(text?.quit??"退出游戏",button,GUILayout.MinHeight(48)))MainMenuUI.QuitGame();
-                if(GUILayout.Button(StoryText.English?"中文":"English",button,GUILayout.MinHeight(40)))StoryText.ToggleLanguage();
+                if(GUILayout.Button(StoryText.Local("设置","Settings"),button,GUILayout.MinHeight(40)))GameSettingsUI.Show();
                 GUILayout.Space(10);GUILayout.Label(text?.hint??"Esc / E 继续",small);
                 GUILayout.EndArea();
             }

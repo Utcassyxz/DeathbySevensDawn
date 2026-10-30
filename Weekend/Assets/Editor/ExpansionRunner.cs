@@ -23,7 +23,7 @@ using DeathBySeventhsDawn.Interaction;
     static void Call(object o,string m)=>o.GetType().GetMethod(m,System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).Invoke(o,null);
     static void Place(Vector2 p){var go=GameObject.FindWithTag("Player");go.transform.position=p;go.GetComponent<Rigidbody2D>().position=p;}
     [MenuItem("Prototype/Test expanded investigation runtime")]
-    static void Run(){backup=new byte[3][];int i=0;foreach(var ext in new[]{"",".bak",".tmp"}){var p=ProgressionSave.PathName+ext;backup[i++]=File.Exists(p)?File.ReadAllBytes(p):null;}oldLang=PlayerPrefs.GetInt("Story.Language",0);PlayerPrefs.SetInt("Story.Language",0);SessionState.SetBool(DayOneSupernovaEvent.SuppressionKey,true);ProgressionSave.Write(new ProgressionState{dreamSeen=true});EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");errors=false;routine=Steps();EditorApplication.isPlaying=true;next=EditorApplication.timeSinceStartup+3;}
+    static void Run(){backup=new byte[3][];int i=0;foreach(var ext in new[]{"",".bak",".tmp"}){var p=ProgressionSave.PathName+ext;backup[i++]=File.Exists(p)?File.ReadAllBytes(p):null;}oldLang=PlayerPrefs.GetInt("Story.Language",0);PlayerPrefs.SetInt("Story.Language",0);SessionState.SetBool(DayOneSupernovaEvent.SuppressionKey,true);ProgressionSave.Write(new ProgressionState{dreamSeen=true,journalUnlocked=true,investigationUnlocked=true,tutorialComplete=true});EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");errors=false;routine=Steps();EditorApplication.isPlaying=true;next=EditorApplication.timeSinceStartup+3;}
     static IEnumerator Steps(){
         while(GameManager.Instance==null)yield return .2f;
         var clock=TimeManager.Instance;

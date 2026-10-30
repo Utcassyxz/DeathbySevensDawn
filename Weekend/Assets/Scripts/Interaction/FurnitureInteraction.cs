@@ -36,6 +36,7 @@ namespace DeathBySeventhsDawn.Interaction
         void Update()
         {
             if(GameManager.Instance==null || GameManager.Instance.HasEnded) { CloseMenu(); target=null; return; }
+            if(!GameManager.Instance.State.tutorialComplete){CloseMenu();target=null;return;}
             if(ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked) return;
             bool interact=false,cancel=false;
 #if ENABLE_INPUT_SYSTEM
@@ -67,11 +68,11 @@ namespace DeathBySeventhsDawn.Interaction
         }
         public bool WatchTelevision()
         {
-            if(!IsBusy || target!=television || watching || StoryJournal.WorldBlocked) return false;
+            if(!GameManager.Instance.State.tutorialComplete||!IsBusy || target!=television || watching || StoryJournal.WorldBlocked) return false;
             watchingReport=FirstLoopPrologue.Instance!=null?FirstLoopPrologue.Instance.WatchNews():"新闻与杂音交替闪过。";
             watching=true; TimeManager.Instance.AdvanceTime(); return true;
         }
-        public bool CollectNews()=>watching&&GameManager.Instance.State.skt079NewsSeen&&Knowledge.Investigation.Collect("skt079-broadcast");
+        public bool CollectNews()=>false;
         void CloseMenu()
         {
             if(restoreMovement && movement!=null) movement.enabled=true;
@@ -80,7 +81,7 @@ namespace DeathBySeventhsDawn.Interaction
         void PrepareStyles()
         {
             if(label!=null) return;
-            var font=Font.CreateDynamicFontFromOSFont(new[] {"Microsoft YaHei","SimHei","Noto Sans CJK SC"},26);
+            var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
             label=new GUIStyle(GUI.skin.label) {font=font,fontSize=26,wordWrap=true,alignment=TextAnchor.MiddleCenter};
             button=new GUIStyle(GUIStyle.none) {font=font,fontSize=25,wordWrap=true,padding=new RectOffset(16,16,14,14),alignment=TextAnchor.MiddleCenter};
             button.normal.textColor=new Color(.74f,.78f,.66f);button.hover.textColor=new Color(.96f,.94f,.82f);button.active.textColor=Color.white;
@@ -88,7 +89,8 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
-            if(GameManager.Instance==null || GameManager.Instance.HasEnded || ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked) return;
+            DeathBySeventhsDawn.Progression.GameTypography.Use(label,button,box);
+            if(GameManager.Instance==null || !GameManager.Instance.State.tutorialComplete || GameManager.Instance.HasEnded || ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked) return;
             if(target==null && !IsBusy) return;
             PrepareStyles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix=GUI.matrix; var color=GUI.color;
@@ -113,7 +115,6 @@ namespace DeathBySeventhsDawn.Interaction
                 } else if(watching) {
                     GUILayout.Label(watchingReport,label);
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("已度过一个时段。","One period has passed."),label);
-                    if(GameManager.Instance.State.skt079NewsSeen&&!Knowledge.Investigation.Has("skt079-broadcast")&&GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("摘录新闻到笔记 · R","Record news extract \u00b7 R"),button))CollectNews();
                 } else {
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("屏幕亮着。要坐下来看看电视吗？","The screen is on. Sit down and watch?"),label);
                     if(GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("看电视（度过一个时段）","Watch television (one period)"),button)) WatchTelevision();

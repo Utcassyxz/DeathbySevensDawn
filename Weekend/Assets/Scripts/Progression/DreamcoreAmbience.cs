@@ -79,7 +79,7 @@ namespace DeathBySeventhsDawn.Progression
         static float Delta(Color a,Color b)=>Mathf.Abs(a.r-b.r)+Mathf.Abs(a.g-b.g)+Mathf.Abs(a.b-b.b)+Mathf.Abs(a.a-b.a);
         void OnGUI()
         {
-            if(Event.current.type!=EventType.Repaint||MainMenuUI.IsVisible)return;
+            if(Event.current.type!=EventType.Repaint||MainMenuUI.IsVisible||GameSettingsUI.IsOpen)return;
             var game=GameManager.Instance;var clock=TimeManager.Instance;if(game==null||clock==null)return;
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;GUI.matrix=Matrix4x4.identity;GUI.depth=90;
             float w=Screen.width,h=Screen.height;

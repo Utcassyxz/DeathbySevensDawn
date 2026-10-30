@@ -45,7 +45,7 @@ namespace DeathBySeventhsDawn.Interaction
             scenery=new GameObject("401 first-loop story props");SceneManager.MoveGameObjectToScene(scenery,scene);
             var floor=GameObject.Find("Corridor tiles");material=floor!=null?floor.GetComponent<SpriteRenderer>().sharedMaterial:null;
             EnsureSquare();
-            BuildFlyers();
+            if(TimeManager.Instance.Days>=2)BuildFlyers();
             if(TimeManager.Instance.Days>=1)BuildBoards(GameManager.Instance.State.neighborBarricadeSeen);
             entryPending=true;
         }
@@ -163,8 +163,8 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void BuildFlyers()
         {
-            Part("401 flyer",-3.45f,1.63f,.43f,.35f,new Color(.84f,.81f,.63f),10,scenery.transform);
-            for(int i=0;i<3;i++)Part("Flyer writing",-3.45f,1.72f-i*.08f,.29f,.018f,new Color(.35f,.24f,.17f),11,scenery.transform);
+            Part("401 door note",-4.48f,1.48f,.26f,.28f,new Color(.84f,.81f,.63f),10,scenery.transform);
+            for(int i=0;i<3;i++)Part("Door note writing",-4.48f,1.55f-i*.06f,.17f,.014f,new Color(.35f,.24f,.17f),11,scenery.transform);
         }
         void BuildBoards(bool visible)
         {
@@ -190,10 +190,11 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(text,title,button);
             if(!IsPresenting||ProgressionHUD.DebugConsoleOpen)return;
             if(text==null)
             {
-                var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},26);
+                var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
                 text=new GUIStyle(GUI.skin.label){font=font,fontSize=25,wordWrap=true,alignment=TextAnchor.MiddleCenter};
                 title=new GUIStyle(text){fontSize=42,fontStyle=FontStyle.Bold};button=new GUIStyle(GUIStyle.none){font=font,fontSize=22,alignment=TextAnchor.MiddleCenter};
                 button.normal.textColor=new Color(.74f,.78f,.66f);button.hover.textColor=new Color(.96f,.94f,.82f);button.active.textColor=Color.white;

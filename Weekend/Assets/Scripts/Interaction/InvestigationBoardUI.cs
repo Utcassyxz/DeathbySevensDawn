@@ -106,8 +106,9 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void Styles()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(title,body,small,cardTitle,rowTitle,rowMeta,tag,button,filterButton,linkRow,headerTitle,headerSmall);
             if(body!=null)return;
-            var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},24);
+            var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
             body=new GUIStyle(GUI.skin.label){font=font,fontSize=19,wordWrap=true};body.normal.textColor=Ink;
             title=new GUIStyle(body){fontSize=32,fontStyle=FontStyle.Bold};small=new GUIStyle(body){fontSize=16,wordWrap=true};small.normal.textColor=Muted;
             cardTitle=new GUIStyle(body){fontSize=23,fontStyle=FontStyle.Bold};

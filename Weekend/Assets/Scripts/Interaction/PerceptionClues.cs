@@ -44,6 +44,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void Update()
         {
+            if(GameManager.Instance!=null&&!GameManager.Instance.State.investigationUnlocked)return;
             if(marker!=null)marker.SetActive(FilterOpen);
             if(!FilterOpen){if(reading)Close();nearby=false;return;}
             if(ProgressionHUD.DebugConsoleOpen)return;
@@ -71,8 +72,9 @@ namespace DeathBySeventhsDawn.Interaction
         public void Close(){reading=false;blockedFrame=Time.frameCount;}
         void OnGUI()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(text,title,button);
             if(ProgressionHUD.DebugConsoleOpen||(!reading&&!nearby))return;
-            if(text==null){var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},24);text=new GUIStyle(GUI.skin.label){font=font,fontSize=24,wordWrap=true};title=new GUIStyle(text){fontSize=30,fontStyle=FontStyle.Bold};button=new GUIStyle(text){alignment=TextAnchor.MiddleCenter};button.normal.textColor=new Color(.78f,.80f,.65f);}
+            if(text==null){var font=DeathBySeventhsDawn.Progression.GameTypography.Current;text=new GUIStyle(GUI.skin.label){font=font,fontSize=24,wordWrap=true};title=new GUIStyle(text){fontSize=30,fontStyle=FontStyle.Bold};button=new GUIStyle(text){alignment=TextAnchor.MiddleCenter};button.normal.textColor=new Color(.78f,.80f,.65f);}
             DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Clamp(Screen.height/900f,.8f,2.4f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float w=Screen.width/scale,h=Screen.height/scale;
             try

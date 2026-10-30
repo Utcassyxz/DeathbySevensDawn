@@ -17,8 +17,9 @@ namespace DeathBySeventhsDawn.Interaction
         public void ResetNavigation(){filter=0;indexScroll=Vector2.zero;articleScroll=Vector2.zero;}
         void Prepare()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(heading,eyebrow,body,small,rowTitle,rowMeta,tab,selectedTab,navigation);
             if(body!=null)return;
-            var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Noto Sans CJK SC"},24);
+            var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
             body=Style(font,22,Ink);body.wordWrap=true;
             heading=Style(font,34,Ink);heading.fontStyle=FontStyle.Bold;heading.wordWrap=true;
             eyebrow=Style(font,14,Accent);small=Style(font,15,Muted);
@@ -100,7 +101,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             GUI.EndScrollView();
             GUI.Label(new Rect(left.x+24,left.yMax-36,left.width-48,20),DeathBySeventhsDawn.Story.StoryText.Local("新记录在前 · 已读状态会保留","Newest first \u00b7 Reading progress saved"),rowMeta);
-            GUI.Label(new Rect(right.x+36,right.y+24,right.width-200,24),DeathBySeventhsDawn.Story.StoryText.Local("DeathbySevensDawn   /   记忆手稿","DeathbySevensDawn / Field notes"),eyebrow);
+            GUI.Label(new Rect(right.x+36,right.y+24,right.width-200,24),DeathBySeventhsDawn.Story.StoryText.Local("SEVEN DAY   /   记忆手稿","SEVEN DAY / Field notes"),eyebrow);
             if(GUI.Button(new Rect(right.xMax-147,right.y+16,121,38),DeathBySeventhsDawn.Story.StoryText.Local("合上  ×","Close \u00d7"),navigation))close();
             Fill(new Rect(right.x+30,right.y+75,right.width-60,1),new Color(.73f,.73f,.63f));
             bool selectedVisible=visible.Contains(selected);

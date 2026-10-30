@@ -34,7 +34,7 @@ public static class VerifyInvestigation
         if(EditorApplication.isPlaying)throw new Exception("Stop Play before running acceptance.");
         SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
         foreach(string suffix in new[]{"",".bak",".tmp"})SessionState.SetString(KeyName+suffix,File.Exists(ProgressionSave.PathName+suffix)?Convert.ToBase64String(File.ReadAllBytes(ProgressionSave.PathName+suffix)):"");
-        ProgressionSave.Write(new ProgressionState{dreamSeen=true});EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Corridor.unity");
+        ProgressionSave.Write(new ProgressionState{dreamSeen=true,journalUnlocked=true,investigationUnlocked=true,tutorialComplete=true});EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Corridor.unity");
         steps=null;next=deadline=0;error=null;assertions=0;SessionState.SetBool(KeyName,true);EditorApplication.isPlaying=true;
     }
     static void Check(bool ok,string text){assertions++;if(!ok)throw new Exception(text);}
@@ -54,14 +54,12 @@ public static class VerifyInvestigation
     {
         background=Application.runInBackground;Application.runInBackground=true;keyboard=InputSystem.AddDevice<Keyboard>("InvestigationAcceptanceKeyboard");keyboard.MakeCurrent();
         yield return 5f;
-        Check(State.neighborFlyersSeen&&!Investigation.Has("401-flyers"),"Encounter must not collect flyer");
+        Check(State.neighborFlyersSeen&&!Investigation.Has("401-warning"),"Encounter does not grant a warning record");
         for(int i=0;i<DeathBySeventhsDawn.Story.StoryText.Current.cult.dayOne.Length;i++)CultNeighbor.Instance.Advance();
-        Place(new Vector2(-3.45f,1.05f));yield return .4f;Press(Key.E);yield return .4f;Release();
-        Check(EvidenceInspection.Instance.IsOpen&&!Investigation.Has("401-flyers"),"Viewing flyer is not collection");Capture("flyer-before-collection");yield return .4f;
-        Press(Key.Escape);yield return .4f;Release();yield return .3f;
-        Check(!Investigation.Has("401-flyers"),"Leaving uncollected flyer writes nothing");Press(Key.E);yield return .3f;Release();yield return .3f;Press(Key.R);yield return .3f;Release();
-        Check(Investigation.Has("401-flyers")&&State.journal.Count==1,"Explicit R collects flyer");
-        Check(!EvidenceInspection.Instance.CollectCurrent()&&State.journal.Count==1,"Flyer collection deduplicated");
+        Check(GameObject.Find("401 flyer")==null,"Flyer is reserved for the lobby");
+        Check(!Investigation.Has("401-warning"),"Conversation holds the warning for initial diary information");
+        Check(Investigation.Collect("401-warning")&&State.journal.Count==1,"Initial warning can populate the journal");
+        Check(!Investigation.Collect("401-warning")&&State.journal.Count==1,"Initial warning deduplicates");
         EvidenceInspection.Instance.Close();SceneManager.LoadScene("Bedroom");yield return .4f;
         Place(new Vector2(2.6f,-1.0f));yield return .4f;Press(Key.E);yield return .3f;Release();
         Check(EvidenceInspection.Instance.CurrentId=="my-observation-notes"&&!Investigation.Has("my-observation-notes"),"Desk notes are inspectable");
@@ -71,14 +69,14 @@ public static class VerifyInvestigation
         Check(PerceptionClues.Instance.CollectCurrent(),"Explicit hidden clue collection");PerceptionClues.Instance.Close();State.sanityBurden=0;
         TimeManager.Instance.SleepUntilNextMorning();SceneManager.LoadScene("LivingRoom");yield return .5f;Place(new Vector2(-3.65f,-1.65f));yield return .4f;Press(Key.E);yield return .4f;Release();
         var furniture=UnityEngine.Object.FindAnyObjectByType<FurnitureInteraction>();Check(furniture.WatchTelevision(),"Watch day 2 news");
-        Check(State.skt079NewsSeen&&!Investigation.Has("skt079-broadcast"),"News not automatically excerpted");Check(furniture.CollectNews(),"Manually excerpt news");
+        Check(State.skt079NewsSeen&&!Investigation.Has("skt079-broadcast"),"News not automatically excerpted");Check(!furniture.CollectNews()&&Investigation.Collect("skt079-broadcast"),"TV has no record action; initial-information API can populate news");
         Press(Key.Escape);yield return .4f;Release();SceneManager.LoadScene("Corridor");yield return 5f;
         Check(State.neighborBarricadeSeen&&!Investigation.Has("401-barricade"),"Boarding does not automatically record evidence");
         Place(new Vector2(-4.35f,.35f));yield return .4f;Press(Key.E);yield return .4f;Release();
-        Check(EvidenceInspection.Instance.CurrentId=="401-barricade"&&EvidenceInspection.Instance.CollectCurrent(),"Inspect and record boarded door");EvidenceInspection.Instance.Close();
+        Check(EvidenceInspection.Instance.CurrentId=="cult-door-note"&&EvidenceInspection.Instance.CollectCurrent(),"Day-two note is examined before the door");EvidenceInspection.Instance.Close();yield return .4f;Press(Key.E);yield return .4f;Release();Check(EvidenceInspection.Instance.CurrentId=="401-barricade"&&EvidenceInspection.Instance.CollectCurrent(),"Inspect and record boarded door");EvidenceInspection.Instance.Close();
         State.sanityBurden=65;Place(new Vector2(-3.45f,1.05f));yield return .4f;Press(Key.E);yield return .4f;Release();
         Check(PerceptionClues.Instance.CollectCurrent(),"Collect hidden underprint deliberately");PerceptionClues.Instance.Close();State.sanityBurden=0;
-        Check(Investigation.Connect("401-flyers","401-barricade",true),"Link warning to boarded door");
+        Check(Investigation.Connect("401-warning","401-barricade",true),"Link warning to boarded door");
         Check(Investigation.Connect("filter-401-underprint","401-barricade",true),"Cross-check hidden writing with boards");
         SceneManager.LoadScene("Bedroom");yield return .5f;
         var window=UnityEngine.Object.FindAnyObjectByType<WindowLookout2D>();Place(window.transform.position);yield return .4f;
@@ -91,9 +89,9 @@ public static class VerifyInvestigation
         Check(Investigation.Match("apartment-telescope","my-observation-notes")!=null&&!Investigation.Has("deduction-astronomy"),"Preview does not grant conclusion");
         Check(Investigation.Connect("apartment-telescope","my-observation-notes",true),"Deduce astronomy hobby");
         Check(!Investigation.Connect("my-observation-notes","apartment-telescope",true),"Reverse duplicate rejected");
-        Check(Investigation.Connect("401-flyers","apartment-telescope",false),"Unsupported hypothesis stored as tentative");
-        Check(Investigation.FindLink("401-flyers","apartment-telescope").conclusion==null,"Tentative is not fact");
-        Check(Investigation.RemoveTentative("apartment-telescope","401-flyers"),"Tentative can be removed");
+        Check(Investigation.Connect("401-warning","apartment-telescope",false),"Unsupported hypothesis stored as tentative");
+        Check(Investigation.FindLink("401-warning","apartment-telescope").conclusion==null,"Tentative is not fact");
+        Check(Investigation.RemoveTentative("apartment-telescope","401-warning"),"Tentative can be removed");
         TimeManager.Instance.AdvanceTime();Press(Key.T);yield return .5f;Release();
         Check(Story.IsRevelation&&KnowledgeManager.Instance.Experienced(StoryContent.AncientKnowledgeId)&&!Investigation.Has(StoryContent.AncientKnowledgeId),"Witness has cost but no automatic sketch");
         float knowledge=GameManager.Instance.Knowledge;
@@ -102,8 +100,8 @@ public static class VerifyInvestigation
         Check(Resources.Load<Texture2D>("Story/AncientOutlineSketch")!=null,"Sketch asset present");
         Check(Investigation.Connect(StoryContent.AncientKnowledgeId,"apartment-telescope",true),"Sketch connected to telescope");
         Check(Investigation.Connect("deduction-optical","deduction-astronomy",true),"Deductions can support later deductions");
-        State.neighborFlyersSeen=false;Check(Investigation.Match("401-flyers","skt079-broadcast")==null,"Chronology requires witnessing Day 1 warning");State.neighborFlyersSeen=true;
-        Check(Investigation.Connect("401-flyers","skt079-broadcast",true),"Warning chronology deduction");
+        State.neighborFlyersSeen=false;Check(Investigation.Match("401-warning","skt079-broadcast")==null,"Chronology requires witnessing Day 1 warning");State.neighborFlyersSeen=true;
+        Check(Investigation.Connect("401-warning","skt079-broadcast",true),"Warning chronology deduction");
         Press(Key.Escape);yield return .4f;Release();Check(FirstLoopPrologue.Instance.ChapterTitleOpen,"Prologue gate uses experience, not collection");
         FirstLoopPrologue.Instance.EnterPrologue();yield return .4f;
         Press(Key.J);yield return .4f;Release();
@@ -120,7 +118,7 @@ public static class VerifyInvestigation
         typeof(InvestigationBoardUI).GetField("boardScroll",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).SetValue(board,new Vector2(0,500));
         Capture("board");yield return .6f;
         var loaded=ProgressionSave.Load();Check(loaded.investigationLinks.Count==6&&loaded.journal.Any(e=>e.id=="deduction-deliberate"),"Graph persists on save/load");
-        var legacy=JsonUtility.FromJson<ProgressionState>("{\"version\":1,\"journal\":[{\"id\":\"401-flyers\",\"title\":\"legacy\"}],\"knowledgeIds\":[]}");Investigation.Normalize(legacy);
+        var legacy=JsonUtility.FromJson<ProgressionState>("{\"version\":1,\"journal\":[{\"id\":\"401-warning\",\"title\":\"legacy\"}],\"knowledgeIds\":[]}");Investigation.Normalize(legacy);
         Check(legacy.journal.Count==1&&legacy.investigationLinks!=null&&legacy.observedKnowledgeIds!=null,"Legacy records preserved");
         Press(Key.Escape);yield return .3f;Release();int count=State.journal.Count;LoopManager.Instance.RestartLoop();yield return .6f;
         Check(State.journal.Count==count&&State.investigationLinks.Count==6,"Loop retains collected reasoning");

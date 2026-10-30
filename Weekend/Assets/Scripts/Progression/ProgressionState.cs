@@ -5,12 +5,14 @@ namespace DeathBySeventhsDawn.Progression
     // Only permanent progress is saved. Loading starts a fresh Day 1 without an aging penalty.
     [Serializable] public class ProgressionState
     {
-        public int version=1, loopCount;
+        public int version=2, loopCount;
         public bool badEndingOne, dreamSeen;
         public bool neighborFlyersSeen, skt079NewsSeen, neighborBarricadeSeen, prologueEntered;
         public bool dayOneSupernovaSeen;
         public int morningStage;
-        public bool fridgeOpened;
+        public bool fridgeOpened,fridgeDoorOpen,dayOneNewsStarted,journalUnlocked,investigationUnlocked,tutorialComplete;
+        public int newsPage;
+        public List<string> initialEvidenceIds=new List<string>();
         public bool cultDayOneTalked,cultTokenOffered;
         public List<string> inventory=new List<string>();
         public List<Knowledge.JournalEntry> journal=new List<Knowledge.JournalEntry>();

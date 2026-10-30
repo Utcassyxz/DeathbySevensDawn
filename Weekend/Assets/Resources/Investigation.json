@@ -67,6 +67,10 @@
     {
       "id": "cult-door-note",
       "image": ""
+    },
+    {
+      "id": "401-warning",
+      "image": ""
     }
   ],
   "deductions": [
@@ -87,12 +91,12 @@
     },
     {
       "id": "deduction-warning",
-      "left": "401-flyers",
+      "left": "401-warning",
       "right": "skt079-broadcast"
     },
     {
       "id": "deduction-sealing",
-      "left": "401-flyers",
+      "left": "401-warning",
       "right": "401-barricade"
     },
     {

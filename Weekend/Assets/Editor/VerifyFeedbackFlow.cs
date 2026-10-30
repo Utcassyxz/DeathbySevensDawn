@@ -26,7 +26,7 @@ public static class VerifyFeedbackFlow
         SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey,true);
         foreach(string suffix in new[]{"",".bak",".tmp"})
             SessionState.SetString(KeyName+suffix,File.Exists(ProgressionSave.PathName+suffix)?Convert.ToBase64String(File.ReadAllBytes(ProgressionSave.PathName+suffix)):"");
-        ProgressionSave.Write(new ProgressionState{dreamSeen=true});
+        ProgressionSave.Write(new ProgressionState{dreamSeen=true,journalUnlocked=true,investigationUnlocked=true,tutorialComplete=true});
         EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
         phase=0;next=0;deadline=0;SessionState.SetBool(KeyName,true);EditorApplication.isPlaying=true;
     }

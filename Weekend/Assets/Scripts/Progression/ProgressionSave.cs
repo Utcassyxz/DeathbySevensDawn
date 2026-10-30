@@ -11,7 +11,7 @@ namespace DeathBySeventhsDawn.Progression
             try {
                 if(!File.Exists(PathName)) return new ProgressionState();
                 var state=JsonUtility.FromJson<ProgressionState>(File.ReadAllText(PathName));
-                if(state==null || state.version!=1 || state.loopCount<0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
+                if(state==null || (state.version!=1&&state.version!=2) || state.loopCount<0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
                     throw new InvalidDataException("Unsupported or invalid progression save.");
                 state.knowledgeIds=state.knowledgeIds??new System.Collections.Generic.List<string>();
                 Knowledge.Investigation.Normalize(state);

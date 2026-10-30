@@ -24,7 +24,7 @@ namespace DeathBySeventhsDawn.Interaction
         public bool CollectCurrent()=>IsOpen&&Investigation.Collect(opened);
         public bool TryOpen(string id)
         {
-            if(id!=target||StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy||ProgressionHUD.DebugConsoleOpen||(GameManager.Instance==null||GameManager.Instance.HasEnded))return false;
+            if(!GameManager.Instance.State.investigationUnlocked||id!=target||StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy||ProgressionHUD.DebugConsoleOpen||(GameManager.Instance==null||GameManager.Instance.HasEnded))return false;
             opened=id;openedFrame=Time.frameCount;scroll=Vector2.zero;return true;
         }
         void Update()
@@ -40,6 +40,7 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             }
             target=null;
+            if(!GameManager.Instance.State.investigationUnlocked)return;
             if(StoryJournal.WorldBlocked||FurnitureInteraction.IsBusy)return;
             var window=Object.FindAnyObjectByType<WindowLookout2D>();if(window!=null&&window.IsOpen)return;
             var player=GameObject.FindWithTag("Player");if(player==null)return;
@@ -47,19 +48,20 @@ namespace DeathBySeventhsDawn.Interaction
             if(scene=="Bedroom"&&Vector2.Distance(pos,new Vector2(2.7f,-1.1f))<1.05f)target="my-observation-notes";
             if(scene=="Corridor"&&GameManager.Instance.LoopCount==0)
             {
-                if(Vector2.Distance(pos,new Vector2(-3.45f,1.25f))<.95f&&(GameManager.Instance.State.neighborFlyersSeen||TimeManager.Instance.Days>=2))target="401-flyers";
+                if(TimeManager.Instance.Days==2&&!Investigation.Has("cult-door-note")&&Vector2.Distance(pos,new Vector2(-4.35f,.65f))<.8f)target="cult-door-note";
                 else if(Vector2.Distance(pos,new Vector2(-4.35f,.35f))<.65f&&TimeManager.Instance.Days>=2)target="401-barricade";
             }
             if(scene=="LivingRoom"&&TimeManager.Instance.Days<3){var tank=GameObject.Find("Aquarium and cabinet");if(tank!=null&&Vector2.Distance(pos,tank.transform.position)<2.05f)target="tank-label";}
             if(scene=="Bedroom"&&target=="my-observation-notes"&&Investigation.Has(target)&&TimeManager.Instance.Days>=2)target="notes-gap";
             if(scene=="Corridor"&&Vector2.Distance(pos,new Vector2(4.7f,1.15f))<1f)target="403-silence";
-            if(scene=="Corridor"&&TimeManager.Instance.Days==2&&target=="401-flyers")target="cult-door-note";
+
             if(target!=null&&k!=null&&k.eKey.wasPressedThisFrame)TryOpen(target);
         }
         void OnGUI()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(text,title,button);
             if(ProgressionHUD.DebugConsoleOpen||(target==null&&!IsOpen)||(GameManager.Instance==null||GameManager.Instance.HasEnded))return;
-            if(text==null){var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei"},24);text=new GUIStyle(GUI.skin.label){font=font,fontSize=24,wordWrap=true};title=new GUIStyle(text){fontSize=32,fontStyle=FontStyle.Bold};button=new GUIStyle(text){alignment=TextAnchor.MiddleCenter};button.normal.textColor=new Color(.79f,.83f,.68f);}
+            if(text==null){var font=DeathBySeventhsDawn.Progression.GameTypography.Current;text=new GUIStyle(GUI.skin.label){font=font,fontSize=24,wordWrap=true};title=new GUIStyle(text){fontSize=32,fontStyle=FontStyle.Bold};button=new GUIStyle(text){alignment=TextAnchor.MiddleCenter};button.normal.textColor=new Color(.79f,.83f,.68f);}
             DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;
             float scale=Mathf.Min(Screen.height/900f,Screen.width/1000f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float w=Screen.width/scale,h=Screen.height/scale;
             try

@@ -31,7 +31,7 @@ namespace DeathBySeventhsDawn.Interaction
         void Styles()
         {
             if(body!=null)return;
-            var font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Consolas"},20);
+            var font=DeathBySeventhsDawn.Progression.GameTypography.Current;
             body=new GUIStyle(GUI.skin.label){font=font,fontSize=18,wordWrap=true};body.normal.textColor=Ink;
             title=new GUIStyle(body){fontSize=32,fontStyle=FontStyle.Bold};small=new GUIStyle(body){fontSize=14,wordWrap=true};small.normal.textColor=Muted;
             mono=new GUIStyle(body){fontSize=16,wordWrap=true};mono.normal.textColor=Accent;
@@ -44,6 +44,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
+            DeathBySeventhsDawn.Progression.GameTypography.Use(title,body,small,button,tabStyle,tabSelected,mono);
             if(!open)return;
             Styles();DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix=GUI.matrix;var color=GUI.color;int depth=GUI.depth;

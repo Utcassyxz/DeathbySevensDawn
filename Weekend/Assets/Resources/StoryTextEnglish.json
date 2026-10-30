@@ -2,10 +2,10 @@
   "dream": {
     "title": "Dream · The anthill",
     "pages": [
-      "They are arguing again.\nI stand beside the road, holding half an ice lolly.",
-      "An anthill beside my shoe.\nAn ant drags a white husk across the entrance.",
-      "I kick it.\nSoil sticks to my shoe. Ants crawl into my sock.",
-      "A knock. Then another.\n\nI open my eyes."
+      "They are arguing again.\nHe stands beside the road, holding half an ice lolly.",
+      "An anthill beside his shoe.\nAn ant drags a white husk across the entrance.",
+      "He kicks it.\nSoil sticks to his shoe. Ants crawl into his sock.",
+      "A knock. Then another.\n\nHe opens his eyes."
     ],
     "images": [
       "Story/Dream/dream-01",
@@ -14,14 +14,14 @@
       "Story/Dream/dream-04"
     ],
     "journalTitle": "The anthill dream",
-    "journalBody": "The road. My parents arguing. I kicked an anthill.\nThen a shadow covered them both. I woke with my feet curled up.",
-    "fallbackPage": "I woke from a dream about an anthill."
+    "journalBody": "The road. His parents arguing. He kicked an anthill.\nThen a shadow covered them both. He woke with his feet curled up.",
+    "fallbackPage": "He woke from a dream about an anthill."
   },
   "knowledge": {
     "ancientTitle": "A shape behind the sky",
-    "ancientBody": "The stars bent along its edge.\nI took my eye away before I could find the other end.",
+    "ancientBody": "The stars bent along its edge.\nHe took his eye away before he could find the other end.",
     "windowTitle": "The view on day two",
-    "windowBody": "Something has changed between the buildings. I wrote down what I could see.",
+    "windowBody": "Something has changed between the buildings. He wrote down what he could see.",
     "fallbackTitle": "A finding",
     "fallbackBodyPrefix": "Recorded clue: "
   },
@@ -29,9 +29,9 @@
     "title": "Telescope",
     "revelationTitle": "Second night · Behind the sky",
     "nightOnly": "Glare fills the lens.\nCome back after sunset.",
-    "wrongDay": "I turn the focus ring. Rooftops and stars.\nNothing else tonight.",
-    "gainedSuffix": "\n\nMy hand is shaking. Can I still draw the edge?",
-    "repeatSuffix": "\n\nThat edge again. I could try drawing it.",
+    "wrongDay": "He turns the focus ring. Rooftops and stars.\nNothing else tonight.",
+    "gainedSuffix": "\n\nHis hand is shaking. Can he still draw the edge?",
+    "repeatSuffix": "\n\nThat edge again. He could try drawing it.",
     "imageMissing": "Image unavailable.",
     "collect": "Record the telescope · R",
     "collected": "Telescope recorded",
@@ -45,10 +45,10 @@
     "news": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
     "flyer": "COVER YOUR WINDOWS.\nDo not trust the calm voices.\nSomething is coming from above.",
     "dayOneCaption": "The man from 401 presses a flyer against the wall. His lips keep moving.",
-    "startledCaption": "The hammer stops. He turns and looks straight at me.",
+    "startledCaption": "The hammer stops. The neighbour turns towards the man at the door of 402.",
     "boardingCaption": "The tenant of 401 is hammering a board across his door.",
     "chapterTitle": "Behind the sky",
-    "chapterText": "I take my eye away.\n\nThe balcony is still here. So is the building opposite.\n\nI do not touch the focus ring again.",
+    "chapterText": "He takes his eye away.\n\nThe balcony is still here. So is the building opposite.\n\nHe does not touch the focus ring again.",
     "newsDay1": "The Will Circus brings its national tour to our city this week.\n\nMr Miyazaki, known as the “God of Sushi”, will open his 101st branch here. The ribbon-cutting is scheduled for Tuesday.\n\nAuthorities report activity by a large illegal organisation calling itself the Triangle Cult. Residents are advised to remain alert.\n\nA supernova may be visible from our city tonight. Astronomy enthusiasts may wish to watch the sky.",
     "newsDefault": "The local bulletin repeats."
   },
@@ -77,12 +77,12 @@
     "bedroom": {
       "id": "filter-bedroom-margins",
       "title": "Writing in the margin",
-      "body": "Old scratches at the desk edge.\n“Not stars moving. Its eyes.”\nThe grooves catch under my nail."
+      "body": "Old scratches at the desk edge.\n“Not stars moving. Its eyes.”\nThe grooves catch under his nail."
     },
     "corridor": {
       "id": "filter-401-underprint",
       "title": "Beneath the flyer",
-      "body": "Writing beneath the wallpaper.\n“Boards will not stop it. I just do not want to see.”\nWhy could I not read this before?"
+      "body": "Writing beneath the wallpaper.\n“Boards will not stop it. I just do not want to see.”\nWhy could he not read this before?"
     },
     "balcony": {
       "id": "filter-railing-tally",
@@ -101,26 +101,26 @@
     "evidence": [
       {
         "id": "my-observation-notes",
-        "title": "My observation book",
-        "body": "Months of star positions, cloud cover and times. A note: half a turn on the focus ring; balcony light off first.\nMy handwriting. The dates have gaps, but the notes keep going.",
+        "title": "Old observation records",
+        "body": "Months of star positions, cloud cover and observing times fill the loose sheets on the desk. The calibration marks match those on the telescope. These are his own records.",
         "source": "Bedroom · Desk"
       },
       {
         "id": "apartment-telescope",
         "title": "The balcony telescope",
-        "body": "A polished focus ring. A north mark beside the tripod. My calibration marks on the tube match the book.",
+        "body": "A polished focus ring. A north mark beside the tripod. His calibration marks on the tube match the book.",
         "source": "Balcony · Telescope"
       },
       {
         "id": "401-flyers",
-        "title": "The flyer from 401",
+        "title": "Notice-board flyer",
         "body": "COVER YOUR WINDOWS. Do not trust the calm voices. Something is coming from above.\nFresh paper. Tape still tacky at the corners.",
-        "source": "Corridor · 401"
+        "source": "Ground floor · notice board (reserved)"
       },
       {
         "id": "401-barricade",
         "title": "401 boarded shut",
-        "body": "Fresh boards cover the door. I heard the hammer through the wall on day one. Even the gaps have been covered.",
+        "body": "Fresh boards cover the door. He heard the hammer through the wall on day one. Even the gaps have been covered.",
         "source": "Corridor · 401"
       },
       {
@@ -132,25 +132,25 @@
       {
         "id": "balcony-telescope-day2-ancient-outline",
         "title": "The outline · A memory sketch",
-        "body": "Second night. A shape through the telescope. I drew what I remembered. Stars bent around the edge.\nA memory, not a photograph. I have no second observation.",
+        "body": "Second night. A shape through the telescope. He drew what he remembered. Stars bent around the edge.\nA memory, not a photograph. He has no second observation.",
         "source": "Balcony · Second night"
       },
       {
         "id": "bedroom-window-day2-observation",
         "title": "The view on day two",
-        "body": "The skyline looks different today. I recorded the view. No measurements to compare.",
+        "body": "The skyline looks different today. He recorded the view. No measurements to compare.",
         "source": "Bedroom · Window"
       },
       {
         "id": "filter-bedroom-margins",
         "title": "Writing in the margin",
-        "body": "Old writing at the desk edge: “Not stars moving. Its eyes.”\nI could only read it when I was unwell.",
+        "body": "Old writing at the desk edge: “Not stars moving. Its eyes.”\nHe could only read it when he was unwell.",
         "source": "Bedroom · Desk edge"
       },
       {
         "id": "filter-401-underprint",
         "title": "Beneath the flyer",
-        "body": "Beneath the wallpaper: “Boards will not stop it. I just do not want to see.”\nI do not know who wrote it.",
+        "body": "Beneath the wallpaper: “Boards will not stop it. I just do not want to see.”\nHe does not know who wrote it.",
         "source": "Corridor · Hidden writing"
       },
       {
@@ -162,13 +162,13 @@
       {
         "id": "tank-label",
         "title": "Tank label",
-        "body": "Water changes: Sundays. The last tick is in my handwriting.\nThe pump cable crosses the paper. There is no crease beneath it.",
+        "body": "Water changes: Sundays. The last tick is in his handwriting.\nThe pump cable crosses the paper. There is no crease beneath it.",
         "source": "Living room · Cabinet"
       },
       {
         "id": "tank-eye",
         "title": "An eye behind the glass",
-        "body": "Day three. An eye pressed against the inside of the glass.\nIt did not follow when I moved left. When I turned away, a voice said: Quietly.",
+        "body": "Day three. An eye pressed against the inside of the glass.\nIt did not follow when he moved left. When he turned away, a voice said: Quietly.",
         "source": "Living room · Day three"
       },
       {
@@ -180,7 +180,7 @@
       {
         "id": "001-name",
         "title": "The name 001",
-        "body": "Day six. Outside the tank, it asked me to write down 001.\nIt said I hid my observation book badly. It never gave me a name.",
+        "body": "Day six. Outside the tank, it asked him to write down 001.\nIt said he hid his observation book badly. It never gave him a name.",
         "source": "Living room · 001"
       },
       {
@@ -192,7 +192,7 @@
       {
         "id": "403-silence",
         "title": "Dust beneath 403",
-        "body": "A thin line of dust. No footprints.\nA chair scraped across the floor inside. When I knocked, it stopped.",
+        "body": "A thin line of dust. No footprints.\nA chair scraped across the floor inside. When he knocked, it stopped.",
         "source": "Corridor · 403"
       },
       {
@@ -200,14 +200,20 @@
         "title": "A second note from 401",
         "body": "DON’T ANSWER IT.\nIf it has already spoken, knock twice.\nThe last line has been scratched out.",
         "source": "Corridor · Day two"
+      },
+      {
+        "id": "401-warning",
+        "title": "The warning from 401",
+        "body": "He stopped hammering when the door of 402 opened. “Go back. Stay inside. Leave the television off.” Then he shut his door.",
+        "source": "Day 1 · corridor"
       }
     ],
     "deductions": [
       {
         "id": "deduction-astronomy",
         "relation": "习惯与身份",
-        "title": "Astronomy is my hobby",
-        "body": "Months of records match the worn telescope. I have been doing this for a while."
+        "title": "An amateur astronomer",
+        "body": "The months of observations and the well-used telescope point to a longstanding interest in astronomy."
       },
       {
         "id": "deduction-optical",
@@ -218,32 +224,32 @@
       {
         "id": "deduction-deliberate",
         "relation": "交叉印证",
-        "title": "I chose to look",
-        "body": "I knew the instrument. I went looking.\nThat does not make what I saw reliable. I need another witness."
+        "title": "He chose to look",
+        "body": "He knew the instrument. He went looking.\nThat does not make what he saw reliable. He needs another witness."
       },
       {
         "id": "deduction-warning",
         "relation": "时间关联",
         "title": "His warning and the bulletin",
-        "body": "The flyer warns about the sky. The news presents tonight as an opportunity to watch it.\nThe tenant of 401 seems to expect something else."
+        "body": "The tenant warned against the television, yet the bulletin sounded ordinary. His warning and the news do not explain one another."
       },
       {
         "id": "deduction-sealing",
         "relation": "行为动机",
-        "title": "He followed his own warning",
-        "body": "He told people to cover windows. Then he covered his own door.\nI still do not know what frightened him."
+        "title": "A warning made tangible",
+        "body": "The tenant warned him to stay inside, then sealed the doorway. The behaviour matches the warning; the reason remains unknown."
       },
       {
         "id": "deduction-not-looking",
         "relation": "交叉印证",
         "title": "Perhaps he did not want to see",
-        "body": "The writing fits the covered gaps. He may be avoiding the sight of something.\nI do not know who wrote it."
+        "body": "The writing fits the covered gaps. He may be avoiding the sight of something.\nHe does not know who wrote it."
       },
       {
         "id": "deduction-tank-resident",
         "relation": "交叉印证",
-        "title": "Something in my tank",
-        "body": "I maintained this tank. Something in it now speaks.\nThe label says nothing about it. It does not tell me when it arrived."
+        "title": "Something in his tank",
+        "body": "He maintained this tank. Something in it now speaks.\nThe label says nothing about it. It does not tell him when it arrived."
       },
       {
         "id": "deduction-waterline",
@@ -255,7 +261,7 @@
         "id": "deduction-book-reader",
         "relation": "交叉印证",
         "title": "Another reader",
-        "body": "001 knows about the book. Pages have been torn out.\nI should ask about them. Knowing the book exists does not make it responsible."
+        "body": "001 knows about the book. Pages have been torn out.\nHe should ask about them. Knowing the book exists does not make it responsible."
       }
     ]
   },
@@ -265,29 +271,29 @@
     "speakerDay3": "Inside the tank",
     "speakerDay6": "001",
     "day3Pages": [
-      "I stop by the tank. The filter draws a thin line of bubbles.",
-      "“Move your hand.”\nMy hand is resting on the lid.",
-      "I ask if it can breathe.\n“Can you?”",
-      "I lift my hand. The bubbles stop."
+      "He stops by the tank. The filter draws a thin line of bubbles.",
+      "“Move your hand.”\nHis hand is resting on the lid.",
+      "He asks if it can breathe.\n“Can you?”",
+      "He lift his hand. The bubbles stop."
     ],
     "day5Pages": [
       "The cabinet door will not close. Two fingers hold it from inside.",
-      "“The towel.”\nI ask which towel.\n“The one you put away.”",
+      "“The towel.”\nHe asks which towel.\n“The one you put away.”",
       "It rubs the dry waterline with a thumb. The stain does not come off.",
       "“You keep moving things back.”"
     ],
     "day6Pages": [
       "It stands beside the empty tank, facing the cabinet.",
-      "“001.”\nI wait.\n“That is what you wrote last time.”",
-      "I ask why it is still here.\nIt touches the edge of the tank.",
+      "“001.”\nHe waits.\n“That is what you wrote last time.”",
+      "He asks why it is still here.\nIt touches the edge of the tank.",
       "“You haven’t moved this.”"
     ],
-    "question": "Ask: Have you read my book?",
+    "question": "Ask: Have you read his book?",
     "answerGap": "“Two stubs. You counted them before.”",
     "answerDefault": "“On the desk. Same place.”"
   },
   "mainMenu": {
-    "title": "seven day",
+    "title": "SEVEN DAY",
     "subtitle": "七日",
     "tagline": "",
     "start": "BEGIN A NEW GAME",
@@ -321,21 +327,21 @@
     "sound": "Three knocks through the wall. A pause. Then the hammer again.\nIt is coming from 401.",
     "dayOne": [
       "“Go back. Now.”",
-      "His eyes pass over my shoulder, down the corridor.",
+      "The neighbour looks past him, down the corridor.",
       "“Stay inside. And leave the television off.”",
       "He backs into 401 and pulls the door shut."
     ],
     "note": "DON’T ANSWER IT.\nIf it has already spoken, knock twice.\nThe last line has been scratched out.",
     "door": [
       "“Who?”",
-      "His eye moves down to my hand.",
+      "The eye drops to the visitor’s hands.",
       "“You. Get back inside.”",
       "“It isn’t safe here. They can see us whenever they want.”",
       "“Take this. Keep it folded.”"
     ],
     "refusal": "No answer. Something slides across the other side of the door.",
     "itemTitle": "Folded foil triangle",
-    "itemBody": "Folded three times. One corner is warm.\nI have left it closed."
+    "itemBody": "Folded three times. One corner is warm.\nHe has left it closed."
   },
   "morning": {
     "continueDream": "Enter  Continue",
@@ -345,6 +351,15 @@
     "kitchen": "Check the fridge in the kitchen.",
     "fridgePrompt": "E  Open the fridge",
     "fridgeOpen": "The seal comes free. The television starts in the next room.",
-    "afterNews": "There should still be something in the fridge."
+    "afterNews": "The room falls quiet.",
+    "sofa": "Rest on the living-room sofa.",
+    "nap": "The television grows distant. He falls asleep on the sofa.\nWhen he wakes, dusk has filled the room.",
+    "desk": "Dusk. He wants to put the day into words.\nGo to the desk in the bedroom.",
+    "writing": "He opens a blank notebook and starts with the morning.",
+    "telescope": "The journal is ready. Take a look through the telescope on the balcony.",
+    "investigate": "R records the telescope as evidence.\nThis is the first investigation; nothing is recorded automatically.",
+    "connect": "Esc → B: Link the records and telescope.\nSave a tentative link, then confirm a conclusion.",
+    "journalTitle": "The first evening",
+    "journalBody": "The tenant of 401 boarded up his door and warned him to stay inside. The television carried ordinary local news.\n\nHe woke on the sofa at dusk and put the day into words. The newspaper items and the neighbour’s warning follow on the next pages."
   }
 }
