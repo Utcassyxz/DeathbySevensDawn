@@ -15,22 +15,26 @@ namespace DeathBySeventhsDawn.Knowledge
     {
         public string id, title, body, source, image;
     }
+
     [Serializable]
     public sealed class DeductionDefinition
     {
         public string id, left, right, relation, title, body;
     }
+
     [Serializable]
     public sealed class InvestigationLink
     {
         public string left, right, relation, conclusion;
     }
+
     [Serializable]
     public sealed class InvestigationCatalog
     {
         public EvidenceDefinition[] evidence;
         public DeductionDefinition[] deductions;
     }
+
     // The catalog describes possibilities. Only explicitly collected entries are visible to the player.
     public static class Investigation
     {
@@ -39,6 +43,7 @@ namespace DeathBySeventhsDawn.Knowledge
         {
             catalog = null;
         }
+
         public static string LocalTitle(string id, string fallback)
         {
             if (id == "prologue-entry")
@@ -58,6 +63,7 @@ namespace DeathBySeventhsDawn.Knowledge
                 return s.dayOneBroadcast.journalTitle;
             return fallback;
         }
+
         public static string LocalBody(string id, string fallback)
         {
             if (id == "prologue-entry")
@@ -75,6 +81,7 @@ namespace DeathBySeventhsDawn.Knowledge
                 return s.dream.journalBody;
             return fallback;
         }
+
         public static InvestigationCatalog Catalog
         {
             get
@@ -89,6 +96,7 @@ namespace DeathBySeventhsDawn.Knowledge
                 return catalog;
             }
         }
+
         static void ApplyStoryText(InvestigationCatalog target)
         {
             // 文案统一放在 Resources/StoryText.json；Investigation.json 只保留结构 id。
@@ -107,6 +115,7 @@ namespace DeathBySeventhsDawn.Knowledge
                     entry.body = copy.body;
                     entry.source = copy.source;
                 }
+
             if (target.deductions != null && text.deductions != null)
                 foreach (var entry in target.deductions)
                 {
@@ -120,19 +129,36 @@ namespace DeathBySeventhsDawn.Knowledge
                     entry.body = copy.body;
                 }
         }
-        static readonly string[] FallbackRelations = { "习惯与身份", "观察工具", "时间关联", "行为动机", "交叉印证" };
-        static readonly string[] EnglishRelations = { "Habit and identity", "Observation tool", "Time connection", "Behavior and motive", "Cross-check" };
+
+        static readonly string[] FallbackRelations =
+        {
+            "习惯与身份",
+            "观察工具",
+            "时间关联",
+            "行为动机",
+            "交叉印证"
+        };
+        static readonly string[] EnglishRelations =
+        {
+            "Habit and identity",
+            "Observation tool",
+            "Time connection",
+            "Behavior and motive",
+            "Cross-check"
+        };
         // Persist the original relation keys; UI language must never change graph identity.
         static string RelationKey(string value)
         {
             int index = Array.IndexOf(EnglishRelations, value);
             return index >= 0 ? FallbackRelations[index] : value;
         }
+
         public static string RelationLabel(string value)
         {
             int index = Array.IndexOf(FallbackRelations, RelationKey(value));
             return index >= 0 ? Relations[index] : value;
         }
+
         public static string[] Relations
         {
             get
@@ -141,7 +167,9 @@ namespace DeathBySeventhsDawn.Knowledge
                 return relations != null && relations.Length > 0 ? relations : FallbackRelations;
             }
         }
+
         static ProgressionState State => GameManager.Instance.State;
+
         public static void Normalize(ProgressionState state)
         {
             if (state.version == 1)
@@ -151,8 +179,10 @@ namespace DeathBySeventhsDawn.Knowledge
                     state.journalUnlocked = state.investigationUnlocked = state.tutorialComplete = true;
                     state.morningStage = 10;
                 }
+
                 state.version = 2;
             }
+
             if (!state.tutorialComplete && state.morningStage == 4 && state.dayOneSupernovaSeen)
                 state.morningStage = 5;
             if (state.initialEvidenceIds == null)
@@ -165,7 +195,18 @@ namespace DeathBySeventhsDawn.Knowledge
                 state.observedKnowledgeIds = new List<string>();
             if (state.investigationLinks == null)
                 state.investigationLinks = new List<InvestigationLink>();
+            // Retire redundant identity deductions without removing collected facts.
+            var retired = new[]
+            {
+                "deduction-astronomy",
+                "deduction-deliberate",
+                "deduction-book-reader"
+            };
+            state.journal.RemoveAll(e => e != null && Array.IndexOf(retired, e.id) >= 0);
+            state.knowledgeIds.RemoveAll(id => Array.IndexOf(retired, id) >= 0);
+            state.investigationLinks.RemoveAll(l => l == null || Array.IndexOf(retired, l.left) >= 0 || Array.IndexOf(retired, l.right) >= 0 || Array.IndexOf(retired, l.conclusion) >= 0);
         }
+
         public static EvidenceDefinition Evidence(string id) => Array.Find(Catalog.evidence, e => e.id == id);
         public static bool Has(string id) => State.journal.Exists(e => e != null && e.id == id);
         public static bool IsNode(string id) => Evidence(id) != null || Array.Exists(Catalog.deductions, d => d.id == id);
@@ -175,7 +216,16 @@ namespace DeathBySeventhsDawn.Knowledge
             var definition = Evidence(id);
             if (!State.investigationUnlocked || definition == null || Has(id) || GameManager.Instance.HasEnded)
                 return false;
-            var entry = new JournalEntry { id = id, title = definition.title, body = definition.body, imageResource = definition.image, isKnowledge = true, day = TimeManager.Instance.Days, loop = GameManager.Instance.LoopCount };
+            var entry = new JournalEntry
+            {
+                id = id,
+                title = definition.title,
+                body = definition.body,
+                imageResource = definition.image,
+                isKnowledge = true,
+                day = TimeManager.Instance.Days,
+                loop = GameManager.Instance.LoopCount
+            };
             // Collecting evidence never adds a second cosmic exposure reward.
             State.journal.Add(entry);
             if (!State.knowledgeIds.Contains(id))
@@ -184,18 +234,21 @@ namespace DeathBySeventhsDawn.Knowledge
             JournalUpdates.NotifyAdded(entry);
             return true;
         }
+
         public static DeductionDefinition Match(string left, string right, string relation)
         {
             if (left == right || !Has(left) || !Has(right))
                 return null;
             return Array.Find(Catalog.deductions, d => (d.id != "deduction-warning" || State.neighborFlyersSeen) && RelationKey(d.relation) == RelationKey(relation) && ((d.left == left && d.right == right) || (d.left == right && d.right == left)));
         }
+
         public static DeductionDefinition Match(string left, string right)
         {
             if (left == right || !Has(left) || !Has(right))
                 return null;
             return Array.Find(Catalog.deductions, d => (d.id != "deduction-warning" || State.neighborFlyersSeen) && ((d.left == left && d.right == right) || (d.left == right && d.right == left)));
         }
+
         static bool SamePair(InvestigationLink link, string a, string b) => (link.left == a && link.right == b) || (link.left == b && link.right == a);
         public static InvestigationLink FindLink(string a, string b, string relation) => State.investigationLinks.Find(l => l != null && RelationKey(l.relation) == RelationKey(relation) && SamePair(l, a, b));
         public static InvestigationLink FindLink(string a, string b)
@@ -203,6 +256,7 @@ namespace DeathBySeventhsDawn.Knowledge
             var links = State.investigationLinks;
             return links.Find(l => l != null && !string.IsNullOrEmpty(l.conclusion) && SamePair(l, a, b)) ?? links.Find(l => l != null && SamePair(l, a, b));
         }
+
         public static bool Connect(string left, string right, string relation, bool writeConclusion)
         {
             if (!State.investigationUnlocked || GameManager.Instance.HasEnded || left == right || !IsNode(left) || !IsNode(right) || !Has(left) || !Has(right) || !FallbackRelations.Contains(RelationKey(relation)))
@@ -216,24 +270,40 @@ namespace DeathBySeventhsDawn.Knowledge
                 return false;
             if (link == null)
             {
-                link = new InvestigationLink { left = left, right = right, relation = relation };
+                link = new InvestigationLink
+                {
+                    left = left,
+                    right = right,
+                    relation = relation
+                };
                 State.investigationLinks.Add(link);
             }
+
             JournalEntry added = null;
             if (writeConclusion)
             {
                 link.conclusion = match.id;
                 if (!Has(match.id))
                 {
-                    added = new JournalEntry { id = match.id, title = match.title, body = match.body + DeathBySeventhsDawn.Story.StoryText.UI("\n\n依据：") + Title(left) + " ＋ " + Title(right) + DeathBySeventhsDawn.Story.StoryText.UI("\n关系：") + RelationLabel(relation), isKnowledge = true, day = TimeManager.Instance.Days, loop = GameManager.Instance.LoopCount };
+                    added = new JournalEntry
+                    {
+                        id = match.id,
+                        title = match.title,
+                        body = match.body + DeathBySeventhsDawn.Story.StoryText.UI("\n\n依据：") + Title(left) + " ＋ " + Title(right) + DeathBySeventhsDawn.Story.StoryText.UI("\n关系：") + RelationLabel(relation),
+                        isKnowledge = true,
+                        day = TimeManager.Instance.Days,
+                        loop = GameManager.Instance.LoopCount
+                    };
                     State.journal.Add(added);
                 }
             }
+
             ProgressionSave.Write(State);
             if (added != null)
                 JournalUpdates.NotifyAdded(added);
             return true;
         }
+
         public static bool Connect(string left, string right, bool writeConclusion)
         {
             if (!State.investigationUnlocked || GameManager.Instance.HasEnded || left == right || !IsNode(left) || !IsNode(right) || !Has(left) || !Has(right))
@@ -246,9 +316,15 @@ namespace DeathBySeventhsDawn.Knowledge
                 return false;
             if (link == null)
             {
-                link = new InvestigationLink { left = left, right = right, relation = RelationKey(Relations[0]) };
+                link = new InvestigationLink
+                {
+                    left = left,
+                    right = right,
+                    relation = RelationKey(Relations[0])
+                };
                 State.investigationLinks.Add(link);
             }
+
             JournalEntry added = null;
             if (writeConclusion)
             {
@@ -261,17 +337,28 @@ namespace DeathBySeventhsDawn.Knowledge
                     if (other != null && other != link && SamePair(other, left, right) && string.IsNullOrEmpty(other.conclusion))
                         State.investigationLinks.RemoveAt(i);
                 }
+
                 if (!Has(match.id))
                 {
-                    added = new JournalEntry { id = match.id, title = match.title, body = match.body + DeathBySeventhsDawn.Story.StoryText.UI("\n\n依据：") + Title(left) + " ＋ " + Title(right) + DeathBySeventhsDawn.Story.StoryText.UI("\n关系：") + RelationLabel(match.relation), isKnowledge = true, day = TimeManager.Instance.Days, loop = GameManager.Instance.LoopCount };
+                    added = new JournalEntry
+                    {
+                        id = match.id,
+                        title = match.title,
+                        body = match.body + DeathBySeventhsDawn.Story.StoryText.UI("\n\n依据：") + Title(left) + " ＋ " + Title(right) + DeathBySeventhsDawn.Story.StoryText.UI("\n关系：") + RelationLabel(match.relation),
+                        isKnowledge = true,
+                        day = TimeManager.Instance.Days,
+                        loop = GameManager.Instance.LoopCount
+                    };
                     State.journal.Add(added);
                 }
             }
+
             ProgressionSave.Write(State);
             if (added != null)
                 JournalUpdates.NotifyAdded(added);
             return true;
         }
+
         public static bool RemoveTentative(string left, string right, string relation)
         {
             var link = FindLink(left, right, relation);
@@ -281,6 +368,7 @@ namespace DeathBySeventhsDawn.Knowledge
             ProgressionSave.Write(State);
             return true;
         }
+
         public static bool RemoveTentative(string left, string right)
         {
             bool removed = false;
@@ -293,10 +381,18 @@ namespace DeathBySeventhsDawn.Knowledge
                     removed = true;
                 }
             }
+
             if (removed)
                 ProgressionSave.Write(State);
             return removed;
         }
+
+        public static bool CanCombine(string first, string second)
+        {
+            var match = Match(first, second);
+            return match != null && !Has(match.id);
+        }
+
         public static string Title(string id) => LocalTitle(id, State.journal.Find(e => e != null && e.id == id)?.title ?? StoryText.Local("未收录", "Not recorded"));
         public static IReadOnlyList<InvestigationLink> Links => State.investigationLinks;
     }

@@ -6,15 +6,13 @@ using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Progression;
 using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
+
 namespace DeathBySeventhsDawn.Interaction
 {
     public sealed class DayOneSupernovaEvent : MonoBehaviour
     {
         public const string SuppressionKey = "DayOneSupernovaSuppressed";
-        public static DayOneSupernovaEvent Instance
-        {
-            get; private set;
-        }
+        public static DayOneSupernovaEvent Instance { get; private set; }
 #if UNITY_EDITOR
         public static bool Suppressed=>UnityEditor.SessionState.GetBool(SuppressionKey,false);
 #else
@@ -26,6 +24,7 @@ namespace DeathBySeventhsDawn.Interaction
         public int PageIndex => page;
         public Texture2D CurrentIllustration => !boring && illustrations != null && page < illustrations.Length ? illustrations[page] : null;
         public bool BulletinConsumed => GameManager.Instance.State.dayOneSupernovaSeen || GameManager.Instance.State.skt079NewsSeen;
+
         bool presenting, boring, intro, replay;
         int page, openedFrame, blockedUntilFrame = -1;
         Texture2D[] illustrations;
@@ -35,12 +34,14 @@ namespace DeathBySeventhsDawn.Interaction
         {
             Instance = this;
         }
+
         void OnEnable()
         {
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset += ResetEvent;
             SceneManager.sceneLoaded += Loaded;
         }
+
         void OnDisable()
         {
             if (GameManager.Instance != null)
@@ -48,12 +49,14 @@ namespace DeathBySeventhsDawn.Interaction
             SceneManager.sceneLoaded -= Loaded;
             Close();
         }
+
         void Loaded(Scene scene, LoadSceneMode mode) => Close();
         void ResetEvent()
         {
             Close();
             replay = false;
         }
+
         public bool PlayFromFridge()
         {
             var state = GameManager.Instance.State;
@@ -65,6 +68,7 @@ namespace DeathBySeventhsDawn.Interaction
             StartPresentation(true, false, false);
             return true;
         }
+
         public bool Resume()
         {
             var state = GameManager.Instance.State;
@@ -73,6 +77,7 @@ namespace DeathBySeventhsDawn.Interaction
             StartPresentation(true, false, false);
             return true;
         }
+
         public bool OpenTelevision()
         {
             if (presenting || GameManager.Instance.HasEnded || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
@@ -82,6 +87,7 @@ namespace DeathBySeventhsDawn.Interaction
             StartPresentation(false, BulletinConsumed, false);
             return true;
         }
+
         void StartPresentation(bool isIntro, bool noNews, bool isReplay)
         {
             subtitles.Reset();
@@ -96,6 +102,7 @@ namespace DeathBySeventhsDawn.Interaction
             for (int i = 0; i < paths.Length; i++)
                 illustrations[i] = Resources.Load<Texture2D>(paths[i]);
         }
+
         public void Advance()
         {
             if (!presenting)
@@ -105,6 +112,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Close();
                 return;
             }
+
             if (subtitles.Next())
                 return;
             subtitles.Reset();
@@ -114,9 +122,11 @@ namespace DeathBySeventhsDawn.Interaction
                 GameManager.Instance.State.newsPage = page;
                 ProgressionSave.Write(GameManager.Instance.State);
             }
+
             if (page >= StoryText.Current.dayOneBroadcast.pages.Length)
                 Finish();
         }
+
         void Finish()
         {
             bool finishMeal = intro;
@@ -126,10 +136,12 @@ namespace DeathBySeventhsDawn.Interaction
                 state.dayOneSupernovaSeen = state.skt079NewsSeen = true;
                 ProgressionSave.Write(state);
             }
+
             Close();
             if (finishMeal)
                 MorningRoutine.Instance?.NewsFinished();
         }
+
         public void Close()
         {
             if (presenting)
@@ -140,6 +152,7 @@ namespace DeathBySeventhsDawn.Interaction
             intro = false;
             boring = false;
         }
+
         void Update()
         {
             if (!presenting || GameSettingsUI.WorldBlocked || Time.frameCount <= openedFrame + 1)
@@ -149,12 +162,14 @@ namespace DeathBySeventhsDawn.Interaction
                 Close();
                 return;
             }
+
             var k = Keyboard.current;
-            if (k != null && k.eKey.wasPressedThisFrame)
+            if (k != null && k.enterKey.wasPressedThisFrame)
                 Advance();
             else if (k != null && k.escapeKey.wasPressedThisFrame && !intro)
                 Close();
         }
+
         public static void Replay()
         {
             if (Instance != null)
@@ -163,6 +178,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Instance.StartPresentation(false, false, true);
             }
         }
+
         public static void ResetForNewRun() => Instance?.ResetEvent();
         void OnGUI()
         {
@@ -170,10 +186,22 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             if (body == null)
             {
-                body = new GUIStyle(GUI.skin.label) { fontSize = 25, wordWrap = true };
-                heading = new GUIStyle(body) { fontSize = 34, fontStyle = FontStyle.Bold };
-                small = new GUIStyle(body) { fontSize = 18 };
+                body = new GUIStyle(GUI.skin.label)
+                {
+                    fontSize = 25,
+                    wordWrap = true
+                };
+                heading = new GUIStyle(body)
+                {
+                    fontSize = 34,
+                    fontStyle = FontStyle.Bold
+                };
+                small = new GUIStyle(body)
+                {
+                    fontSize = 18
+                };
             }
+
             GameTypography.Use(body, heading, small);
             var matrix = GUI.matrix;
             var color = GUI.color;
@@ -194,19 +222,25 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     if (CurrentIllustration != null)
                         GUI.DrawTexture(new Rect(left, 84, panel, h * .49f), CurrentIllustration, ScaleMode.ScaleToFit);
-                    var speech=NarrativeUI.DialogueRect(w,h);
-                    subtitles.Set(text.pages[page],body,speech.width-70,92);
-                    NarrativeUI.Dialogue(speech,text.title,subtitles.Current,$"{page+1} / {text.pages.Length} · "+subtitles.Counter+(page==text.pages.Length-1?text.closePrompt:text.continuePrompt),body);
+                    var speech = NarrativeUI.DialogueRect(w, h);
+                    subtitles.Set(text.pages[page], body, speech.width - 70, 92);
+                    NarrativeUI.Dialogue(speech, text.title, subtitles.Current, $"{page + 1} / {text.pages.Length} · " + subtitles.Counter + (page == text.pages.Length - 1 ? text.closePrompt : text.continuePrompt), body);
                 }
                 else
                 {
                     GUI.Label(new Rect(left, h * .32f, panel, 40), text.narrator, small);
                     GUI.Label(new Rect(left, h * .4f, panel, 150), text.boring, body);
-                    GUI.Label(new Rect(left, h - 76, panel, 42), StoryText.Local("E / Esc  离开", "E / Esc  Leave"), small);
+                    GUI.Label(new Rect(left, h - 76, panel, 42), StoryText.Local("Enter / Esc  离开", "Enter / Esc  Leave"), small);
                 }
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void OnDestroy()
         {
             if (Instance == this)

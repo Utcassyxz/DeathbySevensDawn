@@ -15,29 +15,37 @@ namespace DeathBySeventhsDawn.Interaction
     public sealed class CultNeighbor : MonoBehaviour
     {
         public const string Token = "foil-triangle";
-        public static CultNeighbor Instance
-        {
-            get; private set;
-        }
+        public static CultNeighbor Instance { get; private set; }
+
         enum View
         {
-            None, DayOne, Door, Refusal, Bag
+            None,
+            DayOne,
+            Door,
+            Refusal,
+            Bag
         }
+
         readonly DialoguePages subtitles = new DialoguePages();
         public int SubtitlePage => subtitles.Index;
         public int SubtitlePages => subtitles.Count;
-        View view; int line, frame, blockedFrame = -1; float age, cueTime, nextHit; string prompt;
-        AudioSource impacts; AudioClip hammer, knock; Texture2D eyeArt, tokenArt; GUIStyle text, heading, button, small;
+
+        View view;
+        int line, frame, blockedFrame = -1;
+        float age, cueTime, nextHit;
+        string prompt;
+        AudioSource impacts;
+        AudioClip hammer, knock;
+        Texture2D eyeArt, tokenArt;
+        GUIStyle text, heading, button, small;
         ProgressionState State => GameManager.Instance.State;
         public static bool WorldBlocked => Instance != null && (Instance.view != View.None || Time.frameCount <= Instance.blockedFrame);
         public bool DoorOpen => view == View.Door;
-        public int ImpactCount
-        {
-            get; private set;
-        }
+        public int ImpactCount { get; private set; }
         public bool BagOpen => view == View.Bag;
         public bool RouteEligible => State.cultDayOneTalked && State.inventory.Contains(Token);
         public bool HasToken => State.inventory.Contains(Token);
+
         void Awake()
         {
             Instance = this;
@@ -54,14 +62,17 @@ namespace DeathBySeventhsDawn.Interaction
                 if (groups.Length > 0)
                     impacts.outputAudioMixerGroup = groups[0];
             }
+
             BuildArt();
         }
+
         void OnEnable()
         {
             SceneManager.sceneLoaded += Loaded;
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset += Reset;
         }
+
         void OnDisable()
         {
             SceneManager.sceneLoaded -= Loaded;
@@ -69,15 +80,18 @@ namespace DeathBySeventhsDawn.Interaction
                 GameManager.Instance.JourneyReset -= Reset;
             Close();
         }
+
         void Loaded(Scene s, LoadSceneMode m)
         {
             Close();
         }
+
         void Reset()
         {
             Close();
             cueTime = nextHit = 0;
         }
+
         void Close()
         {
             subtitles.Reset();
@@ -85,6 +99,7 @@ namespace DeathBySeventhsDawn.Interaction
             prompt = null;
             blockedFrame = Time.frameCount;
         }
+
         public void Hammer()
         {
             if (Time.unscaledTime > nextHit)
@@ -93,6 +108,7 @@ namespace DeathBySeventhsDawn.Interaction
                 nextHit = Time.unscaledTime + .8f;
             }
         }
+
         void Hit(AudioClip clip)
         {
             if (clip == null)
@@ -101,6 +117,7 @@ namespace DeathBySeventhsDawn.Interaction
             impacts.pitch = 1 + Mathf.Sin(Time.unscaledTime * 7) * .035f;
             impacts.PlayOneShot(clip);
         }
+
         public bool TalkDayOne()
         {
             if (view != View.None || TimeManager.Instance.Days != 1 || GameManager.Instance.LoopCount != 0 || State.cultDayOneTalked)
@@ -108,6 +125,7 @@ namespace DeathBySeventhsDawn.Interaction
             Open(View.DayOne);
             return true;
         }
+
         public bool KnockDoor()
         {
             if (TimeManager.Instance.Days != 2 || GameManager.Instance.LoopCount != 0)
@@ -123,6 +141,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Open(View.Refusal);
             return view == View.Door;
         }
+
         public bool TakeToken()
         {
             if (view != View.Door || line < StoryText.Current.cult.door.Length || age < .9f || HasToken || State.aquariumSealed)
@@ -132,6 +151,7 @@ namespace DeathBySeventhsDawn.Interaction
             Close();
             return true;
         }
+
         public void Advance()
         {
             if (subtitles.Next())
@@ -167,6 +187,7 @@ namespace DeathBySeventhsDawn.Interaction
                     TakeToken();
             }
         }
+
         void Open(View value)
         {
             subtitles.Reset();
@@ -183,6 +204,7 @@ namespace DeathBySeventhsDawn.Interaction
                     rb.linearVelocity = Vector2.zero;
             }
         }
+
         void Update()
         {
             if (GameManager.Instance == null || TimeManager.Instance == null)
@@ -198,10 +220,17 @@ namespace DeathBySeventhsDawn.Interaction
                     Close();
                     return;
                 }
-                if (k != null && k.eKey.wasPressedThisFrame)
+
+                if (view == View.Door && line >= StoryText.Current.cult.door.Length)
+                {
+                    if (StoryControls.UsePressed)
+                        TakeToken();
+                }
+                else if (StoryControls.ContinuePressed && age > .25f)
                     Advance();
                 return;
             }
+
             prompt = null;
             if (StoryJournal.WorldBlocked || ProgressionHUD.DebugConsoleOpen || FurnitureInteraction.IsBusy || GameManager.Instance.HasEnded)
                 return;
@@ -210,6 +239,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Open(View.Bag);
                 return;
             }
+
             int day = TimeManager.Instance.Days;
             string scene = SceneManager.GetActiveScene().name;
             if (day == 1 && GameManager.Instance.LoopCount == 0 && !State.neighborBarricadeSeen && (scene == "Bedroom" || scene == "LivingRoom"))
@@ -220,8 +250,10 @@ namespace DeathBySeventhsDawn.Interaction
                     Hit(hammer);
                     nextHit = Time.unscaledTime + (cueTime % 5 < 2 ? .72f : 2.1f);
                 }
+
                 prompt = cueTime > 4 ? StoryText.Current.cult.sound : null;
             }
+
             if (scene != "Corridor" || GameManager.Instance.LoopCount != 0)
                 return;
             if (FirstLoopPrologue.Instance != null && FirstLoopPrologue.Instance.IsPresenting)
@@ -244,6 +276,7 @@ namespace DeathBySeventhsDawn.Interaction
                     KnockDoor();
             }
         }
+
         float lastEye;
         void AnimateEye()
         {
@@ -276,21 +309,57 @@ namespace DeathBySeventhsDawn.Interaction
                         c = new Color(.20f, .13f, .09f);
                     eyeArt.SetPixel(x, y, c);
                 }
+
             eyeArt.Apply(false);
         }
+
         void Styles()
         {
             if (text != null)
                 return;
             var f = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            text = new GUIStyle(GUI.skin.label) { font = f, fontSize = 23, wordWrap = true };
-            heading = new GUIStyle(text) { fontSize = 30, fontStyle = FontStyle.Bold };
-            small = new GUIStyle(text) { fontSize = 17 };
-            button = new GUIStyle(GUI.skin.button) { font = f, fontSize = 20, padding = new RectOffset(16, 16, 8, 8), wordWrap = true };
-            foreach (var style in new[] { text, heading, small })
-                foreach (var st in new[] { style.normal, style.hover, style.active, style.focused })
+            text = new GUIStyle(GUI.skin.label)
+            {
+                font = f,
+                fontSize = 23,
+                wordWrap = true
+            };
+            heading = new GUIStyle(text)
+            {
+                fontSize = 30,
+                fontStyle = FontStyle.Bold
+            };
+            small = new GUIStyle(text)
+            {
+                fontSize = 17
+            };
+            button = new GUIStyle(GUI.skin.button)
+            {
+                font = f,
+                fontSize = 20,
+                padding = new RectOffset(16, 16, 8, 8),
+                wordWrap = true
+            };
+            foreach (var style in new[]
+            {
+                text,
+                heading,
+                small
+            }
+
+            )
+                foreach (var st in new[]
+                {
+                    style.normal,
+                    style.hover,
+                    style.active,
+                    style.focused
+                }
+
+                )
                     st.textColor = new Color(.87f, .85f, .76f);
         }
+
         static void Fill(Rect r, Color c)
         {
             var old = GUI.color;
@@ -298,6 +367,7 @@ namespace DeathBySeventhsDawn.Interaction
             GUI.DrawTexture(r, Texture2D.whiteTexture);
             GUI.color = old;
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(text, heading, button, small);
@@ -316,17 +386,19 @@ namespace DeathBySeventhsDawn.Interaction
                 if (view == View.None)
                 {
                     if (prompt != null)
-                        WorldPromptUI.Offer("neighbor",prompt,90);
+                        WorldPromptUI.Offer("neighbor", prompt, 90);
                     return;
                 }
+
                 GUI.depth = -65;
                 if (view == View.DayOne)
                 {
-                    var dialogue=NarrativeUI.DialogueRect(w,h);
-                    subtitles.Set(StoryText.Current.cult.dayOne[Mathf.Min(line,StoryText.Current.cult.dayOne.Length-1)],text,dialogue.width-70,92);
-                    NarrativeUI.Dialogue(dialogue,StoryText.Local("401 的住户","Resident of 401"),subtitles.Current,subtitles.Counter+StoryText.Local("E  继续 · Esc 离开","E Continue · Esc Leave"),text);
+                    var dialogue = NarrativeUI.DialogueRect(w, h);
+                    subtitles.Set(StoryText.Current.cult.dayOne[Mathf.Min(line, StoryText.Current.cult.dayOne.Length - 1)], text, dialogue.width - 70, 92);
+                    NarrativeUI.Dialogue(dialogue, StoryText.Local("401 的住户", "Resident of 401"), subtitles.Current, subtitles.Counter + StoryText.Local("Enter  继续 · Esc 离开", "Enter Continue · Esc Leave"), text);
                     return;
                 }
+
                 Fill(new Rect(0, 0, w, h), new Color(.018f, .025f, .026f, .99f));
                 float pw = Mathf.Min(880, w - 80);
                 Rect panel = new Rect((w - pw) / 2, 50, pw, h - 100);
@@ -344,6 +416,7 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.Label(new Rect(panel.x, h - 70, pw, 30), StoryText.Local("Esc  合上背包", "Esc  Close inventory"), small);
                     return;
                 }
+
                 string prose = view == View.DayOne ? StoryText.Current.cult.dayOne[Mathf.Min(line, StoryText.Current.cult.dayOne.Length - 1)] : view == View.Refusal ? StoryText.Current.cult.refusal : line < StoryText.Current.cult.door.Length ? StoryText.Current.cult.door[line] : StoryText.Current.cult.itemBody;
                 if (view == View.Door)
                 {
@@ -362,15 +435,25 @@ namespace DeathBySeventhsDawn.Interaction
                         GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
                     }
                 }
-                var speech=NarrativeUI.DialogueRect(w,h);
-                subtitles.Set(prose,text,speech.width-70,92);
-                NarrativeUI.Dialogue(speech,StoryText.Local("401 的住户","Resident of 401"),subtitles.Current,subtitles.Counter+StoryText.Local(view==View.Refusal?"Esc 离开":view==View.Door&&line>=StoryText.Current.cult.door.Length?"E 拾起并放入背包 · Esc 离开":"E 继续 · Esc 离开",view==View.Refusal?"Esc Leave":view==View.Door&&line>=StoryText.Current.cult.door.Length?"E Take · Esc Leave":"E Continue · Esc Leave"),text);
+
+                var speech = NarrativeUI.DialogueRect(w, h);
+                subtitles.Set(prose, text, speech.width - 70, 92);
+                NarrativeUI.Dialogue(speech, StoryText.Local("401 的住户", "Resident of 401"), subtitles.Current, subtitles.Counter + StoryText.Local(view == View.Refusal ? "Esc 离开" : view == View.Door && line >= StoryText.Current.cult.door.Length ? "E 拾起并放入背包 · Esc 离开" : "Enter 继续 · Esc 离开", view == View.Refusal ? "Esc Leave" : view == View.Door && line >= StoryText.Current.cult.door.Length ? "E Take · Esc Leave" : "Enter Continue · Esc Leave"), text);
             }
-            finally { GUI.matrix = matrix; GUI.depth = depth; GUI.color = color; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.depth = depth;
+                GUI.color = color;
+            }
         }
+
         void BuildArt()
         {
-            eyeArt = new Texture2D(320, 160, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
+            eyeArt = new Texture2D(320, 160, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Point
+            };
             for (int y = 0; y < 160; y++)
                 for (int x = 0; x < 320; x++)
                 {
@@ -392,12 +475,17 @@ namespace DeathBySeventhsDawn.Interaction
                         if (x > 181 && x < 185 && y > 83 && y < 87)
                             c = new Color(.8f, .78f, .6f);
                     }
+
                     if ((x == 35 || x == 285) && y % 39 == 18)
                         c = new Color(.42f, .43f, .39f);
                     eyeArt.SetPixel(x, y, c);
                 }
+
             eyeArt.Apply();
-            tokenArt = new Texture2D(96, 96, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
+            tokenArt = new Texture2D(96, 96, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Point
+            };
             for (int y = 0; y < 96; y++)
                 for (int x = 0; x < 96; x++)
                 {
@@ -410,10 +498,13 @@ namespace DeathBySeventhsDawn.Interaction
                         if (Mathf.Abs(x - 48) < 2 || Mathf.Abs(y - (x * .7f + 23)) < 1.7f)
                             c = new Color(.85f, .86f, .81f);
                     }
+
                     tokenArt.SetPixel(x, y, c);
                 }
+
             tokenArt.Apply();
         }
+
         void OnDestroy()
         {
             if (Instance == this)

@@ -33,14 +33,16 @@
     "gainedSuffix": "\n\nHis hand is shaking. Can he still draw the edge?",
     "repeatSuffix": "\n\nThat edge again. He could try drawing it.",
     "imageMissing": "Image unavailable.",
-    "collect": "Record the telescope · R",
-    "collected": "Telescope recorded",
-    "observe": "Look through the lens · T",
+    "collect": "Record both observations · R",
+    "collected": "Observations recorded",
+    "observe": "Look through the lens · E",
     "close": "Look away · Esc",
     "revelationCollect": "Sketch the outline · R",
     "revelationCollected": "Sketch recorded",
     "revelationClose": "Look away · Esc",
-    "firstNight": "Why are there no stars in that patch?\n…Not a cloud. Something is blocking the light behind it.\nIt looks bigger than before. I’ll check tomorrow night. See if it’s coming closer."
+    "firstNight": "There should be stars there.\nSomething’s covering them. The edge is too steady for a cloud.",
+    "recheck": "The clouds have moved on. It’s still there.\nThose three stars at the edge are gone now.\nMaybe it’s that unusual activity they mentioned. I’ll check again tomorrow night.",
+    "sleepThought": "An hour already… My eyes hurt.\nI’ve marked the positions. That’s enough for tonight. I should get some sleep."
   },
   "firstLoop": {
     "news": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.\n\nMiyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.\n\nPolice advise residents not to give the Triangle Church their address, photograph or hair.\n\nThe observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline.",
@@ -66,8 +68,8 @@
     ],
     "journalTitle": "Local news extract",
     "journalBody": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.\n\nMiyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.\n\nPolice advise residents not to give the Triangle Church their address, photograph or hair.\n\nThe observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline.",
-    "continuePrompt": "E  Continue",
-    "closePrompt": "E  Finish listening",
+    "continuePrompt": "Enter  Continue",
+    "closePrompt": "Enter  Finish listening",
     "liveLabel": "NEWS",
     "images": [
       "News/Circus",
@@ -111,13 +113,13 @@
       {
         "id": "my-observation-notes",
         "title": "Old observation records",
-        "body": "Three months of star positions, clouds and times. Electricity bill worked out in the corner.\nHugo’s handwriting. The overdue notice recognizes me too.",
+        "body": "Three months of star positions, times and cloud cover. Several pages show the same field above the balcony.",
         "source": "Bedroom · Desk"
       },
       {
         "id": "apartment-telescope",
         "title": "Balcony telescope",
-        "body": "A chip in the focus ring. Tape on the north leg matches the old records.\nApparently Hugo used to take this seriously.",
+        "body": "A worn focus ring. Tape marks the north leg. The old observing log uses the same alignment marks.",
         "source": "Balcony · Telescope"
       },
       {
@@ -215,26 +217,32 @@
         "title": "The neighbor’s warning",
         "body": "The tenant told Hugo to go inside, close the windows and leave the television off.\nHe did not say why.",
         "source": "Day 1 · corridor"
+      },
+      {
+        "id": "first-night-silhouette",
+        "title": "The missing stars",
+        "body": "The first observation: a sharply curved blank patch. The nearby stars stayed in focus.",
+        "source": "Balcony · First night"
+      },
+      {
+        "id": "first-night-recheck",
+        "title": "One hour later",
+        "body": "The tripod and field of view stayed fixed. The clouds moved away, but the dark patch remained. Three stars along its edge had disappeared.",
+        "source": "Balcony · First night, second observation"
       }
     ],
     "deductions": [
       {
-        "id": "deduction-astronomy",
-        "relation": "Habit and identity",
-        "title": "An astronomy habit",
-        "body": "Marks in the records match the telescope. Apparently Hugo bought it for more than dust."
+        "id": "deduction-growing-shadow",
+        "relation": "Time connection",
+        "title": "The obstruction is growing",
+        "body": "The same field, an hour apart: more stars have vanished behind the edge. It is not a passing cloud. Its distance and cause are still unknown."
       },
       {
         "id": "deduction-optical",
         "relation": "Observation tool",
-        "title": "A sketch through glass",
-        "body": "Lens-edge marks on the sketch. A telescope view. Not proof of what is in the sky."
-      },
-      {
-        "id": "deduction-deliberate",
-        "relation": "Cross-check",
-        "title": "I went looking",
-        "body": "Nobody made me look. Hugo knows how to focus it.\nDoes not mean Hugo knows what Hugo saw."
+        "title": "The same curve",
+        "body": "The first night’s blank patch and the rooftop sketch share a curved edge. It may have been there before the second night."
       },
       {
         "id": "deduction-warning",
@@ -265,12 +273,6 @@
         "relation": "Time connection",
         "title": "Out before?",
         "body": "Stain higher than its hand. Next day it is outside.\nMaybe it was out earlier. Maybe Hugo spilled the water."
-      },
-      {
-        "id": "deduction-book-reader",
-        "relation": "Cross-check",
-        "title": "Another reader",
-        "body": "It knows the book. Pages missing.\nAsk. Do not start by shouting."
       }
     ]
   },
@@ -323,7 +325,7 @@
     "resume": "Resume",
     "returnToTitle": "Return to title",
     "quit": "Quit",
-    "hint": "Esc Resume"
+    "hint": "Esc Return to game"
   },
   "ending": {
     "title": "BAD END · JUST A MINUTE",
@@ -363,23 +365,23 @@
     "continueDream": "Enter  Continue",
     "wake": "…What is he hammering now?\nDoes the guy in 401 ever sleep?",
     "neighbor": "Still hammering next door. Better have a look.",
-    "food": "Food first. Back home.",
-    "kitchen": "There should be something left in the kitchen.",
+    "food": "…Forget it. I need something to eat.",
+    "kitchen": "There should still be bread in the fridge.",
     "fridgePrompt": "E  Open the fridge",
     "fridgeOpen": "The TV just turned itself on.\nIsn’t the remote still on the table?",
-    "afterNews": "Hugo has a few news items to get through first.\nThe remote is missing. The television has plans of its own.",
-    "sofa": "Getting sleepy. Unemployed, anyway. Might as well lie down.",
+    "afterNews": "Hold on. They just mentioned the observatory.",
+    "sofa": "I could sleep… Not like I have work today.",
     "nap": "Five minutes. That’s all.",
-    "desk": "…That dream again. I need to write it down.\nThe pen’s on the bedroom desk.",
-    "writing": "The neighbor. The TV turning itself on…\nWrite it down. Before I decide I imagined it tomorrow.",
+    "desk": "Nearly dark already…\nThat anthill again. I should write it down while I still remember.",
+    "writing": "The man next door. The TV. That dream.\nWhat a day.",
     "telescope": "The news said it would be visible tonight. Worth trying the telescope.",
-    "investigate": "That isn’t a star. I need its position. And an outline.",
-    "connect": "I still have the old observation notes. Let’s compare them.\nB  Open the evidence board.",
+    "investigate": "Two observations, with positions and times. Compare them.",
+    "connect": "The same patch of sky. How much changed?\nB  Open the evidence board.",
     "journalTitle": "The first evening",
-    "journalBody": "Hugo woke to the hammer in 401. The tenant told him to close his windows, stay inside, and leave the television off.\nHugo went in. The television switched itself on. He ate some bread and slept on the sofa until evening.\n\nThe neighbor probably would not applaud this level of compliance.",
-    "breadMeal": "The bread’s dry. Still edible.\n…Now I’m sleepy. Not like I have a job to get to. The sofa will do.",
-    "fridgeEmpty": "Hugo checks the fridge again, then closes it.\nThe bread has not grown back. A necessary investigation.",
-    "sofaFree": "Hugo can rest here and let some time pass.\nThe sofa guarantees a place to sit. Quality of rest is not covered."
+    "journalBody": "The hammering next door woke Hugo. The tenant of 401 told him to go back inside and leave the TV off.\nThe TV came on while he opened the fridge. He ate some bread, then slept on the sofa until dusk.\nThe anthill dream was still with him when he woke.",
+    "breadMeal": "Dry.\n…Now I’m even sleepier. No job to get to. I’ll lie down for a bit.",
+    "fridgeEmpty": "Nothing else. Close it.",
+    "sofaFree": "Just a minute."
   },
   "worldEnd": {
     "title": "Hugo, Who Did Nothing",
@@ -414,7 +416,7 @@
     "narrator": "Narrator",
     "record": "R  Record what Hugo saw",
     "recorded": "Observation recorded",
-    "close": "E / Esc  Step away"
+    "close": "Enter Continue · Esc Leave"
   },
   "ui": [
     {

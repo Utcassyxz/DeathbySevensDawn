@@ -71,23 +71,26 @@
     {
       "id": "401-warning",
       "image": ""
+    },
+    {
+      "id": "first-night-silhouette",
+      "image": "Story/ApproachingBody"
+    },
+    {
+      "id": "first-night-recheck",
+      "image": ""
     }
   ],
   "deductions": [
     {
-      "id": "deduction-astronomy",
-      "left": "my-observation-notes",
-      "right": "apartment-telescope"
+      "id": "deduction-growing-shadow",
+      "left": "first-night-silhouette",
+      "right": "first-night-recheck"
     },
     {
       "id": "deduction-optical",
       "left": "balcony-telescope-day2-ancient-outline",
-      "right": "apartment-telescope"
-    },
-    {
-      "id": "deduction-deliberate",
-      "left": "deduction-astronomy",
-      "right": "deduction-optical"
+      "right": "first-night-silhouette"
     },
     {
       "id": "deduction-warning",
@@ -112,11 +115,6 @@
     {
       "id": "deduction-waterline",
       "left": "tank-overflow",
-      "right": "001-name"
-    },
-    {
-      "id": "deduction-book-reader",
-      "left": "notes-gap",
       "right": "001-name"
     }
   ]

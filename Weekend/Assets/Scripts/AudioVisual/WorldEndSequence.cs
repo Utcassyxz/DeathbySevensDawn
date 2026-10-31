@@ -9,11 +9,9 @@ namespace DeathBySeventhsDawn.Progression
     public sealed class WorldEndSequence : MonoBehaviour
     {
         public const float Duration = 5.5f;
-        public static WorldEndSequence Instance
-        {
-            get; private set;
-        }
+        public static WorldEndSequence Instance { get; private set; }
         public static bool IsPresenting => Instance != null && Instance.playing;
+
         bool playing;
         float elapsed;
         GUIStyle caption;
@@ -22,8 +20,14 @@ namespace DeathBySeventhsDawn.Progression
         {
             Instance = this;
             // Reusable pixel silhouettes, generated once; no per-frame textures or scene mutations.
-            flame = new Texture2D(64, 128, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
-            round = new Texture2D(32, 32, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear };
+            flame = new Texture2D(64, 128, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Point
+            };
+            round = new Texture2D(32, 32, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Bilinear
+            };
             for (int y = 0; y < 128; y++)
                 for (int x = 0; x < 64; x++)
                 {
@@ -33,17 +37,23 @@ namespace DeathBySeventhsDawn.Progression
                     float hot = Mathf.Clamp01(1 - v * 1.3f - Mathf.Abs(x - center) / 36);
                     flame.SetPixel(x, y, new Color(Mathf.Lerp(.38f, .96f, hot), Mathf.Lerp(.055f, .48f, hot), Mathf.Lerp(.025f, .10f, hot), alpha));
                 }
+
             for (int y = 0; y < 32; y++)
                 for (int x = 0; x < 32; x++)
                     round.SetPixel(x, y, new Color(1, 1, 1, Mathf.Clamp01((1 - Vector2.Distance(new Vector2(x, y), new Vector2(15.5f, 15.5f)) / 15.5f) * 12)));
             flame.Apply();
             round.Apply();
         }
+
         void OnEnable()
         {
-            GameManager.Instance.EndingTriggered += OnEnding;
-            GameManager.Instance.JourneyReset += ResetSequence;
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.EndingTriggered += OnEnding;
+                GameManager.Instance.JourneyReset += ResetSequence;
+            }
         }
+
         void OnDisable()
         {
             if (GameManager.Instance != null)
@@ -51,8 +61,10 @@ namespace DeathBySeventhsDawn.Progression
                 GameManager.Instance.EndingTriggered -= OnEnding;
                 GameManager.Instance.JourneyReset -= ResetSequence;
             }
+
             ResetSequence();
         }
+
         void OnEnding(string id)
         {
             if (id != "world-end")
@@ -60,11 +72,13 @@ namespace DeathBySeventhsDawn.Progression
             elapsed = 0;
             playing = true;
         }
+
         void ResetSequence()
         {
             playing = false;
             elapsed = 0;
         }
+
         void Update()
         {
             if (playing)
@@ -74,11 +88,13 @@ namespace DeathBySeventhsDawn.Progression
                     playing = false;
             }
         }
+
         static void Fill(Rect rect, Color color)
         {
             GUI.color = color;
             GUI.DrawTexture(rect, Texture2D.whiteTexture);
         }
+
         void OnGUI()
         {
             if (!playing)
@@ -102,6 +118,7 @@ namespace DeathBySeventhsDawn.Progression
                     GUI.color = Color.white;
                     GUI.DrawTexture(new Rect(x - w * .05f, h - rise, w * .105f, rise * 1.15f), flame);
                 }
+
                 var ink = new Color(.035f, .028f, .025f);
                 for (int i = 0; i < 7; i++)
                 {
@@ -114,22 +131,35 @@ namespace DeathBySeventhsDawn.Progression
                     Limb(new Vector2(x - 6 * unit, y), new Vector2(x - (14 + 20 * t) * unit, y + 105 * unit), 12 * unit, ink);
                     Limb(new Vector2(x + 6 * unit, y), new Vector2(x + (20 + 30 * t) * unit, y + 110 * unit), 12 * unit, ink);
                 }
+
                 for (int i = 0; i < 40; i++)
                 {
                     float x = (i * .371f % 1) * w + Mathf.Sin(elapsed * .7f + i) * 12;
                     float y = h - (elapsed * 36 + i * 41) % (h * .6f);
                     Fill(new Rect(x, y, 2 + i % 3, 4 + i % 5), new Color(.75f, .27f, .08f, .32f));
                 }
+
                 Fill(new Rect(0, 0, w, h), new Color(0, 0, 0, Mathf.SmoothStep(0, 1, Mathf.Clamp01((t - .72f) / .28f))));
                 if (caption == null)
-                    caption = new GUIStyle(GUI.skin.label) { fontSize = 26, alignment = TextAnchor.MiddleCenter, wordWrap = true };
+                    caption = new GUIStyle(GUI.skin.label)
+                    {
+                        fontSize = 26,
+                        alignment = TextAnchor.MiddleCenter,
+                        wordWrap = true
+                    };
                 GameTypography.Use(caption);
                 GUI.color = Color.white;
                 var lines = StoryText.Current.worldEnd.lines;
                 GUI.Label(new Rect(w * .12f, h * .16f, w * .76f, h * .2f), lines[Mathf.Min(lines.Length - 1, (int)(t * lines.Length))], caption);
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         static void Limb(Vector2 start, Vector2 end, float width, Color color)
         {
             var previous = GUI.matrix;
@@ -137,6 +167,7 @@ namespace DeathBySeventhsDawn.Progression
             Fill(new Rect(start.x, start.y - width * .5f, Vector2.Distance(start, end), width), color);
             GUI.matrix = previous;
         }
+
         void OnDestroy()
         {
             if (flame != null)

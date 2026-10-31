@@ -4,6 +4,7 @@ using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
+
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -12,10 +13,8 @@ namespace DeathBySeventhsDawn.Progression
     // Scene-independent HUD. Debug access: backquote/tilde, then 1997.
     public class ProgressionHUD : MonoBehaviour
     {
-        public static bool DebugConsoleOpen
-        {
-            get; private set;
-        }
+        public static bool DebugConsoleOpen { get; private set; }
+
         // 本次游戏只验证一次口令。此对象跨场景/轮回保留；关闭面板不会清除解锁状态。
         // 不写入存档，重新启动游戏后仍需首次输入 1997。
         bool unlockedThisSession;
@@ -23,7 +22,6 @@ namespace DeathBySeventhsDawn.Progression
         string code = "";
         Vector2 scroll;
         GUIStyle labelStyle, titleStyle, buttonStyle, boxStyle;
-
         void Update()
         {
             if (MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked)
@@ -52,6 +50,7 @@ namespace DeathBySeventhsDawn.Progression
             }
 #endif
         }
+
         void ToggleConsole()
         {
             if (debugOpen || enteringCode)
@@ -59,6 +58,7 @@ namespace DeathBySeventhsDawn.Progression
                 Close();
                 return;
             }
+
             DebugConsoleOpen = true;
             if (unlockedThisSession)
             {
@@ -72,17 +72,20 @@ namespace DeathBySeventhsDawn.Progression
                 code = "";
             }
         }
+
         void OnEnable()
         {
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset += Close;
         }
+
         void OnDisable()
         {
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset -= Close;
             Close();
         }
+
         void Close()
         {
             DebugConsoleOpen = false;
@@ -91,11 +94,13 @@ namespace DeathBySeventhsDawn.Progression
             confirmNewJourney = false;
             code = "";
         }
+
         void RestoreInitialState()
         {
             Close();
             GameManager.Instance.StartNewJourney();
         }
+
         void EnterDigit(char digit)
         {
             if (!enteringCode)
@@ -112,24 +117,44 @@ namespace DeathBySeventhsDawn.Progression
             else if (code.Length >= 4)
                 code = "";
         }
+
         void OnDestroy()
         {
             DebugConsoleOpen = false;
         }
+
         void PrepareStyles()
         {
             if (labelStyle != null)
                 return;
             // A dynamic OS font provides Chinese glyphs missing from the default IMGUI font.
             var chineseFont = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            labelStyle = new GUIStyle(GUI.skin.label) { fontSize = 23, wordWrap = true, padding = new RectOffset(10, 10, 5, 5) };
-            titleStyle = new GUIStyle(labelStyle) { fontSize = 29, fontStyle = FontStyle.Bold };
-            buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 23, wordWrap = true, padding = new RectOffset(14, 14, 12, 12) };
+            labelStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 23,
+                wordWrap = true,
+                padding = new RectOffset(10, 10, 5, 5)
+            };
+            titleStyle = new GUIStyle(labelStyle)
+            {
+                fontSize = 29,
+                fontStyle = FontStyle.Bold
+            };
+            buttonStyle = new GUIStyle(GUI.skin.button)
+            {
+                fontSize = 23,
+                wordWrap = true,
+                padding = new RectOffset(14, 14, 12, 12)
+            };
             labelStyle.font = chineseFont;
             titleStyle.font = chineseFont;
             buttonStyle.font = chineseFont;
-            boxStyle = new GUIStyle(GUI.skin.box) { padding = new RectOffset(18, 18, 16, 16) };
+            boxStyle = new GUIStyle(GUI.skin.box)
+            {
+                padding = new RectOffset(18, 18, 16, 16)
+            };
         }
+
         void DrawStatus(GameManager game, TimeManager clock)
         {
             GUILayout.Label(StoryText.Local($"第 {clock.Days} / 7 天  {PeriodName(clock.Period)}   |   轮回次数 {game.LoopCount}", $"Day {clock.Days} / 7  {PeriodName(clock.Period)}   |   Loops {game.LoopCount}"), labelStyle);
@@ -137,9 +162,27 @@ namespace DeathBySeventhsDawn.Progression
             GUILayout.Label(StoryText.Local($"知识 {game.Knowledge:0.#}   |   等级 {game.KnowledgeLevel}", $"Knowledge {game.Knowledge:0.#}   |   Level {game.KnowledgeLevel}"), labelStyle);
             GUILayout.Label(StoryText.Local($"变异 {game.Mutation:0.#}   |   理智 {game.Sanity:0.#}（{LayerName(game.Layer)}）", $"Mutation {game.Mutation:0.#}   |   Sanity {game.Sanity:0.#} ({LayerName(game.Layer)})"), labelStyle);
         }
-        static string PeriodName(TimePeriod period) => new[] { DeathBySeventhsDawn.Story.StoryText.UI("早晨"), DeathBySeventhsDawn.Story.StoryText.UI("下午"), DeathBySeventhsDawn.Story.StoryText.UI("傍晚"), DeathBySeventhsDawn.Story.StoryText.UI("深夜") }[(int)period];
-        static string LayerName(SanityLayer layer) => new[] { DeathBySeventhsDawn.Story.StoryText.UI("清醒"), DeathBySeventhsDawn.Story.StoryText.UI("动摇"), DeathBySeventhsDawn.Story.StoryText.UI("破碎"), DeathBySeventhsDawn.Story.StoryText.UI("启示") }[(int)layer];
-        static string TierName(KnowledgeTier tier) => new[] { DeathBySeventhsDawn.Story.StoryText.UI("普通"), DeathBySeventhsDawn.Story.StoryText.UI("禁忌"), DeathBySeventhsDawn.Story.StoryText.UI("宇宙") }[(int)tier];
+
+        static string PeriodName(TimePeriod period) => new[]
+        {
+            DeathBySeventhsDawn.Story.StoryText.UI("早晨"),
+            DeathBySeventhsDawn.Story.StoryText.UI("下午"),
+            DeathBySeventhsDawn.Story.StoryText.UI("傍晚"),
+            DeathBySeventhsDawn.Story.StoryText.UI("深夜")
+        }[(int)period];
+        static string LayerName(SanityLayer layer) => new[]
+        {
+            DeathBySeventhsDawn.Story.StoryText.UI("清醒"),
+            DeathBySeventhsDawn.Story.StoryText.UI("动摇"),
+            DeathBySeventhsDawn.Story.StoryText.UI("破碎"),
+            DeathBySeventhsDawn.Story.StoryText.UI("启示")
+        }[(int)layer];
+        static string TierName(KnowledgeTier tier) => new[]
+        {
+            DeathBySeventhsDawn.Story.StoryText.UI("普通"),
+            DeathBySeventhsDawn.Story.StoryText.UI("禁忌"),
+            DeathBySeventhsDawn.Story.StoryText.UI("宇宙")
+        }[(int)tier];
         static string AbilityName(string id)
         {
             switch (id)
@@ -158,6 +201,7 @@ namespace DeathBySeventhsDawn.Progression
                     return id;
             }
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(labelStyle, titleStyle, buttonStyle, boxStyle);
@@ -185,41 +229,7 @@ namespace DeathBySeventhsDawn.Progression
                     return;
                 if (game.HasEnded && !debugOpen && !enteringCode)
                 {
-                    GUI.color = new Color(0, 0, 0, .97f);
-                    GUI.DrawTexture(new Rect(0, 0, width, height), Texture2D.whiteTexture);
-                    GUI.color = previousColor;
-                    float endingWidth = Mathf.Min(820, width - 24);
-                    GUILayout.BeginArea(new Rect((width - endingWidth) / 2, 24, endingWidth, height - 48), boxStyle);
-                    scroll = GUILayout.BeginScrollView(scroll);
-                    var ending = game.WorldEndEnding ? StoryText.Current.worldEnd : StoryText.Current.ending;
-                    GUILayout.Label(ending?.title ?? "坏结局 1：无能的勇者", titleStyle);
-                    GUILayout.Space(24);
-                    if (ending?.lines != null)
-                        foreach (var line in ending.lines)
-                            GUILayout.Label(line, labelStyle);
-                    GUILayout.Space(20);
-                    GUILayout.Label(string.Format(ending?.summary ?? "历经 {0} 次轮回，体力上限 {1:0.#}。", game.LoopCount, game.MaxVitality), labelStyle);
-                    GUILayout.Space(20);
-                    if (!confirmNewJourney)
-                    {
-                        if (GUILayout.Button(ending?.restart ?? "重新开始旅程", buttonStyle))
-                            confirmNewJourney = true;
-                    }
-                    else
-                    {
-                        GUILayout.Label(ending?.confirmWarning ?? "重新开始会清除本次旅程的知识、变异和轮回进度。", labelStyle);
-                        if (GUILayout.Button(ending?.confirm ?? "确认重新开始", buttonStyle))
-                        {
-                            RestoreInitialState();
-                        }
-                        if (GUILayout.Button(ending?.cancel ?? DeathBySeventhsDawn.Story.StoryText.UI("取消"), buttonStyle))
-                            confirmNewJourney = false;
-                    }
-                    GUILayout.Space(10);
-                    if (GUILayout.Button(ending?.returnToTitle ?? "回到主页面", buttonStyle))
-                        MainMenuUI.ReturnToMainMenu();
-                    GUILayout.EndScrollView();
-                    GUILayout.EndArea();
+                    EndingCollectionUI.DrawResult(game, width, height);
                 }
                 else if (debugOpen)
                 {
@@ -251,6 +261,7 @@ namespace DeathBySeventhsDawn.Progression
                             confirmNewJourney = false;
                         GUILayout.EndHorizontal();
                     }
+
                     GUILayout.Space(16);
                     GUI.enabled = !confirmNewJourney;
                     if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("推进时段（每天四个时段）"), buttonStyle))
@@ -282,12 +293,16 @@ namespace DeathBySeventhsDawn.Progression
                     float promptWidth = Mathf.Min(610, width - 24);
                     GUILayout.BeginArea(new Rect((width - promptWidth) / 2, Mathf.Max(12, (height - 180) / 2), promptWidth, 180), boxStyle);
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("调试面板"), titleStyle);
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("输入口令：") + new string('*', code.Length) + "_", labelStyle);
+                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("输入口令：") + new string ('*', code.Length) + "_", labelStyle);
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("输入正确后自动打开 · Esc 取消"), labelStyle);
                     GUILayout.EndArea();
                 }
             }
-            finally { GUI.matrix = previousMatrix; GUI.color = previousColor; }
+            finally
+            {
+                GUI.matrix = previousMatrix;
+                GUI.color = previousColor;
+            }
         }
     }
 }

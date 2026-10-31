@@ -22,6 +22,10 @@ namespace DeathBySeventhsDawn.Progression
         public static string VisiblePrompt { get; private set; }
 
         static string selectedSource;
+        string lastPrompt;
+        float promptSince;
+        public bool Compact => Time.unscaledTime - promptSince > 3;
+
         public static bool CanActivate(string source)
         {
             Pick();
@@ -61,6 +65,8 @@ namespace DeathBySeventhsDawn.Progression
                 }
 
             selectedSource = bestSource;
+            if (game != null && game.State.tutorialComplete && game.LoopCount == 0 && game.State.firstNightWatchComplete && TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Night)
+                return StoryText.Local("该睡了。回卧室休息。", "Time for bed. Head back to the bedroom.") + (best != null ? "\n" + best : "");
             return best;
         }
 
@@ -136,11 +142,21 @@ namespace DeathBySeventhsDawn.Progression
                 VisiblePrompt = Pick();
                 if (!string.IsNullOrEmpty(VisiblePrompt))
                 {
-                    var p = new Rect(w * .12f, h - 310, w * .76f, 74);
+                    string key = game.State.tutorialComplete ? VisiblePrompt : "stage:" + game.State.morningStage;
+                    if (lastPrompt != key)
+                    {
+                        lastPrompt = key;
+                        promptSince = Time.unscaledTime;
+                    }
+
+                    float t = Mathf.SmoothStep(0, 1, Mathf.Clamp01((Time.unscaledTime - promptSince - 2.6f) / .4f));
+                    var full = new Rect(w * .12f, h - 310, w * .76f, 74);
+                    var compact = new Rect(28, 134, 340, 92);
+                    var p = new Rect(Mathf.Lerp(full.x, compact.x, t), Mathf.Lerp(full.y, compact.y, t), Mathf.Lerp(full.width, compact.width, t), Mathf.Lerp(full.height, compact.height, t));
                     NarrativeUI.Panel(p);
-                    label.fontSize = 20;
+                    label.fontSize = Mathf.RoundToInt(Mathf.Lerp(20, 16, t));
                     label.alignment = TextAnchor.MiddleLeft;
-                    GUI.Label(new Rect(p.x + 22, p.y + 8, p.width - 44, p.height - 16), VisiblePrompt, label);
+                    GUI.Label(new Rect(p.x + 16, p.y + 8, p.width - 32, p.height - 16), VisiblePrompt, label);
                 }
             }
             finally

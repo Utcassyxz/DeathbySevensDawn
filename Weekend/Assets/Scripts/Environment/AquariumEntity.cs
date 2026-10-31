@@ -6,6 +6,7 @@ using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Progression;
 using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
+
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -16,12 +17,10 @@ namespace DeathBySeventhsDawn.Interaction
     {
         public const string NpcCode = "001";
         static Color C(double r, double g, double b, double a = 1) => new Color((float)r, (float)g, (float)b, (float)a);
-        public static AquariumEntity Instance
-        {
-            get; private set;
-        }
+        public static AquariumEntity Instance { get; private set; }
         public static bool WorldBlocked => Instance != null && (Instance.talking || Time.frameCount <= Instance.blockedUntilFrame);
         public bool IsTalking => talking;
+
         GameObject tank, formRoot, player;
         SpriteRenderer tankRenderer;
         Color tankOriginal;
@@ -35,7 +34,7 @@ namespace DeathBySeventhsDawn.Interaction
         string[] pages;
         string speaker;
         GUIStyle text, title, button, small;
-        readonly DialoguePages subtitles=new DialoguePages();
+        readonly DialoguePages subtitles = new DialoguePages();
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -43,8 +42,10 @@ namespace DeathBySeventhsDawn.Interaction
                 Destroy(this);
                 return;
             }
+
             Instance = this;
         }
+
         void OnEnable()
         {
             SceneManager.sceneLoaded += OnLoaded;
@@ -53,6 +54,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset += ResetEntity;
         }
+
         void OnDisable()
         {
             SceneManager.sceneLoaded -= OnLoaded;
@@ -63,14 +65,17 @@ namespace DeathBySeventhsDawn.Interaction
             CloseDialogue();
             DestroyForm();
         }
+
         void Start()
         {
             Setup(SceneManager.GetActiveScene());
         }
+
         void OnLoaded(Scene scene, LoadSceneMode mode)
         {
             Setup(scene);
         }
+
         void Setup(Scene scene)
         {
             CloseDialogue();
@@ -92,14 +97,17 @@ namespace DeathBySeventhsDawn.Interaction
                 tankOriginal = tankRenderer.color;
                 hasOriginal = true;
             }
+
             player = GameObject.FindWithTag("Player");
             RefreshForm();
         }
+
         void OnTimeChanged(int day, TimePeriod period)
         {
             if (day != visualDay)
                 RefreshForm();
         }
+
         void ResetEntity()
         {
             CloseDialogue();
@@ -108,6 +116,7 @@ namespace DeathBySeventhsDawn.Interaction
             visualDay = -1;
             nearby = false;
         }
+
         void RefreshForm()
         {
             if (tank == null)
@@ -129,6 +138,7 @@ namespace DeathBySeventhsDawn.Interaction
             else
                 BuildDayThree();
         }
+
         void BuildDayThree()
         {
             if (tankRenderer != null)
@@ -141,6 +151,7 @@ namespace DeathBySeventhsDawn.Interaction
             Part("tendril a", new Vector3(-.45f, -.75f, 0), new Vector2(.07f, .9f), C(.24f, .38, .30f), 1);
             Part("tendril b", new Vector3(.42f, -.7f, 0), new Vector2(.06f, .75f), C(.20f, .33, .26f), 1);
         }
+
         void BuildHalfBody()
         {
             if (tankRenderer != null)
@@ -153,6 +164,7 @@ namespace DeathBySeventhsDawn.Interaction
             Circle("pupil", new Vector3(.08f, 1.65f, 0), new Vector2(.055f, .055f), C(.04f, .06, .05f), 6);
             Part("water line", new Vector3(0, 1.02f, 0), new Vector2(1.1f, .045f), C(.55f, .72, .64f), 7);
         }
+
         void BuildNpc()
         {
             if (tankRenderer != null)
@@ -169,6 +181,7 @@ namespace DeathBySeventhsDawn.Interaction
             Circle("001 eye right", root + new Vector3(.1f, 2.07f, 0), new Vector2(.08f, .08f), C(.88f, .84, .62f), 11);
             Part("001 water drip", root + new Vector3(.3f, .72f, 0), new Vector2(.05f, .55f), C(.40f, .55, .50f, 0.65f), 7);
         }
+
         void Update()
         {
             if (GameManager.Instance == null || GameManager.Instance.HasEnded)
@@ -177,6 +190,7 @@ namespace DeathBySeventhsDawn.Interaction
                 CloseDialogue();
                 return;
             }
+
             if (GameManager.Instance.AquariumSealed)
             {
                 if (formRoot != null)
@@ -186,16 +200,19 @@ namespace DeathBySeventhsDawn.Interaction
                     TickDialogue();
                 return;
             }
+
             if (TutorialGate.IsBlocked("aquarium"))
             {
                 nearby = false;
                 return;
             }
+
             if (talking)
             {
                 TickDialogue();
                 return;
             }
+
             if (TimeManager.Instance != null && TimeManager.Instance.Days != visualDay)
                 RefreshForm();
             if (tank == null || TimeManager.Instance == null || (TimeManager.Instance.Days < 3 && !HasFoil))
@@ -203,17 +220,20 @@ namespace DeathBySeventhsDawn.Interaction
                 nearby = false;
                 return;
             }
+
             if (ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
             {
                 nearby = false;
                 return;
             }
+
             var window = Object.FindAnyObjectByType<WindowLookout2D>();
             if (window != null && window.IsOpen)
             {
                 nearby = false;
                 return;
             }
+
             if (player == null)
                 player = GameObject.FindWithTag("Player");
             Vector2 point = InteractionPoint();
@@ -226,6 +246,7 @@ namespace DeathBySeventhsDawn.Interaction
                     OpenDialogue();
             }
         }
+
         Vector2 InteractionPoint()
         {
             if (tank == null)
@@ -235,6 +256,7 @@ namespace DeathBySeventhsDawn.Interaction
                 point += new Vector3(1.42f, -.35f, 0);
             return point;
         }
+
         bool InteractPressed()
         {
 #if ENABLE_INPUT_SYSTEM
@@ -245,16 +267,22 @@ namespace DeathBySeventhsDawn.Interaction
             return false;
 #endif
         }
+
         public bool HasFoil => GameManager.Instance != null && GameManager.Instance.State.inventory.Contains(CultNeighbor.Token);
         public bool FormVisible => formRoot != null && !GameManager.Instance.AquariumSealed;
+
         void OpenOffer()
         {
-            pages = new[] { TimeManager.Instance.Days < 3 ? StoryText.Current.aquarium.offerBefore : StoryText.Current.aquarium.offer };
+            pages = new[]
+            {
+                TimeManager.Instance.Days < 3 ? StoryText.Current.aquarium.offerBefore : StoryText.Current.aquarium.offer
+            };
             speaker = StoryText.Current.aquarium.sealedTitle;
             page = 0;
             openedFrame = Time.frameCount;
             talking = true;
         }
+
         /// <summary>Consume exactly one token only while standing at the tank; the seal survives reloads and loops.</summary>
         public bool ThrowFoil()
         {
@@ -266,13 +294,17 @@ namespace DeathBySeventhsDawn.Interaction
             ProgressionSave.Write(game.State);
             DestroyForm();
             RestoreTank();
-            pages = new[] { TimeManager.Instance.Days < 3 ? StoryText.Current.aquarium.sealedBefore : StoryText.Current.aquarium.sealedBody };
+            pages = new[]
+            {
+                TimeManager.Instance.Days < 3 ? StoryText.Current.aquarium.sealedBefore : StoryText.Current.aquarium.sealedBody
+            };
             speaker = StoryText.Current.aquarium.sealedTitle;
             page = 0;
             openedFrame = Time.frameCount;
             talking = true;
             return true;
         }
+
         void OpenDialogue()
         {
             if (GameManager.Instance.HasEnded || GameManager.Instance.AquariumSealed || TutorialGate.IsBlocked("aquarium"))
@@ -286,6 +318,7 @@ namespace DeathBySeventhsDawn.Interaction
             openedFrame = Time.frameCount;
             talking = true;
         }
+
         void TickDialogue()
         {
             if (pages == null || pages.Length == 0)
@@ -293,6 +326,7 @@ namespace DeathBySeventhsDawn.Interaction
                 CloseDialogue();
                 return;
             }
+
             if (Time.frameCount <= openedFrame + 2)
                 return;
             bool advance = false, close = false;
@@ -301,13 +335,14 @@ namespace DeathBySeventhsDawn.Interaction
                 ThrowFoil();
                 return;
             }
+
             if (!GameManager.Instance.AquariumSealed && visualDay >= 3 && UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.rKey.wasPressedThisFrame)
                 Investigation.Collect(visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye");
 #if ENABLE_INPUT_SYSTEM
             var k=Keyboard.current;
-            if(k!=null){advance=k.eKey.wasPressedThisFrame;close=k.escapeKey.wasPressedThisFrame;}
+            if(k!=null){advance=k.enterKey.wasPressedThisFrame;close=k.escapeKey.wasPressedThisFrame;}
 #elif ENABLE_LEGACY_INPUT_MANAGER
-            advance=Input.GetKeyDown(KeyCode.E);
+            advance=Input.GetKeyDown(KeyCode.Return);
             close=Input.GetKeyDown(KeyCode.Escape);
 #endif
             if (close)
@@ -315,14 +350,17 @@ namespace DeathBySeventhsDawn.Interaction
                 CloseDialogue();
                 return;
             }
+
             if (!advance)
                 return;
-            if(subtitles.Next())return;
+            if (subtitles.Next())
+                return;
             subtitles.Reset();
             page++;
             if (page >= pages.Length)
                 CloseDialogue();
         }
+
         void CloseDialogue()
         {
             if (talking)
@@ -332,6 +370,7 @@ namespace DeathBySeventhsDawn.Interaction
             page = 0;
             pages = null;
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(text, title, button, small);
@@ -353,39 +392,83 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     var aq = StoryText.Current.aquarium;
                     string prompt = HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : (aq?.promptDay3 ?? "E  和鱼缸里的东西说话");
-                    WorldPromptUI.Offer("aquarium",prompt,85);
+                    WorldPromptUI.Offer("aquarium", prompt, 85);
                     return;
                 }
-                GUI.depth=-50;
-                var dialogue=NarrativeUI.DialogueRect(w,h);
-                var subtitleStyle=new GUIStyle(text){fontSize=23,padding=new RectOffset()};
-                subtitles.Set(pages!=null?pages[Mathf.Clamp(page,0,pages.Length-1)]:"",subtitleStyle,dialogue.width-50,dialogue.height-86);
-                NarrativeUI.Dialogue(dialogue,speaker,subtitles.Current,subtitles.Counter+StoryText.Local("E 继续 · Esc 离开","E Continue · Esc Leave"),text);
-                float x=dialogue.x,y=dialogue.y-64,bw=(dialogue.width-24)/3;
-                if(HasFoil){if(GUI.Button(new Rect(x,y,bw,48),StoryText.Current.aquarium.throwFoil,button))ThrowFoil();x+=bw+12;}
-                if(!GameManager.Instance.AquariumSealed&&visualDay>=3)
+
+                GUI.depth = -50;
+                var dialogue = NarrativeUI.DialogueRect(w, h);
+                var subtitleStyle = new GUIStyle(text)
                 {
-                    string evidence=visualDay>=6?"001-name":visualDay>=5?"tank-overflow":"tank-eye";
-                    if(GUI.Button(new Rect(x,y,bw,48),StoryText.Local(Investigation.Has(evidence)?"已记录":"R 记下这次观察",Investigation.Has(evidence)?"Recorded":"R Record observation"),button))Investigation.Collect(evidence);
-                    if(GUI.Button(new Rect(x+bw+12,y,bw,48),StoryText.Current.aquarium.question,button)){pages=new[]{Investigation.Has("notes-gap")?StoryText.Current.aquarium.answerGap:StoryText.Current.aquarium.answerDefault};page=0;subtitles.Reset();}
+                    fontSize = 23,
+                    padding = new RectOffset()
+                };
+                subtitles.Set(pages != null ? pages[Mathf.Clamp(page, 0, pages.Length - 1)] : "", subtitleStyle, dialogue.width - 50, dialogue.height - 86);
+                NarrativeUI.Dialogue(dialogue, speaker, subtitles.Current, subtitles.Counter + StoryText.Local("Enter 继续 · Esc 离开", "Enter Continue · Esc Leave"), text);
+                float x = dialogue.x, y = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
+                if (HasFoil)
+                {
+                    if (GUI.Button(new Rect(x, y, bw, 48), StoryText.Current.aquarium.throwFoil, button))
+                        ThrowFoil();
+                    x += bw + 12;
+                }
+
+                if (!GameManager.Instance.AquariumSealed && visualDay >= 3)
+                {
+                    string evidence = visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
+                    if (GUI.Button(new Rect(x, y, bw, 48), StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R 记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R Record observation"), button))
+                        Investigation.Collect(evidence);
+                    if (GUI.Button(new Rect(x + bw + 12, y, bw, 48), StoryText.Current.aquarium.question, button))
+                    {
+                        pages = new[]
+                        {
+                            Investigation.Has("notes-gap") ? StoryText.Current.aquarium.answerGap : StoryText.Current.aquarium.answerDefault
+                        };
+                        page = 0;
+                        subtitles.Reset();
+                    }
                 }
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void Styles()
         {
             if (text != null)
                 return;
             var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            text = new GUIStyle(GUI.skin.label) { font = font, fontSize = 25, wordWrap = true };
+            text = new GUIStyle(GUI.skin.label)
+            {
+                font = font,
+                fontSize = 25,
+                wordWrap = true
+            };
             text.normal.textColor = C(.92f, .89, .80f);
-            title = new GUIStyle(text) { fontSize = 38, fontStyle = FontStyle.Bold };
+            title = new GUIStyle(text)
+            {
+                fontSize = 38,
+                fontStyle = FontStyle.Bold
+            };
             title.normal.textColor = C(.72f, .86, .74f);
-            small = new GUIStyle(text) { fontSize = 17 };
+            small = new GUIStyle(text)
+            {
+                fontSize = 17
+            };
             small.normal.textColor = C(.58f, .68, .60f);
-            button = new GUIStyle(GUIStyle.none) { font = font, fontSize = 23, alignment = TextAnchor.MiddleCenter };
+            button = new GUIStyle(GUIStyle.none)
+            {
+                font = font,
+                fontSize = 23,
+                alignment = TextAnchor.MiddleCenter
+            };
             button.normal.textColor = C(.78f, .82, .68f);
         }
+
         void EnsureSprites()
         {
             if (square == null)
@@ -395,9 +478,14 @@ namespace DeathBySeventhsDawn.Interaction
                 pixel.Apply();
                 square = Sprite.Create(pixel, new Rect(0, 0, 1, 1), new Vector2(.5f, .5f), 1);
             }
+
             if (circle == null)
             {
-                circleTexture = new Texture2D(64, 64, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+                circleTexture = new Texture2D(64, 64, TextureFormat.RGBA32, false)
+                {
+                    wrapMode = TextureWrapMode.Clamp,
+                    filterMode = FilterMode.Bilinear
+                };
                 for (int y = 0; y < 64; y++)
                     for (int x = 0; x < 64; x++)
                     {
@@ -405,10 +493,12 @@ namespace DeathBySeventhsDawn.Interaction
                         float a = Mathf.Clamp01(1 - Mathf.Sqrt(dx * dx + dy * dy));
                         circleTexture.SetPixel(x, y, C(1, 1, 1, a));
                     }
+
                 circleTexture.Apply(false);
                 circle = Sprite.Create(circleTexture, new Rect(0, 0, 64, 64), new Vector2(.5f, .5f), 64);
             }
         }
+
         void Part(string name, Vector3 localPosition, Vector2 size, Color color, int order)
         {
             var part = new GameObject(name);
@@ -420,6 +510,7 @@ namespace DeathBySeventhsDawn.Interaction
             renderer.color = color;
             ApplyRenderer(renderer, order);
         }
+
         void Circle(string name, Vector3 localPosition, Vector2 size, Color color, int order)
         {
             var part = new GameObject(name);
@@ -431,6 +522,7 @@ namespace DeathBySeventhsDawn.Interaction
             renderer.color = color;
             ApplyRenderer(renderer, order);
         }
+
         void ApplyRenderer(SpriteRenderer renderer, int order)
         {
             if (tankRenderer != null)
@@ -443,6 +535,7 @@ namespace DeathBySeventhsDawn.Interaction
             else
                 renderer.sortingOrder = order;
         }
+
         void DestroyForm()
         {
             if (formRoot != null)
@@ -451,11 +544,13 @@ namespace DeathBySeventhsDawn.Interaction
             if (tankRenderer != null && hasOriginal)
                 tankRenderer.color = tankOriginal;
         }
+
         void RestoreTank()
         {
             if (tankRenderer != null && hasOriginal)
                 tankRenderer.color = tankOriginal;
         }
+
         void OnDestroy()
         {
             if (Instance == this)

@@ -3,6 +3,7 @@ using UnityEngine;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.TimeSystem;
+
 namespace DeathBySeventhsDawn.Progression
 {
     public static class ProgressionBootstrap
@@ -37,6 +38,7 @@ namespace DeathBySeventhsDawn.Progression
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent>();
                 hud.AddComponent<SceneBackdrop>();
                 hud.AddComponent<TimeAtmosphere>();
+                hud.AddComponent<InteriorLighting>();
                 hud.AddComponent<WorldPromptUI>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.CultNeighbor>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.MorningRoutine>();

@@ -44,7 +44,8 @@ namespace DeathBySeventhsDawn.Progression
         void OnEnable()
         {
             clock = TimeManager.Instance;
-            clock.TimeChanged += Changed;
+            if (clock != null)
+                clock.TimeChanged += Changed;
             SceneManager.sceneLoaded += Loaded;
         }
 
@@ -124,7 +125,7 @@ namespace DeathBySeventhsDawn.Progression
         static bool Dynamic(Transform t)
         {
             for (; t != null; t = t.parent)
-                if (t.name.StartsWith("Aquarium") || t.name.StartsWith("Perception clue") || t.name.StartsWith("Distant ") || t.name.StartsWith("阳台外景照片"))
+                if (t.name.StartsWith("Apartment lighting") || t.name.StartsWith("Aquarium") || t.name.StartsWith("Perception clue") || t.name.StartsWith("Distant ") || t.name.StartsWith("阳台外景照片"))
                     return true;
             return false;
         }
@@ -218,7 +219,7 @@ namespace DeathBySeventhsDawn.Progression
             foreach (var p in originals)
                 if (p.Key != null)
                 {
-                    var c = p.Value * tint;
+                    var c = p.Value * InteriorLighting.LitTint(tint);
                     c.a = p.Value.a;
                     p.Key.color = c;
                 }

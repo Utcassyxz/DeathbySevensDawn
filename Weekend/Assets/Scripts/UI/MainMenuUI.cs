@@ -11,15 +11,13 @@ namespace DeathBySeventhsDawn.Progression
     // 启动主界面：开始游戏 / 退出；游戏内“回到主页面”也会回到这里。
     public sealed class MainMenuUI : MonoBehaviour
     {
-        public static MainMenuUI Instance
-        {
-            get; private set;
-        }
+        public static MainMenuUI Instance { get; private set; }
         public static bool WorldBlocked => Instance != null && (Instance.visible || Time.frameCount <= Instance.blockedUntilFrame);
         public static bool IsVisible => Instance != null && Instance.visible;
         public static float OpeningProgress => Instance != null && Instance.starting ? Mathf.Clamp01((Time.unscaledTime - Instance.openingStarted) / 11f) : 0;
         public static bool IsOpening => Instance != null && Instance.starting;
         public static bool Suppressed => DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.Suppressed;
+
         bool visible, starting;
         float openingStarted;
         OpeningSky sky = new OpeningSky();
@@ -36,9 +34,14 @@ namespace DeathBySeventhsDawn.Progression
                 Destroy(this);
                 return;
             }
+
             Instance = this;
             visible = !Suppressed;
-            gradient = new Texture2D(1, 64, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            gradient = new Texture2D(1, 64, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear
+            };
             for (int y = 0; y < 64; y++)
             {
                 float t = y / 63f;
@@ -46,8 +49,13 @@ namespace DeathBySeventhsDawn.Progression
                 c = Color.Lerp(c, new Color(.035f, .035f, .045f), t * .55f);
                 gradient.SetPixel(0, y, c);
             }
+
             gradient.Apply(false);
-            halo = new Texture2D(128, 128, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            halo = new Texture2D(128, 128, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear
+            };
             for (int y = 0; y < 128; y++)
                 for (int x = 0; x < 128; x++)
                 {
@@ -55,12 +63,14 @@ namespace DeathBySeventhsDawn.Progression
                     float a = Mathf.Pow(Mathf.Clamp01(1 - Mathf.Sqrt(dx * dx + dy * dy)), 2.4f);
                     halo.SetPixel(x, y, new Color(1, 1, 1, a));
                 }
+
             halo.Apply(false);
             stars = new Vector2[46];
             var random = new System.Random(7);
             for (int i = 0; i < stars.Length; i++)
                 stars[i] = new Vector2((float)random.NextDouble(), (float)random.NextDouble());
         }
+
         void Update()
         {
             if (!visible || GameSettingsUI.WorldBlocked)
@@ -71,10 +81,19 @@ namespace DeathBySeventhsDawn.Progression
                     FinishOpening();
                 return;
             }
+
+            if (EndingCollectionUI.GalleryOpen)
+            {
+                if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                    EndingCollectionUI.CloseGallery();
+                return;
+            }
+
             var k = Keyboard.current;
             if (k != null && k.enterKey.wasPressedThisFrame)
                 StartGame();
         }
+
         public void StartGame()
         {
             if (!visible || starting || GameSettingsUI.WorldBlocked)
@@ -83,6 +102,7 @@ namespace DeathBySeventhsDawn.Progression
             openingStarted = Time.unscaledTime;
             ApartmentAudio.Instance?.BeginOpening();
         }
+
         void FinishOpening()
         {
             visible = false;
@@ -97,6 +117,7 @@ namespace DeathBySeventhsDawn.Progression
                 starting = false;
                 return;
             }
+
             if (TimeManager.Instance != null)
                 TimeManager.Instance.ResetToDayOne();
             if (Application.CanStreamedLevelBeLoaded("Bedroom"))
@@ -105,6 +126,7 @@ namespace DeathBySeventhsDawn.Progression
                 SceneManager.LoadScene("LivingRoom");
             starting = false;
         }
+
         public static void ReturnToMainMenu()
         {
             if (Instance == null)
@@ -113,6 +135,7 @@ namespace DeathBySeventhsDawn.Progression
             Instance.starting = false;
             Instance.blockedUntilFrame = Time.frameCount;
         }
+
         public static void QuitGame()
         {
 #if UNITY_EDITOR
@@ -121,16 +144,33 @@ namespace DeathBySeventhsDawn.Progression
             Application.Quit();
 #endif
         }
+
         void Styles()
         {
             if (title != null)
                 return;
             var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            title = new GUIStyle(GUI.skin.label) { font = font, fontSize = 62, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
+            title = new GUIStyle(GUI.skin.label)
+            {
+                font = font,
+                fontSize = 62,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter
+            };
             title.normal.textColor = Ink;
-            subtitle = new GUIStyle(title) { fontSize = 20, fontStyle = FontStyle.Normal };
+            subtitle = new GUIStyle(title)
+            {
+                fontSize = 20,
+                fontStyle = FontStyle.Normal
+            };
             subtitle.normal.textColor = Gold;
-            button = new GUIStyle(GUI.skin.button) { font = font, fontSize = 23, alignment = TextAnchor.MiddleCenter, padding = new RectOffset(18, 18, 12, 12) };
+            button = new GUIStyle(GUI.skin.button)
+            {
+                font = font,
+                fontSize = 23,
+                alignment = TextAnchor.MiddleCenter,
+                padding = new RectOffset(18, 18, 12, 12)
+            };
             plateNormal = MakePlate(false, false);
             plateHover = MakePlate(true, false);
             platePressed = MakePlate(true, true);
@@ -144,14 +184,25 @@ namespace DeathBySeventhsDawn.Progression
             button.focused.textColor = button.hover.textColor;
             button.active.textColor = Gold;
             PrototypeButtons.Apply(button);
-            small = new GUIStyle(GUI.skin.label) { font = font, fontSize = 16, alignment = TextAnchor.MiddleCenter, wordWrap = true };
+            small = new GUIStyle(GUI.skin.label)
+            {
+                font = font,
+                fontSize = 16,
+                alignment = TextAnchor.MiddleCenter,
+                wordWrap = true
+            };
             small.normal.textColor = Muted;
         }
+
         // Small nine-sliced metal plates: a raised rim, recessed face and deterministic grain.
         static Texture2D MakePlate(bool hover, bool pressed)
         {
             const int width = 128, height = 64;
-            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp
+            };
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                 {
@@ -178,15 +229,18 @@ namespace DeathBySeventhsDawn.Progression
                         if (edge >= 2 && edge <= 4)
                             c = top ? new Color(.14f, .13f, .10f) : new Color(.46f, .40f, .27f);
                     }
+
                     if (hover && edge == 2)
                         c = Color.Lerp(c, new Color(.84f, .74f, .49f), .28f);
                     if ((x < 2 || x >= width - 2) && (y < 2 || y >= height - 2))
                         c = Color.clear;
                     texture.SetPixel(x, y, c);
                 }
+
             texture.Apply(false);
             return texture;
         }
+
         bool PlateButton(Rect rect, string text)
         {
             bool pressed = rect.Contains(Event.current.mousePosition) && Mouse.current != null && Mouse.current.leftButton.isPressed;
@@ -194,15 +248,23 @@ namespace DeathBySeventhsDawn.Progression
             Fill(new Rect(rect.x + 2, rect.y + rect.height - 2, rect.width - 4, 6), new Color(.10f, .085f, .055f));
             button.contentOffset = pressed ? new Vector2(0, 2) : Vector2.zero;
             bool clicked = GUI.Button(rect, text, button);
-            foreach (float x in new[] { rect.x + 13, rect.xMax - 16 })
+            foreach (float x in new[]
+            {
+                rect.x + 13,
+                rect.xMax - 16
+            }
+
+            )
             {
                 var bolt = new Rect(x, rect.center.y - 2 + (pressed ? 2 : 0), 3, 3);
                 Fill(new Rect(bolt.x, bolt.y + 1, 3, 3), new Color(.025f, .035f, .035f));
                 Fill(bolt, new Color(.44f, .40f, .28f));
                 Fill(new Rect(bolt.x, bolt.y, 2, 1), new Color(.68f, .60f, .41f));
             }
+
             return clicked;
         }
+
         static void Fill(Rect r, Color c)
         {
             var old = GUI.color;
@@ -210,6 +272,7 @@ namespace DeathBySeventhsDawn.Progression
             GUI.DrawTexture(r, Texture2D.whiteTexture);
             GUI.color = old;
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(title, subtitle, button, small);
@@ -237,18 +300,33 @@ namespace DeathBySeventhsDawn.Progression
                         FinishOpening();
                     return;
                 }
+
+                if (EndingCollectionUI.GalleryOpen)
+                {
+                    EndingCollectionUI.DrawGallery(w, h);
+                    return;
+                }
+
                 GUI.Label(new Rect(0, h * .10f, w, 90), StoryText.Current.mainMenu?.title ?? "七日", title);
                 GUI.Label(new Rect(0, h * .10f + 86, w, 32), StoryText.Current.mainMenu?.subtitle ?? "SEVEN DAY", subtitle);
                 float bw = Mathf.Min(300, w - 80);
-                if (PlateButton(new Rect((w - bw) / 2, h * .70f, bw, 58), StoryText.Current.mainMenu?.start ?? "开 始 新 游 戏"))
+                if (PlateButton(new Rect((w - bw) / 2, h * .61f, bw, 58), StoryText.Current.mainMenu?.start ?? "开 始 新 游 戏"))
                     StartGame();
-                if (PlateButton(new Rect((w - bw) / 2, h * .70f + 78, bw, 52), StoryText.Local("设置", "Settings")))
+                if (PlateButton(new Rect((w - bw) / 2, h * .61f + 78, bw, 52), StoryText.Local("设置", "Settings")))
                     GameSettingsUI.Show();
-                if (PlateButton(new Rect((w - bw) / 2, h * .70f + 152, bw, 52), StoryText.Current.mainMenu?.quit ?? "退出游戏"))
+                if (PlateButton(new Rect((w - bw) / 2, h * .61f + 148, bw, 52), StoryText.Local("结局收录", "Ending collection")))
+                    EndingCollectionUI.OpenGallery();
+                if (PlateButton(new Rect((w - bw) / 2, h * .61f + 216, bw, 52), StoryText.Current.mainMenu?.quit ?? "退出游戏"))
                     QuitGame();
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void OnDestroy()
         {
             if (Instance == this)

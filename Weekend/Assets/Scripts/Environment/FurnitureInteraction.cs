@@ -6,6 +6,7 @@ using DeathBySeventhsDawn.Player;
 using DeathBySeventhsDawn.TimeSystem;
 using DeathBySeventhsDawn.Progression;
 using DeathBySeventhsDawn.Story;
+
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -14,11 +15,10 @@ namespace DeathBySeventhsDawn.Interaction
     // Bind existing furniture at runtime; scene assets and their colliders stay unchanged.
     public sealed class FurnitureInteraction : MonoBehaviour
     {
-        public static bool IsBusy
-        {
-            get; private set;
-        }
-        [SerializeField] float interactionDistance = .85f;
+        public static bool IsBusy { get; private set; }
+
+        [SerializeField]
+        float interactionDistance = .18f;
         GameObject bed, television, sofa, player, target;
         PlayerController2D movement;
         bool restoreMovement;
@@ -31,6 +31,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GameManager.Instance.JourneyReset += CloseMenu;
             Bind();
         }
+
         void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -38,11 +39,13 @@ namespace DeathBySeventhsDawn.Interaction
                 GameManager.Instance.JourneyReset -= CloseMenu;
             CloseMenu();
         }
+
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             CloseMenu();
             Bind();
         }
+
         void Bind()
         {
             bed = GameObject.Find("Bed");
@@ -50,17 +53,8 @@ namespace DeathBySeventhsDawn.Interaction
             television = GameObject.Find("Television and stand");
             player = GameObject.FindWithTag("Player");
         }
-        float Distance(GameObject item)
-        {
-            if (item == null || player == null)
-                return float.PositiveInfinity;
-            Vector2 position = player.transform.position;
-            var collider = item.GetComponent<Collider2D>();
-            if (collider != null)
-                return Vector2.Distance(position, collider.ClosestPoint(position));
-            var renderer = item.GetComponent<Renderer>();
-            return renderer != null ? Vector2.Distance(position, (Vector2)renderer.bounds.ClosestPoint(position)) : Vector2.Distance(position, item.transform.position);
-        }
+
+        float Distance(GameObject item) => PropReach.Gap(item, player);
         void Update()
         {
             if (GameManager.Instance == null || GameManager.Instance.HasEnded)
@@ -69,12 +63,14 @@ namespace DeathBySeventhsDawn.Interaction
                 target = null;
                 return;
             }
+
             if (!GameManager.Instance.State.tutorialComplete)
             {
                 CloseMenu();
                 target = null;
                 return;
             }
+
             if (ProgressionHUD.DebugConsoleOpen || StoryJournal.WorldBlocked)
                 return;
             bool interact = false, cancel = false;
@@ -87,10 +83,24 @@ namespace DeathBySeventhsDawn.Interaction
 #endif
             if (IsBusy)
             {
+                if (interact && target == bed)
+                {
+                    CloseMenu();
+                    TimeManager.Instance.SleepUntilNextMorning();
+                    return;
+                }
+
+                if (interact && target == sofa)
+                {
+                    RestOnePeriod();
+                    return;
+                }
+
                 if (cancel)
                     CloseMenu();
                 return;
             }
+
             if (player == null)
                 Bind();
             // Give the existing window interaction priority if interaction areas overlap.
@@ -100,6 +110,7 @@ namespace DeathBySeventhsDawn.Interaction
                 target = null;
                 return;
             }
+
             float bedDistance = Distance(bed), tvDistance = Distance(television);
             target = bedDistance <= tvDistance ? bed : television;
             float nearest = Mathf.Min(bedDistance, tvDistance), sofaDistance = Distance(sofa);
@@ -108,6 +119,7 @@ namespace DeathBySeventhsDawn.Interaction
                 target = sofa;
                 nearest = sofaDistance;
             }
+
             if (nearest > interactionDistance)
                 target = null;
             if (target != null && interact && WorldPromptUI.CanActivate("furniture"))
@@ -124,6 +136,7 @@ namespace DeathBySeventhsDawn.Interaction
                     WatchTelevision();
             }
         }
+
         public bool WatchTelevision()
         {
             if (!GameManager.Instance.State.tutorialComplete || !IsBusy || target != television || StoryJournal.WorldBlocked)
@@ -131,6 +144,7 @@ namespace DeathBySeventhsDawn.Interaction
             CloseMenu();
             return DayOneSupernovaEvent.Instance.OpenTelevision();
         }
+
         // A deliberate rest, rather than a repeated TV bulletin, provides normal period progression.
         public bool RestOnePeriod()
         {
@@ -140,6 +154,7 @@ namespace DeathBySeventhsDawn.Interaction
             TimeManager.Instance.AdvanceTime();
             return true;
         }
+
         void CloseMenu()
         {
             if (restoreMovement && movement != null)
@@ -149,18 +164,36 @@ namespace DeathBySeventhsDawn.Interaction
             IsBusy = false;
             scroll = Vector2.zero;
         }
+
         void PrepareStyles()
         {
             if (label != null)
                 return;
             var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            label = new GUIStyle(GUI.skin.label) { font = font, fontSize = 26, wordWrap = true, alignment = TextAnchor.MiddleCenter };
-            button = new GUIStyle(GUIStyle.none) { font = font, fontSize = 25, wordWrap = true, padding = new RectOffset(16, 16, 14, 14), alignment = TextAnchor.MiddleCenter };
+            label = new GUIStyle(GUI.skin.label)
+            {
+                font = font,
+                fontSize = 26,
+                wordWrap = true,
+                alignment = TextAnchor.MiddleCenter
+            };
+            button = new GUIStyle(GUIStyle.none)
+            {
+                font = font,
+                fontSize = 25,
+                wordWrap = true,
+                padding = new RectOffset(16, 16, 14, 14),
+                alignment = TextAnchor.MiddleCenter
+            };
             button.normal.textColor = new Color(.74f, .78f, .66f);
             button.hover.textColor = new Color(.96f, .94f, .82f);
             button.active.textColor = Color.white;
-            box = new GUIStyle(GUI.skin.box) { padding = new RectOffset(24, 24, 24, 24) };
+            box = new GUIStyle(GUI.skin.box)
+            {
+                padding = new RectOffset(24, 24, 24, 24)
+            };
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(label, button, box);
@@ -179,14 +212,16 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if (!IsBusy)
                 {
-                    WorldPromptUI.Offer("furniture", target==bed?StoryText.Local("E  睡觉","E  Sleep"):target==sofa?StoryText.Local("E  歇一会儿","E  Rest"):StoryText.Local("E  看电视","E  Television"),40);
+                    WorldPromptUI.Offer("furniture", target == bed ? StoryText.Local("E  睡觉", "E  Sleep") : target == sofa ? StoryText.Local("E  歇一会儿", "E  Rest") : StoryText.Local("E  看电视", "E  Television"), 40);
                     return;
                 }
+
                 GUI.color = new Color(0, 0, 0, .88f);
                 GUI.DrawTexture(new Rect(0, 0, width, height), Texture2D.whiteTexture);
                 GUI.color = color;
                 float panelWidth = Mathf.Min(760, width - 24), panelHeight = Mathf.Min(target == bed ? 480 : 620, height - 24);
-                var frame=new Rect((width-panelWidth)/2,(height-panelHeight)/2,panelWidth,panelHeight);NarrativeUI.Panel(frame);
+                var frame = new Rect((width - panelWidth) / 2, (height - panelHeight) / 2, panelWidth, panelHeight);
+                NarrativeUI.Panel(frame);
                 GUILayout.BeginArea(frame, box);
                 scroll = GUILayout.BeginScrollView(scroll);
                 GUILayout.Label(target == bed ? DeathBySeventhsDawn.Story.StoryText.Local("上床休息", "Rest") : target == sofa ? DeathBySeventhsDawn.Story.StoryText.Local("沙发", "Sofa") : DeathBySeventhsDawn.Story.StoryText.Local("电视", "Television"), label);
@@ -194,7 +229,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (target == bed)
                 {
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("要结束今天，睡到明天早晨吗？", "End today and sleep until morning?"), label);
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("上床睡觉（跳过今天）", "Sleep until tomorrow"), button))
+                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("睡到明早 · E", "Sleep until tomorrow · E"), button))
                     {
                         CloseMenu();
                         TimeManager.Instance.SleepUntilNextMorning();
@@ -203,9 +238,10 @@ namespace DeathBySeventhsDawn.Interaction
                 else if (target == sofa)
                 {
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Current.morning.sofaFree, label);
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("歇一会儿（度过一个时段）", "Rest for one period"), button))
+                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("歇一会儿 · E", "Rest for one period · E"), button))
                         RestOnePeriod();
                 }
+
                 GUILayout.Space(20);
                 GUILayout.EndScrollView();
                 if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("离开", "Leave"), button))
@@ -213,7 +249,11 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("Esc 返回", "Esc Back"), label);
                 GUILayout.EndArea();
             }
-            finally { GUI.matrix = matrix; GUI.color = color; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+            }
         }
     }
 }

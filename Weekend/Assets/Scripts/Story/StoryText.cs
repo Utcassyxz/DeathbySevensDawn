@@ -1,6 +1,7 @@
 // 职责：中英文文案目录加载、切换和反序列化结构；剧情文字统一从资源读取。
 using System;
 using UnityEngine;
+
 namespace DeathBySeventhsDawn.Story
 {
     // ============================================================================
@@ -20,7 +21,9 @@ namespace DeathBySeventhsDawn.Story
     {
         public const string ResourcePath = "StoryText";
         static StoryTextData data;
-        static bool english; public static bool English => english;
+        static bool english;
+        public static bool English => english;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void LoadLanguage()
         {
@@ -28,6 +31,7 @@ namespace DeathBySeventhsDawn.Story
             Reload();
             DeathBySeventhsDawn.Knowledge.Investigation.ReloadLanguage();
         }
+
         public static event Action LanguageChanged;
         public static string Local(string chinese, string english) => English ? english : chinese;
         public static string UI(string key)
@@ -39,6 +43,7 @@ namespace DeathBySeventhsDawn.Story
                         return entry.text;
             return key;
         }
+
         public static void ToggleLanguage()
         {
             english = !english;
@@ -48,6 +53,7 @@ namespace DeathBySeventhsDawn.Story
             DeathBySeventhsDawn.Knowledge.Investigation.ReloadLanguage();
             LanguageChanged?.Invoke();
         }
+
         public static StoryTextData Current
         {
             get
@@ -66,18 +72,25 @@ namespace DeathBySeventhsDawn.Story
                         {
                             data = JsonUtility.FromJson<StoryTextData>(asset.text);
                         }
-                        catch (Exception ex) { Debug.LogError("StoryText.json 解析失败：" + ex.Message); }
+                        catch (Exception ex)
+                        {
+                            Debug.LogError("StoryText.json 解析失败：" + ex.Message);
+                        }
+
                         if (data == null)
                             data = new StoryTextData();
                     }
                 }
+
                 return data;
             }
         }
+
         public static void Reload()
         {
             data = null;
         }
+
         public static string Value(string value, string fallback) => string.IsNullOrEmpty(value) ? fallback : value;
         public static string[] Pages(string[] pages, params string[] fallback) => pages != null && pages.Length > 0 ? pages : fallback;
     }
@@ -132,7 +145,7 @@ namespace DeathBySeventhsDawn.Story
         public string revelationTitle;
         public string nightOnly;
         public string wrongDay;
-        public string firstNight;
+        public string firstNight, recheck, sleepThought;
         public string gainedSuffix;
         public string repeatSuffix;
         public string imageMissing;

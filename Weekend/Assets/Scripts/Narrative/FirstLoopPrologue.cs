@@ -6,6 +6,7 @@ using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Progression;
 using DeathBySeventhsDawn.Story;
 using DeathBySeventhsDawn.TimeSystem;
+
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -13,17 +14,18 @@ namespace DeathBySeventhsDawn.Interaction
 {
     public sealed class FirstLoopPrologue : MonoBehaviour
     {
-        public static FirstLoopPrologue Instance
-        {
-            get; private set;
-        }
+        public static FirstLoopPrologue Instance { get; private set; }
         public static bool WorldBlocked => Instance != null && (Instance.IsPresenting || Time.frameCount <= Instance.blockedUntilFrame);
         public bool IsPresenting => clip != Clip.None || titleOpen;
         public bool ChapterTitleOpen => titleOpen;
+
         enum Clip
         {
-            None, Flyers, Boards
+            None,
+            Flyers,
+            Boards
         }
+
         Clip clip;
         float elapsed, titleElapsed;
         SpriteRenderer[] actorRenderers;
@@ -32,9 +34,12 @@ namespace DeathBySeventhsDawn.Interaction
         FirstLoopPrologueContent content;
         GameObject scenery, actor;
         readonly GameObject[] boards = new GameObject[4];
-        Sprite square; Texture2D pixel; Material material;
+        Sprite square;
+        Texture2D pixel;
+        Material material;
         GUIStyle text, title, button;
         bool FirstLoop => GameManager.Instance != null && GameManager.Instance.LoopCount == 0 && !GameManager.Instance.HasEnded;
+
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -42,17 +47,20 @@ namespace DeathBySeventhsDawn.Interaction
                 Destroy(this);
                 return;
             }
+
             Instance = this;
             content = Resources.Load<FirstLoopPrologueContent>("FirstLoopPrologue");
             if (content == null)
                 content = ScriptableObject.CreateInstance<FirstLoopPrologueContent>();
         }
+
         void OnEnable()
         {
             SceneManager.sceneLoaded += OnLoaded;
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset += ResetJourney;
         }
+
         void OnDisable()
         {
             SceneManager.sceneLoaded -= OnLoaded;
@@ -60,6 +68,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GameManager.Instance.JourneyReset -= ResetJourney;
             ResetJourney();
         }
+
         void ResetJourney()
         {
             clip = Clip.None;
@@ -71,6 +80,7 @@ namespace DeathBySeventhsDawn.Interaction
             actor = null;
             actorRenderers = null;
         }
+
         void OnLoaded(Scene scene, LoadSceneMode mode)
         {
             clip = Clip.None;
@@ -93,6 +103,7 @@ namespace DeathBySeventhsDawn.Interaction
                 BuildBoards(GameManager.Instance.State.neighborBarricadeSeen);
             entryPending = true;
         }
+
         void Update()
         {
             if (!FirstLoop)
@@ -101,6 +112,7 @@ namespace DeathBySeventhsDawn.Interaction
                 titleOpen = false;
                 return;
             }
+
             if (ProgressionHUD.DebugConsoleOpen)
                 return;
             if (titleOpen)
@@ -110,14 +122,15 @@ namespace DeathBySeventhsDawn.Interaction
                     return;
                 bool confirm = false;
 #if ENABLE_INPUT_SYSTEM
-                var keyboard=Keyboard.current;confirm=keyboard!=null&&(keyboard.eKey.wasPressedThisFrame);
+                var keyboard=Keyboard.current;confirm=keyboard!=null&&(keyboard.enterKey.wasPressedThisFrame);
 #elif ENABLE_LEGACY_INPUT_MANAGER
-                confirm=Input.GetKeyDown(KeyCode.E);
+                confirm=Input.GetKeyDown(KeyCode.Return);
 #endif
                 if (confirm)
                     EnterPrologue();
                 return;
             }
+
             if (clip != Clip.None)
             {
                 elapsed += Time.unscaledDeltaTime;
@@ -143,14 +156,17 @@ namespace DeathBySeventhsDawn.Interaction
                         if (hammer != null)
                             hammer.localRotation = Quaternion.Euler(0, 0, retreat == 0 && elapsed < 1.3f ? Mathf.Sin(elapsed * 16) * 18 : 0);
                     }
+
                     for (int i = 0; i < 3; i++)
                         if (boards[i] != null)
                             boards[i].SetActive(elapsed > (i + 1) * .8f);
                     if (elapsed >= 4.5f)
                         FinishEncounter();
                 }
+
                 return;
             }
+
             if (!entryPending || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
                 return;
             entryPending = false;
@@ -160,6 +176,7 @@ namespace DeathBySeventhsDawn.Interaction
             else if (TimeManager.Instance.Days >= 2 && !state.neighborBarricadeSeen)
                 StartEncounter(Clip.Boards);
         }
+
         void MoveActor(Vector3 start, float progress)
         {
             if (actor == null)
@@ -176,6 +193,7 @@ namespace DeathBySeventhsDawn.Interaction
                     renderer.color = color;
                 }
         }
+
         void StartEncounter(Clip next)
         {
             clip = next;
@@ -191,6 +209,7 @@ namespace DeathBySeventhsDawn.Interaction
                 actor.transform.SetParent(scenery.transform);
                 Part("Coat", -.0f, .0f, .4f, .65f, new Color(.32f, .25f, .20f), 12, actor.transform);
             }
+
             actor.transform.position = next == Clip.Flyers ? new Vector3(-3.95f, .93f, 0) : new Vector3(-4.1f, .98f, 0);
             actor.transform.localScale = Vector3.one * .85f;
             if (next == Clip.Boards)
@@ -201,8 +220,10 @@ namespace DeathBySeventhsDawn.Interaction
                 Part("Hammer grip", .28f, .08f, .045f, .22f, new Color(.40f, .27f, .16f), 16, actor.transform, true);
                 Part("Hammer head", .28f, .20f, .18f, .065f, new Color(.40f, .43f, .42f), 17, actor.transform, true);
             }
+
             actorRenderers = actor.GetComponentsInChildren<SpriteRenderer>();
         }
+
         void FinishEncounter()
         {
             var state = GameManager.Instance.State;
@@ -220,6 +241,7 @@ namespace DeathBySeventhsDawn.Interaction
                     boards[3].SetActive(true);
                 ProgressionSave.Write(state);
             }
+
             clip = Clip.None;
             blockedUntilFrame = Time.frameCount;
             if (actor != null)
@@ -237,9 +259,11 @@ namespace DeathBySeventhsDawn.Interaction
                 else
                     Destroy(actor);
             }
+
             if (TimeManager.Instance.Days == 1 && !state.cultDayOneTalked)
                 CultNeighbor.Instance?.TalkDayOne();
         }
+
         // 旧电视文案兼容入口；新闻统一播放，重复查看不消耗时段。
         public string WatchNews() => StoryText.Current.dayOneBroadcast.boring;
         public bool BeginPrologue()
@@ -251,6 +275,7 @@ namespace DeathBySeventhsDawn.Interaction
             openedFrame = Time.frameCount;
             return true;
         }
+
         public void EnterPrologue()
         {
             if (!titleOpen)
@@ -261,6 +286,7 @@ namespace DeathBySeventhsDawn.Interaction
             var text = StoryText.Current.firstLoop;
             Record("prologue-entry", text?.chapterTitle ?? "天穹之后", text?.chapterText ?? "");
         }
+
         void Record(string id, string heading, string body)
         {
             var state = GameManager.Instance.State;
@@ -268,13 +294,23 @@ namespace DeathBySeventhsDawn.Interaction
             bool added = entry == null;
             if (added)
             {
-                entry = new JournalEntry { id = id, title = heading, body = body, isKnowledge = false, day = TimeManager.Instance.Days, loop = GameManager.Instance.LoopCount };
+                entry = new JournalEntry
+                {
+                    id = id,
+                    title = heading,
+                    body = body,
+                    isKnowledge = false,
+                    day = TimeManager.Instance.Days,
+                    loop = GameManager.Instance.LoopCount
+                };
                 state.journal.Add(entry);
             }
+
             ProgressionSave.Write(state);
             if (added)
                 JournalUpdates.NotifyAdded(entry);
         }
+
         void EnsureSquare()
         {
             if (square != null)
@@ -284,12 +320,14 @@ namespace DeathBySeventhsDawn.Interaction
             pixel.Apply();
             square = Sprite.Create(pixel, new Rect(0, 0, 1, 1), new Vector2(.5f, .5f), 1);
         }
+
         void BuildFlyers()
         {
             Part("401 door note", -4.48f, 1.48f, .26f, .28f, new Color(.84f, .81f, .63f), 10, scenery.transform);
             for (int i = 0; i < 3; i++)
                 Part("Door note writing", -4.48f, 1.55f - i * .06f, .17f, .014f, new Color(.35f, .24f, .17f), 11, scenery.transform);
         }
+
         void BuildBoards(bool visible)
         {
             for (int i = 0; i < 3; i++)
@@ -301,12 +339,14 @@ namespace DeathBySeventhsDawn.Interaction
                 for (int nail = 0; nail < 2; nail++)
                     Part("Nail", i == 2 ? 0 : (nail == 0 ? -.58f : .58f), i == 2 ? (nail == 0 ? -.21f : .21f) : 0, .028f, .028f, new Color(.18f, .19f, .18f), 15, plank.transform, true);
             }
+
             // 邻居钉完门后，门下方又会多出一块从里面补上的木板。
             var extra = Part("401 barricade plank extra", -4.48f, 1.16f, 1.08f, .12f, new Color(.38f, .25f, .14f), 14, scenery.transform);
             boards[3] = extra;
             extra.SetActive(visible);
             Part("Nail", -4.05f, 1.16f, .028f, .028f, new Color(.18f, .19f, .18f), 15, extra.transform, true);
         }
+
         GameObject Part(string name, float x, float y, float width, float height, Color color, int order, Transform parent, bool local = false)
         {
             var piece = new GameObject(name);
@@ -325,6 +365,7 @@ namespace DeathBySeventhsDawn.Interaction
                 renderer.sharedMaterial = material;
             return piece;
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(text, title, button);
@@ -333,13 +374,29 @@ namespace DeathBySeventhsDawn.Interaction
             if (text == null)
             {
                 var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-                text = new GUIStyle(GUI.skin.label) { font = font, fontSize = 25, wordWrap = true, alignment = TextAnchor.MiddleCenter };
-                title = new GUIStyle(text) { fontSize = 42, fontStyle = FontStyle.Bold };
-                button = new GUIStyle(GUIStyle.none) { font = font, fontSize = 22, alignment = TextAnchor.MiddleCenter };
+                text = new GUIStyle(GUI.skin.label)
+                {
+                    font = font,
+                    fontSize = 25,
+                    wordWrap = true,
+                    alignment = TextAnchor.MiddleCenter
+                };
+                title = new GUIStyle(text)
+                {
+                    fontSize = 42,
+                    fontStyle = FontStyle.Bold
+                };
+                button = new GUIStyle(GUIStyle.none)
+                {
+                    font = font,
+                    fontSize = 22,
+                    alignment = TextAnchor.MiddleCenter
+                };
                 button.normal.textColor = new Color(.74f, .78f, .66f);
                 button.hover.textColor = new Color(.96f, .94f, .82f);
                 button.active.textColor = Color.white;
             }
+
             DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix = GUI.matrix;
             var color = GUI.color;
@@ -359,23 +416,18 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.Label(new Rect((width - panel) / 2, height * .18f, panel, 50), DeathBySeventhsDawn.Story.StoryText.UI("序  章"), text);
                     GUI.Label(new Rect((width - panel) / 2, height * .29f, panel, 80), StoryText.Current.firstLoop?.chapterTitle ?? "天穹之后", title);
                     GUI.Label(new Rect((width - panel) / 2, height * .44f, panel, 180), StoryText.Current.firstLoop?.chapterText ?? "", text);
-                    if (GUI.Button(new Rect(width / 2 - 160, height * .78f, 320, 58), DeathBySeventhsDawn.Story.StoryText.UI("进入序章  ·  E"), button))
+                    if (GUI.Button(new Rect(width / 2 - 160, height * .78f, 320, 58), DeathBySeventhsDawn.Story.StoryText.UI("进入序章  ·  Enter"), button))
                         EnterPrologue();
                 }
-                else
-                {
-                    float panel = Mathf.Min(860, width - 48), left = (width - panel) / 2;
-                    GUI.color = new Color(.035f, .045f, .045f, .91f);
-                    GUI.DrawTexture(new Rect(left, height - 148, panel, 112), Texture2D.whiteTexture);
-                    GUI.color = new Color(.55f, .60f, .48f, .8f);
-                    GUI.DrawTexture(new Rect(left, height - 148, 3, 112), Texture2D.whiteTexture);
-                    GUI.color = color;
-                    var loopText = StoryText.Current.firstLoop;
-                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(width,height),StoryText.Local("走廊","Corridor"), clip == Clip.Boards ? (TimeManager.Instance.Days == 1 && elapsed >= 1.3f ? (loopText?.startledCaption ?? "") : (loopText?.boardingCaption ?? "")) : elapsed < 2f ? (loopText?.dayOneCaption ?? "") : (loopText?.startledCaption ?? ""), "", text);
-                }
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void OnDestroy()
         {
             if (Instance == this)
