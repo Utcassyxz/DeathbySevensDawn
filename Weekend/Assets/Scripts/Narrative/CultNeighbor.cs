@@ -147,7 +147,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         public bool KnockDoor()
         {
-            if (TimeManager.Instance.Days != 2 || GameManager.Instance.LoopCount != 0)
+            if (TimeManager.Instance.Days != 2 || GameManager.Instance.LoopCount != 0 || HasToken)
                 return false;
             Hit(knock);
             if (State.cultDayOneTalked && Investigation.Has("cult-door-note") && !HasToken)
@@ -293,7 +293,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             else if (day == 2)
             {
-                if (!Investigation.Has("cult-door-note"))
+                if (!Investigation.Has("cult-door-note") || HasToken)
                     return;
                 prompt = StoryText.Local(State.cultTokenOffered && !HasToken ? "E  敲门，取回门缝边的小三角" : "E  敲 401 的门", State.cultTokenOffered && !HasToken ? "E  Knock; the triangle is by the crack" : "E  Knock on 401");
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
@@ -424,14 +424,15 @@ namespace DeathBySeventhsDawn.Interaction
                 }
 
                 Fill(new Rect(0, 0, w, h), new Color(.018f, .025f, .026f, .99f));
-                float pw = Mathf.Min(880, w - 80);
+                float pw = Mathf.Min(1280, w - 80);
                 Rect panel = new Rect((w - pw) / 2, 50, pw, h - 100);
                 if (view == View.Bag)
                 {
-                    GUI.Label(new Rect(panel.x, panel.y, pw, 50), StoryText.Local("背包", "Inventory") + "   " + State.inventory.Count + " / 12", heading);
-                    const int columns = 4, rows = 3;
-                    const float slot = 86f, gap = 12f;
+                    GUI.Label(new Rect(panel.x, panel.y, pw, 50), StoryText.Local("背包", "Inventory") + "   " + State.inventory.Count + " / 24", heading);
+                    const int columns = 6, rows = 4;
+                    const float slot = 96f, gap = 12f;
                     float gridX = panel.x + 24, gridY = panel.y + 92;
+                    var slotNumber = new GUIStyle(small) { alignment = TextAnchor.MiddleCenter, fontSize = 22 };
                     for (int i = 0; i < columns * rows; i++)
                     {
                         var cell = new Rect(gridX + (i % columns) * (slot + gap), gridY + (i / columns) * (slot + gap), slot, slot);
@@ -447,12 +448,16 @@ namespace DeathBySeventhsDawn.Interaction
                                 GUI.DrawTexture(new Rect(cell.x + 8, cell.y + 8, cell.width - 16, cell.height - 16), tokenArt, ScaleMode.ScaleToFit);
                             GUI.Label(new Rect(cell.x + 6, cell.yMax - 24, cell.width - 12, 20), item == Token ? StoryText.Current.cult.itemTitle : item, small);
                         }
+                        else
+                            GUI.Label(new Rect(cell.x, cell.y, cell.width, cell.height), "+", slotNumber);
                     }
 
+                    float detailX = panel.x + 24 + columns * (slot + gap);
+                    float detailW = pw - 48 - columns * (slot + gap);
                     if (HasToken)
                     {
-                        GUI.Label(new Rect(panel.x + 24 + columns * (slot + gap), panel.y + 92, pw - 48 - columns * (slot + gap), 50), StoryText.Current.cult.itemTitle, heading);
-                        GUI.Label(new Rect(panel.x + 24 + columns * (slot + gap), panel.y + 146, pw - 48 - columns * (slot + gap), 190), StoryText.Current.cult.itemBody, text);
+                        GUI.Label(new Rect(detailX, panel.y + 92, detailW, 50), StoryText.Current.cult.itemTitle, heading);
+                        GUI.Label(new Rect(detailX, panel.y + 146, detailW, 190), StoryText.Current.cult.itemBody, text);
                     }
                     else
                         GUI.Label(new Rect(panel.x, panel.y + 110, pw, 100), StoryText.Local("背包是空的。探索房间，看看有什么值得带走。", "The bag is empty. Explore and find something worth carrying."), text);

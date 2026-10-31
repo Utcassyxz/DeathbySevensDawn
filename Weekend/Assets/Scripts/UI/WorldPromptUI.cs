@@ -141,8 +141,8 @@ namespace DeathBySeventhsDawn.Progression
                     if (game.State.journalUnlocked)
                     {
                         label.fontSize = 14;
-                        label.alignment = TextAnchor.UpperLeft;
-                        GUI.Label(new Rect(28, 70, 360, 36), StoryText.Local("J 日记", "J Journal") + (game.State.investigationUnlocked ? StoryText.Local("  ·  B 连线", "  ·  B Board") : "") + StoryText.Local("  ·  I 背包", "  ·  I Inventory"), label);
+                        label.alignment = TextAnchor.UpperRight;
+                        GUI.Label(new Rect(w - 225, 70, 200, 36), StoryText.Local("J 日记", "J Journal") + (game.State.investigationUnlocked ? StoryText.Local("  ·  B 连线", "  ·  B Board") : "") + StoryText.Local("  ·  I 背包", "  ·  I Inventory"), label);
                     }
                 }
 
@@ -154,8 +154,8 @@ namespace DeathBySeventhsDawn.Progression
                     // One compact top-left task chip. No full-width bottom banner.
                     label.fontSize = 15;
                     label.alignment = TextAnchor.MiddleLeft;
-                    float textHeight = label.CalcHeight(new GUIContent(VisiblePrompt), 268);
-                    var p = new Rect(28, 106, 300, Mathf.Clamp(textHeight + 18, 44, 84));
+                    float textHeight = label.CalcHeight(new GUIContent(VisiblePrompt), 248);
+                    var p = new Rect(28, 106, 280, Mathf.Clamp(textHeight + 18, 44, 84));
                     NarrativeUI.Panel(p);
                     GUI.Label(new Rect(p.x + 14, p.y + 8, p.width - 28, p.height - 16), VisiblePrompt, label);
                 }
