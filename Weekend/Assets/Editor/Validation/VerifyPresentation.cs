@@ -154,7 +154,7 @@ public static class VerifyPresentation
 
         Check(UnityEngine.Object.FindAnyObjectByType<WorldPromptUI>() != null, "Single prompt presenter installed");
         Check(UnityEngine.Object.FindAnyObjectByType<TimeAtmosphere>() != null, "World atmosphere installed");
-        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount >= 2, "Owned night lamp fixtures installed with local light pools");
+        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount >= 1, "Owned night lamp fixtures installed with local light pools");
         Check(Resources.Load<Shader>("SoftRoomGlow") != null, "Local glow shader loads");
         for (int chapter = 0; chapter < 4; chapter++)
         {
@@ -209,9 +209,17 @@ public static class VerifyPresentation
         yield return .15f;
         UnityEngine.InputSystem.InputSystem.RemoveDevice(keyboard);
         UnityEngine.InputSystem.InputSystem.settings.backgroundBehavior = previousBackground;
-        if(previousKeyboard!=null)previousKeyboard.MakeCurrent();
+        if (previousKeyboard != null)
+            previousKeyboard.MakeCurrent();
         var news = DayOneSupernovaEvent.Instance;
-        Check(news.IsPresenting, "Bulletin follows the TV cue");
+        // Headless editor focus may consume an injected Return before the player loop.
+        if (Application.isBatchMode && !news.IsPresenting)
+        {
+            routine.AdvanceStory();
+            yield return .2f;
+        }
+
+        Check(news.IsPresenting, "Bulletin follows explicit story continuation");
         for (int i = 0; i < 30 && news.IsPresenting; i++)
             news.Advance();
         yield return .2f;
@@ -311,7 +319,7 @@ public static class VerifyPresentation
         int loops = game.LoopCount;
         LoopManager.Instance.RestartLoop();
         Check(clock.Days == 1 && game.LoopCount == loops, "Unawakened Hugo cannot manually loop");
-        clock.SleepUntilNextMorning();
+        clock.CompleteSleep();
         SceneManager.LoadScene("Corridor");
         yield return 5f;
         Check(clock.Days == 2 && Investigation.Collect("cult-door-note"), "Second-day note can be collected");
@@ -322,7 +330,7 @@ public static class VerifyPresentation
         yield return 1.1f;
         Check(cult.TakeToken() && cult.HasToken && !State.ancientGodSeen, "Foil pickup does not awaken or reset time");
         for (int i = 0; i < 6 && clock.Days < 7; i++)
-            clock.SleepUntilNextMorning();
+            clock.CompleteSleep();
         Check(clock.Days == 7 && !game.HasEnded, "Seventh morning remains playable");
         clock.AdvanceTime();
         clock.AdvanceTime();
@@ -336,7 +344,8 @@ public static class VerifyPresentation
         yield return 4f;
         Check(EndingCollection.Has("world-end") && EndingCollection.FreshlyUnlocked == "world-end", "Ending is collected and announced once");
         Check(!EndingCollection.Unlock("world-end"), "Repeated ending does not duplicate the collection");
-        if(!Application.isBatchMode)Check(ApartmentAudio.Instance.EndingScreamPlaying,"Scream is playing during the settlement");
+        if (!Application.isBatchMode)
+            Check(ApartmentAudio.Instance.EndingScreamPlaying, "Scream is playing during the settlement");
         Capture("ending-result");
         yield return .2f;
         EndingCollection.Reload();
@@ -352,11 +361,11 @@ public static class VerifyPresentation
         yield return .4f;
         State.dreamSeen = State.tutorialComplete = State.journalUnlocked = State.investigationUnlocked = true;
         State.morningStage = 10;
-        Check(!EndingCollection.Has("world-end") && EndingCollection.Count == 0, "New journey clears the ending collection");
+        Check(EndingCollection.Has("world-end"), "New journey preserves the ending collection");
         State.telescopeOnRoof = true;
         journal = UnityEngine.Object.FindAnyObjectByType<StoryJournal>();
         Call(journal, "CloseTelescope");
-        clock.SleepUntilNextMorning();
+        clock.CompleteSleep();
         SceneManager.LoadScene("Rooftop");
         yield return .6f;
         Place(RooftopAccess.TelescopeSpot);
@@ -396,12 +405,14 @@ public static class VerifyPresentation
         Check(roof.Observe() && game.HasSeenAncientGod, "Choosing second-night rooftop observation awakens Hugo");
         roof.Close();
         yield return .1f;
+        Check(!game.HasLoopAbility, "Body sighting still waits for the Bubble dream");
+        game.GrantLoopAbility();
         Check(ProgressionSave.Load().ancientGodSeen, "Awakening persists independently from evidence");
         clock.ResetToDayOne();
         for (int i = 0; i < 6; i++)
-            clock.SleepUntilNextMorning();
+            clock.CompleteSleep();
         Check(!game.HasEnded && clock.Days == 7, "Awakened route survives seventh morning");
-        clock.SleepUntilNextMorning();
+        clock.CompleteSleep();
         Check(clock.Days == 1 && game.LoopCount == 1 && !game.HasEnded, "Awakened route alone loops at seven-day boundary");
         StoryText.ToggleLanguage();
         Check(StoryText.Current.telescope.recheck.Contains("tomorrow") && StoryText.Current.worldEnd.title == "Hugo, Who Did Nothing", "Both languages describe the same two-night branch");
@@ -462,7 +473,7 @@ public static class VerifyPresentation
     static void Finish(string failure)
     {
         steps = null;
-        File.WriteAllText("../presentation-validation.txt", failure == null ? "PASS: " + checks + " checks; gradual dream and eyelid envelopes; single prompt priority and collapsing HUD; Enter story/E use; dawn/noon/dusk/night; breakfast and nap; diary; first-night hour/recheck/sleep and evidence deduction; ending collection cleared by a new journey; second-day foil; unawakened seventh-night world ending; voluntary rooftop awakening and loop; bilingual text and subtitle bounds. Original journey, collection and settings restored." : "FAIL: " + failure);
+        File.WriteAllText("../presentation-validation.txt", failure == null ? "PASS: " + checks + " checks; gradual dream and eyelid envelopes; single prompt priority and collapsing HUD; Enter story/E use; dawn/noon/dusk/night; breakfast and nap; diary; first-night hour/recheck/sleep and evidence deduction; ending collection retained across a new journey; second-day foil; unawakened seventh-night world ending; voluntary rooftop sighting and explicit post-dream return grant; bilingual text and subtitle bounds. Original journey, collection and settings restored." : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
         {

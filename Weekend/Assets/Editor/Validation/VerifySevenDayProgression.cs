@@ -8,6 +8,7 @@ using DeathBySeventhsDawn.Progression;
 using DeathBySeventhsDawn.TimeSystem;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Story;
+
 public static class VerifySevenDayProgression
 {
     const string Key = "VerifySevenDayProgression";
@@ -20,10 +21,27 @@ public static class VerifySevenDayProgression
             AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<ProgressionSettings>(), "Assets/Resources/SevenDayProgression.asset");
         AssetDatabase.SaveAssets();
     }
+
     [MenuItem("Prototype/Validate synced seven day progression")]
     public static void Run()
     {
+        if (EditorApplication.isPlaying)
+            throw new Exception("Exit Play mode before validation.");
+        SessionState.SetBool(Key + "Suppressed", SessionState.GetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey, false));
         SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey, true);
+        foreach (var suffix in new[]
+        {
+            "",
+            ".bak",
+            ".tmp"
+        }
+
+        )
+        {
+            string album = EndingCollection.PathName + suffix;
+            SessionState.SetString(Key + "Album" + suffix, File.Exists(album) ? Convert.ToBase64String(File.ReadAllBytes(album)) : "");
+        }
+
         SessionState.SetInt(Key + "Language", PlayerPrefs.GetInt("Story.Language", 0));
         PlayerPrefs.SetInt("Story.Language", 0);
         CreateSettings();
@@ -36,17 +54,20 @@ public static class VerifySevenDayProgression
         SessionState.SetBool(Key, true);
         EditorApplication.isPlaying = true;
     }
+
     [InitializeOnLoadMethod]
     static void Subscribe()
     {
         EditorApplication.update -= Tick;
         EditorApplication.update += Tick;
     }
+
     static void Check(bool condition, string message)
     {
         if (!condition)
             throw new Exception(message);
     }
+
     static void Tick()
     {
         if (!SessionState.GetBool(Key, false) || !EditorApplication.isPlaying || GameManager.Instance == null)
@@ -61,15 +82,17 @@ public static class VerifySevenDayProgression
             Check(clock.Days == 1 && game.LoopCount == 0, "Initial state");
             var advanced = (ProgressionState)typeof(GameManager).GetProperty("State", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(game);
             advanced.journalUnlocked = advanced.investigationUnlocked = advanced.tutorialComplete = true;
-            game.RecordAncientGodEncounter(); // This suite exercises the already-awakened loop branch.
+            game.RecordAncientGodEncounter();
+            game.GrantLoopAbility(); // This suite exercises the already-awakened loop branch.
             foreach (TimePeriod period in Enum.GetValues(typeof(TimePeriod)))
             {
                 clock.ResetToDayOne();
                 for (int p = 0; p < (int)period; p++)
                     clock.AdvanceTime();
-                clock.SleepUntilNextMorning();
+                clock.CompleteSleep();
                 Check(clock.Days == 2 && clock.Period == TimePeriod.Morning, "Sleep from " + period);
             }
+
             clock.ResetToDayOne();
             int abilityEvents = 0, sanityEvents = 0;
             game.AbilityUnlocked += _ => abilityEvents++;
@@ -88,8 +111,12 @@ public static class VerifySevenDayProgression
             Check(ProgressionSave.Load().journal.Find(e => e.id == "test-ordinary").isRead, "Read state saved to disk");
             Check(feedback.TimeMessage == "第 1 天 · 清晨", "Latest time feedback after reset");
             Check(!game.CanUseHumanRoute(25) && game.MeetsKnowledgeRequirement(50), "Route and knowledge gates");
+            // This suite tests the clock and persistence directly; NightArc tests the player dream path.
             for (int i = 0; i < 27; i++)
-                clock.AdvanceTime();
+                if (clock.Period == TimePeriod.Night)
+                    clock.CompleteSleep();
+                else
+                    clock.AdvanceTime();
             Check(clock.Days == 7 && clock.Period == TimePeriod.Night && game.LoopCount == 0, "Seven day boundary");
             clock.AdvanceTime();
             Check(clock.Days == 1 && game.LoopCount == 1 && game.MaxVitality == 95 && game.Vitality == 95, "Automatic restart and aging");
@@ -114,34 +141,55 @@ public static class VerifySevenDayProgression
                 game.Settings.minimumVitality = game.MaxVitality;
                 clock.ResetToDayOne();
                 for (int day = 0; day < 5; day++)
-                    clock.SleepUntilNextMorning();
+                    clock.CompleteSleep();
                 Check(clock.Days == 6 && !game.HasEnded, "No early ending");
-                clock.SleepUntilNextMorning();
+                clock.CompleteSleep();
                 Check(clock.Days == 7 && game.HasEnded, "Sleeping to Day 7 triggers bad ending");
                 int loops = game.LoopCount;
                 clock.AdvanceTime();
-                clock.SleepUntilNextMorning();
+                clock.CompleteSleep();
                 LoopManager.Instance.RestartLoop();
                 Check(clock.Days == 7 && game.LoopCount == loops, "Ending blocks time and loops");
                 Check(ProgressionSave.Load().badEndingOne, "Ending persistence");
             }
-            finally { game.Settings.minimumVitality = oldFloor; }
+            finally
+            {
+                game.Settings.minimumVitality = oldFloor;
+            }
+
             Debug.Log("SEVEN_DAY_PROGRESSION_PASS: boundary, death, aging, rewards, deduplication, levels, ability/sanity events, gates and disk persistence.");
         }
-        catch (Exception e) { Debug.LogException(e); exit = 1; }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            exit = 1;
+        }
         finally
         {
+            SessionState.SetBool(DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.SuppressionKey, SessionState.GetBool(Key + "Suppressed", false));
+            foreach (var suffix in new[]
+            {
+                "",
+                ".bak",
+                ".tmp"
+            }
+
+            )
+                Restore(EndingCollection.PathName + suffix, SessionState.GetString(Key + "Album" + suffix, ""));
+            EndingCollection.Reload();
             PlayerPrefs.SetInt("Story.Language", SessionState.GetInt(Key + "Language", 0));
             PlayerPrefs.Save();
             Restore(ProgressionSave.PathName, SessionState.GetString(Key + "Save", ""));
             Restore(ProgressionSave.PathName + ".bak", SessionState.GetString(Key + "Backup", ""));
         }
+
         File.WriteAllText("../seven-day-validation.txt", exit == 0 ? "PASS: seven-day boundary, sleep, death, aging, knowledge, journal, ending and save persistence. Original save restored." : "FAIL: inspect Unity log. Original save restored.");
         if (Application.isBatchMode)
             EditorApplication.Exit(exit);
         else
             EditorApplication.isPlaying = false;
     }
+
     static void Restore(string path, string data)
     {
         if (data != "")

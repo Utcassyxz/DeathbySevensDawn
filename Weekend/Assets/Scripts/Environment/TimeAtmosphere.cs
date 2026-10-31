@@ -1,3 +1,4 @@
+// CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
 // 职责：时间配色与天台天空的同步渐变；不接管其他系统的动态着色。
 using System.Collections.Generic;
 using UnityEngine;
@@ -125,7 +126,7 @@ namespace DeathBySeventhsDawn.Progression
         static bool Dynamic(Transform t)
         {
             for (; t != null; t = t.parent)
-                if (t.name.StartsWith("Apartment lighting") || t.name.StartsWith("Aquarium") || t.name.StartsWith("Perception clue") || t.name.StartsWith("Distant ") || t.name.StartsWith("阳台外景照片"))
+                if (t.name.StartsWith("Balcony vista") || t.name.StartsWith("Corridor detail") || t.name.StartsWith("Apartment lighting") || t.name.StartsWith("Aquarium") || t.name.StartsWith("Perception clue") || t.name.StartsWith("Distant ") || t.name.StartsWith("阳台外景照片"))
                     return true;
             return false;
         }

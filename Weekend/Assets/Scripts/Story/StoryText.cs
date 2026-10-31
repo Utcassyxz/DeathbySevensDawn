@@ -112,6 +112,7 @@ namespace DeathBySeventhsDawn.Story
         public MainMenuText mainMenu;
         public PauseText pause;
         public EndingText ending;
+        public EndingText fishEnding;
         public EndingText worldEnd;
         public RooftopText rooftop;
         public UiTranslation[] ui;
@@ -246,6 +247,9 @@ namespace DeathBySeventhsDawn.Story
         public string[] day2;
         public string[] day3;
         public string[] yog;
+        public string[] replacement;
+        public string[] protectedDream;
+        public string[] yogSpeakers;
     }
 
     [Serializable]

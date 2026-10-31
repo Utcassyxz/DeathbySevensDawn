@@ -13,7 +13,6 @@ namespace DeathBySeventhsDawn.Progression
         Texture2D solidBitmap, glowBitmap;
         Sprite square, glow;
         readonly List<SpriteRenderer> lampGlows = new List<SpriteRenderer>();
-
         void OnEnable() => SceneManager.sceneLoaded += Loaded;
         void OnDisable()
         {
@@ -22,7 +21,6 @@ namespace DeathBySeventhsDawn.Progression
         }
 
         void Start() => Loaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
-
         void Loaded(Scene scene, LoadSceneMode mode)
         {
             Clear();
@@ -59,14 +57,18 @@ namespace DeathBySeventhsDawn.Progression
             solidBitmap.SetPixel(0, 0, Color.white);
             solidBitmap.Apply(false);
             square = Sprite.Create(solidBitmap, new Rect(0, 0, 1, 1), Vector2.one * .5f, 1);
-
-            glowBitmap = new Texture2D(64, 64, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+            glowBitmap = new Texture2D(64, 64, TextureFormat.RGBA32, false)
+            {
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
             for (int y = 0; y < 64; y++)
                 for (int x = 0; x < 64; x++)
                 {
                     float r = Vector2.Distance(new Vector2(x, y), new Vector2(31.5f, 31.5f)) / 31.5f;
                     glowBitmap.SetPixel(x, y, new Color(1, 1, 1, Mathf.Pow(Mathf.Clamp01(1 - r * r), 3)));
                 }
+
             glowBitmap.Apply(false);
             glow = Sprite.Create(glowBitmap, new Rect(0, 0, 64, 64), Vector2.one * .5f, 64);
         }
@@ -76,84 +78,89 @@ namespace DeathBySeventhsDawn.Progression
             EnsureSprites();
             root = new GameObject("Corridor detail");
             SceneManager.MoveGameObjectToScene(root, SceneManager.GetActiveScene());
-
-            Color wallpaper = new Color(.30f, .34f, .31f);
-            Color rail = new Color(.50f, .45f, .34f);
-            Color wainscot = new Color(.15f, .21f, .20f);
-            Color carpet = new Color(.17f, .13f, .12f);
-            Color brass = new Color(.64f, .52f, .30f);
-            Color pipe = new Color(.24f, .28f, .27f);
-
-            // Lower panelled wall, its top rail and the darker skirting.
-            Block("lower wainscot", new Vector2(0, -.62f), new Vector2(11.1f, 1.16f), wainscot, 1);
-            Block("dado rail", new Vector2(0, -.03f), new Vector2(11.1f, .055f), rail, 3);
-            Block("skirting", new Vector2(0, -1.79f), new Vector2(11.1f, .09f), new Color(.10f, .12f, .12f), 3);
-            for (int i = 0; i < 11; i++)
+            Color wall = new Color(.31f, .36f, .34f), brass = new Color(.61f, .51f, .34f), wood = new Color(.23f, .17f, .15f);
+            Block("north wallpaper face", new Vector2(0, 1.55f), new Vector2(13.65f, .95f), wall, 0);
+            Block("north cornice shadow", new Vector2(0, 2.06f), new Vector2(13.7f, .10f), new Color(.10f, .14f, .15f), 1);
+            Block("north cornice brass", new Vector2(0, 1.99f), new Vector2(13.7f, .025f), brass, 2);
+            Block("north skirting", new Vector2(0, 1.04f), new Vector2(13.7f, .065f), new Color(.11f, .16f, .16f), 1);
+            for (int i = 0; i < 37; i++)
+                Block("wallpaper pinstripe", new Vector2(-6.65f + i * .37f, 1.55f), new Vector2(.012f, .80f), new Color(.25f, .30f, .28f), 1);
+            for (int i = 0; i < 29; i++)
             {
-                float x = -5.05f + i * .98f;
-                Block("panel stile", new Vector2(x, -.64f), new Vector2(.035f, 1.10f), new Color(.10f, .14f, .14f), 2);
-                Block("panel inlay", new Vector2(x + .49f, -.64f), new Vector2(.36f, .64f), new Color(.18f, .25f, .23f), 1);
+                float x = -6.7f + i * .48f;
+                Block("tile grout", new Vector2(x, -.35f), new Vector2(.012f, 2.7f), new Color(.20f, .22f, .21f), -5);
             }
 
-            // Upper wall gets a subtle wallpaper seam, not another flat colour.
-            for (int i = 0; i < 7; i++)
-                Block("wall seam", new Vector2(-4.8f + i * 1.6f, .84f), new Vector2(.018f, 1.32f), new Color(.25f, .29f, .27f, .55f), 1);
-            Block("crown rail", new Vector2(0, 1.54f), new Vector2(11.1f, .055f), rail, 3);
-            Block("ceiling", new Vector2(0, 1.94f), new Vector2(11.1f, .20f), new Color(.10f, .12f, .12f), 4);
-
-            // Runner and its stitched edge; leaves the tile border visible.
-            Block("runner", new Vector2(0, -1.47f), new Vector2(9.7f, .44f), carpet, 2);
-            Block("runner edge", new Vector2(0, -1.25f), new Vector2(9.7f, .025f), new Color(.34f, .24f, .18f), 3);
-            Block("runner edge", new Vector2(0, -1.69f), new Vector2(9.7f, .025f), new Color(.11f, .09f, .08f), 3);
-            for (int i = 0; i < 9; i++)
-                Block("runner stitch", new Vector2(-4.1f + i * 1.02f, -1.47f), new Vector2(.42f, .012f), new Color(.42f, .30f, .22f, .65f), 3);
-
-            // Pipes and cable tray give the corridor a lived-in silhouette.
-            Block("pipe tray", new Vector2(0, 1.78f), new Vector2(10.9f, .045f), pipe, 5);
-            for (int i = 0; i < 3; i++)
+            for (int row = 0; row < 4; row++)
+                Block("cross tile grout", new Vector2(0, -1.5f + row * .64f), new Vector2(13.65f, .012f), new Color(.14f, .17f, .16f), -5);
+            Block("runner shadow", new Vector2(0, -.24f), new Vector2(12.1f, 1.10f), new Color(.09f, .095f, .095f), -4);
+            Block("woven runner", new Vector2(0, -.19f), new Vector2(12f, .94f), new Color(.25f, .17f, .18f), -3);
+            for (int i = 0; i < 2; i++)
+                Block("runner binding", new Vector2(0, -.59f + i * .80f), new Vector2(11.94f, .025f), new Color(.51f, .38f, .27f), -2);
+            for (int i = 0; i < 39; i++)
+                Block("woven fleck", new Vector2(-5.8f + i * .30f, -.18f), new Vector2(.10f, .018f), new Color(.33f, .24f, .22f), -2);
+            for (int stitch = 0; stitch < 58; stitch++)
+                for (int edge = 0; edge < 2; edge++)
+                    Block("runner edge stitch", new Vector2(-5.75f + stitch * .20f, -.52f + edge * .66f), new Vector2(.025f, .045f), new Color(.37f, .28f, .23f), -2);
+            foreach (float x in new[]
             {
-                float x = -4.5f + i * 4.5f;
-                Block("pipe bracket", new Vector2(x, 1.78f), new Vector2(.045f, .16f), new Color(.42f, .38f, .30f), 5);
+                -4.7f,
+                4.7f
             }
 
-            // Three wall lamps: actual shades and warm pools, switched at dusk/night.
-            for (int i = 0; i < 3; i++)
+            )
             {
-                float x = -3.2f + i * 3.2f;
-                Block("lamp bracket", new Vector2(x, 1.24f), new Vector2(.045f, .22f), new Color(.20f, .18f, .15f), 5);
-                Block("lamp shade", new Vector2(x, 1.12f), new Vector2(.40f, .12f), new Color(.78f, .58f, .31f), 5);
-                Block("lamp bulb", new Vector2(x, 1.03f), new Vector2(.10f, .08f), new Color(1f, .86f, .57f), 6);
-                var pool = new GameObject("corridor lamp glow");
-                pool.transform.SetParent(root.transform, false);
-                pool.transform.position = new Vector2(x, .92f);
-                pool.transform.localScale = new Vector2(2.5f, 2.1f);
-                var r = pool.AddComponent<SpriteRenderer>();
+                Block("door frame outer", new Vector2(x, 1.51f), new Vector2(1.48f, 1.03f), new Color(.10f, .12f, .12f), 2);
+                Block("neighbor wood door", new Vector2(x, 1.49f), new Vector2(1.25f, .90f), wood, 3);
+                Block("door inset", new Vector2(x, 1.41f), new Vector2(.94f, .60f), wood * 1.16f, 4);
+                Block("door inset shadow", new Vector2(x, 1.12f), new Vector2(.96f, .025f), wood * .58f, 5);
+                Block("handle plate", new Vector2(x + .43f, 1.40f), new Vector2(.055f, .19f), brass * .7f, 5);
+                Block("lever", new Vector2(x + .39f, 1.45f), new Vector2(.15f, .035f), brass, 6);
+                Block("threshold", new Vector2(x, 1.0f), new Vector2(1.42f, .06f), brass * .6f, 4);
+                Block("door mat", new Vector2(x, .80f), new Vector2(1.5f, .34f), new Color(.18f, .20f, .18f), -2);
+            }
+
+            // The 402 entrance remains below the player, as requested; do not move its collider.
+            foreach (float x in new[]
+            {
+                -3.85f,
+                3.85f
+            }
+
+            )
+            {
+                Block("south wainscot", new Vector2(x, -1.87f), new Vector2(6.1f, .28f), new Color(.14f, .19f, .19f), 2);
+                Block("south trim", new Vector2(x, -1.69f), new Vector2(6.1f, .035f), brass * .7f, 3);
+            }
+
+            Block("402 welcome mat", new Vector2(0, -1.24f), new Vector2(1.6f, .36f), new Color(.20f, .22f, .19f), -2);
+            foreach (float x in new[]
+            {
+                -2.7f,
+                0f,
+                2.7f
+            }
+
+            )
+            {
+                Block("wall lamp backplate", new Vector2(x, 1.71f), new Vector2(.17f, .30f), brass * .65f, 4);
+                Block("wall lamp shade", new Vector2(x, 1.75f), new Vector2(.34f, .18f), new Color(.65f, .48f, .29f), 5);
+                Block("wall lamp glass", new Vector2(x, 1.62f), new Vector2(.20f, .11f), new Color(.91f, .79f, .57f), 5);
+                var g = new GameObject("corridor lamp glow");
+                g.transform.SetParent(root.transform, false);
+                g.transform.position = new Vector2(x, 1.53f);
+                g.transform.localScale = new Vector2(1.7f, 1.35f);
+                var r = g.AddComponent<SpriteRenderer>();
                 r.sprite = glow;
-                r.color = new Color(1f, .72f, .42f, 0);
-                r.sortingOrder = 7;
+                r.sortingOrder = 8;
                 lampGlows.Add(r);
             }
 
-            // Small brass details: unit underline, handles and mailboxes.
-            for (int i = 0; i < 3; i++)
-            {
-                float x = -4.7f + i * 4.7f;
-                Block("room underline", new Vector2(x, 1.46f), new Vector2(.62f, .025f), brass, 5);
-                Block("door handle", new Vector2(x + .37f, -.68f), new Vector2(.08f, .035f), brass, 5);
-                Block("door handle", new Vector2(x + .37f, -.60f), new Vector2(.025f, .10f), new Color(.20f, .18f, .14f), 5);
-            }
-            for (int i = 0; i < 6; i++)
-            {
-                float x = -4.5f + i * .34f;
-                Block("mail slot", new Vector2(x, -.95f), new Vector2(.22f, .30f), new Color(.31f, .30f, .25f), 4);
-                Block("mail slot line", new Vector2(x, -.92f), new Vector2(.15f, .012f), new Color(.12f, .12f, .10f), 5);
-            }
-
-            // Extinguisher and a service sign at the ends.
-            Block("extinguisher", new Vector2(-3.9f, -.84f), new Vector2(.16f, .38f), new Color(.54f, .12f, .10f), 5);
-            Block("extinguisher band", new Vector2(-3.9f, -.71f), new Vector2(.16f, .035f), new Color(.80f, .74f, .58f), 6);
-            Block("service sign", new Vector2(4.05f, .84f), new Vector2(.50f, .30f), new Color(.76f, .72f, .58f), 5);
-            Block("service sign line", new Vector2(4.05f, .88f), new Vector2(.36f, .018f), new Color(.32f, .35f, .30f), 6);
+            Block("ceiling conduit", new Vector2(0, 2.16f), new Vector2(13.3f, .035f), new Color(.28f, .31f, .29f), 1);
+            for (int i = 0; i < 8; i++)
+                Block("conduit clasp", new Vector2(-6.2f + i * 1.8f, 2.16f), new Vector2(.04f, .095f), brass * .6f, 2);
+            Block("fire cabinet", new Vector2(-6.35f, .90f), new Vector2(.45f, .48f), new Color(.36f, .14f, .13f), 3);
+            Block("fire cabinet glazing", new Vector2(-6.35f, .93f), new Vector2(.29f, .26f), new Color(.15f, .20f, .21f), 4);
         }
 
         void Block(string name, Vector2 position, Vector2 size, Color color, int order)

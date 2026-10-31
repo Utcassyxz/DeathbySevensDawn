@@ -33,10 +33,32 @@
       "“You’re so tired,” it says.\nHugo wakes with the taste of pondweed in his mouth."
     ],
     "yog": [
-      "Hello, human.\nYou may call me Bubble.",
-      "The body you saw was only the shadow I cast as I passed.\nDo not hurry to understand it. Understanding will crush you.",
-      "On the day everything ends, you and I will meet again.\nUntil then, you may begin over.",
-      "Bubble speaks softly, the way one soothes a child who refuses to sleep.\nWhen Hugo wakes, it is still dark outside."
+      "Hugo cannot feel the bed beneath him. His hands come apart first, then his arms, then everything.\nThere is no pain. Each piece remembers where it belongs. Something is putting him back together.",
+      "Hello, human.\nYou may call me Bubble. A rather endearing name.",
+      "Was I… dead just then?",
+      "No. The scattered parts have been returned.\nTheir order may be slightly different.",
+      "That thing in the sky. What was it?",
+      "A part of something passing by.\nYou may return. You will remember; the others will not.",
+      "When all things reach their end, you and I shall meet again."
+    ],
+    "yogSpeakers": [
+      "Hugo",
+      "Bubble",
+      "Hugo",
+      "Bubble",
+      "Hugo",
+      "Bubble",
+      "Bubble"
+    ],
+    "replacement": [
+      "Hugo lies down. The flat is quiet, except for the filter in the next room.\nThen even that stops.",
+      "Footsteps cross the bedroom floor. Water drips beside the bed.\n“Don’t get up. You’ve had enough.”",
+      "It is his own voice.\n“I know what to say at the interview. I listened every time.”",
+      "Something cold settles across his mouth.\n“Rest. I’ll do the difficult part.”\nThe bedside lamp stays on."
+    ],
+    "protectedDream": [
+      "The corridor goes on for too long. A door closes somewhere behind Hugo.",
+      "He counts six knocks. The seventh never comes."
     ]
   },
   "knowledge": {
@@ -213,8 +235,8 @@
       },
       {
         "id": "001-name",
-        "title": "001",
-        "body": "Day six. Says it is 001. Says Hugo wrote that number.\nCannot find it in the book.",
+        "title": "The same voice",
+        "body": "On the sixth day the fish repeated Hugo’s words, including the pause and the sigh.",
         "source": "Living room · 001"
       },
       {
@@ -304,49 +326,46 @@
     "promptDay4": "E  Listen to the fish",
     "promptDay6": "E  Speak to 001",
     "promptDay7": "E  Look at it",
-    "speakerDay3": "The fish in the tank",
+    "speakerDay3": "Hugo",
     "speakerDay4": "The fish",
-    "speakerDay6": "001",
-    "speakerDay7": "Something wearing Hugo’s face",
+    "speakerDay6": "The fish",
+    "speakerDay7": "Hugo’s double",
     "day3Pages": [
-      "It is still the same fish.\nBut under the scales along its side, a human face has surfaced.",
-      "Eyes, nose, lips—as if someone pushed a face out from inside.\nIt watches Hugo through the glass and does not open its mouth.",
-      "Hugo looks away.\nThe water-change label has no record of this tenant."
+      "It turns sideways. The gold scales stretch around a pale cheek.\nTwo eyes open on its flank. The fish’s own eyes are still there.",
+      "Hugo taps the glass. The human eyes follow his finger.\nIts lips stay closed.\n“…What happened to you?”"
     ],
     "day4Pages": [
-      "Hugo crouches to change the water. The fish swims to the glass and its lips move.",
-      "“You finally listened.”\nIt does not sound like a fish. It sounds like Hugo’s own voice inside his head.",
-      "“Every day since you lost the job, you stood here and talked.\nInterviews. Rent. Not wanting to wake up.”",
-      "Hugo says nothing.\nThe filter takes over the conversation for him."
+      "“Did they call back?”\nHugo looks behind him. There is nobody there.",
+      "The fish presses its cheek to the glass.\n“The job. You said they would call.”",
+      "“You heard that?”\n“Every day. You stand right here.”",
+      "“I don’t know how to help yet.”\nIts mouth moves once more.\n“But I’m trying.”"
     ],
     "day7Pages": [
-      "It has grown Hugo’s face.\nThe shoulders, the fingers, the way it stands—all matched.",
-      "“You’re tired,” it says.\n“Let me live for you. Close the window. I’ll handle the remaining seven days.”",
-      "Hugo looks at his own face and cannot tell who is speaking.\nThere are no fish left in the tank."
+      "It has his face now. The hair, the sleeves, even the way it stands.",
+      "“You can sleep longer tomorrow. I’ll go.”\n“You don’t even know where.”",
+      "“I listened.”\nIt smiles with Hugo’s mouth.\n“I remember everything you told me.”"
     ],
     "day5Pages": [
-      "Two fingers hold the cabinet open.\nHugo pushes. Something pushes back.",
-      "“Lend me a towel.”\n“Get out of my cabinet first.”\n“Hence the towel.”",
-      "The water stain is above the handle now.\nIt rubs the mark with its thumb. Some paint comes off.",
-      "“The landlord will keep the deposit.”\n“Put it on my bill.”\n\nEasy for it to say."
+      "A hand rests on the cabinet edge. Scales continue past the knuckles.",
+      "“You don’t have to tell me again. The rent. The interviews. I remember.”",
+      "Hugo reaches for a towel.\nThe hand reaches first.\n“I can do that.”"
     ],
     "day6Pages": [
-      "It stands outside the tank. A small puddle on the floor.\nHugo walks around it.",
-      "“What do I call you?”\n“001.”\n“You have numbers?”\n“You wrote it.”",
-      "It looks toward the bedroom.\n“Stop leaving that book open.”\nHugo remembers closing it.",
-      "“How long are you staying?”\nIt rests a hand on the tank.\n\nHugo starts working out the water bill."
+      "It repeats a sentence Hugo said yesterday. The pauses are identical.",
+      "“Does it sound right?”\n“Don’t do that.”\nThe fish lowers its eyes.",
+      "“I only thought… if you didn’t have to do all of it yourself.”"
     ],
     "question": "Hugo asks: have you been reading my book?",
     "answerGap": "“With pages torn out like that, do I need to?”\nIt withdraws its hand.",
     "answerDefault": "“You left it on the desk.”\n\nNot an answer.",
     "offerPrompt": "E  Check the water",
-    "offer": "Hugo looks at the eye in the water, then at the foil.\nThe neighbor’s one-sentence instructions are proving more useful than most manuals.",
+    "offer": "The fish watches the foil. Its human mouth stops moving.\nHugo holds it above the water.",
     "throwFoil": "F  Drop the foil triangle into the tank",
     "sealedTitle": "The tank",
-    "sealedBody": "Hugo drops the foil triangle into the water. The eye retreats behind the weeds. The extra fingers disappear with it.\nThe filter keeps humming.\n\nHugo does not reach in to check. Today he has learned when to stop.",
-    "offerBefore": "The fish swim between the weeds, occupied with being fish.\nHugo feels the foil triangle in his pocket. The neighbor left one sentence: when the ancient god passed, everyone began turning into what they wanted most; the foil can hold back part of the radiation.\n\nHugo can try it now, or keep it.",
+    "sealedBody": "The foil sinks. The extra features slowly recede beneath the scales.\nA goldfish swims past the glass.\nHugo watches it for a long time.",
+    "offerBefore": "The little foil triangle rests in Hugo’s palm.\nThe tenant said to put it in water. He never said what it would do.",
     "waterPrompt": "E  Examine the aquarium",
-    "sealedBefore": "Hugo drops the foil triangle into the tank. It sinks behind the weeds.\nThe fish swim away. The filter keeps humming.\n\nNo applause. Fish rarely handle that part."
+    "sealedBefore": "The triangle sinks into the gravel. The fish darts behind the plants.\nThe filter keeps running."
   },
   "mainMenu": {
     "title": "SEVEN DAY",
@@ -391,7 +410,7 @@
     "door": [
       "An eye appears in the crack.\n“Who is it?”",
       "“402. From yesterday…”\n“Oh. You.”\nThe eye flicks toward the corridor.",
-      "“Go home. It isn’t safe here.”\n“Is someone outside?”\n“They can see us. Any time.”",
+      "“Go home. They can see us.”\nHis eye moves past Hugo.\n“Water… no, not yet. Sorry.”",
       "Something rustles behind the boards. A little triangle folded from foil squeezes through the crack.\n“Don’t unfold it. You can put it in water.”",
       "The eye stays on Hugo.\n“Take it. Get back inside.”\nThe triangle drops onto the sill."
     ],
@@ -726,5 +745,14 @@
       "key": "指向：没有更多配方",
       "text": "Supports: no further recipes"
     }
-  ]
+  ],
+  "fishEnding": {
+    "title": "A Life in Your Place",
+    "lines": [
+      "It remembered every worry he had told it.",
+      "There was one part it never understood: Hugo had wanted to be heard.",
+      "The figure beside the bed folded his clothes for morning."
+    ],
+    "summary": "Ending 03"
+  }
 }

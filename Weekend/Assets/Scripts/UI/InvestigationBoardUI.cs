@@ -348,7 +348,7 @@ namespace DeathBySeventhsDawn.Interaction
             Fill(new Rect(0, 0, w, 94), new Color(.07f, .12f, .12f));
             GUI.Label(new Rect(30, 16, 520, 44), DeathBySeventhsDawn.Story.StoryText.Local("线索连线", "Evidence board"), headerTitle);
             GUI.Label(new Rect(32, 58, w - 420, 24), DeathBySeventhsDawn.Story.StoryText.Local("先选一条线索，能与它推理的记录会亮起。", "Select a clue. Compatible records light up."), headerSmall);
-            if (GUI.Button(new Rect(w - 232, 24, 202, 44), DeathBySeventhsDawn.Story.StoryText.Local("合上  ·  B / Esc", "Close \u00b7 B / Esc"), button))
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w - 232, 24, 202, 44), DeathBySeventhsDawn.Story.StoryText.Local("合上  ·  B / Esc", "Close \u00b7 B / Esc"), button))
             {
                 CloseRequested?.Invoke();
                 return;
@@ -356,7 +356,7 @@ namespace DeathBySeventhsDawn.Interaction
 
             for (int i = 0; i < filters.Length; i++)
             {
-                if (GUI.Button(new Rect(30 + i * 192, 102, 184, 34), (filter == i ? "●  " : "") + filters[i], filterButton) && filter != i)
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(30 + i * 192, 102, 184, 34), (filter == i ? "●  " : "") + filters[i], filterButton) && filter != i)
                 {
                     filter = i;
                     focus = 0;
@@ -393,7 +393,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.Label(new Rect(row.x + 14, row.y + 8, 80, 20), compatible ? DeathBySeventhsDawn.Story.StoryText.Local("可推理", "Can combine") : deduction ? DeathBySeventhsDawn.Story.StoryText.Local("推论", "Deduction") : DeathBySeventhsDawn.Story.StoryText.Local("现场记录", "Evidence"), tag);
                 GUI.Label(new Rect(row.x + 14, row.y + 24, row.width - 24, 30), (chosen ? (first == entry.id ? "① " : "② ") : "") + DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id, entry.title), rowTitle);
                 GUI.Label(new Rect(row.x + 14, row.y + 50, row.width - 24, 22), DeathBySeventhsDawn.Story.StoryText.Local("第 " + entry.day + " 天  ·  " + ConnectionCount(entry.id) + " 条连线", "Day " + entry.day + " · " + ConnectionCount(entry.id) + " links"), rowMeta);
-                if (GUI.Button(row, GUIContent.none, GUIStyle.none))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(row, GUIContent.none, GUIStyle.none))
                 {
                     focus = i;
                     Select(entry.id);
@@ -442,14 +442,14 @@ namespace DeathBySeventhsDawn.Interaction
                     else if (rule != null)
                     {
                         GUILayout.Label(rule.title, cardTitle);
-                        if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("写下推论  ·  Enter", "Record deduction · Enter"), button, GUILayout.MinHeight(50)))
+                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("写下推论  ·  Enter", "Record deduction · Enter"), button, GUILayout.MinHeight(50)))
                             Commit();
                     }
                     else
                         GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("这两条暂时对不上。换一条试试。", "These don't support a conclusion. Try another record."), body);
-                    if (link != null && !concluded && GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("擦去这条待证线  ·  Delete", "Erase tentative link \u00b7 Delete"), button, GUILayout.MinHeight(42)))
+                    if (link != null && !concluded && DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("擦去这条待证线  ·  Delete", "Erase tentative link \u00b7 Delete"), button, GUILayout.MinHeight(42)))
                         Remove();
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("清空选择  ·  Backspace", "Clear selection \u00b7 Backspace"), button, GUILayout.MinHeight(40)))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("清空选择  ·  Backspace", "Clear selection \u00b7 Backspace"), button, GUILayout.MinHeight(40)))
                     {
                         first = second = null;
                         RefreshMessage();
@@ -479,10 +479,8 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             }
 
-            string toggle = showLinks
-                ? DeathBySeventhsDawn.Story.StoryText.Local("收起已连线", "Hide saved connections")
-                : DeathBySeventhsDawn.Story.StoryText.Local("查看已连线 · " + valid, "Saved connections \u00b7 " + valid);
-            if (GUILayout.Button(toggle, linkRow, GUILayout.MinHeight(42)))
+            string toggle = showLinks ? DeathBySeventhsDawn.Story.StoryText.Local("收起已连线", "Hide saved connections") : DeathBySeventhsDawn.Story.StoryText.Local("查看已连线 · " + valid, "Saved connections \u00b7 " + valid);
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(toggle, linkRow, GUILayout.MinHeight(42)))
                 showLinks = !showLinks;
             if (showLinks)
                 DrawLinks();
@@ -498,7 +496,7 @@ namespace DeathBySeventhsDawn.Interaction
                     continue;
                 count++;
                 string status = string.IsNullOrEmpty(link.conclusion) ? DeathBySeventhsDawn.Story.StoryText.Local("待证 · 不当作事实", "Tentative \u00b7 Not a fact") : "→ " + Investigation.Title(link.conclusion);
-                if (GUILayout.Button(Investigation.Title(link.left) + "  ↔  " + Investigation.Title(link.right) + "\n" + status, linkRow, GUILayout.MinHeight(50)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(Investigation.Title(link.left) + "  ↔  " + Investigation.Title(link.right) + "\n" + status, linkRow, GUILayout.MinHeight(50)))
                     SelectPair(link.left, link.right);
             }
 

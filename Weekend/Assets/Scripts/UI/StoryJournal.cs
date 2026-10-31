@@ -1,3 +1,4 @@
+// CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
 // 职责：日记、梦境与阳台观测页面的输入协调；阳台不触发天台古神事件。
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -55,6 +56,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         Watch watch;
         float watchAge;
+        public float ObservationZoom => watch == Watch.Recheck || watch == Watch.Sleep || watch == Watch.Complete ? 1.34f : 1f;
         public bool NightWatchComplete => GameManager.Instance.State.firstNightWatchComplete;
 
         string telescopeMessage;
@@ -71,7 +73,7 @@ namespace DeathBySeventhsDawn.Interaction
         public static bool IsNight(TimePeriod period) => period == TimePeriod.Evening || period == TimePeriod.Night;
         void Awake()
         {
-            approachingBody = Resources.Load<Texture2D>("Story/ApproachingBody");
+            approachingBody = Resources.Load<Texture2D>("Story/CosmicOccultation");
             content = Resources.Load<StoryContent>("StoryContent");
             if (content == null)
                 content = ScriptableObject.CreateInstance<StoryContent>();
@@ -230,6 +232,7 @@ namespace DeathBySeventhsDawn.Interaction
                         DeathBySeventhsDawn.Progression.ApartmentAudio.Instance?.PlayDreamKick(dreamKicks, 3);
                         return;
                     }
+
                     if (dreamCaption.Next())
                         return;
                     dreamCaption.Reset();
@@ -534,9 +537,9 @@ namespace DeathBySeventhsDawn.Interaction
                     DrawDream(width, height);
                     return;
                 }
+
                 if (RooftopAccess.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked)
                     return;
-
                 if (page == Page.Diary)
                 {
                     GUI.depth = -20;
@@ -555,13 +558,13 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.color = new Color(.07f, .12f, .12f);
                     GUI.DrawTexture(new Rect(0, 0, width, 82), Texture2D.whiteTexture);
                     GUI.color = color;
-                    if (game.State.investigationUnlocked && GUI.Button(new Rect(28, 18, 220, 48), StoryText.Local("● 线索连线 · B", "Evidence board · B"), button))
+                    if (game.State.investigationUnlocked && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(28, 18, 220, 48), StoryText.Local("● 线索连线 · B", "Evidence board · B"), button))
                     {
                         showBoard = true;
                         boardReturnToGame = false;
                     }
 
-                    if (GUI.Button(new Rect(260, 18, 190, 48), DeathBySeventhsDawn.Story.StoryText.UI("合上 · Esc"), button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(260, 18, 190, 48), DeathBySeventhsDawn.Story.StoryText.UI("合上 · Esc"), button))
                         SetPage(Page.None);
                     return;
                 }
@@ -592,7 +595,14 @@ namespace DeathBySeventhsDawn.Interaction
                 }
 
                 if (firstObjectView && approachingBody != null)
-                    GUI.DrawTexture(new Rect(width * .16f, 35, width * .68f, height * .46f), approachingBody, ScaleMode.ScaleToFit);
+                {
+                    var view = new Rect(width * .10f, 22, width * .80f, height * .59f);
+                    float zoom = ObservationZoom;
+                    GUI.BeginGroup(view);
+                    GUI.DrawTexture(new Rect(view.width * (1 - zoom) * .72f, view.height * (1 - zoom) * .4f, view.width * zoom, view.height * zoom), approachingBody, ScaleMode.ScaleAndCrop);
+                    GUI.EndGroup();
+                }
+
                 var dialogue = NarrativeUI.DialogueRect(width, height);
                 var subtitleStyle = new GUIStyle(text)
                 {
@@ -602,11 +612,11 @@ namespace DeathBySeventhsDawn.Interaction
                 telescopeCaption.Set(telescopeMessage, subtitleStyle, dialogue.width - 50, dialogue.height - 86);
                 NarrativeUI.Dialogue(dialogue, StoryText.Local("雨果 · 望远镜", "Hugo · Telescope"), telescopeCaption.Current, telescopeCaption.Counter + StoryText.Local("Enter 继续", "Enter Continue"), text);
                 float rowY = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
-                if (game.State.investigationUnlocked && !Investigation.Has("first-night-recheck") && NightWatchComplete && GUI.Button(new Rect(dialogue.x, rowY, bw, 48), telescopeText.collect, button))
+                if (game.State.investigationUnlocked && !Investigation.Has("first-night-recheck") && NightWatchComplete && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(dialogue.x, rowY, bw, 48), telescopeText.collect, button))
                     CollectTelescopeEvidence();
-                if (watch == Watch.None && GUI.Button(new Rect(dialogue.x + bw + 12, rowY, bw, 48), telescopeText.observe, button))
+                if (watch == Watch.None && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(dialogue.x + bw + 12, rowY, bw, 48), telescopeText.observe, button))
                     ObserveTelescope();
-                if ((watch == Watch.None || watch == Watch.Sleep || watch == Watch.Complete) && GUI.Button(new Rect(dialogue.x + (bw + 12) * 2, rowY, bw, 48), telescopeText.close, button))
+                if ((watch == Watch.None || watch == Watch.Sleep || watch == Watch.Complete) && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(dialogue.x + (bw + 12) * 2, rowY, bw, 48), telescopeText.close, button))
                     CloseTelescope();
             }
             finally
@@ -653,6 +663,7 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.color = new Color(.32f, .2f, .12f, .10f);
                     GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
                 }
+
                 GUI.color = Color.white;
             }
 

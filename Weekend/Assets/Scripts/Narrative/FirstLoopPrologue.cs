@@ -416,7 +416,7 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.Label(new Rect((width - panel) / 2, height * .18f, panel, 50), DeathBySeventhsDawn.Story.StoryText.UI("序  章"), text);
                     GUI.Label(new Rect((width - panel) / 2, height * .29f, panel, 80), StoryText.Current.firstLoop?.chapterTitle ?? "天穹之后", title);
                     GUI.Label(new Rect((width - panel) / 2, height * .44f, panel, 180), StoryText.Current.firstLoop?.chapterText ?? "", text);
-                    if (GUI.Button(new Rect(width / 2 - 160, height * .78f, 320, 58), DeathBySeventhsDawn.Story.StoryText.UI("进入序章  ·  Enter"), button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(width / 2 - 160, height * .78f, 320, 58), DeathBySeventhsDawn.Story.StoryText.UI("进入序章  ·  Enter"), button))
                         EnterPrologue();
                 }
             }

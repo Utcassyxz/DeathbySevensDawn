@@ -1,93 +1,60 @@
-// 职责：按时段切换阳台环境贴图。
-using System.Collections.Generic;
+// CORE VISUAL OWNER: balcony sky, city and time-of-day are one bounded sprite, never camera clear-color.
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using DeathBySeventhsDawn.TimeSystem;
+
 namespace DeathBySeventhsDawn.Interaction
 {
-    // 只管理阳台的天空、远楼、远处窗灯。不要把栏杆、地板或玩家加进远景列表。
     public sealed class BalconyTimeView : MonoBehaviour
     {
-        BalconyViewSettings settings;
-        readonly List<SpriteRenderer> buildings = new List<SpriteRenderer>(), windows = new List<SpriteRenderer>();
-        readonly List<bool> buildingVisibility = new List<bool>(), windowVisibility = new List<bool>();
-        Camera viewCamera; Color originalSky;
-        SpriteRenderer photoRenderer;
-        Bounds sceneryBounds;
         TimeManager clock;
+        Texture2D panorama;
+        Sprite image;
+        SpriteRenderer renderer;
+        public Color SkyColor { get; private set; }
 
-        // 自动绑定现有 Balcony 场景，避免为了上色重建或改写场景文件。
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Install()
         {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneLoaded -= Loaded;
+            SceneManager.sceneLoaded += Loaded;
         }
-        static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+
+        static void Loaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.name != "Balcony")
+            if (scene.name != "Balcony" || Object.FindAnyObjectByType<BalconyTimeView>() != null)
                 return;
-            foreach (var root in scene.GetRootGameObjects())
-                if (root.GetComponentInChildren<BalconyTimeView>() != null)
-                    return;
-            var controller = new GameObject("阳台外景时间变化");
-            SceneManager.MoveGameObjectToScene(controller, scene);
-            controller.AddComponent<BalconyTimeView>();
+            var g = new GameObject("Balcony vista owner");
+            SceneManager.MoveGameObjectToScene(g, scene);
+            g.AddComponent<BalconyTimeView>();
         }
+
         void Awake()
         {
-            // 【配置入口】编辑 Assets/Resources/BalconyViewSettings.asset；无需修改本脚本。
-            settings = Resources.Load<BalconyViewSettings>("BalconyViewSettings");
-            if (settings == null)
-                settings = ScriptableObject.CreateInstance<BalconyViewSettings>();
-            bool hasBounds = false;
-            foreach (var root in gameObject.scene.GetRootGameObjects())
+            foreach (var r in Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
+                if (r.gameObject.scene == gameObject.scene && (r.name.StartsWith("Distant ") || r.name.StartsWith("阳台外景照片")))
+                    r.enabled = false;
+            panorama = new Texture2D(640, 224, TextureFormat.RGBA32, false)
             {
-                foreach (var renderer in root.GetComponentsInChildren<SpriteRenderer>(true))
-                {
-                    // 这些名字对应现有场景对象；以后若重命名远楼，请同步调整这里。
-                    bool building = renderer.name.StartsWith("Distant building");
-                    bool window = renderer.name == "Distant window";
-                    if (!building && !window)
-                        continue;
-                    if (building)
-                    {
-                        buildings.Add(renderer);
-                        buildingVisibility.Add(renderer.enabled);
-                    }
-                    else
-                    {
-                        windows.Add(renderer);
-                        windowVisibility.Add(renderer.enabled);
-                    }
-                    if (!hasBounds)
-                    {
-                        sceneryBounds = renderer.bounds;
-                        hasBounds = true;
-                    }
-                    else
-                        sceneryBounds.Encapsulate(renderer.bounds);
-                }
-                if (viewCamera == null)
-                    viewCamera = root.GetComponentInChildren<Camera>();
-
-            }
-
-            if (viewCamera != null)
-                originalSky = viewCamera.backgroundColor;
-            if (!hasBounds)
-                sceneryBounds = new Bounds(new Vector3(0, -3.7f, 0), new Vector3(15, 2.5f, 0));
-            var photo = new GameObject("阳台外景照片（运行时）");
-            photo.transform.SetParent(transform, false);
-            photoRenderer = photo.AddComponent<SpriteRenderer>();
-            // 使用原有不受灯光影响的材质，让照片无需额外灯光也能显示。
-            if (buildings.Count > 0)
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            image = Sprite.Create(panorama, new Rect(0, 0, 640, 224), Vector2.one * .5f, 56);
+            var g = new GameObject("Balcony vista sky and city");
+            g.transform.SetParent(transform, false);
+            g.transform.position = new Vector3(0, -4.05f, 0);
+            g.transform.localScale = new Vector3(1.32f, 1, 1);
+            renderer = g.AddComponent<SpriteRenderer>();
+            renderer.sprite = image;
+            renderer.sortingOrder = -12;
+            var camera = Camera.main;
+            if (camera != null)
             {
-                photoRenderer.sharedMaterial = buildings[0].sharedMaterial;
-                photoRenderer.sortingLayerID = buildings[0].sortingLayerID;
-                photoRenderer.sortingOrder = buildings[0].sortingOrder;
+                camera.orthographicSize = 5.3f;
+                camera.transform.position = new Vector3(0, -.65f, -10);
             }
         }
+
         void OnEnable()
         {
             clock = TimeManager.Instance;
@@ -96,50 +63,70 @@ namespace DeathBySeventhsDawn.Interaction
                 clock.TimeChanged += Refresh;
                 Refresh(clock.Days, clock.Period);
             }
-            else
-                Refresh(1, TimePeriod.Morning);
         }
+
         void OnDisable()
         {
             if (clock != null)
                 clock.TimeChanged -= Refresh;
-            if (viewCamera != null)
-                viewCamera.backgroundColor = originalSky;
-
         }
+
         void Refresh(int day, TimePeriod period)
         {
+            bool night = period == TimePeriod.Night;
+            bool dusk = period == TimePeriod.Evening;
+            SkyColor = night ? new Color(.025f, .035f, .095f) : dusk ? new Color(.56f, .24f, .28f) : period == TimePeriod.Morning ? new Color(.56f, .77f, .85f) : new Color(.39f, .67f, .87f);
             float decay = Mathf.Clamp01((day - 1) / 6f);
-            Color sky = settings.Sky(day, (int)period);
-            if (viewCamera != null)
-                viewCamera.backgroundColor = sky;
+            for (int y = 0; y < 224; y++)
+                for (int x = 0; x < 640; x++)
+                {
+                    float t = y / 223f;
+                    Color c = Color.Lerp(SkyColor * .58f, SkyColor, t);
+                    c.a = 1;
+                    if (night)
+                    {
+                        float band = Mathf.Exp(-Mathf.Pow((y - (105 + x * .10f)) / 27, 2)) * .12f;
+                        c += new Color(.23f, .19f, .37f) * band * (.4f + Mathf.PerlinNoise(x * .028f, y * .035f));
+                        uint hash = unchecked((uint)(x * 73856093 ^ y * 19349663));
+                        hash ^= hash >> 13;
+                        hash *= 1274126177u;
+                        if (hash % 877 == 0 && y > 72)
+                            c = new Color(.67f, .75f, .90f);
+                    }
+                    else
+                    {
+                        float cloud = Mathf.PerlinNoise(x * .011f, y * .021f + day * .03f);
+                        if (cloud > .62f && y > 80)
+                            c = Color.Lerp(c, new Color(.91f, .90f, .84f), Mathf.Clamp01((cloud - .62f) * 2.5f));
+                    }
 
-            Color buildingColor = Color.Lerp(settings.firstDayBuildings, settings.seventhDayBuildings, decay) * settings.Brightness((int)period);
-            buildingColor.a = 1;
-            Sprite photo = settings.Photo(day);
-            for (int i = 0; i < buildings.Count; i++)
-            {
-                buildings[i].enabled = photo == null && buildingVisibility[i];
-                buildings[i].color = buildingColor;
-            }
-            for (int i = 0; i < windows.Count; i++)
-            {
-                var window = windows[i];
-                window.enabled = photo == null && windowVisibility[i];
-                // 固定索引控制逐日熄灯，不使用随机数，重进房间也保持一致。
-                bool lit = (period == TimePeriod.Evening || period == TimePeriod.Night) && i % 7 >= day - 1;
-                window.color = lit ? settings.litWindows : settings.darkWindows;
-            }
-            photoRenderer.sprite = photo;
-            photoRenderer.enabled = photo != null;
-            if (photo == null)
-                return;
-            photoRenderer.color = settings.tintPhotosWithTime ? sky : Color.white;
-            // 保持照片比例，完整放入远景区域；不会拉伸照片或覆盖阳台的行走区域。
-            float size = Mathf.Max(.1f, settings.photoAreaScale);
-            float factor = Mathf.Min(sceneryBounds.size.x / Mathf.Max(.01f, photo.bounds.size.x), sceneryBounds.size.y / Mathf.Max(.01f, photo.bounds.size.y)) * size;
-            photoRenderer.transform.localScale = new Vector3(factor, factor, 1);
-            photoRenderer.transform.position = sceneryBounds.center + (Vector3)settings.photoOffset - photo.bounds.center * factor;
+                    int column = x / 31;
+                    int roof = 32 + (column * 17 % 39);
+                    if (y < roof)
+                    {
+                        c = night ? new Color(.045f, .065f, .105f) : new Color(.27f, .36f, .40f);
+                        if (x % 31 < 2)
+                            c *= .68f;
+                        if (x % 9 >= 3 && x % 9 <= 5 && y % 13 >= 4 && y % 13 <= 7 && y < roof - 6)
+                            c = night && ((column + y / 13) % 8 >= day - 1) ? new Color(.83f, .63f, .30f) : c * .7f;
+                        if (y == roof - 1)
+                            c *= 1.28f;
+                    }
+
+                    c = Color.Lerp(c, new Color(.15f, .13f, .21f), decay * .28f);
+                    c.a = 1;
+                    panorama.SetPixel(x, y, c);
+                }
+
+            panorama.Apply(false);
+        }
+
+        void OnDestroy()
+        {
+            if (image != null)
+                Destroy(image);
+            if (panorama != null)
+                Destroy(panorama);
         }
     }
 }

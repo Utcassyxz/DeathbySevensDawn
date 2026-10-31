@@ -230,7 +230,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (target == bed)
                 {
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("要结束今天，睡到明天早晨吗？", "End today and sleep until morning?"), label);
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("睡到明早 · E", "Sleep until tomorrow · E"), button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("睡到明早 · E", "Sleep until tomorrow · E"), button))
                     {
                         CloseMenu();
                         if (!NightDreamSequence.BeginSleep())
@@ -240,13 +240,13 @@ namespace DeathBySeventhsDawn.Interaction
                 else if (target == sofa)
                 {
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Current.morning.sofaFree, label);
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("歇一会儿 · E", "Rest for one period · E"), button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("歇一会儿 · E", "Rest for one period · E"), button))
                         RestOnePeriod();
                 }
 
                 GUILayout.Space(20);
                 GUILayout.EndScrollView();
-                if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("离开", "Leave"), button))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("离开", "Leave"), button))
                     CloseMenu();
                 GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("Esc 返回", "Esc Back"), label);
                 GUILayout.EndArea();

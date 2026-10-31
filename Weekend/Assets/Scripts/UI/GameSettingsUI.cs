@@ -2,30 +2,33 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using DeathBySeventhsDawn.Story;
+
 namespace DeathBySeventhsDawn.Progression
 {
     [DefaultExecutionOrder(-120)]
     public sealed class GameSettingsUI : MonoBehaviour
     {
-        public static GameSettingsUI Instance
-        {
-            get; private set;
-        }
+        public static GameSettingsUI Instance { get; private set; }
         public static bool IsOpen => Instance != null && Instance.open;
         public static bool WorldBlocked => Instance != null && (Instance.open || Time.frameCount <= Instance.blockedFrame);
         public static float MasterVolume => PlayerPrefs.GetFloat("SevenDay.MasterVolume", 1);
-        bool open; int blockedFrame = -1; GUIStyle title, label, button;
+
+        bool open;
+        int blockedFrame = -1;
+        GUIStyle title, label, button;
         void Awake()
         {
             Instance = this;
             AudioListener.volume = MasterVolume;
         }
+
         public static void SetVolume(float value)
         {
             value = Mathf.Clamp01(value);
             AudioListener.volume = value;
             PlayerPrefs.SetFloat("SevenDay.MasterVolume", value);
         }
+
         public static void Show()
         {
             if (Instance == null)
@@ -33,6 +36,7 @@ namespace DeathBySeventhsDawn.Progression
             Instance.open = true;
             Instance.blockedFrame = Time.frameCount;
         }
+
         public static void Hide()
         {
             if (Instance == null)
@@ -41,27 +45,32 @@ namespace DeathBySeventhsDawn.Progression
             Instance.blockedFrame = Time.frameCount;
             PlayerPrefs.Save();
         }
+
         void OnEnable()
         {
             if (DeathBySeventhsDawn.Core.GameManager.Instance != null)
                 DeathBySeventhsDawn.Core.GameManager.Instance.JourneyReset += Reset;
         }
+
         void OnDisable()
         {
             if (DeathBySeventhsDawn.Core.GameManager.Instance != null)
                 DeathBySeventhsDawn.Core.GameManager.Instance.JourneyReset -= Reset;
             Reset();
         }
+
         void Reset()
         {
             if (open)
                 Hide();
         }
+
         void Update()
         {
             if (open && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
                 Hide();
         }
+
         void OnGUI()
         {
             if (!open)
@@ -73,12 +82,28 @@ namespace DeathBySeventhsDawn.Progression
                 Event.current.Use();
                 return;
             }
+
             if (label == null)
             {
-                label = new GUIStyle(GUI.skin.label) { font = GameTypography.Current, fontSize = 24, wordWrap = true };
-                title = new GUIStyle(label) { fontSize = 38, fontStyle = FontStyle.Bold };
-                button = new GUIStyle(GUI.skin.button) { font = GameTypography.Current, fontSize = 23, padding = new RectOffset(15, 15, 12, 12) };
+                label = new GUIStyle(GUI.skin.label)
+                {
+                    font = GameTypography.Current,
+                    fontSize = 24,
+                    wordWrap = true
+                };
+                title = new GUIStyle(label)
+                {
+                    fontSize = 38,
+                    fontStyle = FontStyle.Bold
+                };
+                button = new GUIStyle(GUI.skin.button)
+                {
+                    font = GameTypography.Current,
+                    fontSize = 23,
+                    padding = new RectOffset(15, 15, 12, 12)
+                };
             }
+
             GameTypography.Use(title, label, button);
             PrototypeButtons.Apply(button);
             var matrix = GUI.matrix;
@@ -110,24 +135,31 @@ namespace DeathBySeventhsDawn.Progression
                 GUILayout.Label(StoryText.Local("语言", "Language"), label);
                 GUILayout.BeginHorizontal();
                 button.font = GameTypography.Chinese;
-                if (GUILayout.Button((StoryText.English ? "" : "• ") + "中文", button, GUILayout.MinHeight(50)) && StoryText.English)
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton((StoryText.English ? "" : "• ") + "中文", button, GUILayout.MinHeight(50)) && StoryText.English)
                     StoryText.ToggleLanguage();
                 button.font = GameTypography.English;
-                if (GUILayout.Button((StoryText.English ? "• " : "") + "English", button, GUILayout.MinHeight(50)) && !StoryText.English)
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton((StoryText.English ? "• " : "") + "English", button, GUILayout.MinHeight(50)) && !StoryText.English)
                     StoryText.ToggleLanguage();
                 GUILayout.EndHorizontal();
                 button.font = GameTypography.Current;
                 GUILayout.Space(38);
-                if (GUILayout.Button(StoryText.Local("返回  ·  Esc", "Back  ·  Esc"), button, GUILayout.MinHeight(50)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(StoryText.Local("返回  ·  Esc", "Back  ·  Esc"), button, GUILayout.MinHeight(50)))
                     Hide();
                 GUILayout.EndArea();
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void OnApplicationQuit()
         {
             PlayerPrefs.Save();
         }
+
         void OnDestroy()
         {
             if (Instance == this)

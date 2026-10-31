@@ -1,3 +1,4 @@
+// CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
 // 职责：旅程状态入口：管理知识、变异、体力及两个互斥的第七天结局。
 using System;
 using UnityEngine;
@@ -19,8 +20,10 @@ namespace DeathBySeventhsDawn.Core
         public ProgressionSettings Settings { get; private set; }
         internal ProgressionState State { get; private set; }
         public int LoopCount => State.loopCount;
-        public bool HasEnded => State.badEndingOne || State.worldEndEnding;
+        public bool HasEnded => State.badEndingOne || State.worldEndEnding || State.fishReplacementEnding;
         public bool HasSeenAncientGod => State.ancientGodSeen;
+        public bool HasLoopAbility => State.yogDreamSeen;
+        public bool FishReplacementEnding => State.fishReplacementEnding;
         public bool AquariumSealed => State.aquariumSealed;
         public bool WorldEndEnding => State.worldEndEnding;
 
@@ -35,6 +38,29 @@ namespace DeathBySeventhsDawn.Core
             return true;
         }
 
+        // CORE FLOW: sighting is evidence; only the completed Bubble encounter grants return.
+        public bool GrantLoopAbility()
+        {
+            if (HasEnded || !State.ancientGodSeen || State.yogDreamSeen)
+                return false;
+            State.yogDreamSeen = true;
+            ProgressionSave.Write(State);
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool TriggerReplacementEnding()
+        {
+            if (HasEnded || AquariumSealed || TimeSystem.TimeManager.Instance.Days != 7)
+                return false;
+            State.fishReplacementEnding = true;
+            ProgressionSave.Write(State);
+            EndingCollection.Unlock("fish-replacement");
+            EndingTriggered?.Invoke("fish-replacement");
+            Changed?.Invoke();
+            return true;
+        }
+
         public event Action<string> EndingTriggered;
         // Unawakened Hugo gets all seven days; the last-night boundary resolves world destruction.
         // Awakened aging remains a separate ending, and journal evidence cannot grant awakening.
@@ -44,7 +70,7 @@ namespace DeathBySeventhsDawn.Core
                 return true;
             if (day < 7)
                 return false;
-            if (!State.ancientGodSeen && day >= 7 && TimeSystem.TimeManager.Instance.Period == TimeSystem.TimePeriod.Night)
+            if (!HasLoopAbility && day >= 7 && TimeSystem.TimeManager.Instance.Period == TimeSystem.TimePeriod.Night)
             {
                 State.worldEndEnding = true;
                 ProgressionSave.Write(State);
@@ -54,7 +80,7 @@ namespace DeathBySeventhsDawn.Core
                 return true;
             }
 
-            if (!State.ancientGodSeen)
+            if (!HasLoopAbility)
                 return false;
             if (MaxVitality > Settings.minimumVitality + .001f)
                 return false;
@@ -70,7 +96,6 @@ namespace DeathBySeventhsDawn.Core
         public void StartNewJourney()
         {
             StoryTransition.Cover(1.2f);
-            EndingCollection.Clear();
             EndingCollectionUI.ResetResult();
             State = new ProgressionState();
             Vitality = MaxVitality;
@@ -115,6 +140,8 @@ namespace DeathBySeventhsDawn.Core
                 EndingCollection.Unlock("world-end", false);
             if (State.badEndingOne)
                 EndingCollection.Unlock("bad-ending-1", false);
+            if (State.fishReplacementEnding)
+                EndingCollection.Unlock("fish-replacement", false);
             Vitality = MaxVitality;
         }
 

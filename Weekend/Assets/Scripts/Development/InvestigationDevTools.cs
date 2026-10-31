@@ -12,11 +12,9 @@ namespace DeathBySeventhsDawn.Interaction
     // 开发用线索面板：显示所有线索、它们参与的配方，以及全部连接；可一键发放/清空。
     public sealed class InvestigationDevTools : MonoBehaviour
     {
-        public static InvestigationDevTools Instance
-        {
-            get; private set;
-        }
+        public static InvestigationDevTools Instance { get; private set; }
         public static bool WorldBlocked => Instance != null && Instance.open;
+
         bool open, confirmClear;
         int openedFrame, tab;
         Vector2 scroll;
@@ -29,8 +27,10 @@ namespace DeathBySeventhsDawn.Interaction
                 Destroy(this);
                 return;
             }
+
             Instance = this;
         }
+
         public static void Open()
         {
             if (Instance == null)
@@ -40,11 +40,13 @@ namespace DeathBySeventhsDawn.Interaction
             Instance.confirmClear = false;
             Instance.scroll = Vector2.zero;
         }
+
         void Close()
         {
             open = false;
             confirmClear = false;
         }
+
         void Update()
         {
             if (!open)
@@ -54,35 +56,99 @@ namespace DeathBySeventhsDawn.Interaction
                 Close();
                 return;
             }
+
             var k = Keyboard.current;
             if (k != null && Time.frameCount > openedFrame + 1 && k.escapeKey.wasPressedThisFrame)
                 Close();
         }
+
         void Styles()
         {
             if (body != null)
                 return;
             var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            body = new GUIStyle(GUI.skin.label) { font = font, fontSize = 18, wordWrap = true };
+            body = new GUIStyle(GUI.skin.label)
+            {
+                font = font,
+                fontSize = 18,
+                wordWrap = true
+            };
             body.normal.textColor = Ink;
-            title = new GUIStyle(body) { fontSize = 32, fontStyle = FontStyle.Bold };
-            small = new GUIStyle(body) { fontSize = 14, wordWrap = true };
+            title = new GUIStyle(body)
+            {
+                fontSize = 32,
+                fontStyle = FontStyle.Bold
+            };
+            small = new GUIStyle(body)
+            {
+                fontSize = 14,
+                wordWrap = true
+            };
             small.normal.textColor = Muted;
-            mono = new GUIStyle(body) { fontSize = 16, wordWrap = true };
+            mono = new GUIStyle(body)
+            {
+                fontSize = 16,
+                wordWrap = true
+            };
             mono.normal.textColor = Accent;
-            button = new GUIStyle(GUI.skin.button) { font = font, fontSize = 17, wordWrap = true, padding = new RectOffset(10, 10, 8, 8) };
-            tabStyle = new GUIStyle(GUI.skin.button) { font = font, fontSize = 16, padding = new RectOffset(8, 8, 6, 6) };
-            tabSelected = new GUIStyle(tabStyle) { fontStyle = FontStyle.Bold };
+            button = new GUIStyle(GUI.skin.button)
+            {
+                font = font,
+                fontSize = 17,
+                wordWrap = true,
+                padding = new RectOffset(10, 10, 8, 8)
+            };
+            tabStyle = new GUIStyle(GUI.skin.button)
+            {
+                font = font,
+                fontSize = 16,
+                padding = new RectOffset(8, 8, 6, 6)
+            };
+            tabSelected = new GUIStyle(tabStyle)
+            {
+                fontStyle = FontStyle.Bold
+            };
             tabSelected.normal.textColor = Accent;
-            foreach (var style in new[] { body, title, small, mono })
-                foreach (var state in new[] { style.normal, style.hover, style.active, style.focused })
+            foreach (var style in new[]
+            {
+                body,
+                title,
+                small,
+                mono
+            }
+
+            )
+                foreach (var state in new[]
+                {
+                    style.normal,
+                    style.hover,
+                    style.active,
+                    style.focused
+                }
+
+                )
                     state.textColor = Ink;
-            foreach (var style in new[] { button, tabStyle })
-                foreach (var state in new[] { style.normal, style.hover, style.active, style.focused })
+            foreach (var style in new[]
+            {
+                button,
+                tabStyle
+            }
+
+            )
+                foreach (var state in new[]
+                {
+                    style.normal,
+                    style.hover,
+                    style.active,
+                    style.focused
+                }
+
+                )
                     state.textColor = new Color(.08f, .12f, .10f);
             small.normal.textColor = Muted;
             tabSelected.normal.textColor = Accent;
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(title, body, small, button, tabStyle, tabSelected, mono);
@@ -104,12 +170,13 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.color = color;
                 GUI.Label(new Rect(28, 16, 600, 42), DeathBySeventhsDawn.Story.StoryText.UI("线索开发者面板"), title);
                 GUI.Label(new Rect(30, 58, w - 760, 24), DeathBySeventhsDawn.Story.StoryText.UI("只读视图 + 一键发放：每个线索指向哪些推论、全部配方与当前连接。仅开发用。"), small);
-                if (GUI.Button(new Rect(w - 676, 20, 200, 42), DeathBySeventhsDawn.Story.StoryText.UI("获得全部线索和连接"), button))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w - 676, 20, 200, 42), DeathBySeventhsDawn.Story.StoryText.UI("获得全部线索和连接"), button))
                 {
                     GrantAll();
                     scroll = Vector2.zero;
                 }
-                if (GUI.Button(new Rect(w - 466, 20, 190, 42), confirmClear ? DeathBySeventhsDawn.Story.StoryText.UI("再次点击确认清空") : DeathBySeventhsDawn.Story.StoryText.UI("清空全部推理数据"), button))
+
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w - 466, 20, 190, 42), confirmClear ? DeathBySeventhsDawn.Story.StoryText.UI("再次点击确认清空") : DeathBySeventhsDawn.Story.StoryText.UI("清空全部推理数据"), button))
                 {
                     if (confirmClear)
                     {
@@ -120,21 +187,24 @@ namespace DeathBySeventhsDawn.Interaction
                     else
                         confirmClear = true;
                 }
-                if (GUI.Button(new Rect(w - 266, 20, 230, 42), DeathBySeventhsDawn.Story.StoryText.UI("关闭  ·  Esc"), button))
+
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w - 266, 20, 230, 42), DeathBySeventhsDawn.Story.StoryText.UI("关闭  ·  Esc"), button))
                 {
                     Close();
                     return;
                 }
+
                 for (int i = 0; i < 3; i++)
                 {
                     string label = i == 0 ? DeathBySeventhsDawn.Story.StoryText.UI("线索总览") : i == 1 ? DeathBySeventhsDawn.Story.StoryText.UI("全部连接") : DeathBySeventhsDawn.Story.StoryText.UI("配方规则");
-                    if (GUI.Button(new Rect(28 + i * 124, 98, 116, 34), label, i == tab ? tabSelected : tabStyle) && tab != i)
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(28 + i * 124, 98, 116, 34), label, i == tab ? tabSelected : tabStyle) && tab != i)
                     {
                         tab = i;
                         scroll = Vector2.zero;
                         confirmClear = false;
                     }
                 }
+
                 var area = new Rect(28, 148, w - 56, h - 176);
                 GUILayout.BeginArea(area);
                 scroll = GUILayout.BeginScrollView(scroll);
@@ -147,8 +217,14 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.EndScrollView();
                 GUILayout.EndArea();
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void DrawClues()
         {
             GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("所有线索（即使未获得也显示）"), title);
@@ -161,6 +237,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("来源：") + e.source + "    " + RecipeTargets(e.id), small);
                 GUILayout.Space(6);
             }
+
             foreach (var d in Investigation.Catalog.deductions)
             {
                 if (d == null)
@@ -170,6 +247,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Space(6);
             }
         }
+
         void DrawConnections()
         {
             GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("全部配方"), title);
@@ -183,6 +261,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Label(ClueTitle(d.left) + "  +  " + ClueTitle(d.right) + "  →  " + d.title + "   ·   " + Investigation.RelationLabel(d.relation), small);
                 GUILayout.Space(4);
             }
+
             GUILayout.Space(18);
             GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("当前连线"), title);
             GUILayout.Space(6);
@@ -195,9 +274,11 @@ namespace DeathBySeventhsDawn.Interaction
                 string status = string.IsNullOrEmpty(link.conclusion) ? DeathBySeventhsDawn.Story.StoryText.UI("待证") : "→ " + ClueTitle(link.conclusion);
                 GUILayout.Label(status + "   " + ClueTitle(link.left) + "  ↔  " + ClueTitle(link.right), mono);
             }
+
             if (count == 0)
                 GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("当前没有任何连线。"), small);
         }
+
         void DrawRecipes()
         {
             GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("配方规则（数据来自 Investigation.json）"), title);
@@ -211,6 +292,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Space(6);
             }
         }
+
         static string ClueTitle(string id)
         {
             var e = Investigation.Evidence(id);
@@ -219,6 +301,7 @@ namespace DeathBySeventhsDawn.Interaction
             var d = System.Array.Find(Investigation.Catalog.deductions, x => x.id == id);
             return d != null ? d.title : id;
         }
+
         string RecipeTargets(string id)
         {
             string result = DeathBySeventhsDawn.Story.StoryText.UI("指向：");
@@ -233,8 +316,10 @@ namespace DeathBySeventhsDawn.Interaction
                     result += "\n  + " + ClueTitle(d.left == id ? d.right : d.left) + " → " + d.title + " (" + d.id + ")";
                 }
             }
+
             return any ? result : DeathBySeventhsDawn.Story.StoryText.UI("指向：没有更多配方");
         }
+
         void GrantAll()
         {
             var game = GameManager.Instance;
@@ -251,6 +336,7 @@ namespace DeathBySeventhsDawn.Interaction
                         Investigation.Connect(d.left, d.right, true);
             ProgressionSave.Write(state);
         }
+
         void ClearAll()
         {
             var game = GameManager.Instance;
@@ -262,6 +348,7 @@ namespace DeathBySeventhsDawn.Interaction
             state.knowledgeIds.RemoveAll(id => Investigation.IsNode(id));
             ProgressionSave.Write(state);
         }
+
         void OnDestroy()
         {
             if (Instance == this)

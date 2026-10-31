@@ -1,3 +1,4 @@
+// CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
 // 职责：鱼缸的逐日形态、对话及锡纸封缸；封缸后不再生成生物。
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +13,7 @@ using UnityEngine.InputSystem;
 #endif
 namespace DeathBySeventhsDawn.Interaction
 {
-    // 客厅鱼缸的逐日异变；第三天开始可以对话，第六天成为 NPC 001。
+    // 客厅鱼缸的逐日异变；第三天只有人脸，第四天才开口，第七天成为替身。
     public sealed class AquariumEntity : MonoBehaviour
     {
         public const string NpcCode = "001";
@@ -28,8 +29,9 @@ namespace DeathBySeventhsDawn.Interaction
         int visualDay = -1, page, openedFrame;
         int blockedUntilFrame = -1;
         bool talking, nearby;
-        float range = 2.05f;
+        float range = .72f;
         Sprite square, circle;
+        Sprite[] metamorphosis;
         Texture2D pixel, circleTexture;
         string[] pages;
         string speaker;
@@ -44,6 +46,19 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             Instance = this;
+            var atlas = Resources.Load<Texture2D>("Story/FishMetamorphosis");
+            if (atlas != null)
+            {
+                // Explicit atlas regions include transparent gutters; no sprite is cut at its neck.
+                float w = atlas.width, h = atlas.height, mid = w * .5f, top = h * (400f / 1241f);
+                metamorphosis = new[]
+                {
+                    Sprite.Create(atlas, new Rect(0, h - top, mid, top), Vector2.one * .5f, 128),
+                    Sprite.Create(atlas, new Rect(mid, h - top, w - mid, top), Vector2.one * .5f, 128),
+                    Sprite.Create(atlas, new Rect(0, 0, mid, h * (821f / 1241f)), Vector2.one * .5f, 128),
+                    Sprite.Create(atlas, new Rect(mid, 0, w - mid, h * (831f / 1241f)), new Vector2(.5f, 0), 128)
+                };
+            }
         }
 
         void OnEnable()
@@ -125,27 +140,38 @@ namespace DeathBySeventhsDawn.Interaction
             DestroyForm();
             RestoreTank();
             visualDay = day;
-            if (day < 3 || GameManager.Instance.AquariumSealed)
+            if (RadiationRules.Fish(day, GameManager.Instance.AquariumSealed) == FishStage.Ordinary)
                 return;
             EnsureSprites();
             formRoot = new GameObject("Aquarium entity form");
             formRoot.transform.SetParent(tank.transform, false);
             formRoot.transform.localPosition = Vector3.zero;
-            if (day >= 7)
+            if (metamorphosis != null)
+            {
+                var b = tankRenderer.bounds;
+                formRoot.transform.localScale = new Vector3(1 / tank.transform.lossyScale.x, 1 / tank.transform.lossyScale.y, 1);
+                bool human = day >= 7;
+                int index = human ? 3 : day >= 5 ? 2 : day == 4 ? 1 : 0;
+                formRoot.transform.position = human ? new Vector3(b.max.x + .45f, b.min.y - .10f, 0) : new Vector3(b.center.x, b.center.y + b.size.y * .19f, 0);
+                var image = new GameObject(human ? "Hugo double" : "Fish flank human face");
+                image.transform.SetParent(formRoot.transform, false);
+                var r = image.AddComponent<SpriteRenderer>();
+                r.sprite = metamorphosis[index];
+                float size = human ? 1.5f : day >= 5 ? 1.1f : .95f;
+                float scale = size / (human ? r.sprite.bounds.size.y : r.sprite.bounds.size.x);
+                image.transform.localScale = Vector3.one * scale;
+                ApplyRenderer(r, 12);
+            }
+            else if (day >= 7)
                 BuildImpostor();
-            else if (day >= 6)
-                BuildNpc();
             else if (day >= 5)
                 BuildHalfBody();
-            else if (day >= 4)
-                BuildTalkingFish();
             else
-                BuildDayThree();
+                BuildFishFace(day >= 4);
         }
 
         void BuildDayThree() => BuildFishFace(false);
         void BuildTalkingFish() => BuildFishFace(true);
-
         void BuildFishFace(bool speaking)
         {
             if (tankRenderer != null)
@@ -217,6 +243,17 @@ namespace DeathBySeventhsDawn.Interaction
             Part("001 water drip", root + new Vector3(.3f, .72f, 0), new Vector2(.05f, .55f), C(.40f, .55, .50f, 0.65f), 7);
         }
 
+        void LateUpdate()
+        {
+            if (tankRenderer == null || TimeManager.Instance == null)
+                return;
+            var ambient = InteriorLighting.LitTint(TimeAtmosphere.Palette(TimeManager.Instance.Period));
+            tankRenderer.color = tankOriginal * ambient;
+            if (formRoot != null && metamorphosis != null)
+                foreach (var r in formRoot.GetComponentsInChildren<SpriteRenderer>())
+                    r.color = ambient;
+        }
+
         void Update()
         {
             if (GameManager.Instance == null || GameManager.Instance.HasEnded)
@@ -272,7 +309,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (player == null)
                 player = GameObject.FindWithTag("Player");
             Vector2 point = InteractionPoint();
-            nearby = player != null && Vector2.Distance(player.transform.position, point) <= range;
+            nearby = player != null && NearInteraction();
             if (nearby && InteractPressed() && WorldPromptUI.CanActivate("aquarium"))
             {
                 if (HasFoil)
@@ -282,14 +319,14 @@ namespace DeathBySeventhsDawn.Interaction
             }
         }
 
+        bool NearInteraction() => player != null && tank != null && (visualDay < 7 ? PropReach.Gap(tank, player) < .20f : Vector2.Distance(player.transform.position, InteractionPoint()) < .9f);
         Vector2 InteractionPoint()
         {
             if (tank == null)
                 return Vector2.zero;
-            Vector3 point = tank.transform.position;
-            if (visualDay >= 6)
-                point += new Vector3(1.42f, -.35f, 0);
-            return point;
+            if (visualDay >= 7 && tankRenderer != null)
+                return new Vector2(tankRenderer.bounds.max.x + .45f, tankRenderer.bounds.min.y - .1f);
+            return tank.transform.position;
         }
 
         bool InteractPressed()
@@ -322,7 +359,7 @@ namespace DeathBySeventhsDawn.Interaction
         public bool ThrowFoil()
         {
             var game = GameManager.Instance;
-            if (game == null || game.HasEnded || game.AquariumSealed || TutorialGate.IsBlocked("aquarium") || !HasFoil || tank == null || player == null || Vector2.Distance(player.transform.position, InteractionPoint()) > range)
+            if (game == null || game.HasEnded || game.AquariumSealed || TutorialGate.IsBlocked("aquarium") || !HasFoil || tank == null || player == null || !NearInteraction())
                 return false;
             game.State.inventory.Remove(CultNeighbor.Token);
             game.State.aquariumSealed = true;
@@ -345,7 +382,12 @@ namespace DeathBySeventhsDawn.Interaction
             if (GameManager.Instance.HasEnded || GameManager.Instance.AquariumSealed || TutorialGate.IsBlocked("aquarium"))
                 return;
             var aq = StoryText.Current.aquarium;
-            pages = visualDay >= 7 ? aq?.day7Pages : visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : visualDay >= 4 ? aq?.day4Pages : aq?.day3Pages;
+            pages = visualDay < 3 ? new[]
+            {
+                StoryText.Local("……今天又没回音。投出去那么多份简历，连封拒信都没有。\n你倒是好，饿了还有人喂。", "…Still nothing. All those applications. Not even a rejection.\nAt least someone feeds you.")
+            }
+
+            : visualDay >= 7 ? aq?.day7Pages : visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : visualDay >= 4 ? aq?.day4Pages : aq?.day3Pages;
             if (pages == null || pages.Length == 0)
                 return;
             speaker = visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
@@ -443,7 +485,7 @@ namespace DeathBySeventhsDawn.Interaction
                 float x = dialogue.x, y = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
                 if (HasFoil)
                 {
-                    if (GUI.Button(new Rect(x, y, bw, 48), StoryText.Current.aquarium.throwFoil, button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Current.aquarium.throwFoil, button))
                         ThrowFoil();
                     x += bw + 12;
                 }
@@ -451,17 +493,8 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!GameManager.Instance.AquariumSealed && visualDay >= 3)
                 {
                     string evidence = visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
-                    if (GUI.Button(new Rect(x, y, bw, 48), StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R 记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R Record observation"), button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R 记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R Record observation"), button))
                         Investigation.Collect(evidence);
-                    if (GUI.Button(new Rect(x + bw + 12, y, bw, 48), StoryText.Current.aquarium.question, button))
-                    {
-                        pages = new[]
-                        {
-                            Investigation.Has("notes-gap") ? StoryText.Current.aquarium.answerGap : StoryText.Current.aquarium.answerDefault
-                        };
-                        page = 0;
-                        subtitles.Reset();
-                    }
                 }
             }
             finally
@@ -597,6 +630,10 @@ namespace DeathBySeventhsDawn.Interaction
             if (Instance == this)
                 Instance = null;
             DestroyForm();
+            if (metamorphosis != null)
+                foreach (var sprite in metamorphosis)
+                    if (sprite != null)
+                        Destroy(sprite);
             if (square != null)
                 Destroy(square);
             if (circle != null)

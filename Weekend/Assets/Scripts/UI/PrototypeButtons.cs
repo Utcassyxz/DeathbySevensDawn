@@ -1,3 +1,4 @@
+// CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
 // Original nine-slice surfaces shared by all runtime buttons.
 using UnityEngine;
 
@@ -31,6 +32,38 @@ namespace DeathBySeventhsDawn.Progression
 
             t.Apply();
             return t;
+        }
+
+        public static bool Button(Rect rect, string text, GUIStyle style = null)
+        {
+            bool clicked = GUI.Button(rect, text, style ?? GUI.skin.button);
+            if (clicked)
+                ApartmentAudio.Instance?.PlayUiPress();
+            return clicked;
+        }
+
+        public static bool Button(Rect rect, GUIContent text, GUIStyle style = null)
+        {
+            bool clicked = GUI.Button(rect, text, style ?? GUI.skin.button);
+            if (clicked)
+                ApartmentAudio.Instance?.PlayUiPress();
+            return clicked;
+        }
+
+        public static bool LayoutButton(string text, GUIStyle style, params GUILayoutOption[] options)
+        {
+            bool clicked = GUILayout.Button(text, style, options);
+            if (clicked)
+                ApartmentAudio.Instance?.PlayUiPress();
+            return clicked;
+        }
+
+        public static bool LayoutButton(string text, params GUILayoutOption[] options)
+        {
+            bool clicked = GUILayout.Button(text, options);
+            if (clicked)
+                ApartmentAudio.Instance?.PlayUiPress();
+            return clicked;
         }
 
         public static void Apply(GUIStyle style)

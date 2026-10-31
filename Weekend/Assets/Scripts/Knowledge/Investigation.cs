@@ -172,6 +172,9 @@ namespace DeathBySeventhsDawn.Knowledge
 
         public static void Normalize(ProgressionState state)
         {
+            // Existing completed loops prove the old save already possessed return.
+            if (state.loopCount > 0)
+                state.yogDreamSeen = true;
             if (state.version == 1)
             {
                 if (state.journal != null && state.journal.Count > 0)

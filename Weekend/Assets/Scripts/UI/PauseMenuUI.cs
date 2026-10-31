@@ -10,11 +10,9 @@ namespace DeathBySeventhsDawn.Progression
     // 游戏内暂停：继续 / 回到主页面 / 退出游戏。Esc 打开，Esc/E 关闭。
     public sealed class PauseMenuUI : MonoBehaviour
     {
-        public static PauseMenuUI Instance
-        {
-            get; private set;
-        }
+        public static PauseMenuUI Instance { get; private set; }
         public static bool WorldBlocked => Instance != null && (Instance.open || Time.frameCount <= Instance.blockedUntilFrame);
+
         bool open;
         int blockedUntilFrame = -1;
         GUIStyle title, body, small, button, box;
@@ -26,12 +24,15 @@ namespace DeathBySeventhsDawn.Progression
                 Destroy(this);
                 return;
             }
+
             Instance = this;
         }
+
         void OnDisable()
         {
             Close();
         }
+
         void Update()
         {
             if (GameSettingsUI.WorldBlocked)
@@ -43,6 +44,7 @@ namespace DeathBySeventhsDawn.Progression
                     Close();
                 return;
             }
+
             if (MainMenuUI.WorldBlocked || MainMenuUI.Suppressed)
                 return;
             if (GameManager.Instance == null || GameManager.Instance.HasEnded)
@@ -56,35 +58,61 @@ namespace DeathBySeventhsDawn.Progression
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
                 Open();
         }
+
         void Open()
         {
             open = true;
             blockedUntilFrame = Time.frameCount;
         }
+
         void Close()
         {
             if (open)
                 blockedUntilFrame = Time.frameCount;
             open = false;
         }
+
         void ReturnToMain()
         {
             Close();
             MainMenuUI.ReturnToMainMenu();
         }
+
         void Styles()
         {
             if (body != null)
                 return;
             var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            body = new GUIStyle(GUI.skin.label) { font = font, fontSize = 19, wordWrap = true, alignment = TextAnchor.MiddleCenter };
+            body = new GUIStyle(GUI.skin.label)
+            {
+                font = font,
+                fontSize = 19,
+                wordWrap = true,
+                alignment = TextAnchor.MiddleCenter
+            };
             body.normal.textColor = Ink;
-            title = new GUIStyle(body) { fontSize = 36, fontStyle = FontStyle.Bold };
-            small = new GUIStyle(body) { fontSize = 14 };
+            title = new GUIStyle(body)
+            {
+                fontSize = 36,
+                fontStyle = FontStyle.Bold
+            };
+            small = new GUIStyle(body)
+            {
+                fontSize = 14
+            };
             small.normal.textColor = Muted;
-            box = new GUIStyle(GUI.skin.box) { padding = new RectOffset(24, 24, 20, 20) };
-            button = new GUIStyle(GUI.skin.button) { font = font, fontSize = 20, padding = new RectOffset(12, 12, 10, 10) };
+            box = new GUIStyle(GUI.skin.box)
+            {
+                padding = new RectOffset(24, 24, 20, 20)
+            };
+            button = new GUIStyle(GUI.skin.button)
+            {
+                font = font,
+                fontSize = 20,
+                padding = new RectOffset(12, 12, 10, 10)
+            };
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(title, body, small, button, box);
@@ -116,20 +144,26 @@ namespace DeathBySeventhsDawn.Progression
                 GUILayout.Space(8);
                 GUILayout.Label(text?.subtitle ?? "时间仍然停在这一刻。", small);
                 GUILayout.Space(18);
-                if (GUILayout.Button(text?.resume ?? "继续游戏", button, GUILayout.MinHeight(48)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(text?.resume ?? "继续游戏", button, GUILayout.MinHeight(48)))
                     Close();
-                if (GUILayout.Button(text?.returnToTitle ?? "回到主页面", button, GUILayout.MinHeight(48)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(text?.returnToTitle ?? "回到主页面", button, GUILayout.MinHeight(48)))
                     ReturnToMain();
-                if (GUILayout.Button(text?.quit ?? "退出游戏", button, GUILayout.MinHeight(48)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(text?.quit ?? "退出游戏", button, GUILayout.MinHeight(48)))
                     MainMenuUI.QuitGame();
-                if (GUILayout.Button(StoryText.Local("设置", "Settings"), button, GUILayout.MinHeight(40)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(StoryText.Local("设置", "Settings"), button, GUILayout.MinHeight(40)))
                     GameSettingsUI.Show();
                 GUILayout.Space(10);
                 GUILayout.Label(text?.hint ?? "Esc / E 继续", small);
                 GUILayout.EndArea();
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void OnDestroy()
         {
             if (Instance == this)

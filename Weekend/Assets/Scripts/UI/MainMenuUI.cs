@@ -248,7 +248,7 @@ namespace DeathBySeventhsDawn.Progression
             Fill(new Rect(rect.x + 3, rect.y + 6, rect.width, rect.height), new Color(0, 0, 0, .55f));
             Fill(new Rect(rect.x + 2, rect.y + rect.height - 2, rect.width - 4, 6), new Color(.10f, .085f, .055f));
             button.contentOffset = pressed ? new Vector2(0, 2) : Vector2.zero;
-            bool clicked = GUI.Button(rect, text, button);
+            bool clicked = DeathBySeventhsDawn.Progression.PrototypeButtons.Button(rect, text, button);
             foreach (float x in new[]
             {
                 rect.x + 13,

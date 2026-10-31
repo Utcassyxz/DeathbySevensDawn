@@ -5,6 +5,7 @@ using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Knowledge;
 using DeathBySeventhsDawn.Progression;
 using DeathBySeventhsDawn.Story;
+
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -13,27 +14,33 @@ namespace DeathBySeventhsDawn.Interaction
     [DefaultExecutionOrder(-50)]
     public sealed class PerceptionClues : MonoBehaviour
     {
-        public static PerceptionClues Instance
-        {
-            get; private set;
-        }
+        public static PerceptionClues Instance { get; private set; }
         public static bool IsReading => Instance != null && (Instance.reading || Time.frameCount <= Instance.blockedFrame);
         public bool FilterOpen => GameManager.Instance != null && !GameManager.Instance.HasEnded && GameManager.Instance.Sanity <= GameManager.Instance.Settings.fracturedSanity;
         public bool ClueVisible => marker != null && marker.activeSelf;
         public string CurrentId => id;
         public Vector2 CluePosition => position;
-        string id, heading, body; Vector2 position, scroll; GameObject marker, player; Sprite sprite; Texture2D pixel;
-        bool reading, nearby; int blockedFrame = -1; GUIStyle text, title, button;
+
+        string id, heading, body;
+        Vector2 position, scroll;
+        GameObject marker, player;
+        Sprite sprite;
+        Texture2D pixel;
+        bool reading, nearby;
+        int blockedFrame = -1;
+        GUIStyle text, title, button;
         void Awake()
         {
             Instance = this;
         }
+
         void OnEnable()
         {
             SceneManager.sceneLoaded += Loaded;
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset += ResetReading;
         }
+
         void OnDisable()
         {
             SceneManager.sceneLoaded -= Loaded;
@@ -41,6 +48,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GameManager.Instance.JourneyReset -= ResetReading;
             ResetReading();
         }
+
         void ResetReading()
         {
             reading = nearby = false;
@@ -49,6 +57,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (marker != null)
                 marker.SetActive(false);
         }
+
         void Loaded(Scene scene, LoadSceneMode mode)
         {
             ResetReading();
@@ -73,6 +82,7 @@ namespace DeathBySeventhsDawn.Interaction
                     position = new Vector2(-1.5f, -1.1f);
                     break;
             }
+
             if (clue == null || string.IsNullOrEmpty(clue.id))
                 return;
             id = clue.id;
@@ -88,6 +98,7 @@ namespace DeathBySeventhsDawn.Interaction
                 pixel.Apply();
                 sprite = Sprite.Create(pixel, new Rect(0, 0, 1, 1), Vector2.one * .5f, 1);
             }
+
             // Pixel-sized scratches only: no scene palette, camera or collider changes.
             for (int i = 0; i < 5; i++)
             {
@@ -100,8 +111,10 @@ namespace DeathBySeventhsDawn.Interaction
                 r.color = new Color(.84f, .76f, .56f);
                 r.sortingOrder = 18;
             }
+
             marker.SetActive(FilterOpen);
         }
+
         void Update()
         {
             if (GameManager.Instance != null && !GameManager.Instance.State.investigationUnlocked)
@@ -113,6 +126,7 @@ namespace DeathBySeventhsDawn.Interaction
                 nearby = false;
                 return;
             }
+
             if (!FilterOpen)
             {
                 if (reading)
@@ -120,6 +134,7 @@ namespace DeathBySeventhsDawn.Interaction
                 nearby = false;
                 return;
             }
+
             if (ProgressionHUD.DebugConsoleOpen)
                 return;
             bool pressed = false, cancel = false;
@@ -136,23 +151,27 @@ namespace DeathBySeventhsDawn.Interaction
                     Close();
                 return;
             }
+
             if (StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
             {
                 nearby = false;
                 return;
             }
+
             var window = Object.FindAnyObjectByType<WindowLookout2D>();
             if (window != null && window.IsOpen)
             {
                 nearby = false;
                 return;
             }
+
             if (player == null)
                 player = GameObject.FindWithTag("Player");
             nearby = marker != null && player != null && Vector2.Distance(player.transform.position, position) < .85f;
             if (nearby && pressed && WorldPromptUI.CanActivate("perception"))
                 TryRead();
         }
+
         public bool TryRead()
         {
             if (TutorialGate.IsBlocked("evidence") || !FilterOpen || marker == null || !nearby || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy || ProgressionHUD.DebugConsoleOpen)
@@ -161,13 +180,14 @@ namespace DeathBySeventhsDawn.Interaction
             scroll = Vector2.zero;
             return true;
         }
-        public bool CollectCurrent() => reading && Investigation.Collect(id);
 
+        public bool CollectCurrent() => reading && Investigation.Collect(id);
         public void Close()
         {
             reading = false;
             blockedFrame = Time.frameCount;
         }
+
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(text, title, button);
@@ -176,11 +196,24 @@ namespace DeathBySeventhsDawn.Interaction
             if (text == null)
             {
                 var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-                text = new GUIStyle(GUI.skin.label) { font = font, fontSize = 24, wordWrap = true };
-                title = new GUIStyle(text) { fontSize = 30, fontStyle = FontStyle.Bold };
-                button = new GUIStyle(text) { alignment = TextAnchor.MiddleCenter };
+                text = new GUIStyle(GUI.skin.label)
+                {
+                    font = font,
+                    fontSize = 24,
+                    wordWrap = true
+                };
+                title = new GUIStyle(text)
+                {
+                    fontSize = 30,
+                    fontStyle = FontStyle.Bold
+                };
+                button = new GUIStyle(text)
+                {
+                    alignment = TextAnchor.MiddleCenter
+                };
                 button.normal.textColor = new Color(.78f, .80f, .65f);
             }
+
             DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
             var matrix = GUI.matrix;
             var color = GUI.color;
@@ -193,32 +226,40 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!reading)
                 {
                     var prompt = StoryText.Current.perception?.prompt ?? "E  辨认那些痕迹";
-                    WorldPromptUI.Offer("perception",prompt,75);
+                    WorldPromptUI.Offer("perception", prompt, 75);
                     return;
                 }
+
                 GUI.depth = -35;
                 GUI.color = new Color(.025f, .035f, .035f, .96f);
                 GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
                 GUI.color = color;
                 float width = Mathf.Min(820, w - 64);
-                var frame=new Rect((w-width)/2-20,h*.14f,width+40,h*.76f);NarrativeUI.Panel(frame);
-                GUILayout.BeginArea(new Rect(frame.x+22,frame.y+20,frame.width-44,frame.height-40));
+                var frame = new Rect((w - width) / 2 - 20, h * .14f, width + 40, h * .76f);
+                NarrativeUI.Panel(frame);
+                GUILayout.BeginArea(new Rect(frame.x + 22, frame.y + 20, frame.width - 44, frame.height - 40));
                 scroll = GUILayout.BeginScrollView(scroll);
                 GUILayout.Label(heading, title);
                 GUILayout.Space(28);
                 GUILayout.Label(body, text);
                 GUILayout.EndScrollView();
                 var perception = StoryText.Current.perception;
-                if (!Investigation.Has(id) && GUILayout.Button(perception?.collect ?? "抄录到笔记 · R", button, GUILayout.Height(55)))
+                if (!Investigation.Has(id) && DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(perception?.collect ?? "抄录到笔记 · R", button, GUILayout.Height(55)))
                     CollectCurrent();
                 if (Investigation.Has(id))
                     GUILayout.Label(perception?.collected ?? "已收录", text);
-                if (GUILayout.Button(perception?.close ?? "移开视线  ·  Esc", button, GUILayout.Height(60)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(perception?.close ?? "移开视线  ·  Esc", button, GUILayout.Height(60)))
                     Close();
                 GUILayout.EndArea();
             }
-            finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
+            finally
+            {
+                GUI.matrix = matrix;
+                GUI.color = color;
+                GUI.depth = depth;
+            }
         }
+
         void OnDestroy()
         {
             if (Instance == this)

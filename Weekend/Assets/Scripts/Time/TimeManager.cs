@@ -1,3 +1,4 @@
+// CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
 // 职责：每天四时段的唯一时钟；所有睡眠都经过第七天结局检查。
 using System;
 using UnityEngine;
@@ -15,17 +16,16 @@ namespace DeathBySeventhsDawn.TimeSystem
 
     public class TimeManager : MonoBehaviour
     {
-        public static TimeManager Instance
-        {
-            get; private set;
-        }
+        public static TimeManager Instance { get; private set; }
 
-        [field: SerializeField, FormerlySerializedAs("<Day>k__BackingField")] public int Days { get; private set; } = 1;
-        [field: SerializeField] public TimePeriod Period { get; private set; } = TimePeriod.Morning;
+        [field: SerializeField, FormerlySerializedAs("<Day>k__BackingField")]
+        public int Days { get; private set; } = 1;
+
+        [field: SerializeField]
+        public TimePeriod Period { get; private set; } = TimePeriod.Morning;
 
         public event Action<int, TimePeriod> TimeChanged;
         public event Action SeventhDayEnded;
-
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -38,15 +38,19 @@ namespace DeathBySeventhsDawn.TimeSystem
             DontDestroyOnLoad(gameObject);
         }
 
+        bool completingSleep;
         public void AdvanceTime()
         {
             if (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded)
+                return;
+            if (!completingSleep && Days < 7 && Period == TimePeriod.Night && Progression.NightDreamSequence.BeginSleep())
                 return;
             if (Days >= 7 && Period == TimePeriod.Night)
             {
                 SeventhDayEnded?.Invoke();
                 return;
             }
+
             if (Period != TimePeriod.Night)
                 Period++;
             else
@@ -54,21 +58,40 @@ namespace DeathBySeventhsDawn.TimeSystem
                 Period = TimePeriod.Morning;
                 Days++;
             }
-            if (Period!=TimePeriod.Night) Core.GameManager.Instance?.TryTriggerBadEnding(Days);
+
+            if (Period != TimePeriod.Night)
+                Core.GameManager.Instance?.TryTriggerBadEnding(Days);
             TimeChanged?.Invoke(Days, Period);
         }
 
         // Sleeping uses the same progression path, so it cannot skip Day 7 or ending checks.
+        // CORE FLOW: all player sleep passes through the same dream owner.
         public void SleepUntilNextMorning()
+        {
+            if (Progression.NightDreamSequence.BeginSleep())
+                return;
+            CompleteSleep();
+        }
+
+        // Explicit clock-only transition for the dream runner and scenario setup.
+        public void CompleteSleep()
         {
             if (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded)
                 return;
-            int periods = 4 - (int)Period;
-            for (int i = 0; i < periods; i++)
+            completingSleep = true;
+            try
             {
-                AdvanceTime();
-                if (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded)
-                    break;
+                int periods = 4 - (int)Period;
+                for (int i = 0; i < periods; i++)
+                {
+                    AdvanceTime();
+                    if (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded)
+                        break;
+                }
+            }
+            finally
+            {
+                completingSleep = false;
             }
         }
 
@@ -77,6 +100,7 @@ namespace DeathBySeventhsDawn.TimeSystem
             if (Instance == this)
                 Instance = null;
         }
+
         public void ResetToDayOne()
         {
             Days = 1;

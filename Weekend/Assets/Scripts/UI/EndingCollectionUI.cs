@@ -71,12 +71,13 @@ namespace DeathBySeventhsDawn.Progression
             GUI.color = Color.white;
             GUI.DrawTexture(new Rect(0, 0, w, h), haze);
             if (endArt == null)
-                endArt = Resources.Load<Texture2D>("Story/ApproachingBody");
+                endArt = Resources.Load<Texture2D>("Story/EndingWorld");
             if (endArt != null)
             {
                 GUI.color = new Color(1f, 1f, 1f, .19f);
                 GUI.DrawTexture(new Rect(0, 0, w, h), endArt, ScaleMode.ScaleAndCrop);
             }
+
             var old = GUI.color;
             GUI.color = new Color(.46f, .31f, .25f, .7f);
             GUI.DrawTexture(new Rect(w * .10f, h * .19f, w * .80f, 1), Texture2D.whiteTexture);
@@ -88,26 +89,36 @@ namespace DeathBySeventhsDawn.Progression
             Background(w, h);
             GUI.Label(new Rect(w * .10f, h * .08f, w * .7f, 60), StoryText.Local("结局收录", "ENDING COLLECTION"), Text(38, NarrativeUI.Ink));
             GUI.Label(new Rect(w * .10f, h * .15f, w * .7f, 30), EndingCollection.Count + " / " + EndingCollection.Ids.Length, Text(18, new Color(.65f, .56f, .46f)));
-            float cardW = w * .38f, cardH = Mathf.Min(330, h * .44f);
+            float cardW = w * .25f, cardH = Mathf.Min(330, h * .44f);
             for (int i = 0; i < EndingCollection.Ids.Length; i++)
             {
                 string id = EndingCollection.Ids[i];
                 bool known = EndingCollection.Has(id);
-                var r = new Rect(w * .10f + i * w * .42f, h * .28f, cardW, cardH);
+                var r = new Rect(w * .10f + i * w * .275f, h * .28f, cardW, cardH);
                 NarrativeUI.Panel(r);
                 GUI.Label(new Rect(r.x + 24, r.y + 18, 100, 70), (i + 1).ToString("00"), Text(48, new Color(.56f, .40f, .32f)));
                 GUI.Label(new Rect(r.x + 24, r.y + 105, r.width - 48, 90), known ? EndingCollection.Title(id) : StoryText.Local("尚未收录", "UNDISCOVERED"), Text(28, known ? NarrativeUI.Ink : new Color(.45f, .46f, .47f)));
-                GUI.Label(new Rect(r.x + 24, r.y + 210, r.width - 48, 86), known ? (id == "world-end" ? StoryText.Local("七天过去了。雨果没有再抬头。", "Seven days passed. Hugo never looked up again.") : StoryText.Local("每次醒来，身体都比上一次更沉。", "Each return left his body a little heavier.")) : StoryText.Local("还没有走到这里。", "This page is still blank."), Text(18, new Color(.68f, .65f, .60f)));
+                GUI.Label(new Rect(r.x + 24, r.y + 210, r.width - 48, 86), known ? (id == "fish-replacement" ? StoryText.Local("有人替他起床，也替他过完了余下的日子。", "Someone got up in his place, and lived the days that remained.") : id == "world-end" ? StoryText.Local("七天过去了。雨果没有再抬头。", "Seven days passed. Hugo never looked up again.") : StoryText.Local("每次醒来，身体都比上一次更沉。", "Each return left his body a little heavier.")) : StoryText.Local("还没有走到这里。", "This page is still blank."), Text(18, new Color(.68f, .65f, .60f)));
             }
 
-            if (GUI.Button(new Rect(w * .10f, h * .82f, 250, 52), StoryText.Local("返回 · Esc", "Back · Esc"), Button()))
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w * .10f, h * .82f, 250, 52), StoryText.Local("返回 · Esc", "Back · Esc"), Button()))
                 CloseGallery();
         }
 
         public static void DrawResult(GameManager game, float w, float h)
         {
             Background(w, h);
-            string id = game.WorldEndEnding ? "world-end" : "bad-ending-1";
+            string id = game.FishReplacementEnding ? "fish-replacement" : game.WorldEndEnding ? "world-end" : "bad-ending-1";
+            var illustration = Resources.Load<Texture2D>(game.FishReplacementEnding ? "Story/EndingReplacement" : "Story/EndingWorld");
+            if (illustration != null)
+            {
+                GUI.color = Color.white;
+                GUI.DrawTexture(new Rect(0, 0, w, h), illustration, ScaleMode.ScaleAndCrop);
+                GUI.color = new Color(.015f, .018f, .027f, .65f);
+                GUI.DrawTexture(new Rect(0, 0, w * .58f, h), Texture2D.whiteTexture);
+                GUI.color = Color.white;
+            }
+
             if (screamedFor != id)
             {
                 screamedFor = id;
@@ -120,16 +131,12 @@ namespace DeathBySeventhsDawn.Progression
             GUI.color = new Color(.42f, .08f, .07f, .045f + pulse * .035f);
             GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
             GUI.color = Color.white;
-            var data = game.WorldEndEnding ? StoryText.Current.worldEnd : StoryText.Current.ending;
-            float left = w * .14f, width = w * .72f;
-            string body = data.lines != null && data.lines.Length > 0
-                ? string.Join("\n", data.lines)
-                : (game.WorldEndEnding
-                    ? StoryText.Local("雨果关好了窗，过完了这一个星期。\n第七天夜里，地球没有等来下一个清晨。", "Hugo shut the window and let the week pass.\nOn the seventh night, Earth never reached another morning.")
-                    : StoryText.Local("他记得每一次醒来。\n身体却一次也没能重新开始。", "He remembered every return.\nHis body never got to start over."));
-            GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.Local("结 局  ", "ENDING  ") + (game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
+            var data = game.FishReplacementEnding ? StoryText.Current.fishEnding : game.WorldEndEnding ? StoryText.Current.worldEnd : StoryText.Current.ending;
+            float left = w * .10f, width = w * .80f;
+            string body = data.lines != null && data.lines.Length > 0 ? string.Join("\n", data.lines) : (game.WorldEndEnding ? StoryText.Local("雨果关好了窗，过完了这一个星期。\n第七天夜里，地球没有等来下一个清晨。", "Hugo shut the window and let the week pass.\nOn the seventh night, Earth never reached another morning.") : StoryText.Local("他记得每一次醒来。\n身体却一次也没能重新开始。", "He remembered every return.\nHis body never got to start over."));
+            GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.Local("结 局  ", "ENDING  ") + (game.FishReplacementEnding ? "03" : game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
             GUI.Label(new Rect(left, h * .24f, width, 110), data.title, Text(44, NarrativeUI.Ink));
-            GUI.Label(new Rect(left, h * .40f, width, h * .20f), body, Text(21, new Color(.76f, .73f, .67f)));
+            GUI.Label(new Rect(left, h * .40f, width * .56f, h * .20f), body, Text(21, new Color(.76f, .73f, .67f)));
             GUI.color = new Color(.46f, .31f, .25f, .7f + pulse * .2f);
             GUI.DrawTexture(new Rect(left, h * .62f - 8, width, 1), Texture2D.whiteTexture);
             GUI.color = Color.white;
@@ -139,23 +146,23 @@ namespace DeathBySeventhsDawn.Progression
             var b = Button();
             if (!confirm)
             {
-                if (GUI.Button(new Rect(left, h * .79f, 280, 56), StoryText.Local("开始新的旅程", "Begin a new journey"), b))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left, h * .79f, 280, 56), StoryText.Local("开始新的旅程", "Begin a new journey"), b))
                     confirm = true;
             }
             else
             {
-                GUI.Label(new Rect(left, h * .71f, width, 46), StoryText.Local("开始新旅程会清空结局收录。", "A new journey clears collected endings."), Text(18, NarrativeUI.Ink));
-                if (GUI.Button(new Rect(left, h * .79f, 210, 56), StoryText.Local("确认重新开始", "Confirm restart"), b))
+                GUI.Label(new Rect(left, h * .71f, width, 46), StoryText.Local("新旅程会清除本次进度；已收录结局保留。", "The journey will reset. Your ending collection will remain."), Text(18, NarrativeUI.Ink));
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left, h * .79f, 210, 56), StoryText.Local("确认重新开始", "Confirm restart"), b))
                 {
                     confirm = false;
                     game.StartNewJourney();
                 }
 
-                if (GUI.Button(new Rect(left + 226, h * .79f, 110, 56), StoryText.Local("取消", "Cancel"), b))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left + 226, h * .79f, 110, 56), StoryText.Local("取消", "Cancel"), b))
                     confirm = false;
             }
 
-            if (GUI.Button(new Rect(left + width - 280, h * .79f, 280, 56), StoryText.Local("回到主页面", "Return to title"), b))
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left + width - 280, h * .79f, 280, 56), StoryText.Local("回到主页面", "Return to title"), b))
             {
                 confirm = false;
                 MainMenuUI.ReturnToMainMenu();

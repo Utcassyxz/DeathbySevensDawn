@@ -1,6 +1,8 @@
-# 七日 · Death by Seventh's Dawn
+# 七日 · SEVEN DAY
 
 Unity 叙事恐怖原型。唯一的游戏工程是 **Weekend/**；根目录旧版重复 Assets 已移除，历史可从 Git 查看。
+
+最新交接与验收：[2026-10-31 · 鱼缸、泡泡与场景](docs/HANDOVER_2026-10-31.md)。
 
 ## 打开项目
 

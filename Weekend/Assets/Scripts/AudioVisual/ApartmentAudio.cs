@@ -1,3 +1,4 @@
+// CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
 // 职责：同步环境音乐和开场声源，并按状态混音。
 using UnityEngine;
 using UnityEngine.Audio;
@@ -10,6 +11,34 @@ namespace DeathBySeventhsDawn.Progression
     {
         public static ApartmentAudio Instance { get; private set; }
 
+        AudioSource uiPress, bubbleScore, goodScore, badScore, trueScore;
+        float specialBlend;
+        public int UiPressCount { get; private set; }
+
+        public enum EndingMood
+        {
+            Good,
+            Bad,
+            True
+        }
+
+        EndingMood endingMood = EndingMood.Bad;
+        public bool SpecialMusicReady => bubbleScore != null && bubbleScore.clip != null && goodScore.clip != null && badScore.clip != null && trueScore.clip != null;
+
+        public void SetEndingMood(EndingMood mood)
+        {
+            endingMood = mood;
+        }
+
+        public void PlayUiPress()
+        {
+            if (uiPress == null || uiPress.clip == null)
+                return;
+            uiPress.volume = .26f;
+            uiPress.PlayOneShot(uiPress.clip);
+            UiPressCount++;
+        }
+
         AudioSource endingVoice;
         float endingDelay = -1, endingAge = -1;
         public bool EndingScreamPlaying => endingVoice != null && endingVoice.isPlaying;
@@ -17,6 +46,8 @@ namespace DeathBySeventhsDawn.Progression
         AudioSource home, hidden, reveal, title, scream, dreamKick, dreamHammer;
         float blend, duck = 1, master, menuBlend = 1, cinematicDuck = 1;
         bool previousRevelation, opening;
+        public float DreamKickGain => dreamKick != null ? dreamKick.volume : 0;
+        public bool HammerLayerReady => dreamHammer != null && dreamHammer.clip != null && dreamHammer.volume > 0;
         public float HiddenBlend => blend;
         public float MenuBlend => menuBlend;
         public bool Ready => home != null && hidden != null && home.clip != null && hidden.clip != null;
@@ -34,6 +65,12 @@ namespace DeathBySeventhsDawn.Progression
             endingVoice = Source("OpeningScream", false);
             dreamKick = Source("DreamKick", false);
             dreamHammer = Source("WoodHammer", false);
+            dreamHammer.volume = .65f;
+            uiPress = Source("UiPress", false);
+            bubbleScore = Source("BubbleThreshold", true);
+            goodScore = Source("EndingGood", true);
+            badScore = Source("EndingBad", true);
+            trueScore = Source("EndingTrue", true);
             menuBlend = MainMenuUI.Suppressed ? 0 : 1;
         }
 
@@ -110,6 +147,7 @@ namespace DeathBySeventhsDawn.Progression
 
         void Ending(string id)
         {
+            endingMood = EndingMood.Bad;
             endingDelay = id == "world-end" ? WorldEndSequence.Duration - 1 : .15f;
             endingAge = -1;
         }
@@ -153,13 +191,9 @@ namespace DeathBySeventhsDawn.Progression
         // when the cinematic path is skipped or a test jumps straight to the result.
         public void PlayEndingScream()
         {
-            if (endingVoice == null || endingVoice.clip == null)
+            if (endingVoice == null || endingVoice.clip == null || endingAge >= 0 || endingDelay >= 0)
                 return;
-            endingDelay = -1;
-            endingAge = 0;
-            endingVoice.Stop();
-            endingVoice.volume = .52f;
-            endingVoice.Play();
+            endingDelay = .05f;
         }
 
         public void EndOpening()
@@ -194,6 +228,29 @@ namespace DeathBySeventhsDawn.Progression
                 }
             }
 
+            bool special = NightDreamSequence.Instance != null && NightDreamSequence.Instance.IsBubble || GameManager.Instance.HasEnded && !MainMenuUI.IsVisible;
+            specialBlend = Mathf.MoveTowards(specialBlend, special ? 1 : 0, Time.unscaledDeltaTime / 2.4f);
+            var wanted = GameManager.Instance.HasEnded ? (endingMood == EndingMood.Good ? goodScore : endingMood == EndingMood.True ? trueScore : badScore) : bubbleScore;
+            foreach (var score in new[]
+            {
+                bubbleScore,
+                goodScore,
+                badScore,
+                trueScore
+            }
+
+            )
+            {
+                if (score == null || score.clip == null)
+                    continue;
+                float targetVolume = special && score == wanted ? .36f : 0;
+                if (targetVolume > 0 && !score.isPlaying)
+                    score.Play();
+                score.volume = Mathf.MoveTowards(score.volume, targetVolume, Time.unscaledDeltaTime * .19f);
+                if (targetVolume == 0 && score.volume < .001f && score.isPlaying)
+                    score.Stop();
+            }
+
             var story = Object.FindAnyObjectByType<StoryJournal>();
             bool revelation = (story != null && story.IsRevelation) || RooftopAccess.Instance != null && RooftopAccess.Instance.IsRevelation;
             if (revelation && !previousRevelation)
@@ -211,8 +268,8 @@ namespace DeathBySeventhsDawn.Progression
             duck = Mathf.Lerp(duck, (StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy) ? .65f : 1, step);
             master = Mathf.MoveTowards(master, GameManager.Instance.HasEnded && !MainMenuUI.IsVisible ? 0 : .55f, dt * .3f);
             float angle = menuBlend * Mathf.PI * .5f, gameGain = Mathf.Cos(angle) * master * duck;
-            home.volume = Mathf.Cos(blend * Mathf.PI * .5f) * gameGain;
-            hidden.volume = Mathf.Sin(blend * Mathf.PI * .5f) * gameGain;
+            home.volume = Mathf.Cos(blend * Mathf.PI * .5f) * gameGain * (1 - specialBlend);
+            hidden.volume = Mathf.Sin(blend * Mathf.PI * .5f) * gameGain * (1 - specialBlend);
             float targetDuck = MainMenuUI.IsOpening ? Mathf.Lerp(1, .38f, MainMenuUI.OpeningProgress) : MainMenuUI.IsVisible ? 1 : cinematicDuck;
             cinematicDuck = Mathf.MoveTowards(cinematicDuck, targetDuck, dt * .15f);
             title.volume = Mathf.Sin(angle) * master * .83f * cinematicDuck;

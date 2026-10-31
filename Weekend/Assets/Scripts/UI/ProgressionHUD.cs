@@ -248,42 +248,42 @@ namespace DeathBySeventhsDawn.Progression
                     GUILayout.Space(12);
                     if (!confirmNewJourney)
                     {
-                        if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("回到初始状态"), buttonStyle))
+                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("回到初始状态"), buttonStyle))
                             confirmNewJourney = true;
                     }
                     else
                     {
                         GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("清空这次旅程的日记、知识、变异、轮回和剧情记录，从第 1 天的开场梦境重新开始。"), labelStyle);
                         GUILayout.BeginHorizontal();
-                        if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("确认重置"), buttonStyle))
+                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("确认重置"), buttonStyle))
                             RestoreInitialState();
-                        if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("取消"), buttonStyle))
+                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("取消"), buttonStyle))
                             confirmNewJourney = false;
                         GUILayout.EndHorizontal();
                     }
 
                     GUILayout.Space(16);
                     GUI.enabled = !confirmNewJourney;
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("推进时段（每天四个时段）"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("推进时段（每天四个时段）"), buttonStyle))
                         clock.AdvanceTime();
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("重播第一天广播"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("重播第一天广播"), buttonStyle))
                         DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.Replay();
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("线索开发者面板"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("线索开发者面板"), buttonStyle))
                         DeathBySeventhsDawn.Interaction.InvestigationDevTools.Open();
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("上床睡觉（跳到次日早晨）"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("上床睡觉（跳到次日早晨）"), buttonStyle))
                         clock.SleepUntilNextMorning();
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("恢复全部体力"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("恢复全部体力"), buttonStyle))
                         game.Heal(game.MaxVitality);
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("损失 25 体力（归零后轮回）"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("损失 25 体力（归零后轮回）"), buttonStyle))
                         game.Damage(25);
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("死亡并开始下一轮"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("死亡并开始下一轮"), buttonStyle))
                         LoopManager.Instance.RestartLoop();
                     foreach (KnowledgeTier tier in System.Enum.GetValues(typeof(KnowledgeTier)))
-                        if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("获得") + TierName(tier) + DeathBySeventhsDawn.Story.StoryText.UI("知识"), buttonStyle))
+                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("获得") + TierName(tier) + DeathBySeventhsDawn.Story.StoryText.UI("知识"), buttonStyle))
                             KnowledgeManager.Instance.Unlock("prototype-" + tier + "-" + System.Guid.NewGuid().ToString("N"), tier);
                     GUI.enabled = true;
                     GUILayout.EndScrollView();
-                    if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.UI("关闭"), buttonStyle))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("关闭"), buttonStyle))
                         Close();
                     GUILayout.EndArea();
                 }

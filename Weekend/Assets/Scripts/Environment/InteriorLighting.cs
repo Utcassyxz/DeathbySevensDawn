@@ -1,4 +1,4 @@
-// 职责：室内夜间灯具与鱼缸的局部光晕；不改变户外夜色。
+// 职责：可见室内灯具的柔和光晕；鱼缸不自发光，不改变户外夜色。
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,7 +24,6 @@ namespace DeathBySeventhsDawn.Progression
         Sprite glowSprite;
         Texture2D solid;
         Sprite solidSprite;
-        Material spriteMaterial;
         SpriteRenderer tank;
         public static bool Indoors => SceneManager.GetActiveScene().name == "LivingRoom" || SceneManager.GetActiveScene().name == "Bedroom" || SceneManager.GetActiveScene().name == "Bathroom";
         public int LightCount => lamps.Count;
@@ -56,10 +55,9 @@ namespace DeathBySeventhsDawn.Progression
             solid.SetPixel(0, 0, Color.white);
             solid.Apply(false);
             solidSprite = Sprite.Create(solid, new Rect(0, 0, 1, 1), Vector2.one * .5f, 1);
-            // Use the built-in sprite material. The previous additive custom material
-            // was not rendered consistently by the 2D renderer and produced white blobs
-            // where it did render. Alpha blending keeps the pools local and warm.
-            spriteMaterial = new Material(Shader.Find("Sprites/Default"));
+        // Keep the renderer-provided 2D material, as CorridorDetail does.
+        // A legacy Sprites/Default material can lose the per-renderer texture in URP:
+        // its tight mesh then appears as a flat orange polygon instead of a gradient.
         }
 
         void OnEnable()
@@ -96,14 +94,12 @@ namespace DeathBySeventhsDawn.Progression
             SceneManager.MoveGameObjectToScene(root, scene);
             if (scene.name == "LivingRoom")
             {
-                // Only light with a visible source: the aquarium and one owned floor lamp.
+                // Only the visible floor lamp emits light. The aquarium follows room ambient.
                 var aquarium = GameObject.Find("Aquarium and cabinet");
                 if (aquarium != null)
                 {
                     tank = aquarium.GetComponent<SpriteRenderer>();
                     var b = tank.bounds;
-                    Add(new Vector2(b.center.x, b.center.y + b.size.y * .18f), new Vector2(b.size.x * 1.12f, 1.10f), new Color(.18f, .62f, .68f), true);
-                    Add(new Vector2(b.center.x, b.min.y + b.size.y * .54f), new Vector2(b.size.x * .88f, .70f), new Color(.20f, .48f, .52f), true);
                 }
 
                 var floorLamp = new Vector2(-4.35f, -2.18f);
@@ -132,7 +128,6 @@ namespace DeathBySeventhsDawn.Progression
             p.transform.localScale = new Vector3(size.x, size.y, 1);
             var r = p.AddComponent<SpriteRenderer>();
             r.sprite = solidSprite;
-            r.sharedMaterial = spriteMaterial;
             r.color = color;
             r.sortingOrder = order;
         }
@@ -179,7 +174,6 @@ namespace DeathBySeventhsDawn.Progression
             g.transform.localScale = size;
             var r = g.AddComponent<SpriteRenderer>();
             r.sprite = glowSprite;
-            r.sharedMaterial = spriteMaterial;
             r.sortingOrder = 18;
             var initial = color;
             initial.a = 0;
@@ -202,21 +196,14 @@ namespace DeathBySeventhsDawn.Progression
                     continue;
                 var c = l.color;
                 // Very slow, tiny water variation; never flash the entire cabinet green.
-                c.a = l.aquarium ? .10f + Mathf.PerlinNoise(Time.unscaledTime * .13f, 3.7f) * .008f
-                    : l.fixture ? (clock.Period == TimePeriod.Night ? .20f : clock.Period == TimePeriod.Evening ? .07f : 0f)
-                    : strength;
+                c.a = l.aquarium ? .10f + Mathf.PerlinNoise(Time.unscaledTime * .13f, 3.7f) * .008f : l.fixture ? (clock.Period == TimePeriod.Night ? .20f : clock.Period == TimePeriod.Evening ? .07f : 0f) : strength;
                 l.renderer.color = c;
             }
-
-            if (tank != null && clock.Period == TimePeriod.Night)
-                tank.color = Color.Lerp(tank.color, new Color(.88f, 1f, .98f), Time.unscaledDeltaTime * 2);
         }
 
         void OnDestroy()
         {
             Clear();
-            if (spriteMaterial != null)
-                Destroy(spriteMaterial);
             if (glowSprite != null)
                 Destroy(glowSprite);
             if (glow != null)
