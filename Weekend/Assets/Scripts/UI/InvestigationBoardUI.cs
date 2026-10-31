@@ -14,7 +14,7 @@ namespace DeathBySeventhsDawn.Interaction
         public Action CloseRequested;
         string first, second, message = DeathBySeventhsDawn.Story.StoryText.Local("从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。", "Select two records. A conclusion is only written when you confirm.");
         int focus, filter;
-        bool previousEnglish;
+        bool previousEnglish, showLinks;
         Vector2 boardScroll, detailScroll;
         GUIStyle title, body, small, cardTitle, rowTitle, rowMeta, tag, button, filterButton, linkRow, headerTitle, headerSmall;
         static readonly Color Ink = new Color(.16f, .22f, .21f), Muted = new Color(.42f, .43f, .36f), Green = new Color(.22f, .42f, .36f), Paper = new Color(.92f, .88f, .75f), Deep = new Color(.045f, .075f, .075f);
@@ -31,6 +31,7 @@ namespace DeathBySeventhsDawn.Interaction
             first = second = null;
             focus = 0;
             filter = 0;
+            showLinks = false;
             boardScroll = detailScroll = Vector2.zero;
             message = DeathBySeventhsDawn.Story.StoryText.Local("从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。", "Select two records. A conclusion is only written when you confirm.");
         }
@@ -413,7 +414,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("从左侧选择一条线索。", "Select a record on the left."), cardTitle);
                 GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("选中后，绿色记录可以与它推理。读过两份记录，再按 Enter 写下结论。", "Green records can be combined with your selection. Read both, then press Enter to record the conclusion."), body);
                 GUILayout.Space(8);
-                DrawLinks();
+                DrawLinksToggle();
             }
             else
             {
@@ -457,11 +458,34 @@ namespace DeathBySeventhsDawn.Interaction
                 else
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("再选一条线索，建立你怀疑的联系。", "Choose a second record to test a connection."), body);
                 GUILayout.Space(18);
-                DrawLinks();
+                DrawLinksToggle();
             }
 
             GUILayout.EndScrollView();
             GUILayout.EndArea();
+        }
+
+        void DrawLinksToggle()
+        {
+            // Saved connections are folded away by default; the main reasoning area
+            // stays about the two records currently being tested.
+            int valid = 0;
+            foreach (var link in Investigation.Links)
+                if (link != null && Investigation.IsNode(link.left) && Investigation.IsNode(link.right))
+                    valid++;
+            if (valid == 0)
+            {
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("还没有连线。选两条线索，建立第一条。", "No connections yet. Select two records to begin."), small);
+                return;
+            }
+
+            string toggle = showLinks
+                ? DeathBySeventhsDawn.Story.StoryText.Local("收起已连线", "Hide saved connections")
+                : DeathBySeventhsDawn.Story.StoryText.Local("查看已连线 · " + valid, "Saved connections \u00b7 " + valid);
+            if (GUILayout.Button(toggle, linkRow, GUILayout.MinHeight(42)))
+                showLinks = !showLinks;
+            if (showLinks)
+                DrawLinks();
         }
 
         void DrawLinks()

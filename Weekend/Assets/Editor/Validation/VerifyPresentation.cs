@@ -154,7 +154,7 @@ public static class VerifyPresentation
 
         Check(UnityEngine.Object.FindAnyObjectByType<WorldPromptUI>() != null, "Single prompt presenter installed");
         Check(UnityEngine.Object.FindAnyObjectByType<TimeAtmosphere>() != null, "World atmosphere installed");
-        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount >= 2, "Localized aquarium spill installed without unowned lamp pools");
+        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount >= 2, "Owned night lamp fixtures installed with local light pools");
         Check(Resources.Load<Shader>("SoftRoomGlow") != null, "Local glow shader loads");
         for (int chapter = 0; chapter < 4; chapter++)
         {

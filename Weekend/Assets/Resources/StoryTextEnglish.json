@@ -17,6 +17,28 @@
     "journalBody": "The anthill dream again.\nThe knocking was still there when Hugo woke up. Next door.",
     "fallbackPage": "The sound beneath Hugo’s shoe has not stopped."
   },
+  "nightDream": {
+    "speaker": "Dream",
+    "yogSpeaker": "Bubble",
+    "day1": [
+      "The road again.\nHis parents’ voices are behind a layer of water; he cannot make out the argument.",
+      "Hugo looks down at his shoe.\nBeneath the sole is not an anthill, but a slow-turning field of stars."
+    ],
+    "day2": [
+      "In the dream the rooftop telescope is still set up.\nThere are no stars in the barrel—only an outline coming closer.",
+      "It has no face.\nHugo knows it is looking at him."
+    ],
+    "day3": [
+      "The fish from the tank swims up beside the bed.\nThe human face on its side looks more like Hugo than it did by daylight.",
+      "“You’re so tired,” it says.\nHugo wakes with the taste of pondweed in his mouth."
+    ],
+    "yog": [
+      "Hello, human.\nYou may call me Bubble.",
+      "The body you saw was only the shadow I cast as I passed.\nDo not hurry to understand it. Understanding will crush you.",
+      "On the day everything ends, you and I will meet again.\nUntil then, you may begin over.",
+      "Bubble speaks softly, the way one soothes a child who refuses to sleep.\nWhen Hugo wakes, it is still dark outside."
+    ]
+  },
   "knowledge": {
     "ancientTitle": "A shape behind the sky",
     "ancientBody": "Hugo adjusts the telescope on the fifth-floor roof. Stars bend along a curve.\nThe curve moves too.\nHugo lets go of the focus ring. His other hand takes longer.",
@@ -278,14 +300,29 @@
     ]
   },
   "aquarium": {
-    "promptDay3": "E  Speak to the thing in the tank",
+    "promptDay3": "E  Look at the fish",
+    "promptDay4": "E  Listen to the fish",
     "promptDay6": "E  Speak to 001",
-    "speakerDay3": "Inside the tank",
+    "promptDay7": "E  Look at it",
+    "speakerDay3": "The fish in the tank",
+    "speakerDay4": "The fish",
     "speakerDay6": "001",
+    "speakerDay7": "Something wearing Hugo’s face",
     "day3Pages": [
-      "Hugo stops at the tank. An extra eye inside.\nThe water-change label has no record of this tenant.",
-      "“Hand off.”\nHugo looks at his hand on the lid.\n“You first. Out of my fish tank.”",
-      "No answer from the water.\nHugo puts the fish food away. The landlord will not cover feeding the wrong thing."
+      "It is still the same fish.\nBut under the scales along its side, a human face has surfaced.",
+      "Eyes, nose, lips—as if someone pushed a face out from inside.\nIt watches Hugo through the glass and does not open its mouth.",
+      "Hugo looks away.\nThe water-change label has no record of this tenant."
+    ],
+    "day4Pages": [
+      "Hugo crouches to change the water. The fish swims to the glass and its lips move.",
+      "“You finally listened.”\nIt does not sound like a fish. It sounds like Hugo’s own voice inside his head.",
+      "“Every day since you lost the job, you stood here and talked.\nInterviews. Rent. Not wanting to wake up.”",
+      "Hugo says nothing.\nThe filter takes over the conversation for him."
+    ],
+    "day7Pages": [
+      "It has grown Hugo’s face.\nThe shoulders, the fingers, the way it stands—all matched.",
+      "“You’re tired,” it says.\n“Let me live for you. Close the window. I’ll handle the remaining seven days.”",
+      "Hugo looks at his own face and cannot tell who is speaking.\nThere are no fish left in the tank."
     ],
     "day5Pages": [
       "Two fingers hold the cabinet open.\nHugo pushes. Something pushes back.",
@@ -307,7 +344,7 @@
     "throwFoil": "F  Drop the foil triangle into the tank",
     "sealedTitle": "The tank",
     "sealedBody": "Hugo drops the foil triangle into the water. The eye retreats behind the weeds. The extra fingers disappear with it.\nThe filter keeps humming.\n\nHugo does not reach in to check. Today he has learned when to stop.",
-    "offerBefore": "The fish swim between the weeds, occupied with being fish.\nHugo feels the foil triangle in his pocket. The neighbor said it could go in water. He neglected to say why.\n\nHugo can try it now, or keep it.",
+    "offerBefore": "The fish swim between the weeds, occupied with being fish.\nHugo feels the foil triangle in his pocket. The neighbor left one sentence: when the ancient god passed, everyone began turning into what they wanted most; the foil can hold back part of the radiation.\n\nHugo can try it now, or keep it.",
     "waterPrompt": "E  Examine the aquarium",
     "sealedBefore": "Hugo drops the foil triangle into the tank. It sinks behind the weeds.\nThe fish swim away. The filter keeps humming.\n\nNo applause. Fish rarely handle that part."
   },

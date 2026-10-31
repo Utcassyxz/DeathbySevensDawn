@@ -14,7 +14,7 @@ namespace DeathBySeventhsDawn.Progression
         float endingDelay = -1, endingAge = -1;
         public bool EndingScreamPlaying => endingVoice != null && endingVoice.isPlaying;
 
-        AudioSource home, hidden, reveal, title, scream;
+        AudioSource home, hidden, reveal, title, scream, dreamKick, dreamHammer;
         float blend, duck = 1, master, menuBlend = 1, cinematicDuck = 1;
         bool previousRevelation, opening;
         public float HiddenBlend => blend;
@@ -32,7 +32,24 @@ namespace DeathBySeventhsDawn.Progression
             title = Source("TitleOrbit", true);
             scream = Source("OpeningScream", false);
             endingVoice = Source("OpeningScream", false);
+            dreamKick = Source("DreamKick", false);
+            dreamHammer = Source("WoodHammer", false);
             menuBlend = MainMenuUI.Suppressed ? 0 : 1;
+        }
+
+        // The dream kick grows from a wet step to a full crack; the neighbour's wood
+        // hammer arrives underneath it, so the two sounds end up sharing the same beat.
+        public void PlayDreamKick(int index, int total)
+        {
+            if (dreamKick != null && dreamKick.clip != null)
+            {
+                dreamKick.pitch = .92f + .08f * Mathf.Clamp01(index / (float)Mathf.Max(1, total));
+                dreamKick.volume = Mathf.Lerp(.22f, .92f, Mathf.Clamp01((index - 1) / 2f));
+                dreamKick.Play();
+            }
+
+            if (index >= 2 && dreamHammer != null && dreamHammer.clip != null)
+                dreamHammer.PlayOneShot(dreamHammer.clip, Mathf.Lerp(.10f, .55f, Mathf.Clamp01((index - 2) / 1f)));
         }
 
         AudioSource Source(string clip, bool loop)

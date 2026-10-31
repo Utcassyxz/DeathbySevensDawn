@@ -101,6 +101,7 @@ namespace DeathBySeventhsDawn.Story
         public MorningText morning;
         public CultText cult;
         public DreamText dream;
+        public NightDreamText nightDream;
         public KnowledgeText knowledge;
         public TelescopeText telescope;
         public FirstLoopText firstLoop;
@@ -237,17 +238,34 @@ namespace DeathBySeventhsDawn.Story
     }
 
     [Serializable]
+    public sealed class NightDreamText
+    {
+        public string speaker;
+        public string yogSpeaker;
+        public string[] day1;
+        public string[] day2;
+        public string[] day3;
+        public string[] yog;
+    }
+
+    [Serializable]
     public sealed class AquariumText
     {
         public string question, answerGap, answerDefault;
         public string offer, offerPrompt, throwFoil, sealedTitle, sealedBody, offerBefore, sealedBefore, waterPrompt;
         public string promptDay3;
+        public string promptDay4;
         public string promptDay6;
+        public string promptDay7;
         public string speakerDay3;
+        public string speakerDay4;
         public string speakerDay6;
+        public string speakerDay7;
         public string[] day3Pages;
+        public string[] day4Pages;
         public string[] day5Pages;
         public string[] day6Pages;
+        public string[] day7Pages;
     }
 
     [Serializable]

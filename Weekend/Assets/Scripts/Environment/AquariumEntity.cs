@@ -131,25 +131,60 @@ namespace DeathBySeventhsDawn.Interaction
             formRoot = new GameObject("Aquarium entity form");
             formRoot.transform.SetParent(tank.transform, false);
             formRoot.transform.localPosition = Vector3.zero;
-            if (day >= 6)
+            if (day >= 7)
+                BuildImpostor();
+            else if (day >= 6)
                 BuildNpc();
             else if (day >= 5)
                 BuildHalfBody();
+            else if (day >= 4)
+                BuildTalkingFish();
             else
                 BuildDayThree();
         }
 
-        void BuildDayThree()
+        void BuildDayThree() => BuildFishFace(false);
+        void BuildTalkingFish() => BuildFishFace(true);
+
+        void BuildFishFace(bool speaking)
         {
             if (tankRenderer != null)
-                tankRenderer.color = Color.Lerp(tankOriginal, C(.38f, .58, .47f), .55f);
-            Part("body in glass", new Vector3(0, -.2f, 0), new Vector2(.62f, 1.1f), C(.12f, .22, .19f), 1);
-            Circle("left eye white", new Vector3(-.13f, .12f, 0), new Vector2(.28f, .28f), C(.82f, .82, .66f), 2);
-            Circle("left eye", new Vector3(-.13f, .12f, 0), new Vector2(.12f, .12f), C(.05f, .08, .06f), 3);
-            Circle("right eye white", new Vector3(.15f, .1f, 0), new Vector2(.22f, .22f), C(.78f, .78, .62f), 2);
-            Circle("right eye", new Vector3(.15f, .1f, 0), new Vector2(.09f, .09f), C(.05f, .08, .06f), 3);
-            Part("tendril a", new Vector3(-.45f, -.75f, 0), new Vector2(.07f, .9f), C(.24f, .38, .30f), 1);
-            Part("tendril b", new Vector3(.42f, -.7f, 0), new Vector2(.06f, .75f), C(.20f, .33, .26f), 1);
+                tankRenderer.color = Color.Lerp(tankOriginal, C(.34f, .50, .43f), .48f);
+            // The fish silhouette stays readable; the human face is the wrong part.
+            Circle("fish body", new Vector3(0, -.20f, 0), new Vector2(.92f, .55f), C(.16f, .27, .24f), 1);
+            PartRot("tail upper", new Vector3(-.48f, -.10f, 0), new Vector2(.34f, .18f), C(.14f, .24, .21f), 1, 32);
+            PartRot("tail lower", new Vector3(-.48f, -.35f, 0), new Vector2(.34f, .18f), C(.14f, .24, .21f), 1, -32);
+            Part("dorsal fin", new Vector3(.02f, .10f, 0), new Vector2(.46f, .10f), C(.13f, .23, .20f), 1);
+            Circle("human face", new Vector3(.13f, -.02f, 0), new Vector2(.30f, .36f), C(.72f, .62, .50f), 2);
+            Circle("left eye white", new Vector3(.04f, .04f, 0), new Vector2(.09f, .07f), C(.84f, .82, .70f), 3);
+            Circle("right eye white", new Vector3(.21f, .04f, 0), new Vector2(.09f, .07f), C(.84f, .82, .70f), 3);
+            Circle("left pupil", new Vector3(.05f, .04f, 0), new Vector2(.035f, .035f), C(.04f, .05, .04f), 4);
+            Circle("right pupil", new Vector3(.20f, .04f, 0), new Vector2(.035f, .035f), C(.04f, .05, .04f), 4);
+            Part("nose bridge", new Vector3(.13f, -.06f, 0), new Vector2(.035f, .12f), C(.54f, .44, .35f), 4);
+            Part("mouth", new Vector3(.13f, -.15f, 0), new Vector2(speaking ? .14f : .10f, speaking ? .035f : .014f), C(.22f, .10, .09f), 4);
+            PartRot("gill", new Vector3(-.14f, -.18f, 0), new Vector2(.03f, .20f), C(.35f, .45, .38f), 3, 12);
+            if (speaking)
+            {
+                Circle("bubble a", new Vector3(.30f, .34f, 0), new Vector2(.06f, .06f), C(.60f, .76, .72f, .55f), 3);
+                Circle("bubble b", new Vector3(.40f, .48f, 0), new Vector2(.04f, .04f), C(.60f, .76, .72f, .40f), 3);
+            }
+        }
+
+        void BuildImpostor()
+        {
+            if (tankRenderer != null)
+                tankRenderer.color = Color.Lerp(tankOriginal, C(.25f, .31, .29f), .55f);
+            Vector3 root = new Vector3(1.30f, -1.05f, 0);
+            Part("hugo left leg", root + new Vector3(-.15f, .45f, 0), new Vector2(.20f, .92f), C(.13f, .14, .15f), 8);
+            Part("hugo right leg", root + new Vector3(.16f, .45f, 0), new Vector2(.20f, .92f), C(.13f, .14, .15f), 8);
+            Part("hugo coat", root + new Vector3(0, 1.28f, 0), new Vector2(.62f, 1.0f), C(.23f, .20, .16f), 9);
+            Part("hugo left arm", root + new Vector3(-.40f, 1.23f, 0), new Vector2(.15f, .88f), C(.23f, .20, .16f), 9);
+            Part("hugo right arm", root + new Vector3(.41f, 1.21f, 0), new Vector2(.15f, .90f), C(.23f, .20, .16f), 9);
+            Circle("hugo face", root + new Vector3(0, 2.02f, 0), new Vector2(.43f, .50f), C(.66f, .54, .43f), 10);
+            Circle("hugo hair", root + new Vector3(0, 2.20f, 0), new Vector2(.46f, .22f), C(.13f, .11, .09f), 11);
+            Circle("hugo eye left", root + new Vector3(-.09f, 2.04f, 0), new Vector2(.07f, .05f), C(.06f, .06, .05f), 12);
+            Circle("hugo eye right", root + new Vector3(.09f, 2.04f, 0), new Vector2(.07f, .05f), C(.06f, .06, .05f), 12);
+            Part("hugo mouth", root + new Vector3(0, 1.88f, 0), new Vector2(.12f, .015f), C(.28f, .14, .12f), 12);
         }
 
         void BuildHalfBody()
@@ -310,10 +345,10 @@ namespace DeathBySeventhsDawn.Interaction
             if (GameManager.Instance.HasEnded || GameManager.Instance.AquariumSealed || TutorialGate.IsBlocked("aquarium"))
                 return;
             var aq = StoryText.Current.aquarium;
-            pages = visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : aq?.day3Pages;
+            pages = visualDay >= 7 ? aq?.day7Pages : visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : visualDay >= 4 ? aq?.day4Pages : aq?.day3Pages;
             if (pages == null || pages.Length == 0)
                 return;
-            speaker = visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : (aq?.speakerDay3 ?? "鱼缸里的东西");
+            speaker = visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
             page = 0;
             openedFrame = Time.frameCount;
             talking = true;
@@ -391,7 +426,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!talking)
                 {
                     var aq = StoryText.Current.aquarium;
-                    string prompt = HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : (aq?.promptDay3 ?? "E  和鱼缸里的东西说话");
+                    string prompt = HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 7 ? (aq?.promptDay7 ?? "E  看着它") : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : visualDay >= 4 ? (aq?.promptDay4 ?? "E  听鱼说话") : (aq?.promptDay3 ?? "E  看看鱼缸里的鱼");
                     WorldPromptUI.Offer("aquarium", prompt, 85);
                     return;
                 }
@@ -501,10 +536,16 @@ namespace DeathBySeventhsDawn.Interaction
 
         void Part(string name, Vector3 localPosition, Vector2 size, Color color, int order)
         {
+            PartRot(name, localPosition, size, color, order, 0);
+        }
+
+        void PartRot(string name, Vector3 localPosition, Vector2 size, Color color, int order, float angle)
+        {
             var part = new GameObject(name);
             part.transform.SetParent(formRoot.transform, false);
             part.transform.localPosition = localPosition;
             part.transform.localScale = new Vector3(size.x, size.y, 1);
+            part.transform.localRotation = Quaternion.Euler(0, 0, angle);
             var renderer = part.AddComponent<SpriteRenderer>();
             renderer.sprite = square;
             renderer.color = color;

@@ -86,7 +86,8 @@ namespace DeathBySeventhsDawn.Interaction
                 if (interact && target == bed)
                 {
                     CloseMenu();
-                    TimeManager.Instance.SleepUntilNextMorning();
+                    if (!NightDreamSequence.BeginSleep())
+                        TimeManager.Instance.SleepUntilNextMorning();
                     return;
                 }
 
@@ -232,7 +233,8 @@ namespace DeathBySeventhsDawn.Interaction
                     if (GUILayout.Button(DeathBySeventhsDawn.Story.StoryText.Local("睡到明早 · E", "Sleep until tomorrow · E"), button))
                     {
                         CloseMenu();
-                        TimeManager.Instance.SleepUntilNextMorning();
+                        if (!NightDreamSequence.BeginSleep())
+                            TimeManager.Instance.SleepUntilNextMorning();
                     }
                 }
                 else if (target == sofa)
