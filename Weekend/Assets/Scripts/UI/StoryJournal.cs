@@ -30,7 +30,8 @@ namespace DeathBySeventhsDawn.Interaction
 
         Page page;
         StoryContent content;
-        int dreamPage, selectedEntry;
+        int dreamPage, selectedEntry, dreamKicks;
+        float dreamKickTime = -10;
         readonly DialoguePages dreamCaption = new DialoguePages();
         readonly DialoguePages telescopeCaption = new DialoguePages();
         Vector2 scroll;
@@ -122,6 +123,8 @@ namespace DeathBySeventhsDawn.Interaction
         void ResetJourney()
         {
             dreamPage = 0;
+            dreamKicks = 0;
+            dreamKickTime = -10;
             dreamCaption.Reset();
             selectedEntry = 0;
             revelation = false;
@@ -218,11 +221,23 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
                 {
+                    // The ant-mound page has three deliberate kicks. Each Enter lands one
+                    // before the page text is allowed to advance.
+                    if (dreamPage == 2 && dreamKicks < 3)
+                    {
+                        dreamKicks++;
+                        dreamKickTime = Time.unscaledTime;
+                        return;
+                    }
                     if (dreamCaption.Next())
                         return;
                     dreamCaption.Reset();
                     if (dreamPage < StoryText.Current.dream.pages.Length - 1)
+                    {
                         dreamPage++;
+                        dreamKicks = 0;
+                        dreamKickTime = -10;
+                    }
                     else
                         WakeUp();
                 }
@@ -298,7 +313,7 @@ namespace DeathBySeventhsDawn.Interaction
 
             if (player == null)
                 player = GameObject.FindWithTag("Player");
-            nearby = !TutorialGate.IsBlocked("telescope") && game.State.journalUnlocked && telescope != null && player != null && Vector2.Distance(player.transform.position, telescope.transform.position) <= content.telescopeRange;
+            nearby = !TutorialGate.IsBlocked("telescope") && game.State.journalUnlocked && telescope != null && player != null && PropReach.Gap(telescope, player) <= content.telescopeRange;
             if (nearby && interact && WorldPromptUI.CanActivate("telescope"))
                 OpenTelescope();
         }
@@ -324,6 +339,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void WakeUp()
         {
+            StoryTransition.Cover(1.0f);
             var state = GameManager.Instance.State;
             state.dreamSeen = true;
             ProgressionSave.Write(state);
@@ -364,6 +380,14 @@ namespace DeathBySeventhsDawn.Interaction
             }
             else if (watch == Watch.Sleep || watch == Watch.Complete)
                 CloseTelescope();
+        }
+
+        public bool OpenTelescopeFromWorld()
+        {
+            if (page != Page.None || nearby == false || telescope == null || TutorialGate.IsBlocked("telescope"))
+                return false;
+            OpenTelescope();
+            return true;
         }
 
         void OpenTelescope()
@@ -426,7 +450,7 @@ namespace DeathBySeventhsDawn.Interaction
                 ProgressionSave.Write(GameManager.Instance.State);
             }
             else
-                telescopeMessage = text.wrongDay;
+                telescopeMessage = clock.Days == 1 ? text.wrongDay : text.wrongDaySecond;
             SetPage(Page.Telescope);
         }
 
@@ -489,10 +513,8 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             DeathBySeventhsDawn.Progression.GameTypography.Use(text, title, button);
-            if (RooftopAccess.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked)
-                return;
             var game = GameManager.Instance;
-            if (game == null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked)
+            if (game == null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked)
                 return;
             Styles();
             DeathBySeventhsDawn.Progression.PrototypeButtons.Apply(button);
@@ -503,11 +525,16 @@ namespace DeathBySeventhsDawn.Interaction
             float width = Screen.width / scale, height = Screen.height / scale;
             try
             {
+                // Dream is its own full-screen page and must be drawn before the
+                // tutorial/wake input blockers; otherwise the first dream frame is
+                // skipped and the just-loaded bedroom is visible for one frame.
                 if (page == Page.Dream)
                 {
                     DrawDream(width, height);
                     return;
                 }
+                if (RooftopAccess.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked)
+                    return;
 
                 if (page == Page.Diary)
                 {
@@ -617,8 +644,14 @@ namespace DeathBySeventhsDawn.Interaction
                 float elapsed = Time.unscaledTime - dreamEntered;
                 float drift = (Mathf.PerlinNoise(dreamPage + 2, elapsed * .12f) - .5f) * 9;
                 float opacity = DreamMotion.Opacity(elapsed, dreamPage);
+                Vector2 shake = dreamPage == 2 && dreamKicks > 0 ? DreamMotion.KickPulse(Time.unscaledTime - dreamKickTime) : Vector2.zero;
                 GUI.color = new Color(1, 1, 1, opacity);
-                GUI.DrawTextureWithTexCoords(new Rect(w * .16f + drift, h * .07f, w * .68f, h * .52f), image, new Rect(.08f, .22f, .84f, .60f));
+                GUI.DrawTextureWithTexCoords(new Rect(w * .16f + drift + shake.x, h * .07f + shake.y, w * .68f, h * .52f), image, new Rect(.08f, .22f, .84f, .60f));
+                if (shake.sqrMagnitude > 0)
+                {
+                    GUI.color = new Color(.32f, .2f, .12f, .10f);
+                    GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
+                }
                 GUI.color = Color.white;
             }
 

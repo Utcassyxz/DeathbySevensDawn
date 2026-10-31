@@ -145,6 +145,7 @@ namespace DeathBySeventhsDawn.Story
         public string revelationTitle;
         public string nightOnly;
         public string wrongDay;
+        public string wrongDaySecond;
         public string firstNight, recheck, sleepThought;
         public string gainedSuffix;
         public string repeatSuffix;

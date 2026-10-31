@@ -132,6 +132,19 @@ namespace DeathBySeventhsDawn.Progression
             }
         }
 
+        // The settlement page calls this explicitly so both endings have a scream even
+        // when the cinematic path is skipped or a test jumps straight to the result.
+        public void PlayEndingScream()
+        {
+            if (endingVoice == null || endingVoice.clip == null)
+                return;
+            endingDelay = -1;
+            endingAge = 0;
+            endingVoice.Stop();
+            endingVoice.volume = .52f;
+            endingVoice.Play();
+        }
+
         public void EndOpening()
         {
             opening = false;

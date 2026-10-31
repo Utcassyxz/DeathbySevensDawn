@@ -69,6 +69,9 @@ namespace DeathBySeventhsDawn.Core
         public event Action JourneyReset;
         public void StartNewJourney()
         {
+            StoryTransition.Cover(1.2f);
+            EndingCollection.Clear();
+            EndingCollectionUI.ResetResult();
             State = new ProgressionState();
             Vitality = MaxVitality;
             ProgressionSave.Write(State);

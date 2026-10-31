@@ -151,12 +151,15 @@ namespace DeathBySeventhsDawn.Interaction
             return false;
         }
 
+        bool CanCarryTelescope => State.tutorialComplete && !State.telescopeCarried && !State.telescopeOnRoof
+            && TimeManager.Instance.Days >= 2 && StoryJournal.IsNight(TimeManager.Instance.Period);
+
         public bool TakeTelescope()
         {
-            if (!State.tutorialComplete || State.telescopeCarried || State.telescopeOnRoof || SceneManager.GetActiveScene().name != "Balcony" || GameManager.Instance.HasEnded || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
+            if (!CanCarryTelescope || SceneManager.GetActiveScene().name != "Balcony" || GameManager.Instance.HasEnded || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
                 return false;
             var scope = GameObject.Find("阳台望远镜");
-            if (scope == null || !Near(scope.transform.position, 1.2f))
+            if (scope == null || PropReach.Gap(scope, player) > 1.2f)
                 return false;
             State.telescopeCarried = true;
             ProgressionSave.Write(State);
@@ -271,7 +274,9 @@ namespace DeathBySeventhsDawn.Interaction
             }
             else if (scene == "Rooftop" && Near(TelescopeSpot))
             {
-                prompt = State.telescopeOnRoof ? text.observe : State.telescopeCarried ? text.place : text.missing;
+                prompt = State.telescopeOnRoof ? text.observe
+                    : State.telescopeCarried ? text.place
+                    : TimeManager.Instance.Days < 2 ? text.wait : text.missing;
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                 {
                     if (State.telescopeOnRoof)
@@ -280,14 +285,20 @@ namespace DeathBySeventhsDawn.Interaction
                         PlaceTelescope();
                 }
             }
-            else if (scene == "Balcony" && State.tutorialComplete && !State.telescopeCarried && !State.telescopeOnRoof)
+            else if (scene == "Balcony" && CanCarryTelescope)
             {
                 var scope = GameObject.Find("阳台望远镜");
-                if (scope != null && Near(scope.transform.position, 1.2f))
+                if (scope != null && PropReach.Gap(scope, player) <= 1.2f)
                 {
-                    prompt = text.carry;
+                    prompt = text.carry + StoryText.Local("   ·   E 查看", "   ·   E Inspect");
                     if (k != null && k.fKey.wasPressedThisFrame)
                         TakeTelescope();
+                    else if (k != null && k.eKey.wasPressedThisFrame)
+                    {
+                        var journal = Object.FindAnyObjectByType<StoryJournal>();
+                        if (journal != null)
+                            journal.OpenTelescopeFromWorld();
+                    }
                 }
             }
         }

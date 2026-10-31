@@ -4,7 +4,7 @@
     "pages": [
       "His parents are still arguing across the road.\nHugo holds half an ice pop. Meltwater runs down his wrist.",
       "There is an anthill by his shoe.\nAn ant is dragging a husk into the entrance. It catches. More ants crowd behind it.",
-      "Hugo steps down.\nHis sole sinks a little into the dirt.\nHe leaves it there.",
+      "Hugo lifts his foot and kicks once.\nThe anthill collapses at one edge.\nHe does not stop. A second kick. A third.",
       "Something knocks beneath his shoe.\nThen again.\n…He cannot lift his foot."
     ],
     "images": [
@@ -29,7 +29,8 @@
     "title": "Telescope",
     "revelationTitle": "Second night · Behind the sky",
     "nightOnly": "Nothing but glare. I’ll try after dark.",
-    "wrongDay": "Can’t get a clear view from here. I’d have to take the telescope up to the roof. Tonight…or leave it alone?",
+    "wrongDay": "I’ll remember this position tonight. Tomorrow evening I’ll carry the telescope to the roof and get a clearer look.",
+    "wrongDaySecond": "I’ll carry the telescope to the roof tonight for a clearer look.",
     "gainedSuffix": "\n\nHis hand is shaking. Can he still draw the edge?",
     "repeatSuffix": "\n\nThat edge again. He could try drawing it.",
     "imageMissing": "Image unavailable.",
@@ -403,11 +404,12 @@
     "floorFive": "5F · Rooftop",
     "up": "E  Take the stairs to the fifth-floor roof",
     "down": "E  Return to the fourth floor",
-    "carry": "F  Pack the telescope for the roof",
+    "carry": "F  Pack the telescope for tonight",
     "carried": "He folds the tripod and tucks it under his arm. The stairs are at the west end of the corridor.",
     "place": "E  Set up the telescope",
     "placed": "This spot will do. The legs are steady.",
     "missing": "Hugo needs his telescope from the balcony. F packs it away.",
+    "wait": "Watch the stars tonight. Tomorrow evening, carry the telescope to the roof.",
     "observe": "E  Look through the rooftop telescope",
     "daylight": "Too bright. No stars yet.",
     "firstNight": "Why are there no stars in that patch?\n…Not a cloud. Something is blocking the light behind it.\nIt looks bigger than before. I’ll check tomorrow night. See if it’s coming closer.",

@@ -105,6 +105,7 @@ namespace DeathBySeventhsDawn.Progression
 
         void FinishOpening()
         {
+            StoryTransition.Cover(1.2f);
             visible = false;
             blockedUntilFrame = Time.frameCount;
             ApartmentAudio.Instance?.EndOpening();

@@ -6,7 +6,7 @@ namespace DeathBySeventhsDawn.Progression
     public static class NarrativeUI
     {
         public static readonly Color Ink = new Color(.92f, .88f, .77f), Accent = new Color(.64f, .46f, .43f);
-        public static Rect DialogueRect(float w, float h) => new Rect(Mathf.Max(24, w * .08f), h - 224, w - Mathf.Max(48, w * .16f), 194);
+        public static Rect DialogueRect(float w, float h) => new Rect(Mathf.Max(24, w * .08f), h - 190, w - Mathf.Max(48, w * .16f), 180);
         static void Fill(Rect r, Color c)
         {
             var old = GUI.color;

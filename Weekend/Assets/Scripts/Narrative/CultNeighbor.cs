@@ -31,6 +31,7 @@ namespace DeathBySeventhsDawn.Interaction
         public int SubtitlePages => subtitles.Count;
 
         View view;
+        bool dayOneStarted;
         int line, frame, blockedFrame = -1;
         float age, cueTime, nextHit;
         string prompt;
@@ -90,38 +91,56 @@ namespace DeathBySeventhsDawn.Interaction
         {
             Close();
             cueTime = nextHit = 0;
+            dayOneStarted = false;
         }
 
         void Close()
         {
+            if (view == View.DayOne && dayOneStarted)
+            {
+                // Closing early still counts as having met him; otherwise the next-day
+                // foil route would be permanently locked behind began-but-not-finished dialogue.
+                if (!State.cultDayOneTalked)
+                {
+                    State.cultDayOneTalked = true;
+                    ProgressionSave.Write(State);
+                }
+                if (MorningRoutine.Instance != null && MorningRoutine.Instance.Stage == 2)
+                    MorningRoutine.Instance.NeighborTalked();
+            }
+            dayOneStarted = false;
             subtitles.Reset();
             view = View.None;
             prompt = null;
             blockedFrame = Time.frameCount;
         }
 
-        public void Hammer()
+        public void Hammer(float strength = 1f)
         {
             if (Time.unscaledTime > nextHit)
             {
-                Hit(hammer);
+                Hit(hammer, strength);
                 nextHit = Time.unscaledTime + .8f;
             }
         }
 
-        void Hit(AudioClip clip)
+        void Hit(AudioClip clip, float volumeScale = 1f)
         {
             if (clip == null)
                 return;
             ImpactCount++;
             impacts.pitch = 1 + Mathf.Sin(Time.unscaledTime * 7) * .035f;
-            impacts.PlayOneShot(clip);
+            impacts.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
         }
 
         public bool TalkDayOne()
         {
-            if (view != View.None || TimeManager.Instance.Days != 1 || GameManager.Instance.LoopCount != 0 || State.cultDayOneTalked)
+            if (view != View.None || TimeManager.Instance.Days != 1 || GameManager.Instance.LoopCount != 0 || State.cultDayOneTalked || State.cultDayOneStarted)
                 return false;
+            // Mark the encounter as soon as it opens; closing early must not allow a second first-meeting.
+            State.cultDayOneStarted = true;
+            ProgressionSave.Write(State);
+            dayOneStarted = true;
             Open(View.DayOne);
             return true;
         }
@@ -220,6 +239,11 @@ namespace DeathBySeventhsDawn.Interaction
                     Close();
                     return;
                 }
+                if (view == View.Bag && k != null && k.iKey.wasPressedThisFrame)
+                {
+                    Close();
+                    return;
+                }
 
                 if (view == View.Door && line >= StoryText.Current.cult.door.Length)
                 {
@@ -247,7 +271,7 @@ namespace DeathBySeventhsDawn.Interaction
                 cueTime += Time.unscaledDeltaTime;
                 if (cueTime > 4 && Time.unscaledTime > nextHit)
                 {
-                    Hit(hammer);
+                    Hit(hammer, Mathf.Clamp01(.16f + cueTime / 12f));
                     nextHit = Time.unscaledTime + (cueTime % 5 < 2 ? .72f : 2.1f);
                 }
 
@@ -261,7 +285,7 @@ namespace DeathBySeventhsDawn.Interaction
             var player = GameObject.FindWithTag("Player");
             if (player == null || Vector2.Distance(player.transform.position, new Vector2(-4.7f, 1.0f)) > .60f)
                 return;
-            if (day == 1 && !State.cultDayOneTalked)
+            if (day == 1 && !State.cultDayOneTalked && !State.cultDayOneStarted)
             {
                 prompt = StoryText.Local("E  和 401 的住户说话", "E  Speak to the tenant of 401");
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
@@ -404,16 +428,35 @@ namespace DeathBySeventhsDawn.Interaction
                 Rect panel = new Rect((w - pw) / 2, 50, pw, h - 100);
                 if (view == View.Bag)
                 {
-                    GUI.Label(new Rect(panel.x, panel.y, pw, 50), StoryText.Local("背包", "Inventory"), heading);
+                    GUI.Label(new Rect(panel.x, panel.y, pw, 50), StoryText.Local("背包", "Inventory") + "   " + State.inventory.Count + " / 12", heading);
+                    const int columns = 4, rows = 3;
+                    const float slot = 86f, gap = 12f;
+                    float gridX = panel.x + 24, gridY = panel.y + 92;
+                    for (int i = 0; i < columns * rows; i++)
+                    {
+                        var cell = new Rect(gridX + (i % columns) * (slot + gap), gridY + (i / columns) * (slot + gap), slot, slot);
+                        Fill(cell, new Color(.055f, .07f, .068f, .96f));
+                        Fill(new Rect(cell.x, cell.y, cell.width, 2), new Color(.28f, .32f, .28f));
+                        Fill(new Rect(cell.x, cell.yMax - 2, cell.width, 2), new Color(.18f, .21f, .19f));
+                        Fill(new Rect(cell.x, cell.y, 2, cell.height), new Color(.28f, .32f, .28f));
+                        Fill(new Rect(cell.xMax - 2, cell.y, 2, cell.height), new Color(.18f, .21f, .19f));
+                        if (i < State.inventory.Count)
+                        {
+                            string item = State.inventory[i];
+                            if (item == Token)
+                                GUI.DrawTexture(new Rect(cell.x + 8, cell.y + 8, cell.width - 16, cell.height - 16), tokenArt, ScaleMode.ScaleToFit);
+                            GUI.Label(new Rect(cell.x + 6, cell.yMax - 24, cell.width - 12, 20), item == Token ? StoryText.Current.cult.itemTitle : item, small);
+                        }
+                    }
+
                     if (HasToken)
                     {
-                        GUI.DrawTexture(new Rect(panel.x + 20, panel.y + 70, 220, 220), tokenArt, ScaleMode.ScaleToFit);
-                        GUI.Label(new Rect(panel.x + 280, panel.y + 90, pw - 300, 50), StoryText.Current.cult.itemTitle, heading);
-                        GUI.Label(new Rect(panel.x + 280, panel.y + 155, pw - 300, 150), StoryText.Current.cult.itemBody, text);
+                        GUI.Label(new Rect(panel.x + 24 + columns * (slot + gap), panel.y + 92, pw - 48 - columns * (slot + gap), 50), StoryText.Current.cult.itemTitle, heading);
+                        GUI.Label(new Rect(panel.x + 24 + columns * (slot + gap), panel.y + 146, pw - 48 - columns * (slot + gap), 190), StoryText.Current.cult.itemBody, text);
                     }
                     else
-                        GUI.Label(new Rect(panel.x, panel.y + 100, pw, 100), StoryText.Local("还没有物品。", "Nothing carried."), text);
-                    GUI.Label(new Rect(panel.x, h - 70, pw, 30), StoryText.Local("Esc  合上背包", "Esc  Close inventory"), small);
+                        GUI.Label(new Rect(panel.x, panel.y + 110, pw, 100), StoryText.Local("背包是空的。探索房间，看看有什么值得带走。", "The bag is empty. Explore and find something worth carrying."), text);
+                    GUI.Label(new Rect(panel.x, h - 70, pw, 30), StoryText.Local("I / Esc  合上背包", "I / Esc  Close inventory"), small);
                     return;
                 }
 

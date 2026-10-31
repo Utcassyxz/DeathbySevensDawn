@@ -28,7 +28,7 @@ namespace DeathBySeventhsDawn.Progression
         public static Color LitTint(Color ambient)
         {
             // Electric lights preserve a readable warm room, while the exterior stays blue-black.
-            return Indoors ? Color.Lerp(ambient, new Color(.82f, .74f, .64f), Mathf.Clamp01(1 - ambient.maxColorComponent) * .78f) : ambient;
+            return Indoors ? Color.Lerp(ambient, new Color(.78f, .76f, .72f), Mathf.Clamp01(1 - ambient.maxColorComponent) * .35f) : ambient;
         }
 
         void Awake()
@@ -87,24 +87,18 @@ namespace DeathBySeventhsDawn.Progression
             SceneManager.MoveGameObjectToScene(root, scene);
             if (scene.name == "LivingRoom")
             {
-                Add(new Vector2(-4.05f, -1.9f), new Vector2(3.5f, 2.5f), new Color(1, .71f, .36f), false);
-                Add(new Vector2(-2.5f, 2.1f), new Vector2(3.2f, 2.0f), new Color(1, .83f, .57f), false);
+                // Only light with a visible source: the aquarium itself. No unowned lamp pools.
                 var aquarium = GameObject.Find("Aquarium and cabinet");
                 if (aquarium != null)
                 {
                     tank = aquarium.GetComponent<SpriteRenderer>();
                     var b = tank.bounds;
-                    Add(new Vector2(b.center.x, b.min.y + .12f), new Vector2(b.size.x * 1.6f, 1.45f), new Color(.24f, .65f, .63f), true);
-                    Add(new Vector2(b.center.x, b.center.y + b.size.y * .14f), new Vector2(b.size.x * .95f, b.size.y * .40f), new Color(.25f, .58f, .60f), true);
+                    Add(new Vector2(b.center.x, b.center.y + b.size.y * .18f), new Vector2(b.size.x * 1.12f, 1.10f), new Color(.18f, .62f, .68f), true);
+                    Add(new Vector2(b.center.x, b.min.y + b.size.y * .54f), new Vector2(b.size.x * .88f, .70f), new Color(.20f, .48f, .52f), true);
                 }
             }
-            else if (scene.name == "Bedroom")
-            {
-                Add(new Vector2(-2.5f, 1.65f), new Vector2(2.8f, 2.3f), new Color(1, .72f, .40f), false);
-                Add(new Vector2(2.6f, -.9f), new Vector2(2.6f, 1.9f), new Color(1, .79f, .48f), false);
-            }
-            else
-                Add(Vector2.zero, new Vector2(3.5f, 3.5f), new Color(.76f, .87f, 1), false);
+            // Bedroom and bathroom have no visible lamp fixture in the current scenes;
+            // keep their ambience in TimeAtmosphere rather than inventing a light source.
         }
 
         void Add(Vector2 position, Vector2 size, Color color, bool aquarium)
@@ -135,12 +129,12 @@ namespace DeathBySeventhsDawn.Progression
                     continue;
                 var c = l.color;
                 // Very slow, tiny water variation; never flash the entire cabinet green.
-                c.a = l.aquarium ? .11f + Mathf.PerlinNoise(Time.unscaledTime * .13f, 3.7f) * .015f : strength;
+                c.a = l.aquarium ? .10f + Mathf.PerlinNoise(Time.unscaledTime * .13f, 3.7f) * .008f : strength;
                 l.renderer.color = c;
             }
 
             if (tank != null && clock.Period == TimePeriod.Night)
-                tank.color = Color.Lerp(tank.color, new Color(.68f, .80f, .78f), Time.unscaledDeltaTime * 2);
+                tank.color = Color.Lerp(tank.color, new Color(.88f, 1f, .98f), Time.unscaledDeltaTime * 2);
         }
 
         void OnDestroy()

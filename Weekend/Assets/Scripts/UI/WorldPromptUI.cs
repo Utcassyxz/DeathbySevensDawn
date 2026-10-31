@@ -22,9 +22,6 @@ namespace DeathBySeventhsDawn.Progression
         public static string VisiblePrompt { get; private set; }
 
         static string selectedSource;
-        string lastPrompt;
-        float promptSince;
-        public bool Compact => Time.unscaledTime - promptSince > 3;
 
         public static bool CanActivate(string source)
         {
@@ -46,14 +43,6 @@ namespace DeathBySeventhsDawn.Progression
         public static string Pick()
         {
             var game = GameManager.Instance;
-            if (game != null && !game.State.tutorialComplete && game.State.morningStage >= 2 && game.State.morningStage <= 9)
-            {
-                int stage = game.State.morningStage;
-                selectedSource = stage == 2 ? "neighbor" : stage >= 7 ? "telescope" : "morning";
-                var routine = MorningRoutine.Instance;
-                return TutorialGate.Reminder + (routine != null && !string.IsNullOrEmpty(routine.ActionPrompt) ? "\n" + routine.ActionPrompt : "");
-            }
-
             string best = null, bestSource = null;
             int priority = int.MinValue;
             foreach (var pair in candidates)
@@ -64,9 +53,29 @@ namespace DeathBySeventhsDawn.Progression
                     bestSource = pair.Key;
                 }
 
+            if (game != null && !game.State.tutorialComplete && game.State.morningStage >= 2 && game.State.morningStage <= 9)
+            {
+                int stage = game.State.morningStage;
+                var routine = MorningRoutine.Instance;
+                if (stage >= 7)
+                {
+                    // The tutorial reminder used to replace the actual telescope prompt.
+                    // Keep a real E prompt when one exists, and only fall back to the hint.
+                    if (best != null)
+                    {
+                        selectedSource = bestSource;
+                        return best;
+                    }
+                    selectedSource = "telescope";
+                    return TutorialGate.Reminder;
+                }
+                selectedSource = stage == 2 ? "neighbor" : "morning";
+                return TutorialGate.Reminder + (routine != null && !string.IsNullOrEmpty(routine.ActionPrompt) ? "\n" + routine.ActionPrompt : "");
+            }
+
             selectedSource = bestSource;
             if (game != null && game.State.tutorialComplete && game.LoopCount == 0 && game.State.firstNightWatchComplete && TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Night)
-                return StoryText.Local("该睡了。回卧室休息。", "Time for bed. Head back to the bedroom.") + (best != null ? "\n" + best : "");
+                return best ?? StoryText.Local("该睡了。回卧室休息。", "Time for bed. Head back to the bedroom.");
             return best;
         }
 
@@ -115,7 +124,7 @@ namespace DeathBySeventhsDawn.Progression
             var label = new GUIStyle(GUI.skin.label)
             {
                 font = GameTypography.Current,
-                fontSize = 21,
+                fontSize = 18,
                 wordWrap = true,
                 alignment = TextAnchor.UpperRight
             };
@@ -126,14 +135,14 @@ namespace DeathBySeventhsDawn.Progression
                 if (!StoryJournal.WorldBlocked && !FurnitureInteraction.IsBusy)
                 {
                     var clock = TimeManager.Instance;
-                    var r = new Rect(w - 265, 20, 240, 66);
+                    var r = new Rect(w - 225, 16, 200, 46);
                     NarrativeUI.Panel(r);
-                    GUI.Label(new Rect(r.x + 14, r.y + 12, r.width - 28, 48), StoryText.Local($"第 {clock.Days} 天 · ", $"DAY {clock.Days} · ") + GameplayFeedback.PeriodName(clock.Period), label);
+                    GUI.Label(new Rect(r.x + 12, r.y + 9, r.width - 24, 32), StoryText.Local($"第 {clock.Days} 天 · ", $"DAY {clock.Days} · ") + GameplayFeedback.PeriodName(clock.Period), label);
                     if (game.State.journalUnlocked)
                     {
-                        label.fontSize = 16;
+                        label.fontSize = 14;
                         label.alignment = TextAnchor.UpperLeft;
-                        GUI.Label(new Rect(28, 85, 360, 60), StoryText.Local("J 日记", "J Journal") + (game.State.investigationUnlocked ? StoryText.Local("  ·  B 连线", "  ·  B Board") : "") + StoryText.Local("  ·  I 背包", "  ·  I Inventory"), label);
+                        GUI.Label(new Rect(28, 70, 360, 36), StoryText.Local("J 日记", "J Journal") + (game.State.investigationUnlocked ? StoryText.Local("  ·  B 连线", "  ·  B Board") : "") + StoryText.Local("  ·  I 背包", "  ·  I Inventory"), label);
                     }
                 }
 
@@ -142,21 +151,13 @@ namespace DeathBySeventhsDawn.Progression
                 VisiblePrompt = Pick();
                 if (!string.IsNullOrEmpty(VisiblePrompt))
                 {
-                    string key = game.State.tutorialComplete ? VisiblePrompt : "stage:" + game.State.morningStage;
-                    if (lastPrompt != key)
-                    {
-                        lastPrompt = key;
-                        promptSince = Time.unscaledTime;
-                    }
-
-                    float t = Mathf.SmoothStep(0, 1, Mathf.Clamp01((Time.unscaledTime - promptSince - 2.6f) / .4f));
-                    var full = new Rect(w * .12f, h - 310, w * .76f, 74);
-                    var compact = new Rect(28, 134, 340, 92);
-                    var p = new Rect(Mathf.Lerp(full.x, compact.x, t), Mathf.Lerp(full.y, compact.y, t), Mathf.Lerp(full.width, compact.width, t), Mathf.Lerp(full.height, compact.height, t));
-                    NarrativeUI.Panel(p);
-                    label.fontSize = Mathf.RoundToInt(Mathf.Lerp(20, 16, t));
+                    // One compact top-left task chip. No full-width bottom banner.
+                    label.fontSize = 15;
                     label.alignment = TextAnchor.MiddleLeft;
-                    GUI.Label(new Rect(p.x + 16, p.y + 8, p.width - 32, p.height - 16), VisiblePrompt, label);
+                    float textHeight = label.CalcHeight(new GUIContent(VisiblePrompt), 268);
+                    var p = new Rect(28, 106, 300, Mathf.Clamp(textHeight + 18, 44, 84));
+                    NarrativeUI.Panel(p);
+                    GUI.Label(new Rect(p.x + 14, p.y + 8, p.width - 28, p.height - 16), VisiblePrompt, label);
                 }
             }
             finally

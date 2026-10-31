@@ -15,6 +15,12 @@ namespace DeathBySeventhsDawn.Progression
             var renderer = image.AddComponent<SpriteRenderer>();
             renderer.sprite = sprite;
             renderer.sortingOrder = 12;
+            var collider = root.GetComponent<BoxCollider2D>();
+            if (collider == null)
+                collider = root.AddComponent<BoxCollider2D>();
+            collider.size = new Vector2(.78f, .72f);
+            collider.offset = new Vector2(0, .18f);
+            collider.isTrigger = true;
         }
 
         static void Build()

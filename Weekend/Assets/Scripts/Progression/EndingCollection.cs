@@ -1,4 +1,4 @@
-// 职责：跨旅程保存结局收录；开新游戏不会清空收藏。
+// 职责：本次游戏的结局收录；开始新旅程时清空，标题页显示当前旅程已解锁的结局。
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -64,6 +64,25 @@ namespace DeathBySeventhsDawn.Progression
         {
             album = null;
             FreshlyUnlocked = null;
+        }
+
+        // A new journey is a fresh player experience: no ending may be pre-unlocked.
+        public static void Clear()
+        {
+            album = new Album();
+            FreshlyUnlocked = null;
+            foreach (string path in new[] { PathName, PathName + ".bak", PathName + ".tmp" })
+            {
+                try
+                {
+                    if (File.Exists(path))
+                        File.Delete(path);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("Ending collection could not be cleared: " + e.Message);
+                }
+            }
         }
 
         public static bool Unlock(string id, bool announce = true)

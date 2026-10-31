@@ -19,7 +19,7 @@ namespace DeathBySeventhsDawn.Progression
         public bool fridgeOpened, fridgeDoorOpen, dayOneNewsStarted, journalUnlocked, investigationUnlocked, tutorialComplete;
         public int newsPage;
         public List<string> initialEvidenceIds = new List<string>();
-        public bool cultDayOneTalked, cultTokenOffered;
+        public bool cultDayOneTalked, cultDayOneStarted, cultTokenOffered;
         public List<string> inventory = new List<string>();
         public List<Knowledge.JournalEntry> journal = new List<Knowledge.JournalEntry>();
         public float knowledge, mutation, sanityBurden;

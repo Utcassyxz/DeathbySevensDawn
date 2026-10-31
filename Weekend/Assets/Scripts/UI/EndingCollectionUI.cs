@@ -11,10 +11,19 @@ namespace DeathBySeventhsDawn.Progression
         public static bool GalleryOpen { get; private set; }
 
         static Texture2D haze;
+        static Texture2D endArt;
         static bool confirm;
+        static string screamedFor;
         public static void OpenGallery()
         {
             GalleryOpen = true;
+            confirm = false;
+        }
+
+        public static void ResetResult()
+        {
+            confirm = false;
+            screamedFor = null;
         }
 
         public static void CloseGallery()
@@ -61,6 +70,13 @@ namespace DeathBySeventhsDawn.Progression
 
             GUI.color = Color.white;
             GUI.DrawTexture(new Rect(0, 0, w, h), haze);
+            if (endArt == null)
+                endArt = Resources.Load<Texture2D>("Story/ApproachingBody");
+            if (endArt != null)
+            {
+                GUI.color = new Color(1f, 1f, 1f, .19f);
+                GUI.DrawTexture(new Rect(0, 0, w, h), endArt, ScaleMode.ScaleAndCrop);
+            }
             var old = GUI.color;
             GUI.color = new Color(.46f, .31f, .25f, .7f);
             GUI.DrawTexture(new Rect(w * .10f, h * .19f, w * .80f, 1), Texture2D.whiteTexture);
@@ -92,11 +108,31 @@ namespace DeathBySeventhsDawn.Progression
         {
             Background(w, h);
             string id = game.WorldEndEnding ? "world-end" : "bad-ending-1";
+            if (screamedFor != id)
+            {
+                screamedFor = id;
+                ApartmentAudio.Instance?.PlayEndingScream();
+            }
+
+            // A slow, low red pulse behind the settlement; it reads as a lingering scream,
+            // not a flashing effect.
+            float pulse = .5f + .5f * Mathf.Sin(Time.unscaledTime * 1.35f);
+            GUI.color = new Color(.42f, .08f, .07f, .045f + pulse * .035f);
+            GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
+            GUI.color = Color.white;
             var data = game.WorldEndEnding ? StoryText.Current.worldEnd : StoryText.Current.ending;
             float left = w * .14f, width = w * .72f;
+            string body = data.lines != null && data.lines.Length > 0
+                ? string.Join("\n", data.lines)
+                : (game.WorldEndEnding
+                    ? StoryText.Local("雨果关好了窗，过完了这一个星期。\n第七天夜里，地球没有等来下一个清晨。", "Hugo shut the window and let the week pass.\nOn the seventh night, Earth never reached another morning.")
+                    : StoryText.Local("他记得每一次醒来。\n身体却一次也没能重新开始。", "He remembered every return.\nHis body never got to start over."));
             GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.Local("结 局  ", "ENDING  ") + (game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
             GUI.Label(new Rect(left, h * .24f, width, 110), data.title, Text(44, NarrativeUI.Ink));
-            GUI.Label(new Rect(left, h * .43f, width, 100), game.WorldEndEnding ? StoryText.Local("雨果关好了窗，过完了这一个星期。\n第七天夜里，地球没有等来下一个清晨。", "Hugo shut the window and let the week pass.\nOn the seventh night, Earth never reached another morning.") : StoryText.Local("他记得每一次醒来。\n身体却一次也没能重新开始。", "He remembered every return.\nHis body never got to start over."), Text(23, new Color(.76f, .73f, .67f)));
+            GUI.Label(new Rect(left, h * .40f, width, h * .20f), body, Text(21, new Color(.76f, .73f, .67f)));
+            GUI.color = new Color(.46f, .31f, .25f, .7f + pulse * .2f);
+            GUI.DrawTexture(new Rect(left, h * .62f - 8, width, 1), Texture2D.whiteTexture);
+            GUI.color = Color.white;
             var badge = new Rect(left, h * .61f, width, 64);
             NarrativeUI.Panel(badge);
             GUI.Label(new Rect(badge.x + 18, badge.y + 12, badge.width - 36, 48), StoryText.Local(EndingCollection.FreshlyUnlocked == id ? "新结局已收录  ·  可在主页面的「结局收录」查看" : "结局已收录  ·  主页面可查看", "ENDING RECORDED  ·  Available in the title screen collection"), Text(18, new Color(.77f, .66f, .45f)));
@@ -108,7 +144,7 @@ namespace DeathBySeventhsDawn.Progression
             }
             else
             {
-                GUI.Label(new Rect(left, h * .71f, width, 46), StoryText.Local("清除本次旅程？结局收录会保留。", "Clear this journey? Collected endings will remain."), Text(18, NarrativeUI.Ink));
+                GUI.Label(new Rect(left, h * .71f, width, 46), StoryText.Local("开始新旅程会清空结局收录。", "A new journey clears collected endings."), Text(18, NarrativeUI.Ink));
                 if (GUI.Button(new Rect(left, h * .79f, 210, 56), StoryText.Local("确认重新开始", "Confirm restart"), b))
                 {
                     confirm = false;

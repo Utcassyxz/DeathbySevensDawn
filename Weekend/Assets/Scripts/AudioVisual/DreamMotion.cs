@@ -42,6 +42,15 @@ namespace DeathBySeventhsDawn.Progression
             return Mathf.SmoothStep(.53f, 1, Mathf.Clamp01((age - 2.27f) / .8f));
         }
 
+        // One screen-shaking impulse per kick, triggered by input rather than a timer.
+        public static Vector2 KickPulse(float since)
+        {
+            if (since < 0 || since > .30f)
+                return Vector2.zero;
+            float strength = 1 - since / .30f;
+            return new Vector2(Mathf.Sin(since * 110f) * 12f, Mathf.Cos(since * 83f) * 8f) * strength;
+        }
+
         public static void Eyelids(float w, float h, float openness)
         {
             var old = GUI.color;

@@ -154,7 +154,7 @@ public static class VerifyPresentation
 
         Check(UnityEngine.Object.FindAnyObjectByType<WorldPromptUI>() != null, "Single prompt presenter installed");
         Check(UnityEngine.Object.FindAnyObjectByType<TimeAtmosphere>() != null, "World atmosphere installed");
-        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount >= 4, "Warm room lights and localized aquarium spill installed");
+        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount >= 2, "Localized aquarium spill installed without unowned lamp pools");
         Check(Resources.Load<Shader>("SoftRoomGlow") != null, "Local glow shader loads");
         for (int chapter = 0; chapter < 4; chapter++)
         {
@@ -352,7 +352,7 @@ public static class VerifyPresentation
         yield return .4f;
         State.dreamSeen = State.tutorialComplete = State.journalUnlocked = State.investigationUnlocked = true;
         State.morningStage = 10;
-        Check(EndingCollection.Has("world-end"), "New journey preserves the ending collection");
+        Check(!EndingCollection.Has("world-end") && EndingCollection.Count == 0, "New journey clears the ending collection");
         State.telescopeOnRoof = true;
         journal = UnityEngine.Object.FindAnyObjectByType<StoryJournal>();
         Call(journal, "CloseTelescope");
@@ -462,7 +462,7 @@ public static class VerifyPresentation
     static void Finish(string failure)
     {
         steps = null;
-        File.WriteAllText("../presentation-validation.txt", failure == null ? "PASS: " + checks + " checks; gradual dream and eyelid envelopes; single prompt priority and collapsing HUD; Enter story/E use; dawn/noon/dusk/night; breakfast and nap; diary; first-night hour/recheck/sleep and evidence deduction; independent ending collection; second-day foil; unawakened seventh-night world ending; voluntary rooftop awakening and loop; bilingual text and subtitle bounds. Original journey, collection and settings restored." : "FAIL: " + failure);
+        File.WriteAllText("../presentation-validation.txt", failure == null ? "PASS: " + checks + " checks; gradual dream and eyelid envelopes; single prompt priority and collapsing HUD; Enter story/E use; dawn/noon/dusk/night; breakfast and nap; diary; first-night hour/recheck/sleep and evidence deduction; ending collection cleared by a new journey; second-day foil; unawakened seventh-night world ending; voluntary rooftop awakening and loop; bilingual text and subtitle bounds. Original journey, collection and settings restored." : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
         {

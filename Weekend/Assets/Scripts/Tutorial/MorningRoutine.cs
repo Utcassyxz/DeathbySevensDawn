@@ -380,9 +380,9 @@ namespace DeathBySeventhsDawn.Interaction
                 BeginWake();
             if (activity == Activity.Wake)
             {
-                if (age > hit * .85f && hit < 3)
+                if (age > .25f + hit * .85f && hit < 3)
                 {
-                    CultNeighbor.Instance?.Hammer();
+                    CultNeighbor.Instance?.Hammer(.35f + hit * .28f);
                     hit++;
                 }
 

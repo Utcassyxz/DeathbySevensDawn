@@ -5,6 +5,6 @@ namespace DeathBySeventhsDawn.Story
     [Serializable]
     public sealed class RooftopText
     {
-        public string floorFour, floorFive, up, down, carry, carried, place, placed, missing, observe, daylight, firstNight, revelation, title, narrator, record, recorded, close;
+        public string floorFour, floorFive, up, down, carry, carried, place, placed, missing, wait, observe, daylight, firstNight, revelation, title, narrator, record, recorded, close;
     }
 }
