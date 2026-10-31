@@ -54,7 +54,7 @@ namespace DeathBySeventhsDawn.TimeSystem
                 Period = TimePeriod.Morning;
                 Days++;
             }
-            Core.GameManager.Instance?.TryTriggerBadEnding(Days);
+            if (Period!=TimePeriod.Night) Core.GameManager.Instance?.TryTriggerBadEnding(Days);
             TimeChanged?.Invoke(Days, Period);
         }
 

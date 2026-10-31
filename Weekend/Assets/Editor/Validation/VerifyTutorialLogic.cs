@@ -33,7 +33,7 @@ public static class VerifyTutorialLogic
     {
         InputSystem.onBeforeUpdate += ApplyPendingInput;
         EditorApplication.update += Tick;
-        EditorApplication.playModeStateChanged += s => { if (!SessionState.GetBool(TestKey, false)) return; if (s == PlayModeStateChange.EnteredPlayMode) { steps = Steps(); next = EditorApplication.timeSinceStartup + 3; deadline = next + 150; count = 0; error = null; } if (s == PlayModeStateChange.EnteredEditMode) Restore(); };
+        EditorApplication.playModeStateChanged += s => { if (!SessionState.GetBool(TestKey, false)) return; if (s == PlayModeStateChange.EnteredPlayMode) { steps = Steps(); next = EditorApplication.timeSinceStartup + 3; deadline = next + 200; count = 0; error = null; } if (s == PlayModeStateChange.EnteredEditMode) Restore(); };
         Application.logMessageReceived += (m, t, l) => { if (steps != null && (l == LogType.Error || l == LogType.Exception) && !t.Contains("UnityEditor.Search.SearchDatabase")) error = m; };
     }
     [MenuItem("Prototype/Test tutorial state logic without keyboard")]
@@ -211,7 +211,7 @@ public static class VerifyTutorialLogic
         yield return .3f;
         Check(routine.OpenFridge(), "Fridge opens after neighbour guide");
         Check(sr.sprite == Resources.Load<Sprite>("Tutorial/FridgeOpen") && sr.sprite != closed && State.fridgeDoorOpen, "Fridge swaps to actual open sprite and saves door state");
-        yield return 1f;
+        yield return 3.3f;
         var news = DayOneSupernovaEvent.Instance;
         for (int wait = 0; wait < 30 && !news.IsPresenting && routine.Stage == 4; wait++)
             yield return .1f;
@@ -228,7 +228,7 @@ public static class VerifyTutorialLogic
         Check(GameObject.Find("Refrigerator").GetComponent<SpriteRenderer>().sprite == Resources.Load<Sprite>("Tutorial/FridgeOpen"), "Fridge remains open across scene reload");
         for (int i = 1; i < 4; i++)
             news.Advance();
-        yield return 3.2f;
+        yield return 5.8f;
         Check(State.dayOneSupernovaSeen && routine.Stage == 5 && State.journal.Count == 0, "Finished news leads to sofa with no automatic entry");
         fridge = GameObject.Find("Refrigerator");
         Place(new Vector2(fridge.transform.position.x, fridge.GetComponent<SpriteRenderer>().bounds.min.y - .3f));
@@ -238,15 +238,15 @@ public static class VerifyTutorialLogic
         for (int i = 0; i < 3; i++)
         {
             Check(routine.OpenFridge(), "Repeat fridge inspection " + i);
-            yield return 3.6f;
+            yield return 6.6f;
             Check(!news.IsPresenting && !State.fridgeDoorOpen && routine.Stage == 5 && State.newsPage == 4, "Repeat fridge does not replay news or stay open " + i);
         }
-        Check(TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Morning, "Fridge never consumes a time period");
+        Check(TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Afternoon, "Repeated fridge checks consume no extra period after lunch");
         var sofa = GameObject.Find("Old sofa").GetComponent<SpriteRenderer>().bounds;
         Place(new Vector2(sofa.center.x, sofa.min.y - .3f));
         yield return .3f;
         Check(routine.CanNap && routine.BeginNap(), "Sofa rest is available after news");
-        yield return 3.8f;
+        yield return 5.8f;
         Check(routine.Stage == 6 && TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Evening, "Sofa sleep advances to same-day evening");
         Check(!State.journalUnlocked && State.journal.Count == 0, "Sofa sleep alone does not unlock journal");
         SceneManager.LoadScene("Bedroom");

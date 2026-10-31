@@ -194,9 +194,9 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     if (CurrentIllustration != null)
                         GUI.DrawTexture(new Rect(left, 84, panel, h * .49f), CurrentIllustration, ScaleMode.ScaleToFit);
-                    subtitles.Set(text.pages[page], body, panel, 112);
-                    GUI.Label(new Rect(left, h * .65f, panel, 112), subtitles.Current, body);
-                    GUI.Label(new Rect(left, h - 76, panel, 42), $"{page + 1} / {text.pages.Length}   ·   " + subtitles.Counter + (page == text.pages.Length - 1 ? text.closePrompt : text.continuePrompt), small);
+                    var speech=NarrativeUI.DialogueRect(w,h);
+                    subtitles.Set(text.pages[page],body,speech.width-70,92);
+                    NarrativeUI.Dialogue(speech,text.title,subtitles.Current,$"{page+1} / {text.pages.Length} · "+subtitles.Counter+(page==text.pages.Length-1?text.closePrompt:text.continuePrompt),body);
                 }
                 else
                 {

@@ -97,9 +97,10 @@ namespace DeathBySeventhsDawn.Interaction
             if (hint != null)
             {
                 hint.text = DeathBySeventhsDawn.Story.StoryText.Local("E  查看窗外", "E  Look outside");
-                hint.gameObject.SetActive(nearby && !TutorialGate.IsBlocked("window"));
+                hint.gameObject.SetActive(false);
+                if(nearby && !TutorialGate.IsBlocked("window")) Progression.WorldPromptUI.Offer("window",hint.text,55);
             }
-            if (nearby && interact)
+            if (nearby && interact && Progression.WorldPromptUI.CanActivate("window"))
                 TryOpen();
         }
 

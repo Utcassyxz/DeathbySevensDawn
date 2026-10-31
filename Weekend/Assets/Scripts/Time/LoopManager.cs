@@ -38,6 +38,7 @@ namespace DeathBySeventhsDawn.TimeSystem
         {
             if (restarting || GameManager.Instance.HasEnded || GameManager.Instance.TryTriggerBadEnding(TimeManager.Instance.Days))
                 return;
+            if(!GameManager.Instance.HasSeenAncientGod) return;
             restarting = true;
             GameManager.Instance.RegisterNewLoop();
             TimeManager.Instance.ResetToDayOne();

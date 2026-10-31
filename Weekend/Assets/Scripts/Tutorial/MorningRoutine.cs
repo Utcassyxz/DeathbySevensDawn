@@ -31,6 +31,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         bool queued, simulated, rendererEnabled, firstFridge, fridgeVisibleOpen;
         string mealMessage;
+        bool napTimeChanged;
         float age; int hit, blockedFrame = -1;
         GameObject player, fridge, sofa, placeholder; Rigidbody2D body; SpriteRenderer original, fridgeRenderer;
         Sprite closedFridge, openedFridge, square; Texture2D pixel; Vector2 bedPoint, standPoint; GUIStyle label;
@@ -95,7 +96,10 @@ namespace DeathBySeventhsDawn.Interaction
                     SceneManager.LoadScene("LivingRoom");
             }
             if (Stage >= 6 && Stage < 10)
+            {
                 RestoreEvening();
+                if(Stage>=7 && TimeManager.Instance.Period==TimePeriod.Evening)TimeManager.Instance.AdvanceTime();
+            }
         }
         void Reset()
         {
@@ -220,6 +224,7 @@ namespace DeathBySeventhsDawn.Interaction
             mealMessage = State.breadEaten ? StoryText.Current.morning.fridgeEmpty : StoryText.Current.morning.breadMeal;
             State.breadEaten = true;
             Save();
+            if (Stage==5 && TimeManager.Instance.Days==1 && TimeManager.Instance.Period==TimePeriod.Morning) TimeManager.Instance.AdvanceTime();
             activity = Activity.Meal;
             age = 0;
         }
@@ -236,6 +241,8 @@ namespace DeathBySeventhsDawn.Interaction
             placeholder.transform.position = bedPoint;
             placeholder.transform.localRotation = Quaternion.Euler(0, 0, 75);
             activity = Activity.Nap;
+            napTimeChanged=false;
+            Object.FindAnyObjectByType<TimeAtmosphere>()?.BeginDuskNap();
             age = 0;
             return true;
         }
@@ -278,6 +285,8 @@ namespace DeathBySeventhsDawn.Interaction
                 Seed(id, true);
             State.initialEvidenceIds.Clear();
             State.morningStage = 7;
+            // Writing takes the last light of dusk; the first telescope lesson happens after dark.
+            if(TimeManager.Instance.Days==1 && TimeManager.Instance.Period==TimePeriod.Evening)TimeManager.Instance.AdvanceTime();
             Save();
             Object.FindAnyObjectByType<StoryJournal>()?.ShowJournal();
         }
@@ -336,7 +345,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if (activity == Activity.Fridge)
             {
-                if (age >= .75f)
+                if (age >= (firstFridge?3f:.75f))
                 {
                     activity = Activity.None;
                     blockedFrame = Time.frameCount;
@@ -353,7 +362,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if (activity == Activity.Meal)
             {
-                if (age >= 2.6f)
+                if (age >= 5.5f)
                 {
                     activity = Activity.None;
                     blockedFrame = Time.frameCount;
@@ -363,7 +372,8 @@ namespace DeathBySeventhsDawn.Interaction
             if (activity == Activity.Nap || activity == Activity.Write)
             {
                 bool nap = activity == Activity.Nap;
-                if (age >= (nap ? 3.4f : 2.0f))
+                if(nap && age>=1.3f && !napTimeChanged){napTimeChanged=true;RestoreEvening();}
+                if (age >= (nap ? 5.3f : 2.0f))
                 {
                     MoveBody(standPoint);
                     RestorePlayer();
@@ -397,7 +407,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (player == null)
                 Bind();
             var k = Keyboard.current;
-            if (k == null || !k.eKey.wasPressedThisFrame)
+            if (k == null || !k.eKey.wasPressedThisFrame || !WorldPromptUI.CanActivate("morning"))
                 return;
             if (CanOpenFridge)
                 OpenFridge();
@@ -406,6 +416,7 @@ namespace DeathBySeventhsDawn.Interaction
             else if (CanWrite)
                 BeginWriting();
         }
+        public string ActionPrompt=>(Stage==3||State.tutorialComplete)&&CanOpenFridge?StoryText.Current.morning.fridgePrompt:CanNap?StoryText.Local("E  在沙发上躺一会儿","E  Lie down on the sofa"):CanWrite?StoryText.Local("E  坐到书桌前","E  Sit at the desk"):null;
         void OnGUI()
         {
             if (GameManager.Instance == null || GameManager.Instance.HasEnded || MainMenuUI.WorldBlocked || GameSettingsUI.WorldBlocked)
@@ -426,35 +437,25 @@ namespace DeathBySeventhsDawn.Interaction
                 if (activity == Activity.Wake || activity == Activity.Nap || activity == Activity.Write)
                 {
                     GUI.depth = -80;
-                    float black = activity == Activity.Wake ? (age < .75f ? 1 : age < 1.12f ? 1 - (age - .75f) / .37f : age < 1.38f ? (age - 1.12f) / .26f : age < 1.75f ? 1 - (age - 1.38f) / .37f : 0) : Mathf.SmoothStep(0, .95f, Mathf.Clamp01(age / .8f));
-                    GUI.color = new Color(0, 0, 0, black);
-                    GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
-                    GUI.color = Color.white;
-                    GUI.Label(new Rect(w * .2f, h * .77f, w * .6f, 90), activity == Activity.Wake ? StoryText.Current.morning.wake : activity == Activity.Nap ? StoryText.Current.morning.nap : StoryText.Current.morning.writing, label);
+                    if(activity==Activity.Wake) DreamMotion.Eyelids(w,h,DreamMotion.WakeOpenness(age));
+                    else if(activity==Activity.Nap){GUI.color=new Color(0,0,0,Mathf.Sin(Mathf.Clamp01(age/5.3f)*Mathf.PI)*.42f);GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=Color.white;}
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w,h), StoryText.Local("雨果","Hugo"), activity==Activity.Wake?StoryText.Current.morning.wake:activity==Activity.Nap?(age<3.8f?StoryText.Current.morning.nap:StoryText.Current.morning.desk):StoryText.Current.morning.writing,"",label);
                     return;
                 }
                 if (activity == Activity.Meal)
                 {
                     GUI.depth = -46;
-                    GUI.color = new Color(.015f, .025f, .025f, .94f);
-                    GUI.DrawTexture(new Rect(w * .15f, h - 175, w * .7f, 125), Texture2D.whiteTexture);
-                    GUI.color = Color.white;
-                    GUI.Label(new Rect(w * .18f, h - 160, w * .64f, 110), mealMessage, label);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w,h),StoryText.Local("雨果","Hugo"),mealMessage,"",label);
                     return;
                 }
                 if (activity == Activity.Fridge)
                 {
-                    GUI.Label(new Rect(w * .24f, h - 100, w * .52f, 65), StoryText.Current.morning.fridgeOpen, label);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w,h),StoryText.Local("雨果","Hugo"),firstFridge?StoryText.Current.morning.fridgeOpen:StoryText.Current.morning.fridgeEmpty,"",label);
                     return;
                 }
                 if (StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
                     return;
-                // Optional props answer in the protagonist's voice instead of pointing at a destination.
-                if (!State.tutorialComplete && player != null && TutorialGate.NearBlockedProp(player.transform.position))
-                    GUI.Label(new Rect(w * .18f, h - 160, w * .64f, 90), TutorialGate.Reminder, label);
-                string prompt = CanOpenFridge ? StoryText.Local(fridgeVisibleOpen ? "E  关上冰箱" : "E  打开冰箱", fridgeVisibleOpen ? "E  Close refrigerator" : "E  Open refrigerator") : CanNap ? StoryText.Local("E  在沙发上歇一会儿", "E  Rest on the sofa") : CanWrite ? StoryText.Local("E  坐到桌前，写下今天的事", "E  Sit at the desk and write") : null;
-                if (prompt != null)
-                    GUI.Label(new Rect(w / 2 - 300, h - 80, 600, 60), prompt, label);
+                if(!string.IsNullOrEmpty(ActionPrompt)) WorldPromptUI.Offer("morning",ActionPrompt,80);
             }
             finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
         }

@@ -5,6 +5,7 @@ using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Player;
 using DeathBySeventhsDawn.TimeSystem;
 using DeathBySeventhsDawn.Progression;
+using DeathBySeventhsDawn.Story;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -109,7 +110,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if (nearest > interactionDistance)
                 target = null;
-            if (target != null && interact)
+            if (target != null && interact && WorldPromptUI.CanActivate("furniture"))
             {
                 movement = player.GetComponent<PlayerController2D>();
                 restoreMovement = movement != null && movement.enabled;
@@ -178,18 +179,15 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if (!IsBusy)
                 {
-                    float hint = Mathf.Min(440, width - 32);
-                    GUI.color = new Color(.035f, .055f, .05f, .92f);
-                    GUI.DrawTexture(new Rect((width - hint) / 2, height - 82, hint, 54), Texture2D.whiteTexture);
-                    GUI.color = color;
-                    GUI.Label(new Rect((width - hint) / 2, height - 82, hint, 54), target == bed ? DeathBySeventhsDawn.Story.StoryText.Local("E  睡觉", "E  Sleep") : target == sofa ? DeathBySeventhsDawn.Story.StoryText.Local("E  歇一会儿", "E  Rest a while") : DeathBySeventhsDawn.Story.StoryText.Local("E  看电视", "E  Television"), label);
+                    WorldPromptUI.Offer("furniture", target==bed?StoryText.Local("E  睡觉","E  Sleep"):target==sofa?StoryText.Local("E  歇一会儿","E  Rest"):StoryText.Local("E  看电视","E  Television"),40);
                     return;
                 }
                 GUI.color = new Color(0, 0, 0, .88f);
                 GUI.DrawTexture(new Rect(0, 0, width, height), Texture2D.whiteTexture);
                 GUI.color = color;
                 float panelWidth = Mathf.Min(760, width - 24), panelHeight = Mathf.Min(target == bed ? 480 : 620, height - 24);
-                GUILayout.BeginArea(new Rect((width - panelWidth) / 2, (height - panelHeight) / 2, panelWidth, panelHeight), box);
+                var frame=new Rect((width-panelWidth)/2,(height-panelHeight)/2,panelWidth,panelHeight);NarrativeUI.Panel(frame);
+                GUILayout.BeginArea(frame, box);
                 scroll = GUILayout.BeginScrollView(scroll);
                 GUILayout.Label(target == bed ? DeathBySeventhsDawn.Story.StoryText.Local("上床休息", "Rest") : target == sofa ? DeathBySeventhsDawn.Story.StoryText.Local("沙发", "Sofa") : DeathBySeventhsDawn.Story.StoryText.Local("电视", "Television"), label);
                 GUILayout.Space(20);

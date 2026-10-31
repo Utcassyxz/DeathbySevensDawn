@@ -109,6 +109,7 @@ namespace DeathBySeventhsDawn.Progression
                 GUI.color = new Color(.06f, .09f, .09f, .98f);
                 GUI.DrawTexture(panel, Texture2D.whiteTexture);
                 GUI.color = color;
+                NarrativeUI.Panel(panel);
                 GUILayout.BeginArea(new Rect(panel.x + 24, panel.y + 22, panel.width - 48, panel.height - 44), box);
                 var text = StoryText.Current.pause;
                 GUILayout.Label(text?.title ?? "暂  停", title);

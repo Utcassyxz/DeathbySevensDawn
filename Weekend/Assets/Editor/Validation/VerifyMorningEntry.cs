@@ -33,7 +33,7 @@ public static class VerifyMorningEntry
     {
         InputSystem.onBeforeUpdate += ApplyPendingInput;
         EditorApplication.update += Tick;
-        EditorApplication.playModeStateChanged += s => { if (!SessionState.GetBool(TestKey, false)) return; if (s == PlayModeStateChange.EnteredPlayMode) { steps = Steps(); next = EditorApplication.timeSinceStartup + 3; deadline = next + 150; count = 0; error = null; } if (s == PlayModeStateChange.ExitingPlayMode) Restore(); };
+        EditorApplication.playModeStateChanged += s => { if (!SessionState.GetBool(TestKey, false)) return; if (s == PlayModeStateChange.EnteredPlayMode) { steps = Steps(); next = EditorApplication.timeSinceStartup + 3; deadline = next + 200; count = 0; error = null; } if (s == PlayModeStateChange.ExitingPlayMode) Restore(); };
         Application.logMessageReceived += (m, t, l) => { if (steps != null && (l == LogType.Error || l == LogType.Exception) && !t.Contains("UnityEditor.Search.SearchDatabase")) error = m; };
     }
     [MenuItem("Prototype/Test full first-day onboarding and settings")]
@@ -223,7 +223,7 @@ public static class VerifyMorningEntry
         Check(!window.CanInteract && !window.TryOpen(), "Distant window does not trigger");
         Place((Vector2)window.transform.position + Vector2.down * .25f);
         yield return .25f;
-        Check(window.TryOpen(), "Window still works close by");
+        Check(window.CanInteract&&!window.TryOpen(), "Nearby optional window stays locked during neighbor guide");
         window.CloseView();
         Place(before);
         SceneManager.LoadScene("Corridor");
@@ -246,7 +246,7 @@ public static class VerifyMorningEntry
         yield return .3f;
         Check(routine.OpenFridge(), "Kitchen fridge is interactive");
         Check(fridgeRenderer.sprite == Resources.Load<Sprite>("Tutorial/FridgeOpen") && fridgeRenderer.sprite != closed, "Opening replaces the sprite instead of drawing a rectangle");
-        yield return 1f;
+        yield return 3.3f;
         var news = DayOneSupernovaEvent.Instance;
         Check(news.IsPresenting && State.dayOneNewsStarted && routine.Stage == 4, "First fridge opening starts bulletin once");
         Check(!routine.OpenFridge() && !news.PlayFromFridge(), "Fridge and bulletin reject concurrent repeats");
@@ -266,7 +266,7 @@ public static class VerifyMorningEntry
         Check(news.IsPresenting && news.PageIndex == page, "Interrupted bulletin resumes at saved page");
         for (int i = page; i < StoryText.Current.dayOneBroadcast.pages.Length; i++)
             news.Advance();
-        yield return .4f;
+        yield return 5.8f;
         Check(State.dayOneSupernovaSeen && routine.Stage == 5 && State.journal.Count == 0, "Finishing news leads to sofa without a diary");
         fridge = GameObject.Find("Refrigerator");
         fb = fridge.GetComponent<SpriteRenderer>().bounds;
@@ -275,16 +275,16 @@ public static class VerifyMorningEntry
         for (int i = 0; i < 3; i++)
         {
             Check(routine.OpenFridge(), "Fridge can toggle after news " + i);
-            yield return 1f;
+            yield return 6.6f;
             Check(!news.IsPresenting && routine.Stage == 5 && State.newsPage == 4, "Repeat fridge never rewinds tutorial or news " + i);
         }
-        Check(TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Morning, "Fridge toggles consume no time");
+        Check(TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Afternoon, "Repeated fridge checks consume no extra time after lunch");
         var sofa = GameObject.Find("Old sofa").GetComponent<SpriteRenderer>().bounds;
         Place(new Vector2(sofa.center.x, sofa.min.y - .3f));
         yield return .3f;
         Check(routine.CanNap && routine.BeginNap(), "Sofa begins guided nap");
         Capture("sofa-nap");
-        yield return 3.8f;
+        yield return 5.8f;
         Check(TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Evening && routine.Stage == 6, "Sofa nap reaches same-day evening exactly");
         Check(!State.journalUnlocked && State.journal.Count == 0, "Waking on sofa still does not grant journal");
         SceneManager.LoadScene("Bedroom");

@@ -39,14 +39,15 @@ namespace DeathBySeventhsDawn.Core
             return true;
         }
         public event Action<string> EndingTriggered;
-        // Entering Day 7 resolves the unawakened route first; aging remains a separate ending.
+        // Unawakened Hugo gets all seven days; the last-night boundary resolves world destruction.
+        // Awakened aging remains a separate ending, and journal evidence cannot grant awakening.
         public bool TryTriggerBadEnding(int day)
         {
             if (HasEnded)
                 return true;
             if (day < 7)
                 return false;
-            if (!State.ancientGodSeen)
+            if (!State.ancientGodSeen && day>=7 && TimeSystem.TimeManager.Instance.Period==TimeSystem.TimePeriod.Night)
             {
                 State.worldEndEnding = true;
                 ProgressionSave.Write(State);
@@ -54,6 +55,7 @@ namespace DeathBySeventhsDawn.Core
                 Changed?.Invoke();
                 return true;
             }
+            if (!State.ancientGodSeen) return false;
             if (MaxVitality > Settings.minimumVitality + .001f)
                 return false;
             State.badEndingOne = true;

@@ -371,7 +371,7 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.DrawTexture(new Rect(left, height - 148, 3, 112), Texture2D.whiteTexture);
                     GUI.color = color;
                     var loopText = StoryText.Current.firstLoop;
-                    GUI.Label(new Rect(left + 26, height - 138, panel - 52, 92), clip == Clip.Boards ? (TimeManager.Instance.Days == 1 && elapsed >= 1.3f ? (loopText?.startledCaption ?? "") : (loopText?.boardingCaption ?? "")) : elapsed < 2f ? (loopText?.dayOneCaption ?? "") : (loopText?.startledCaption ?? ""), text);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(width,height),StoryText.Local("走廊","Corridor"), clip == Clip.Boards ? (TimeManager.Instance.Days == 1 && elapsed >= 1.3f ? (loopText?.startledCaption ?? "") : (loopText?.boardingCaption ?? "")) : elapsed < 2f ? (loopText?.dayOneCaption ?? "") : (loopText?.startledCaption ?? ""), "", text);
                 }
             }
             finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }

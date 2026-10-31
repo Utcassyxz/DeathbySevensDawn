@@ -143,6 +143,7 @@ namespace DeathBySeventhsDawn.Progression
             button.hover.textColor = new Color(1, .96f, .81f);
             button.focused.textColor = button.hover.textColor;
             button.active.textColor = Gold;
+            PrototypeButtons.Apply(button);
             small = new GUIStyle(GUI.skin.label) { font = font, fontSize = 16, alignment = TextAnchor.MiddleCenter, wordWrap = true };
             small.normal.textColor = Muted;
         }

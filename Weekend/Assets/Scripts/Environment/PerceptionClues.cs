@@ -150,7 +150,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (player == null)
                 player = GameObject.FindWithTag("Player");
             nearby = marker != null && player != null && Vector2.Distance(player.transform.position, position) < .85f;
-            if (nearby && pressed)
+            if (nearby && pressed && WorldPromptUI.CanActivate("perception"))
                 TryRead();
         }
         public bool TryRead()
@@ -193,7 +193,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!reading)
                 {
                     var prompt = StoryText.Current.perception?.prompt ?? "E  辨认那些痕迹";
-                    GUI.Label(new Rect(w / 2 - 210, h - 80, 420, 60), prompt, button);
+                    WorldPromptUI.Offer("perception",prompt,75);
                     return;
                 }
                 GUI.depth = -35;
@@ -201,7 +201,8 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
                 GUI.color = color;
                 float width = Mathf.Min(820, w - 64);
-                GUILayout.BeginArea(new Rect((w - width) / 2, h * .18f, width, h * .68f));
+                var frame=new Rect((w-width)/2-20,h*.14f,width+40,h*.76f);NarrativeUI.Panel(frame);
+                GUILayout.BeginArea(new Rect(frame.x+22,frame.y+20,frame.width-44,frame.height-40));
                 scroll = GUILayout.BeginScrollView(scroll);
                 GUILayout.Label(heading, title);
                 GUILayout.Space(28);

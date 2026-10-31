@@ -162,7 +162,7 @@ public static class VerifyNewsAndRoof
         Place(new Vector2(bounds.center.x, bounds.min.y - .3f));
         yield return .3f;
         Check(routine.OpenFridge(), "First fridge interaction starts");
-        yield return 1.2f;
+        yield return 3.3f;
         Check(news.IsPresenting && !news.IsBoring && news.PageIndex == 0, "Fridge opens the shared first news page");
         Check(StoryText.Current.dayOneBroadcast.pages.Length == 4 && StoryText.Current.dayOneBroadcast.images.Length == 4, "Four news pages have four illustration paths");
         for (int i = 0; i < 4; i++)
@@ -185,9 +185,9 @@ public static class VerifyNewsAndRoof
         Check(routine.MealPresenting && State.breadEaten && !State.fridgeDoorOpen, "News closes fridge and presents Hugo eating bread");
         Check(fridge.GetComponent<SpriteRenderer>().sprite != Resources.Load<Sprite>("Tutorial/FridgeOpen"), "The fridge sprite is actually closed");
         Capture("hugo-breakfast");
-        yield return 3f;
+        yield return 5.8f;
         Check(routine.OpenFridge(), "Repeated fridge interaction remains available");
-        yield return 3.6f;
+        yield return 6.6f;
         Check(!news.IsPresenting && !State.fridgeDoorOpen && routine.Stage == 5, "Repeated fridge closes without rewinding the news or tutorial");
         State.tutorialComplete = State.journalUnlocked = State.investigationUnlocked = true;
         State.morningStage = 10;
@@ -195,7 +195,7 @@ public static class VerifyNewsAndRoof
         yield return .2f;
         Check(clock.Days == 2, "Regression reaches second day");
         Check(routine.OpenFridge(), "Day-two fridge interaction available");
-        yield return 3.6f;
+        yield return 6.6f;
         Check(!news.IsPresenting && !State.fridgeDoorOpen && State.newsPage == 4, "Day-two fridge cannot replay television and cannot stay open");
         for (int i = 0; i < 3; i++)
         {

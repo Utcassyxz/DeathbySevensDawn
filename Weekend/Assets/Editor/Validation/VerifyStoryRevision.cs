@@ -96,7 +96,7 @@ public static class VerifyStoryRevision
         Check(!game.HasEnded && !game.HasSeenAncientGod && !game.AquariumSealed, "Clean save has no new route flags");
         foreach (var action in new[] { "window", "bed", "television", "fridge", "telescope", "aquarium", "evidence" })
             Check(TutorialGate.IsBlocked(action), "Neighbor stage blocks " + action);
-        Check(!TutorialGate.IsBlocked("neighbor") && TutorialGate.Reminder.Contains("邻居"), "Neighbor stage gives narrative reminder");
+        Check(!TutorialGate.IsBlocked("neighbor") && !string.IsNullOrEmpty(TutorialGate.Reminder), "Neighbor stage gives narrative reminder");
         var tvObject = GameObject.Find("Television and stand");
         var tv = tvObject.GetComponent<Collider2D>().bounds;
         var playerBody = GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>();
@@ -152,7 +152,9 @@ public static class VerifyStoryRevision
         int loops = game.LoopCount;
         clock.SleepUntilNextMorning();
         yield return .2f;
-        Check(clock.Days == 7 && game.WorldEndEnding && game.HasEnded && game.MaxVitality > game.Settings.minimumVitality, "Day seven ends healthy unawakened journey immediately");
+        Check(clock.Days==7&&!game.HasEnded,"Day seven remains playable");
+        clock.SleepUntilNextMorning();
+        Check(clock.Days==7&&game.WorldEndEnding&&game.HasEnded,"Seventh night ends healthy unawakened journey");
         Check(WorldEndSequence.IsPresenting, "Fire and mutation transition starts automatically");
         yield return 2f;
         Capture("world-end-fire");

@@ -26,9 +26,11 @@ namespace DeathBySeventhsDawn.Interaction
         StoryContent content;
         int dreamPage, selectedEntry;
         readonly DialoguePages dreamCaption = new DialoguePages();
+        readonly DialoguePages telescopeCaption=new DialoguePages();
         Vector2 scroll;
         GameObject telescope, player;
         bool nearby, revelation;
+        float dreamEntered;int displayedDream=-1;Texture2D approachingBody;bool firstObjectView;
         string telescopeMessage;
         Texture2D[] dreamImages;
         bool dreamImagesLoaded;
@@ -42,6 +44,7 @@ namespace DeathBySeventhsDawn.Interaction
         public static bool IsNight(TimePeriod period) => period == TimePeriod.Evening || period == TimePeriod.Night;
         void Awake()
         {
+            approachingBody=Resources.Load<Texture2D>("Story/ApproachingBody");
             content = Resources.Load<StoryContent>("StoryContent");
             if (content == null)
                 content = ScriptableObject.CreateInstance<StoryContent>();
@@ -116,6 +119,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if (page != Page.None && next == Page.None)
                 blockedThroughFrame = Time.frameCount;
+            if(next==Page.Dream && page!=Page.Dream){dreamEntered=Time.unscaledTime;displayedDream=-1;}
             page = next;
             modalOpen = next != Page.None;
             scroll = Vector2.zero;
@@ -201,6 +205,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if (page == Page.Telescope)
             {
+                if(keyboard!=null&&keyboard.eKey.wasPressedThisFrame)telescopeCaption.Next();
 #if ENABLE_INPUT_SYSTEM
                 if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectTelescopeEvidence();
                 if(!revelation&&keyboard!=null&&keyboard.tKey.wasPressedThisFrame)ObserveTelescope();
@@ -229,7 +234,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (player == null)
                 player = GameObject.FindWithTag("Player");
             nearby = !TutorialGate.IsBlocked("telescope") && game.State.journalUnlocked && telescope != null && player != null && Vector2.Distance(player.transform.position, telescope.transform.position) <= content.telescopeRange;
-            if (nearby && interact)
+            if (nearby && interact && WorldPromptUI.CanActivate("telescope"))
                 OpenTelescope();
         }
         public void ShowJournal()
@@ -269,6 +274,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (TutorialGate.IsBlocked("telescope"))
                 return;
             revelation = false;
+            firstObjectView=false;
             telescopeMessage = Investigation.Evidence("apartment-telescope").body;
             SetPage(Page.Telescope);
         }
@@ -288,11 +294,13 @@ namespace DeathBySeventhsDawn.Interaction
             var clock = TimeManager.Instance;
             var text = StoryText.Current.telescope;
             revelation = false;
+            firstObjectView=false;
             if (!IsNight(clock.Period))
                 telescopeMessage = text?.nightOnly ?? "白天的光太强，镜头里只有刺眼的反光。";
             // The balcony teaches observation; only the placed rooftop telescope can reveal the entity.
             else
-                telescopeMessage = text.wrongDay;
+                telescopeMessage = clock.Days==1?text.firstNight:text.wrongDay;
+            if(IsNight(clock.Period)&&clock.Days==1){firstObjectView=true;GameManager.Instance.State.firstNightObjectSeen=true;ProgressionSave.Write(GameManager.Instance.State);}
             if (IsNight(clock.Period) && clock.Days == 1 && MorningRoutine.Instance != null)
             {
                 var tutorial = MorningRoutine.Instance;
@@ -403,33 +411,24 @@ namespace DeathBySeventhsDawn.Interaction
                 }
                 if (page == Page.None)
                 {
-                    if (game.State.journalUnlocked && !FurnitureInteraction.IsBusy)
-                        GUI.Label(new Rect(Mathf.Max(12, width - 375), 12, 360, 130), (JournalUpdates.UnreadCount > 0 ? DeathBySeventhsDawn.Story.StoryText.Local("J  日记 · ", "J  Journal \u00b7 ") + JournalUpdates.UnreadCount + DeathBySeventhsDawn.Story.StoryText.Local(" 条未读", " unread") : DeathBySeventhsDawn.Story.StoryText.Local("J  翻开日记", "J  Journal")) + (game.State.investigationUnlocked ? StoryText.Local("\nB  线索连线", "\nB  Evidence board") : "") + StoryText.Local("\nI  背包", "\nI  Inventory"), text);
                     if (nearby)
-                        GUI.Label(new Rect(12, height - 100, width - 24, 80), DeathBySeventhsDawn.Story.StoryText.UI("E  查看望远镜"), text);
+                        WorldPromptUI.Offer("telescope", StoryText.UI("E  查看望远镜"),60);
                     return;
                 }
                 GUI.depth = -20;
                 GUI.color = page == Page.Diary ? new Color(.87f, .81f, .66f, 1) : new Color(.025f, .03f, .05f, 1);
                 GUI.DrawTexture(new Rect(0, 0, width, height), Texture2D.whiteTexture);
                 GUI.color = color;
-                float panel = Mathf.Min(page == Page.Dream ? 880 : 1120, width - 48);
-                float top = page == Page.Dream ? height * .16f : 12;
-                GUILayout.BeginArea(new Rect((width - panel) / 2, top, panel, height - top - 24));
-                scroll = GUILayout.BeginScrollView(scroll);
-                var telescopeText = StoryText.Current.telescope;
-                GUILayout.Label(telescopeText.title, title);
-                GUILayout.Label(telescopeMessage, text);
-                if (game.State.investigationUnlocked && !Investigation.Has("apartment-telescope") && GUILayout.Button(telescopeText.collect, button))
-                    CollectTelescopeEvidence();
-                else if (Investigation.Has("apartment-telescope"))
-                    GUILayout.Label(telescopeText.collected, text);
-                if (GUILayout.Button(telescopeText.observe, button))
-                    ObserveTelescope();
-                if (GUILayout.Button(telescopeText.close, button))
-                    CloseTelescope();
-                GUILayout.EndScrollView();
-                GUILayout.EndArea();
+                var telescopeText=StoryText.Current.telescope;
+                if(firstObjectView&&approachingBody!=null)GUI.DrawTexture(new Rect(width*.16f,35,width*.68f,height*.46f),approachingBody,ScaleMode.ScaleToFit);
+                var dialogue=NarrativeUI.DialogueRect(width,height);
+                var subtitleStyle=new GUIStyle(text){fontSize=23,padding=new RectOffset()};
+                telescopeCaption.Set(telescopeMessage,subtitleStyle,dialogue.width-50,dialogue.height-86);
+                NarrativeUI.Dialogue(dialogue,StoryText.Local("雨果 · 望远镜","Hugo · Telescope"),telescopeCaption.Current,telescopeCaption.Count>1?telescopeCaption.Counter+StoryText.Local("E 继续","E Continue"):"",text);
+                float rowY=dialogue.y-64,bw=(dialogue.width-24)/3;
+                if(game.State.investigationUnlocked&&!Investigation.Has("apartment-telescope")&&GUI.Button(new Rect(dialogue.x,rowY,bw,48),telescopeText.collect,button))CollectTelescopeEvidence();
+                if(GUI.Button(new Rect(dialogue.x+bw+12,rowY,bw,48),telescopeText.observe,button))ObserveTelescope();
+                if(GUI.Button(new Rect(dialogue.x+(bw+12)*2,rowY,bw,48),telescopeText.close,button))CloseTelescope();
             }
             finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = 0; }
         }
@@ -451,14 +450,16 @@ namespace DeathBySeventhsDawn.Interaction
             var image = dreamImages.Length > 0 ? dreamImages[Mathf.Clamp(dreamPage, 0, dreamImages.Length - 1)] : null;
             if (image != null)
             {
-                float drift = Mathf.Sin(Time.unscaledTime * .18f) * 4;
-                GUI.color = new Color(.65f, .65f, .65f);
+                if(displayedDream!=dreamPage){displayedDream=dreamPage;dreamEntered=Time.unscaledTime;}
+                float elapsed=Time.unscaledTime-dreamEntered;
+                float drift=(Mathf.PerlinNoise(dreamPage+2,elapsed*.12f)-.5f)*9;
+                float opacity=DreamMotion.Opacity(elapsed,dreamPage);
+                GUI.color = new Color(1,1,1,opacity);
                 GUI.DrawTextureWithTexCoords(new Rect(w * .16f + drift, h * .07f, w * .68f, h * .52f), image, new Rect(.08f, .22f, .84f, .60f));
                 GUI.color = Color.white;
             }
-            dreamCaption.Set(dream.pages[Mathf.Clamp(dreamPage, 0, dream.pages.Length - 1)], text, w * .64f, h * .20f);
-            GUI.Label(new Rect(w * .18f, h * .66f, w * .64f, h * .20f), dreamCaption.Current, text);
-            GUI.Label(new Rect(w * .18f, h * .88f, w * .64f, 80), dreamCaption.Counter + StoryText.Current.morning.continueDream, text);
+            dreamCaption.Set(dream.pages[Mathf.Clamp(dreamPage, 0, dream.pages.Length - 1)], text, NarrativeUI.DialogueRect(w,h).width-86,96);
+            NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w,h),StoryText.Local("梦里","Dream"),dreamCaption.Current,dreamCaption.Counter+StoryText.Current.morning.continueDream,text);
         }
         void OnDestroy()
         {

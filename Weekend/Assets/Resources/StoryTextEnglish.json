@@ -2,10 +2,10 @@
   "dream": {
     "title": "Dream · The anthill",
     "pages": [
-      "As a child, Hugo watched his parents argue across the road.\nHis ice lolly melted over his hand. The adults had no time for sticky problems.",
-      "An ant hole beside Hugo’s shoe.\nThe ants were dragging a shell too big for the entrance. Nobody gave way. A familiar family atmosphere.",
-      "Hugo stamped down.\nThe entrance filled with mud.\n\nAt least one argument had been resolved.",
-      "Knocking beneath Hugo’s sole.\nOnce. Again.\n\nHe tried to lift his foot. It did not move."
+      "His parents are still arguing across the road.\nHugo holds half an ice pop. Meltwater runs down his wrist.",
+      "There is an anthill by his shoe.\nAn ant is dragging a husk into the entrance. It catches. More ants crowd behind it.",
+      "Hugo steps down.\nHis sole sinks a little into the dirt.\nHe leaves it there.",
+      "Something knocks beneath his shoe.\nThen again.\n…He cannot lift his foot."
     ],
     "images": [
       "Story/Dream/dream-01",
@@ -14,7 +14,7 @@
       "Story/Dream/dream-04"
     ],
     "journalTitle": "The anthill dream",
-    "journalBody": "Hugo dreamed of stamping on an ant hole as a child. The knocking continued after he woke.\nDream and reality divided the work: one underfoot, the other next door.",
+    "journalBody": "The anthill dream again.\nThe knocking was still there when Hugo woke up. Next door.",
     "fallbackPage": "The sound beneath Hugo’s shoe has not stopped."
   },
   "knowledge": {
@@ -28,8 +28,8 @@
   "telescope": {
     "title": "Telescope",
     "revelationTitle": "Second night · Behind the sky",
-    "nightOnly": "Hugo adjusts the focus. The daylight glare reveals one thing: the lens needs cleaning.\nTry again tonight.",
-    "wrongDay": "Hugo can see a clothes rack and the eaves blocking the sky.\nThe focus ring cannot move a building.\n\nAfter finishing his observation notes, he can press F to pack the telescope and take the stairs from the fourth-floor corridor to the fifth-floor roof.",
+    "nightOnly": "Nothing but glare. I’ll try after dark.",
+    "wrongDay": "Can’t get a clear view from here. I’d have to take the telescope up to the roof. Tonight…or leave it alone?",
     "gainedSuffix": "\n\nHis hand is shaking. Can he still draw the edge?",
     "repeatSuffix": "\n\nThat edge again. He could try drawing it.",
     "imageMissing": "Image unavailable.",
@@ -39,7 +39,8 @@
     "close": "Look away · Esc",
     "revelationCollect": "Sketch the outline · R",
     "revelationCollected": "Sketch recorded",
-    "revelationClose": "Look away · Esc"
+    "revelationClose": "Look away · Esc",
+    "firstNight": "Why are there no stars in that patch?\n…Not a cloud. Something is blocking the light behind it.\nIt looks bigger than before. I’ll check tomorrow night. See if it’s coming closer."
   },
   "firstLoop": {
     "news": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.\n\nMiyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.\n\nPolice advise residents not to give the Triangle Church their address, photograph or hair.\n\nThe observatory expects a visible supernova tonight. There is no cause for alarm. Please stop calling the weather hotline.",
@@ -341,18 +342,18 @@
   "cult": {
     "sound": "Three more blows next door.\nHugo turns over. 401 has apparently not scheduled a day off.",
     "dayOne": [
-      "“Go back inside.”\n\nHugo has not said hello. The neighbor has already planned his day.",
-      "“Renovating?”\nThe tenant hides the hammer behind his leg. The head sticks out. Uncooperative tool.",
-      "“Stay in today. Leave the television off.”\nHugo looks at his keys. He came to complain, not collect house rules.",
-      "No explanation.\n“Windows too.”\nThe door closes. Hugo’s complaint remains undelivered."
+      "The hammer stops.\nThe neighbor glances at Hugo. “Back inside.”",
+      "“What are you boarding it up for?”\nThe neighbor looks toward the stairs and lowers the hammer behind his leg.",
+      "“Go back to your apartment. Stay there today.”\nThe words come out in a rush.\n“Don’t turn the TV on.”",
+      "“Wait—”\n“Keep the windows shut, too.”\nThe door closes. The hammer starts again."
     ],
     "note": "Knock twice if you need something.\nCome alone.\n\nThe note is taped low. Hugo bends to read it. His knees complain first.",
     "door": [
-      "“Who?”\nAn eye appears in the crack first.",
-      "“402. Hugo. Yesterday you—”\n“I know about yesterday.”",
-      "The eye checks Hugo’s hands.\nHugo shows his keys. His only available credentials.",
-      "“Take it. Do not unwrap it. It can go in water.”\nA foil triangle squeezes through.",
-      "The door shuts before Hugo can ask what it is for.\nEnd of instructions."
+      "An eye appears in the crack.\n“Who is it?”",
+      "“402. From yesterday…”\n“Oh. You.”\nThe eye flicks toward the corridor.",
+      "“Go home. It isn’t safe here.”\n“Is someone outside?”\n“They can see us. Any time.”",
+      "Something rustles behind the boards. A little triangle folded from foil squeezes through the crack.\n“Don’t unfold it. You can put it in water.”",
+      "The eye stays on Hugo.\n“Take it. Get back inside.”\nThe triangle drops onto the sill."
     ],
     "refusal": "Someone inhales behind the door. Then silence.\nHugo waits. A complete silence. No contribution required.",
     "itemTitle": "Folded foil triangle",
@@ -360,35 +361,35 @@
   },
   "morning": {
     "continueDream": "Enter  Continue",
-    "wake": "Hugo is awake. The hammer next door is not finished.\nThe alarm clock has lost its job. The neighbor has not.",
-    "neighbor": "Hugo should check on the neighbor first.\nAt this rate, the wall might get into the corridor before he does.",
-    "food": "Hugo should go home and find something to eat first.",
-    "kitchen": "Hugo needs to check the fridge first.\nComplaints do not count as breakfast. Even this many.",
+    "wake": "…What is he hammering now?\nDoes the guy in 401 ever sleep?",
+    "neighbor": "Still hammering next door. Better have a look.",
+    "food": "Food first. Back home.",
+    "kitchen": "There should be something left in the kitchen.",
     "fridgePrompt": "E  Open the fridge",
-    "fridgeOpen": "Hugo opens the fridge. A few slices of bread. Half a carton of milk.\nBehind him, the television comes on.",
+    "fridgeOpen": "The TV just turned itself on.\nIsn’t the remote still on the table?",
     "afterNews": "Hugo has a few news items to get through first.\nThe remote is missing. The television has plans of its own.",
-    "sofa": "Hugo wants a short rest on the sofa first.\nA dependable plan. It has never once ended on schedule.",
-    "nap": "Hugo lies on the sofa. Something hard is under the cushion.\nHe leaves that problem for the Hugo who wakes up.",
-    "desk": "Hugo wants to write today down at the desk first.\nOne less way to deny it tomorrow.",
-    "writing": "Hugo opens the notebook and writes the date.\nThe pen tears the paper. The first official record of his day: a hole.",
-    "telescope": "Hugo should check the balcony telescope first.\nNow that there is a notebook, some evidence would be useful.",
-    "investigate": "Hugo recognizes the old calibration marks.\nPress R to record the observation.",
-    "connect": "Hugo still has two records to connect.\nEsc closes this page; B opens the board. Link the old records and telescope, mark it tentative, then confirm the deduction.",
+    "sofa": "Getting sleepy. Unemployed, anyway. Might as well lie down.",
+    "nap": "Five minutes. That’s all.",
+    "desk": "…That dream again. I need to write it down.\nThe pen’s on the bedroom desk.",
+    "writing": "The neighbor. The TV turning itself on…\nWrite it down. Before I decide I imagined it tomorrow.",
+    "telescope": "The news said it would be visible tonight. Worth trying the telescope.",
+    "investigate": "That isn’t a star. I need its position. And an outline.",
+    "connect": "I still have the old observation notes. Let’s compare them.\nB  Open the evidence board.",
     "journalTitle": "The first evening",
     "journalBody": "Hugo woke to the hammer in 401. The tenant told him to close his windows, stay inside, and leave the television off.\nHugo went in. The television switched itself on. He ate some bread and slept on the sofa until evening.\n\nThe neighbor probably would not applaud this level of compliance.",
-    "breadMeal": "Hugo eats a few slices of bread and shuts the fridge.\nNo accompaniments. The bread raises no objection.",
+    "breadMeal": "The bread’s dry. Still edible.\n…Now I’m sleepy. Not like I have a job to get to. The sofa will do.",
     "fridgeEmpty": "Hugo checks the fridge again, then closes it.\nThe bread has not grown back. A necessary investigation.",
     "sofaFree": "Hugo can rest here and let some time pass.\nThe sofa guarantees a place to sit. Quality of rest is not covered."
   },
   "worldEnd": {
-    "title": "BAD END · BUSINESS AS USUAL",
+    "title": "Hugo, Who Did Nothing",
     "lines": [
-      "On the seventh day, they are still charging for parking downstairs.",
-      "Fire climbs out of the drains. Someone reaches for the hydrant. Their arm coils twice before it gets there.",
-      "The broadcast tells everyone to remain indoors. When the announcer takes a breath, another voice carries on.",
-      "Hugo never went up to the roof. The stairs are gone now."
+      "The seventh night. Hugo draws the curtains.",
+      "He stopped asking what was up there. Tomorrow would do. Tomorrow was always free.",
+      "Outside, the streetlights go out one block at a time. Then the ground begins to burn.",
+      "There is no second morning. Not for Hugo. Not for anyone."
     ],
-    "summary": "Day Seven. The world ends.\nHugo never saw what was above it.",
+    "summary": "Ending 01 · Hugo, Who Did Nothing\nSeven days passed. He never learned how to return.",
     "confirmWarning": "Restarting clears this journey, including collected knowledge.",
     "restart": "Begin again",
     "confirm": "Confirm restart",
@@ -401,13 +402,13 @@
     "up": "E  Take the stairs to the fifth-floor roof",
     "down": "E  Return to the fourth floor",
     "carry": "F  Pack the telescope for the roof",
-    "carried": "Hugo folds the tripod. It is heavier than it looked from the sofa.\nThe stairs are at the west end of the fourth-floor corridor.",
+    "carried": "He folds the tripod and tucks it under his arm. The stairs are at the west end of the corridor.",
     "place": "E  Set up the telescope",
-    "placed": "Hugo sets the tripod on the mat. Five floors, three legs, one reasonably level patch of concrete.",
+    "placed": "This spot will do. The legs are steady.",
     "missing": "Hugo needs his telescope from the balcony. F packs it away.",
     "observe": "E  Look through the rooftop telescope",
-    "daylight": "Hugo finds the far side of the city. Daylight has left very little room for stars.",
-    "firstNight": "A bright point over the rooftops. Hugo checks the time against the bulletin.\nFor once, the television appears to have got something right.",
+    "daylight": "Too bright. No stars yet.",
+    "firstNight": "Why are there no stars in that patch?\n…Not a cloud. Something is blocking the light behind it.\nIt looks bigger than before. I’ll check tomorrow night. See if it’s coming closer.",
     "revelation": "Hugo turns the focus ring. The stars bend around something that does not fit inside the lens.\nIt moves.\nHugo stops adjusting. A little late to pretend he was looking for weather.",
     "title": "Above the fifth floor",
     "narrator": "Narrator",
@@ -542,11 +543,11 @@
     },
     {
       "key": "早晨",
-      "text": "Morning"
+      "text": "Dawn"
     },
     {
       "key": "下午",
-      "text": "Afternoon"
+      "text": "Noon"
     },
     {
       "key": "傍晚",

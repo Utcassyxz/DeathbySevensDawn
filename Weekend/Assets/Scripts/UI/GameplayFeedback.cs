@@ -65,9 +65,9 @@ namespace DeathBySeventhsDawn.Progression
             switch (period)
             {
                 case TimePeriod.Morning:
-                    return DeathBySeventhsDawn.Story.StoryText.Local("早晨", "Morning");
+                    return DeathBySeventhsDawn.Story.StoryText.Local("清晨", "Dawn");
                 case TimePeriod.Afternoon:
-                    return DeathBySeventhsDawn.Story.StoryText.Local("午后", "Afternoon");
+                    return DeathBySeventhsDawn.Story.StoryText.Local("午间", "Noon");
                 case TimePeriod.Evening:
                     return DeathBySeventhsDawn.Story.StoryText.Local("傍晚", "Evening");
                 default:
@@ -102,16 +102,11 @@ namespace DeathBySeventhsDawn.Progression
             var matrix = GUI.matrix;
             float scale = Mathf.Clamp(Screen.height / 900f, .8f, 2.4f);
             GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1));
-            float width = Screen.width / scale, panel = Mathf.Min(640, width - 24), y = 72;
+            float width=Screen.width/scale,height=Screen.height/scale,panel=Mathf.Min(640,width-48);
             try
             {
-                if (timeRemaining > 0)
-                {
-                    GUI.Box(new Rect((width - panel) / 2, y, panel, 56), timeMessage, style);
-                    y += 62;
-                }
-                if (journalRemaining > 0)
-                    GUI.Box(new Rect((width - panel) / 2, y, panel, 80), journalMessage, style);
+                if(journalRemaining>0 && string.IsNullOrEmpty(WorldPromptUI.VisiblePrompt))
+                {var r=new Rect((width-panel)/2,height-230,panel,70);NarrativeUI.Panel(r);GUI.Label(r,journalMessage,style);}
             }
             finally { GUI.matrix = matrix; }
         }

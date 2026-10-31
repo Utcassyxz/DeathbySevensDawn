@@ -86,7 +86,7 @@ public static class VerifySevenDayProgression
             Check(feedback != null && !string.IsNullOrEmpty(feedback.JournalMessage), "Journal update feedback");
             Check(JournalUpdates.MarkRead("test-ordinary") && !JournalUpdates.MarkRead("test-ordinary") && JournalUpdates.UnreadCount == 2, "Read individual entry only once");
             Check(ProgressionSave.Load().journal.Find(e => e.id == "test-ordinary").isRead, "Read state saved to disk");
-            Check(feedback.TimeMessage == "第 1 天 · 早晨", "Latest time feedback after reset");
+            Check(feedback.TimeMessage == "第 1 天 · 清晨", "Latest time feedback after reset");
             Check(!game.CanUseHumanRoute(25) && game.MeetsKnowledgeRequirement(50), "Route and knowledge gates");
             for (int i = 0; i < 27; i++)
                 clock.AdvanceTime();

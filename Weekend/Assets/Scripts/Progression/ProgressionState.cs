@@ -10,7 +10,7 @@ namespace DeathBySeventhsDawn.Progression
         public int version = 2, loopCount;
         public bool badEndingOne, dreamSeen;
         public bool worldEndEnding, ancientGodSeen, aquariumSealed;
-        public bool breadEaten, telescopeCarried, telescopeOnRoof;
+        public bool breadEaten, telescopeCarried, telescopeOnRoof, firstNightObjectSeen;
         public bool neighborFlyersSeen, skt079NewsSeen, neighborBarricadeSeen, prologueEntered;
         public bool dayOneSupernovaSeen;
         public int morningStage;

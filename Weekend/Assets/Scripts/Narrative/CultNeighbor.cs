@@ -232,7 +232,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (day == 1 && !State.cultDayOneTalked)
             {
                 prompt = StoryText.Local("E  和 401 的住户说话", "E  Speak to the tenant of 401");
-                if (k != null && k.eKey.wasPressedThisFrame)
+                if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
                     TalkDayOne();
             }
             else if (day == 2)
@@ -240,7 +240,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!Investigation.Has("cult-door-note"))
                     return;
                 prompt = StoryText.Local(State.cultTokenOffered && !HasToken ? "E  敲门，取回门缝边的小三角" : "E  敲 401 的门", State.cultTokenOffered && !HasToken ? "E  Knock; the triangle is by the crack" : "E  Knock on 401");
-                if (k != null && k.eKey.wasPressedThisFrame)
+                if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
                     KnockDoor();
             }
         }
@@ -316,19 +316,15 @@ namespace DeathBySeventhsDawn.Interaction
                 if (view == View.None)
                 {
                     if (prompt != null)
-                        GUI.Label(new Rect(w / 2 - 380, h - 120, 760, 90), prompt, text);
+                        WorldPromptUI.Offer("neighbor",prompt,90);
                     return;
                 }
                 GUI.depth = -65;
                 if (view == View.DayOne)
                 {
-                    float dw = Mathf.Min(880, w - 80);
-                    var dialogue = new Rect((w - dw) / 2, h - 205, dw, 155);
-                    Fill(dialogue, new Color(.02f, .03f, .028f, .97f));
-                    Fill(new Rect(dialogue.x, dialogue.y, 3, dialogue.height), new Color(.58f, .48f, .28f));
-                    subtitles.Set(StoryText.Current.cult.dayOne[Mathf.Min(line, StoryText.Current.cult.dayOne.Length - 1)], text, dw - 50, 75);
-                    GUI.Label(new Rect(dialogue.x + 25, dialogue.y + 20, dw - 50, 75), subtitles.Current, text);
-                    GUI.Label(new Rect(dialogue.x + 25, dialogue.yMax - 40, dw - 50, 30), subtitles.Counter + StoryText.Local("E  继续  ·  Esc  离开", "E  Continue · Esc Leave"), small);
+                    var dialogue=NarrativeUI.DialogueRect(w,h);
+                    subtitles.Set(StoryText.Current.cult.dayOne[Mathf.Min(line,StoryText.Current.cult.dayOne.Length-1)],text,dialogue.width-70,92);
+                    NarrativeUI.Dialogue(dialogue,StoryText.Local("401 的住户","Resident of 401"),subtitles.Current,subtitles.Counter+StoryText.Local("E  继续 · Esc 离开","E Continue · Esc Leave"),text);
                     return;
                 }
                 Fill(new Rect(0, 0, w, h), new Color(.018f, .025f, .026f, .99f));
@@ -366,10 +362,9 @@ namespace DeathBySeventhsDawn.Interaction
                         GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
                     }
                 }
-                float top = view == View.Door ? h * .64f : h * .30f;
-                subtitles.Set(prose, text, pw, 130);
-                GUI.Label(new Rect(panel.x, top, pw, 130), subtitles.Current, text);
-                GUI.Label(new Rect(panel.x, h - 70, pw, 30), subtitles.Counter + StoryText.Local(view == View.Refusal ? "Esc  离开" : view == View.Door && line >= StoryText.Current.cult.door.Length ? "E  拾起并放入背包  ·  Esc  暂时离开" : "E  继续  ·  Esc  离开", view == View.Refusal ? "Esc  Leave" : view == View.Door && line >= StoryText.Current.cult.door.Length ? "E  Take and put in inventory · Esc Leave" : "E  Continue · Esc Leave"), small);
+                var speech=NarrativeUI.DialogueRect(w,h);
+                subtitles.Set(prose,text,speech.width-70,92);
+                NarrativeUI.Dialogue(speech,StoryText.Local("401 的住户","Resident of 401"),subtitles.Current,subtitles.Counter+StoryText.Local(view==View.Refusal?"Esc 离开":view==View.Door&&line>=StoryText.Current.cult.door.Length?"E 拾起并放入背包 · Esc 离开":"E 继续 · Esc 离开",view==View.Refusal?"Esc Leave":view==View.Door&&line>=StoryText.Current.cult.door.Length?"E Take · Esc Leave":"E Continue · Esc Leave"),text);
             }
             finally { GUI.matrix = matrix; GUI.depth = depth; GUI.color = color; }
         }

@@ -36,6 +36,8 @@ namespace DeathBySeventhsDawn.Progression
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.EvidenceInspection>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent>();
                 hud.AddComponent<SceneBackdrop>();
+                hud.AddComponent<TimeAtmosphere>();
+                hud.AddComponent<WorldPromptUI>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.CultNeighbor>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.MorningRoutine>();
                 hud.AddComponent<GameSettingsUI>();

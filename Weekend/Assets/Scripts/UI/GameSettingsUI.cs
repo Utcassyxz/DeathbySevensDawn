@@ -91,13 +91,14 @@ namespace DeathBySeventhsDawn.Progression
             var panel = new Rect((w - pw) / 2, (h - 460) / 2, pw, 460);
             try
             {
-                GUI.color = new Color(0, 0, 0, .95f);
+                GUI.color = Color.black;
                 GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
                 GUI.color = new Color(.065f, .085f, .08f);
                 GUI.DrawTexture(panel, Texture2D.whiteTexture);
                 GUI.color = new Color(.65f, .55f, .34f);
                 GUI.DrawTexture(new Rect(panel.x, panel.y, pw, 3), Texture2D.whiteTexture);
                 GUI.color = Color.white;
+                NarrativeUI.Panel(panel);
                 GUILayout.BeginArea(new Rect(panel.x + 30, panel.y + 25, pw - 60, 410));
                 GUILayout.Label(StoryText.Local("设置", "Settings"), title);
                 GUILayout.Space(22);

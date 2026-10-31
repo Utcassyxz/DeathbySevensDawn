@@ -29,6 +29,7 @@ namespace DeathBySeventhsDawn.Interaction
         int openedFrame, blockedFrame = -1;
         Sprite square; Texture2D pixel, god;
         GUIStyle title, body, small, button;
+        readonly DialoguePages subtitles=new DialoguePages();
         void Awake()
         {
             Instance = this;
@@ -175,6 +176,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if (clock.Days < 2)
             {
+                State.firstNightObjectSeen=true;ProgressionSave.Write(State);
                 Show(text.firstNight, false);
                 return true;
             }
@@ -186,6 +188,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void Show(string text, bool revealed)
         {
+            subtitles.Reset();
             message = text;
             revelation = revealed;
             open = true;
@@ -216,8 +219,8 @@ namespace DeathBySeventhsDawn.Interaction
                     return;
                 if (revelation && k != null && k.rKey.wasPressedThisFrame)
                     Investigation.Collect(StoryContent.AncientKnowledgeId);
-                if (k != null && (k.eKey.wasPressedThisFrame || k.escapeKey.wasPressedThisFrame))
-                    Close();
+                if(k!=null&&k.eKey.wasPressedThisFrame){if(!subtitles.Next())Close();}
+                else if(k!=null&&k.escapeKey.wasPressedThisFrame)Close();
                 return;
             }
             prompt = null;
@@ -230,19 +233,19 @@ namespace DeathBySeventhsDawn.Interaction
             if (scene == "Corridor" && Near(StairsFour))
             {
                 prompt = State.tutorialComplete ? text.up : TutorialGate.Reminder;
-                if (k != null && k.eKey.wasPressedThisFrame)
+                if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                     UseStairs();
             }
             else if (scene == "Rooftop" && Near(StairsFive))
             {
                 prompt = text.down;
-                if (k != null && k.eKey.wasPressedThisFrame)
+                if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                     UseStairs();
             }
             else if (scene == "Rooftop" && Near(TelescopeSpot))
             {
                 prompt = State.telescopeOnRoof ? text.observe : State.telescopeCarried ? text.place : text.missing;
-                if (k != null && k.eKey.wasPressedThisFrame)
+                if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                 {
                     if (State.telescopeOnRoof)
                         Observe();
@@ -285,24 +288,21 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!open)
                 {
                     if (prompt != null)
-                        GUI.Label(new Rect(w * .15f, h - (SceneManager.GetActiveScene().name == "Balcony" ? 175 : 115), w * .7f, 90), prompt, body);
+                        WorldPromptUI.Offer("rooftop",prompt,65);
                     string scene = SceneManager.GetActiveScene().name;
                     if (scene == "Corridor" || scene == "Rooftop")
                         GUI.Label(new Rect(25, 25, w - 50, 40), scene == "Corridor" ? t.floorFour : t.floorFive, small);
                     return;
                 }
                 GUI.depth = -50;
-                GUI.color = new Color(.01f, .02f, .025f, .98f);
-                GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
-                GUI.color = Color.white;
-                float left = w * .12f, pw = w * .76f;
-                GUI.Label(new Rect(left, 24, pw, 48), revelation ? t.title : t.narrator, title);
-                if (revelation && god != null)
-                    GUI.DrawTexture(new Rect(left, 84, pw, h * .48f), god, ScaleMode.ScaleToFit);
-                GUI.Label(new Rect(left, revelation ? h * .64f : h * .3f, pw, h * .25f), message, body);
-                if (revelation)
-                    GUI.Label(new Rect(left, h - 105, pw, 40), Investigation.Has(StoryContent.AncientKnowledgeId) ? t.recorded : t.record, small);
-                GUI.Label(new Rect(left, h - 58, pw, 40), t.close, small);
+                if(revelation){GUI.color=new Color(.01f,.01f,.015f,.99f);GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=Color.white;}
+                float left=w*.12f,pw=w*.76f;
+                if(revelation&&god!=null)GUI.DrawTexture(new Rect(left,45,pw,h*.48f),god,ScaleMode.ScaleToFit);
+                var speech=NarrativeUI.DialogueRect(w,h);
+                var subtitleStyle=new GUIStyle(body){fontSize=23,padding=new RectOffset()};
+                subtitles.Set(message,subtitleStyle,speech.width-50,speech.height-86);
+                string record=revelation?(Investigation.Has(StoryContent.AncientKnowledgeId)?t.recorded:t.record)+" · ":"";
+                NarrativeUI.Dialogue(speech,revelation?t.title:StoryText.Local("雨果","Hugo"),subtitles.Current,subtitles.Counter+record+t.close,body);
             }
             finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
         }

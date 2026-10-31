@@ -35,6 +35,7 @@ namespace DeathBySeventhsDawn.Interaction
         string[] pages;
         string speaker;
         GUIStyle text, title, button, small;
+        readonly DialoguePages subtitles=new DialoguePages();
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -217,7 +218,7 @@ namespace DeathBySeventhsDawn.Interaction
                 player = GameObject.FindWithTag("Player");
             Vector2 point = InteractionPoint();
             nearby = player != null && Vector2.Distance(player.transform.position, point) <= range;
-            if (nearby && InteractPressed())
+            if (nearby && InteractPressed() && WorldPromptUI.CanActivate("aquarium"))
             {
                 if (HasFoil)
                     OpenOffer();
@@ -316,6 +317,8 @@ namespace DeathBySeventhsDawn.Interaction
             }
             if (!advance)
                 return;
+            if(subtitles.Next())return;
+            subtitles.Reset();
             page++;
             if (page >= pages.Length)
                 CloseDialogue();
@@ -325,6 +328,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (talking)
                 blockedUntilFrame = Time.frameCount;
             talking = false;
+            subtitles.Reset();
             page = 0;
             pages = null;
         }
@@ -349,36 +353,22 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     var aq = StoryText.Current.aquarium;
                     string prompt = HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : (aq?.promptDay3 ?? "E  和鱼缸里的东西说话");
-                    GUI.Label(new Rect(w / 2 - 260, h - 88, 520, 60), prompt, button);
+                    WorldPromptUI.Offer("aquarium",prompt,85);
                     return;
                 }
-                GUI.depth = -30;
-                GUI.color = C(.015f, .03f, .03f, .93f);
-                GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
-                GUI.color = color;
-                float panel = Mathf.Min(860, w - 56);
-                GUILayout.BeginArea(new Rect((w - panel) / 2, h * .16f, panel, h * .68f));
-                GUILayout.Label(speaker, title);
-                GUILayout.Space(6);
-                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("第 ", "Day ") + visualDay + DeathBySeventhsDawn.Story.StoryText.Local(" 天", ""), small);
-                GUILayout.Space(22);
-                GUILayout.Label(pages != null ? pages[Mathf.Clamp(page, 0, pages.Length - 1)] : "", text);
-                GUILayout.FlexibleSpace();
-                string evidence = visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
-                if (HasFoil && GUILayout.Button(StoryText.Current.aquarium.throwFoil, button))
-                    ThrowFoil();
-                if (!GameManager.Instance.AquariumSealed && visualDay >= 3)
+                GUI.depth=-50;
+                var dialogue=NarrativeUI.DialogueRect(w,h);
+                var subtitleStyle=new GUIStyle(text){fontSize=23,padding=new RectOffset()};
+                subtitles.Set(pages!=null?pages[Mathf.Clamp(page,0,pages.Length-1)]:"",subtitleStyle,dialogue.width-50,dialogue.height-86);
+                NarrativeUI.Dialogue(dialogue,speaker,subtitles.Current,subtitles.Counter+StoryText.Local("E 继续 · Esc 离开","E Continue · Esc Leave"),text);
+                float x=dialogue.x,y=dialogue.y-64,bw=(dialogue.width-24)/3;
+                if(HasFoil){if(GUI.Button(new Rect(x,y,bw,48),StoryText.Current.aquarium.throwFoil,button))ThrowFoil();x+=bw+12;}
+                if(!GameManager.Instance.AquariumSealed&&visualDay>=3)
                 {
-                    if (GUILayout.Button(StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R  记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R  Record this observation"), button))
-                        Investigation.Collect(evidence);
-                    if (GUILayout.Button(StoryText.Current.aquarium.question, button))
-                    {
-                        pages = new[] { Investigation.Has("notes-gap") ? StoryText.Current.aquarium.answerGap : StoryText.Current.aquarium.answerDefault };
-                        page = 0;
-                    }
+                    string evidence=visualDay>=6?"001-name":visualDay>=5?"tank-overflow":"tank-eye";
+                    if(GUI.Button(new Rect(x,y,bw,48),StoryText.Local(Investigation.Has(evidence)?"已记录":"R 记下这次观察",Investigation.Has(evidence)?"Recorded":"R Record observation"),button))Investigation.Collect(evidence);
+                    if(GUI.Button(new Rect(x+bw+12,y,bw,48),StoryText.Current.aquarium.question,button)){pages=new[]{Investigation.Has("notes-gap")?StoryText.Current.aquarium.answerGap:StoryText.Current.aquarium.answerDefault};page=0;subtitles.Reset();}
                 }
-                GUILayout.Label(StoryText.Local("E 继续  ·  Esc 关闭", "E Continue · Esc Close"), small);
-                GUILayout.EndArea();
             }
             finally { GUI.matrix = matrix; GUI.color = color; GUI.depth = depth; }
         }
