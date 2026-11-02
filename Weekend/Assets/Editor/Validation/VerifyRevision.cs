@@ -34,7 +34,7 @@ public static class VerifyRevision
                 return;
             if (s == PlayModeStateChange.EnteredPlayMode)
             {
-                steps = SessionState.GetBool(Key + "OnlyCompanions", false) ? CompanionAcceptance.Run() : Steps();
+                steps = SessionState.GetBool(Key + "OnlyCompanions", false) ? Extensions() : Steps();
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
@@ -118,8 +118,8 @@ public static class VerifyRevision
     {
         if (Application.isBatchMode)
             return;
-        Directory.CreateDirectory("../docs/validation/companion-world");
-        ScreenCapture.CaptureScreenshot("../docs/validation/companion-world/" + name + ".png");
+        Directory.CreateDirectory("../docs/validation/continuity-2026-11-02");
+        ScreenCapture.CaptureScreenshot("../docs/validation/continuity-2026-11-02/" + name + ".png");
     }
 
     static void Place(Vector2 p)
@@ -397,10 +397,17 @@ public static class VerifyRevision
         Check(theme.text.Contains("sharedHarmony") && theme.text.Contains("brass melody") && theme.text.Contains("march snare"), "Shared harmony is reorchestrated with strings and marching-band layers");
         Capture("rooftop-after-placement");
         yield return .1f;
-        var extension = CompanionAcceptance.Run();
-        while (extension.MoveNext())
-            yield return extension.Current;
+        var extension = Extensions();
+        while(extension.MoveNext()) yield return extension.Current;
         Check(error == null, "No game runtime exceptions in revision paths");
+    }
+
+    static IEnumerator Extensions()
+    {
+        var extension = CompanionAcceptance.Run();
+        while(extension.MoveNext()) yield return extension.Current;
+        extension = ContinuityAcceptance.Run();
+        while(extension.MoveNext()) yield return extension.Current;
     }
 
     static void Tick()
@@ -409,6 +416,10 @@ public static class VerifyRevision
             return;
         if (steps == null)
         {
+            if (!EditorApplication.isPlaying && File.Exists("../companions-request.txt"))
+            {
+                File.Delete("../companions-request.txt"); RunCompanions(); return;
+            }
             if (!EditorApplication.isPlaying && File.Exists("../revision-request.txt"))
             {
                 File.Delete("../revision-request.txt");
@@ -440,7 +451,7 @@ public static class VerifyRevision
     static void Finish(string failure)
     {
         steps = null;
-        string scope = SessionState.GetBool(Key + "OnlyCompanions", false) ? "focused companion and world checks; seated writing, curtain alignment, seven-day pixels, fish understanding, Bubble reveal and shop, SAN exchange, v1/v2/v3 save compatibility. Original journey, album and settings restored." : "three distinct stamps and hammer/wake handoff; quiet ordinary nights; observation-night Bubble and later-loop market; pre-face foil/late failure; small pixel atlas and dialogue portraits; shared melodic ending variations; deduction reward; save-safe debug previews; coarse balcony with seven-day exterior; dedicated two-flight stairwell and floor travel; second-night carry-only scope; extended shared-harmony orchestrations; seated writing; night curtains; seven radiation views; fish understanding and investigation; unknown/revealed Bubble; SAN exchange and v3 save migration. Original journey, album and settings restored.";
+        string scope = SessionState.GetBool(Key + "OnlyCompanions", false) ? "focused companion and world checks; seated writing, curtain alignment, seven-day pixels, fish understanding, Bubble reveal and shop, SAN exchange, v1/v2/v3/v4 save compatibility; walked doors, terminal stair floors, permanent seated fish and repeat chats, automatic Bubble, stove textures. Original journey, album and settings restored." : "three distinct stamps and hammer/wake handoff; quiet ordinary nights; observation-night Bubble and later-loop market; pre-face foil/late failure; small pixel atlas and dialogue portraits; shared melodic ending variations; deduction reward; save-safe debug previews; coarse balcony with seven-day exterior; dedicated two-flight stairwell and floor travel; second-night carry-only scope; extended shared-harmony orchestrations; seated writing; night curtains; seven radiation views; fish understanding and investigation; unknown/revealed Bubble; SAN exchange and v4 save migration; physically walked bedroom and bathroom doors; terminal-floor flight removal; persistent seated fish; repeat chat shuffle bag; automatic later-loop Bubble; stove on/off texture swap. Original journey, album and settings restored.";
         File.WriteAllText("../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)

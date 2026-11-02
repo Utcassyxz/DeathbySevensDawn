@@ -120,7 +120,10 @@ namespace DeathBySeventhsDawn.Progression
             if (active)
                 return true;
             var text = StoryText.Current.nightDream;
-            if (game.HasSeenAncientGod && ((!game.HasLoopAbility && (game.State.ancientObservationDay == 0 || (game.State.ancientObservationDay == clock.Days && game.State.ancientObservationLoop == game.LoopCount))) || (game.HasLoopAbility && game.LoopCount > 0 && game.State.ancientObservationDay == clock.Days && game.State.ancientObservationLoop == game.LoopCount)))
+            bool firstContact = !game.HasLoopAbility && game.HasSeenAncientGod &&
+                (game.State.ancientObservationDay == 0 || (game.State.ancientObservationDay == clock.Days && game.State.ancientObservationLoop == game.LoopCount));
+            bool returningContact = game.HasLoopAbility && game.State.bubbleDreamUnlocked && game.LoopCount > 0 && game.State.bubbleVisitLoop != game.LoopCount;
+            if (firstContact || returningContact)
             {
                 kind = Kind.Bubble;
                 returning = game.HasLoopAbility;
@@ -183,7 +186,12 @@ namespace DeathBySeventhsDawn.Progression
             }
 
             if (completed == Kind.Bubble)
+            {
                 game.GrantLoopAbility();
+                game.State.bubbleDreamUnlocked = true;
+                game.State.bubbleVisitLoop = game.LoopCount;
+                ProgressionSave.Write(game.State);
+            }
             TimeManager.Instance.CompleteSleep();
             if (!game.HasEnded && Application.CanStreamedLevelBeLoaded("Bedroom"))
             {

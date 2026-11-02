@@ -28,6 +28,7 @@ namespace DeathBySeventhsDawn.Progression
                 hud.AddComponent<WorldEndSequence>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.RooftopAccess>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.FurnitureInteraction>();
+                hud.AddComponent<DeathBySeventhsDawn.Interaction.StoveInteraction>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.FirstLoopPrologue>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.StoryJournal>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.AquariumEntity>();

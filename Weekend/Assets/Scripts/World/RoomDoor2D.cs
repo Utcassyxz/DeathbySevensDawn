@@ -44,7 +44,9 @@ namespace DeathBySeventhsDawn.World
             pendingScene = null;
             blockedUntil = Time.unscaledTime + .6f;
         }
-        void OnTriggerEnter2D(Collider2D other)
+        void OnTriggerEnter2D(Collider2D other) => TryTravel(other);
+        void OnTriggerStay2D(Collider2D other) => TryTravel(other);
+        void TryTravel(Collider2D other)
         {
             if (DeathBySeventhsDawn.Core.GameManager.Instance != null && DeathBySeventhsDawn.Core.GameManager.Instance.HasEnded)
                 return;

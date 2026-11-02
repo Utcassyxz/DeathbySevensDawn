@@ -98,6 +98,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Part(root.transform, "EXIT sign plate", new Vector2(-6.12f, .90f), new Vector2(.80f, .27f), new Color(.12f, .29f, .22f), 7);
             }
 
+            RefreshFloorAppearance();
             if (scene.name == "Rooftop" && State.telescopeOnRoof)
                 BuildScope();
         }
@@ -189,6 +190,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (next < 1 || next > 5)
                 return false;
             CurrentFloor = next;
+            RefreshFloorAppearance();
             // A brief fade makes the flight traversal readable without a second open-world scene.
             StoryTransition.Cover(.7f, .4f);
             if (player != null)
@@ -206,6 +208,21 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             return true;
+        }
+
+        public void RefreshFloorAppearance()
+        {
+            if (SceneManager.GetActiveScene().name != "Stairwell") return;
+            var landing = GameObject.Find("StairwellLanding");
+            if (landing == null) return;
+            foreach (Transform part in landing.transform)
+            {
+                bool up = part.name.StartsWith("Up") || part.name.StartsWith("Upper");
+                bool down = part.name.StartsWith("Down") || part.name.StartsWith("Lower");
+                if (part.name.StartsWith("Rail") || part.name.StartsWith("Baluster"))
+                { up = part.localPosition.x < 0; down = !up; }
+                if (up || down) part.gameObject.SetActive(up ? CurrentFloor < 5 : CurrentFloor > 1);
+            }
         }
 
         bool CanCarryTelescope => State.tutorialComplete && !State.telescopeCarried && !State.telescopeOnRoof && TimeManager.Instance.Days >= 2 && StoryJournal.IsNight(TimeManager.Instance.Period);
@@ -325,9 +342,9 @@ namespace DeathBySeventhsDawn.Interaction
             else if (scene == "Stairwell")
             {
                 if (Near(StairUp, .8f))
-                    prompt = CurrentFloor < 5 ? StoryText.Local("E 上楼", "E Upstairs") : StoryText.Local("已经到顶层了。", "This is the top floor.");
+                    prompt = CurrentFloor < 5 ? StoryText.Local("E 上楼", "E Upstairs") : null;
                 else if (Near(StairDown, .8f))
-                    prompt = CurrentFloor > 1 ? StoryText.Local("E 下楼", "E Downstairs") : StoryText.Local("已经到一楼了。", "This is the ground floor.");
+                    prompt = CurrentFloor > 1 ? StoryText.Local("E 下楼", "E Downstairs") : null;
                 else if (Near(LandingDoor, .95f))
                     prompt = CurrentFloor == 4 ? StoryText.Local("E 返回四楼走廊", "E Fourth-floor corridor") : CurrentFloor == 5 ? StoryText.Local("E 前往天台", "E Rooftop") : StoryText.Local("E 查看防火门", "E Check fire door");
                 if (prompt != null && k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
@@ -409,8 +426,8 @@ namespace DeathBySeventhsDawn.Interaction
                     {
                         Sign(new Vector2(3.88f, 3.18f) * .68f, CurrentFloor.ToString("00"), title, scale, 26);
                         Sign(new Vector2(3.9f, 2.91f) * .68f, CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
-                        Sign(new Vector2(-2.15f, 2.75f) * .68f, "▲", small, scale, 17);
-                        Sign(new Vector2(1.55f, -2.65f) * .68f, "▼", small, scale, 17);
+                        if (CurrentFloor < 5) Sign(new Vector2(-2.15f, 2.75f) * .68f, "▲", small, scale, 17);
+                        if (CurrentFloor > 1) Sign(new Vector2(1.55f, -2.65f) * .68f, "▼", small, scale, 17);
                     }
 
                     if (scene == "Corridor" || scene == "Rooftop")

@@ -31,6 +31,40 @@ namespace DeathBySeventhsDawn.Interaction
         bool talking, nearby, choosing, choiceFinished;
         public bool ChoicesVisible => talking && choosing;
         public bool CompanionReady => GameManager.Instance.State.fishAlly;
+        public bool CompanionPresent => GameManager.Instance.State.fishCompanionUnlocked && GameManager.Instance.LoopCount > GameManager.Instance.State.fishCompanionUnlockLoop;
+        public bool IsAmbientConversation => talking && ambientConversation;
+        public string CurrentConversation => pages == null ? "" : string.Join("\n", pages);
+        bool ambientConversation, storyConversation;
+        string activeEvidence;
+        readonly System.Collections.Generic.List<int> chatBag = new System.Collections.Generic.List<int>();
+        int lastChat = -1; bool lastSilent;
+
+        string PickChat(bool silent)
+        {
+            var pool = silent ? StoryText.Current.expansion.fishSilentChats : StoryText.Current.expansion.fishChats;
+            if (pool == null || pool.Length == 0) return StoryText.Local("……她在听。", "…She is listening.");
+            if (silent != lastSilent) { chatBag.Clear(); lastChat = -1; lastSilent = silent; }
+            if (chatBag.Count == 0)
+                for (int i = 0; i < pool.Length; i++) chatBag.Add(i);
+            int slot = UnityEngine.Random.Range(0, chatBag.Count);
+            if (chatBag.Count > 1 && chatBag[slot] == lastChat) slot = (slot + 1) % chatBag.Count;
+            lastChat = chatBag[slot]; chatBag.RemoveAt(slot);
+            return pool[lastChat];
+        }
+        void CompleteDailyStory()
+        {
+            if (!storyConversation) return;
+            var state = GameManager.Instance.State;
+            if (!state.fishStoryDays.Contains(visualDay)) state.fishStoryDays.Add(visualDay);
+            ProgressionSave.Write(state);
+            storyConversation = false;
+        }
+        public bool TryTalk()
+        {
+            if (tank == null || GameManager.Instance.HasEnded || GameManager.Instance.AquariumSealed ||
+                TutorialGate.IsBlocked("aquarium") || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy || !NearInteraction()) return false;
+            OpenDialogue(); return talking;
+        }
 
         int CurrentTopic => (GameManager.Instance.State.fishUnderstanding & 1) == 0 ? 0 : 1;
 
@@ -43,6 +77,12 @@ namespace DeathBySeventhsDawn.Interaction
             if (explainTrueNeed)
                 state.fishUnderstanding |= 1 << topic;
             state.fishAlly = (state.fishUnderstanding & 3) == 3;
+            if (state.fishAlly && !state.fishCompanionUnlocked)
+            {
+                state.fishCompanionUnlocked = true;
+                state.fishCompanionUnlockLoop = GameManager.Instance.LoopCount;
+            }
+            CompleteDailyStory();
             ProgressionSave.Write(state);
             pages = new[]
             {
@@ -56,6 +96,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
 
         float range = .72f;
+        readonly System.Collections.Generic.Dictionary<SpriteRenderer, Color> formTints = new System.Collections.Generic.Dictionary<SpriteRenderer, Color>();
         Sprite square, circle;
         Sprite[] metamorphosis;
         Texture2D pixel, circleTexture, portrait;
@@ -155,6 +196,11 @@ namespace DeathBySeventhsDawn.Interaction
             DestroyForm();
             RestoreTank();
             visualDay = day;
+            if (CompanionPresent && !GameManager.Instance.AquariumSealed)
+            {
+                BuildSeatedCompanion();
+                return;
+            }
             if (RadiationRules.Fish(day, GameManager.Instance.AquariumSealed) == FishStage.Ordinary)
                 return;
             EnsureSprites();
@@ -183,6 +229,27 @@ namespace DeathBySeventhsDawn.Interaction
                 BuildHalfBody();
             else
                 BuildFishFace(day >= 4);
+        }
+
+        void BuildSeatedCompanion()
+        {
+            var b = tankRenderer.bounds;
+            formRoot = new GameObject("Aquarium entity form");
+            formRoot.transform.SetParent(tank.transform, false);
+            formRoot.transform.localScale = new Vector3(1 / tank.transform.lossyScale.x, 1 / tank.transform.lossyScale.y, 1);
+            formRoot.transform.position = new Vector3(b.min.x - .52f, b.min.y - .45f, 0);
+            EnsureSprites();
+            var solid = formRoot.AddComponent<BoxCollider2D>();
+            solid.size = new Vector2(.42f, .20f);
+            solid.offset = new Vector2(0, -.18f);
+            Part("Fish companion stool seat", new Vector3(0, -.04f), new Vector2(.52f, .14f), C(.40,.29,.23), 10);
+            Part("Fish companion stool left leg", new Vector3(-.17f,-.24f), new Vector2(.08f,.32f), C(.24,.20,.19), 10);
+            Part("Fish companion stool right leg", new Vector3(.17f,-.24f), new Vector2(.08f,.32f), C(.24,.20,.19), 10);
+            var actor = new GameObject("Seated fish companion");
+            actor.transform.SetParent(formRoot.transform, false);
+            var r = actor.AddComponent<SpriteRenderer>();
+            r.sprite = SmallPixelActors.FishCompanion();
+            ApplyRenderer(r, 12);
         }
 
         void BuildDayThree() => BuildFishFace(false);
@@ -266,7 +333,7 @@ namespace DeathBySeventhsDawn.Interaction
             tankRenderer.color = tankOriginal * ambient;
             if (formRoot != null && metamorphosis != null)
                 foreach (var r in formRoot.GetComponentsInChildren<SpriteRenderer>())
-                    r.color = ambient;
+                    r.color = (formTints.TryGetValue(r, out var authored) ? authored : Color.white) * ambient;
         }
 
         void Update()
@@ -302,7 +369,7 @@ namespace DeathBySeventhsDawn.Interaction
 
             if (TimeManager.Instance != null && TimeManager.Instance.Days != visualDay)
                 RefreshForm();
-            if (tank == null || TimeManager.Instance == null || (TimeManager.Instance.Days < 3 && !HasFoil))
+            if (tank == null || TimeManager.Instance == null || (TimeManager.Instance.Days < 1))
             {
                 nearby = false;
                 return;
@@ -327,19 +394,18 @@ namespace DeathBySeventhsDawn.Interaction
             nearby = player != null && NearInteraction();
             if (nearby && InteractPressed() && WorldPromptUI.CanActivate("aquarium"))
             {
-                if (HasFoil)
-                    OpenOffer();
-                else
-                    OpenDialogue();
+                TryTalk();
             }
         }
 
-        bool NearInteraction() => player != null && tank != null && (visualDay < 7 ? PropReach.Gap(tank, player) < .20f : Vector2.Distance(player.transform.position, InteractionPoint()) < .9f);
+        public bool NearInteraction() => player != null && tank != null &&
+            (PropReach.Gap(tank, player) < .24f || (formRoot != null && (visualDay >= 7 || CompanionPresent) && Vector2.Distance(player.transform.position, InteractionPoint()) < .82f));
         Vector2 InteractionPoint()
         {
             if (tank == null)
                 return Vector2.zero;
-            if (visualDay >= 7 && tankRenderer != null)
+            if (CompanionPresent && formRoot != null) return formRoot.transform.position;
+            if (visualDay >= 7 && !CompanionReady && tankRenderer != null)
                 return new Vector2(tankRenderer.bounds.max.x + .45f, tankRenderer.bounds.min.y - .1f);
             return tank.transform.position;
         }
@@ -355,7 +421,7 @@ namespace DeathBySeventhsDawn.Interaction
 #endif
         }
 
-        public bool HasFoil => GameManager.Instance != null && GameManager.Instance.State.inventory.Contains(CultNeighbor.Token);
+        public bool HasFoil => GameManager.Instance != null && !CompanionPresent && GameManager.Instance.State.inventory.Contains(CultNeighbor.Token);
         public bool FormVisible => formRoot != null && !GameManager.Instance.AquariumSealed;
 
         void OpenOffer()
@@ -377,6 +443,9 @@ namespace DeathBySeventhsDawn.Interaction
             if (game == null || game.HasEnded || game.AquariumSealed || TutorialGate.IsBlocked("aquarium") || !HasFoil || tank == null || player == null || !NearInteraction())
                 return false;
             game.State.inventory.Remove(CultNeighbor.Token);
+            storyConversation = ambientConversation = choosing = false;
+            choiceFinished = true;
+            activeEvidence = null;
             if (!RadiationRules.CanSeal(TimeManager.Instance.Days))
             {
                 ProgressionSave.Write(game.State);
@@ -413,6 +482,12 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             choosing = false;
             choiceFinished = false;
+            subtitles.Reset();
+            var state = GameManager.Instance.State;
+            state.fishStoryDays = state.fishStoryDays ?? new System.Collections.Generic.List<int>();
+            ambientConversation = state.fishStoryDays.Contains(visualDay) && !(CompanionReady && !state.fishReportAvailable && (visualDay >= 5 || CompanionPresent));
+            storyConversation = !ambientConversation;
+            activeEvidence = null;
             var aq = StoryText.Current.aquarium;
             pages = visualDay < 3 ? new[]
             {
@@ -420,7 +495,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             : visualDay >= 7 ? aq?.day7Pages : visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : visualDay >= 4 ? aq?.day4Pages : aq?.day3Pages;
-            if (CompanionReady && visualDay >= 5)
+            if (!ambientConversation && CompanionReady && (visualDay >= 5 || CompanionPresent))
             {
                 pages = new[]
                 {
@@ -430,9 +505,11 @@ namespace DeathBySeventhsDawn.Interaction
                 ProgressionSave.Write(GameManager.Instance.State);
             }
 
-            if (pages == null || pages.Length == 0)
-                return;
-            speaker = visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
+            if (ambientConversation) { pages = new[] { PickChat(visualDay < 4 && !CompanionPresent) }; choiceFinished = true; }
+            else if (visualDay >= 3 || CompanionPresent)
+                activeEvidence = CompanionReady && state.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
+            if (pages == null || pages.Length == 0) return;
+            speaker = CompanionReady ? StoryText.Local("小鱼", "Fish") : visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
             page = 0;
             openedFrame = Time.frameCount;
             talking = true;
@@ -455,8 +532,8 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             }
 
-            if (!GameManager.Instance.AquariumSealed && visualDay >= 3 && UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.rKey.wasPressedThisFrame)
-                Investigation.Collect(CompanionReady && GameManager.Instance.State.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye");
+            if (!string.IsNullOrEmpty(activeEvidence) && Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+                Investigation.Collect(activeEvidence);
 #if ENABLE_INPUT_SYSTEM
             var k=Keyboard.current;
             if(k!=null){advance=k.enterKey.wasPressedThisFrame;close=k.escapeKey.wasPressedThisFrame;}
@@ -484,13 +561,16 @@ namespace DeathBySeventhsDawn.Interaction
             page++;
             if (page >= pages.Length)
             {
-                if (!choiceFinished && !CompanionReady && visualDay >= 4 && (CurrentTopic == 0 || visualDay >= 5))
+                if (storyConversation && !choiceFinished && !CompanionReady && visualDay >= 4 && (CurrentTopic == 0 || visualDay >= 5))
                 {
                     page = pages.Length - 1;
                     choosing = true;
                 }
                 else
+                {
+                    CompleteDailyStory();
                     CloseDialogue();
+                }
             }
         }
 
@@ -499,6 +579,8 @@ namespace DeathBySeventhsDawn.Interaction
             if (talking)
                 blockedUntilFrame = Time.frameCount;
             talking = false;
+            ambientConversation = storyConversation = false;
+            activeEvidence = null;
             choosing = false;
             choiceFinished = false;
             subtitles.Reset();
@@ -526,14 +608,14 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!talking)
                 {
                     var aq = StoryText.Current.aquarium;
-                    string prompt = HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 7 ? (aq?.promptDay7 ?? "E  看着它") : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : visualDay >= 4 ? (aq?.promptDay4 ?? "E  听鱼说话") : (aq?.promptDay3 ?? "E  看看鱼缸里的鱼");
+                    string prompt = CompanionPresent ? StoryText.Local("E  和小鱼说话", "E  Talk to Fish") : HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 7 ? (aq?.promptDay7 ?? "E  看着它") : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : visualDay >= 4 ? (aq?.promptDay4 ?? "E  听鱼说话") : (aq?.promptDay3 ?? "E  看看鱼缸里的鱼");
                     WorldPromptUI.Offer("aquarium", prompt, 85);
                     return;
                 }
 
                 GUI.depth = -50;
                 var dialogue = NarrativeUI.DialogueRect(w, h);
-                if (portrait != null && visualDay >= 3)
+                if (portrait != null && (visualDay >= 3 || CompanionPresent))
                 {
                     var art = new Rect(w * .73f, h * .29f, w * .16f, h * .26f);
                     NarrativeUI.Panel(art);
@@ -576,9 +658,9 @@ namespace DeathBySeventhsDawn.Interaction
                     x += bw + 12;
                 }
 
-                if (!GameManager.Instance.AquariumSealed && visualDay >= 3)
+                if (!string.IsNullOrEmpty(activeEvidence))
                 {
-                    string evidence = CompanionReady && GameManager.Instance.State.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
+                    string evidence = activeEvidence;
                     if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R 记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R Record observation"), button))
                         Investigation.Collect(evidence);
                 }
@@ -685,6 +767,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void ApplyRenderer(SpriteRenderer renderer, int order)
         {
+            formTints[renderer] = renderer.color;
             if (tankRenderer != null)
             {
                 renderer.sortingLayerID = tankRenderer.sortingLayerID;
@@ -698,6 +781,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void DestroyForm()
         {
+            formTints.Clear();
             if (formRoot != null)
                 Destroy(formRoot);
             formRoot = null;

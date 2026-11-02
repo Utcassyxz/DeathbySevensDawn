@@ -58,8 +58,8 @@ public static class CompanionAcceptance
             Check(t.width == 192 && t.filterMode == FilterMode.Point, "Exterior is coarse pixel art on day " + day);
             if (!Application.isBatchMode)
             {
-                System.IO.Directory.CreateDirectory("../docs/validation/companion-world");
-                System.IO.File.WriteAllBytes("../docs/validation/companion-world/exterior-day" + day + ".png", t.EncodeToPNG());
+                System.IO.Directory.CreateDirectory("../docs/validation/continuity-2026-11-02");
+                System.IO.File.WriteAllBytes("../docs/validation/continuity-2026-11-02/exterior-day" + day + ".png", t.EncodeToPNG());
             }
         }
 
@@ -141,6 +141,11 @@ public static class CompanionAcceptance
         Check(fish.ChooseUnderstanding(false) && State.fishUnderstanding == 0 && !State.fishAlly, "Dismissive response does not earn understanding");
         Call(fish, "CloseDialogue");
         Call(fish, "OpenDialogue");
+        Check(fish.IsAmbientConversation && !fish.ChoicesVisible, "Repeating a completed daily story gives casual dialogue without retrying its choice");
+        Call(fish, "CloseDialogue");
+        clock.CompleteSleep();
+        yield return .3f;
+        Call(fish, "OpenDialogue");
         for (int n = 0; n < 15 && !fish.ChoicesVisible; n++)
         {
             fish.AdvanceDialogue();
@@ -148,7 +153,7 @@ public static class CompanionAcceptance
         }
 
         Check(fish.ChoicesVisible, "The actual dialogue flow presents its understanding choices");
-        Check(fish.ChooseUnderstanding(true) && State.fishUnderstanding == 1 && !State.fishAlly, "Day four explains listening rather than replacement");
+        Check(fish.ChooseUnderstanding(true) && State.fishUnderstanding == 1 && !State.fishAlly, "A later daily conversation can explain listening after an earlier dismissive answer");
         Call(fish, "CloseDialogue");
         clock.CompleteSleep();
         yield return .3f;
@@ -167,8 +172,7 @@ public static class CompanionAcceptance
         Capture("fish-companion-dialogue");
         yield return .2f;
         Call(fish, "CloseDialogue");
-        clock.CompleteSleep();
-        clock.CompleteSleep();
+        while(clock.Days < 7) clock.CompleteSleep();
         yield return .3f;
         Check(!game.TriggerReplacementEnding() && GameObject.Find("Hugo double") == null, "Companion does not turn into the murderous Hugo double");
         Capture("fish-small-map");
@@ -209,13 +213,12 @@ public static class CompanionAcceptance
         DeathBySeventhsDawn.TimeSystem.LoopManager.Instance.RestartLoop();
         yield return .8f;
         Ready();
-        Check(game.LoopCount > 0 && State.bubblePortraitUnlocked && !State.fishAlly && State.fishUnderstanding == 0, "Bubble identity survives a loop while fish relationship resets");
-        clock.CompleteSleep();
+        Check(game.LoopCount > 0 && State.bubblePortraitUnlocked && State.fishAlly && State.fishUnderstanding == 3 && State.fishCompanionUnlocked, "Bubble identity and the earned fish companion survive a loop");
         Night(clock);
-        game.RecordAncientGodEncounter();
+        Check(State.ancientObservationDay == 0 && State.bubbleDreamUnlocked, "Later loop has no new sighting but retains global Bubble access");
         clock.SleepUntilNextMorning();
         yield return .4f;
-        Check(NightDreamSequence.Instance.IsBubble && NightDreamSequence.Instance.PortraitKnown, "Later-loop observation returns to the known Bubble");
+        Check(NightDreamSequence.Instance.IsBubble && NightDreamSequence.Instance.PortraitKnown, "Later-loop sleep returns to known Bubble without another observation");
         for (int i = 0; i < 20 && !NightDreamSequence.Instance.IsShop; i++)
         {
             NightDreamSequence.Instance.Advance();
@@ -240,13 +243,13 @@ public static class CompanionAcceptance
         State.fishUnderstanding = 3;
         ProgressionSave.Write(State);
         var roundtrip = ProgressionSave.Load();
-        Check(roundtrip.version == 3 && roundtrip.bedroomCurtainsClosed && roundtrip.fishAlly && roundtrip.bubblePurchases.Contains("acceptance-only") && roundtrip.bubblePortraitUnlocked, "Version-three save reload retains curtains, fish, portrait and shop purchases");
+        Check(roundtrip.version == 4 && roundtrip.bedroomCurtainsClosed && roundtrip.fishAlly && roundtrip.bubblePurchases.Contains("acceptance-only") && roundtrip.bubblePortraitUnlocked, "Version-four save reload retains curtains, fish, portrait and shop purchases");
         ProgressionSave.Write(new ProgressionState { version = 2, loopCount = 1, yogDreamSeen = true, ancientGodSeen = true });
         var legacy = ProgressionSave.Load();
-        Check(legacy.version == 3 && legacy.bubbleIntroduced && legacy.bubblePortraitUnlocked, "Existing awakened saves migrate without repeating Bubble's introduction");
+        Check(legacy.version == 4 && legacy.bubbleIntroduced && legacy.bubblePortraitUnlocked, "Existing awakened saves migrate without repeating Bubble's introduction");
         ProgressionSave.Write(new ProgressionState { version = 1, loopCount = 1, journal = new System.Collections.Generic.List<JournalEntry> { new JournalEntry { id = "legacy-note", title = "legacy" } } });
         var oldest = ProgressionSave.Load();
-        Check(oldest.version == 3 && oldest.tutorialComplete && oldest.bubbleIntroduced, "Version-one tutorial and loop normalization precedes the version-three upgrade");
+        Check(oldest.version == 4 && oldest.tutorialComplete && oldest.bubbleIntroduced, "Version-one tutorial and loop normalization precedes the version-four upgrade");
         ProgressionSave.Write(State);
     }
 }

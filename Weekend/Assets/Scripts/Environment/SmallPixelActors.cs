@@ -6,6 +6,7 @@ namespace DeathBySeventhsDawn.Interaction
     public static class SmallPixelActors
     {
         static Sprite[] fish;
+        static Sprite companion;
         static Texture2D bubble, seated;
         public static Sprite[] Fish()
         {
@@ -114,6 +115,29 @@ namespace DeathBySeventhsDawn.Interaction
                 bubble.Apply();
                 return bubble;
             }
+        }
+
+        public static Sprite FishCompanion()
+        {
+            if (companion != null) return companion;
+            var t = new Texture2D(24, 30, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
+            for (int y=0;y<30;y++) for(int x=0;x<24;x++)
+            {
+                Color c = Color.clear;
+                if(x>=7&&x<=16&&y>=17&&y<=26)c=new Color(.78f,.73f,.55f);
+                if(x>=5&&x<=18&&y>=24&&y<=28)c=new Color(.22f,.30f,.29f);
+                if((x>=5&&x<=7||x>=17&&x<=18)&&y>=15&&y<=25)c=new Color(.22f,.30f,.29f);
+                if(x>=6&&x<=17&&y>=7&&y<=17)c=new Color(.31f,.42f,.38f);
+                if((x==4||x==19)&&y>=10&&y<=17)c=new Color(.73f,.68f,.50f);
+                if((x>=4&&x<=9||x>=14&&x<=19)&&y>=4&&y<=7)c=new Color(.19f,.26f,.27f);
+                if((x==9&&y==22)||(x==14&&y==21))c=new Color(.07f,.12f,.14f);
+                if(x>=11&&x<=13&&y==19)c=new Color(.50f,.31f,.27f);
+                if(x>=17&&x<=21&&y>=24&&y<=27&&x-y< -4)c=new Color(.72f,.43f,.25f);
+                t.SetPixel(x,y,c);
+            }
+            t.Apply();
+            companion=Sprite.Create(t,new Rect(0,0,24,30),new Vector2(.5f,.25f),32);
+            return companion;
         }
 
         public static Sprite Seated()

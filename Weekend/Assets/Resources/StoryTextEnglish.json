@@ -1,4 +1,4 @@
-﻿{
+{
   "dream": {
     "title": "Dream · The anthill",
     "pages": [
@@ -316,7 +316,7 @@
   "aquarium": {
     "promptDay3": "E  Look at the fish",
     "promptDay4": "E  Listen to the fish",
-    "promptDay6": "E  Speak to 001",
+    "promptDay6": "E  Talk to Fish",
     "promptDay7": "E  Look at her",
     "speakerDay3": "Hugo",
     "speakerDay4": "Fish",
@@ -327,8 +327,8 @@
       "Hugo taps the glass. The human eyes follow his finger.\nHer lips stay closed.\n“…What happened to you?”"
     ],
     "day4Pages": [
-      "“You didn't talk about the interviews today.”\nHugo stops moving.\nShe waits on the other side of the glass.",
-      "“I can hear you. Even before I could answer.”"
+      "“You haven’t talked about the interviews today.”\nHugo freezes, his hand on the food jar.\n“…Was that you?”",
+      "“Yes. You used to sit here, too.”\n“You heard all of that?”\n“Not all. You kept going quiet.”"
     ],
     "day7Pages": [
       "She has his face now. The hair, the sleeves, even the way she stands.",
@@ -336,10 +336,10 @@
       "“I listened.”\nShe smiles with Hugo’s mouth.\n“I remember everything you told me.”"
     ],
     "day5Pages": [
-      "“Would it be easier if I did it?”\nA thin hand rests against the glass."
+      "A small hand rests against the glass.\n“If I went out instead, would things be easier?”\n“To do what?”\n“The things you don’t want to do.”"
     ],
     "day6Pages": [
-      "“I almost have it.”\nShe repeats the shape of his mouth, not quite in time."
+      "“I tried saying ‘I’m fine.’”\n“Did it sound right?”\nHugo says nothing. She used his voice."
     ],
     "question": "Hugo asks: have you been reading my book?",
     "answerGap": "“With pages torn out like that, do I need to?”\nShe withdraws her hand.",
@@ -756,29 +756,65 @@
       "Oh, it's you. I kept your outline.",
       "Would you like to understand a little more? You can leave something behind. A perfectly friendly arrangement."
     ],
-    "fishChoicePrompt": "What does Hugo actually need?",
+    "fishChoicePrompt": "Hugo thinks for a moment.",
     "fishGoodChoices": [
-      "I wanted someone to listen. Not someone to replace me.",
-      "Help me find out what's happening. You can stay yourself."
+      "I need someone to talk to. Just listen.",
+      "Help me figure this out. Stay yourself."
     ],
     "fishBadChoices": [
-      "Yes. You could handle my life better.",
-      "Just become me. Then all of this can be yours."
+      "I wish you could go to work for me.",
+      "If you want it, take all of it."
     ],
     "fishGoodReplies": [
-      "…Then I can listen. I already know how.",
-      "She presses a fin against the glass.\nThe water shifts away from it.\n“Then we'll look together.”"
+      "“Just listen?”\n“Yes. You don’t have to live my life for me.”\nShe goes quiet.\n“I can do that.”",
+      "“I can help?”\n“Yes. Tell me if you notice anything wrong.”\nShe looks at her hand and lowers it.\n“Then… I’ll stop practising this.”"
     ],
     "fishBadReplies": [
       "“You'd let me?”\nHer mouth moves a moment before the words.",
       "“All of it?”\nShe keeps watching his face."
     ],
     "fishAllyPages": [
-      "She no longer copies his voice.\n“The water starts stinging after that light. The metal thing makes it quieter.”",
-      "“I can watch from here. You go look outside.\nAnd come back. I don't know what your face means unless you tell me.”"
+      "“When that light came through, the water felt full of needles.”\n“Dirty water?”\n“Different. The little metal triangle makes it quieter.”",
+      "“Go look outside. I’ll stay here.”\n“Call me if anything happens.”\n“You too. Don’t keep it all to yourself.”"
     ],
     "fishHelpTitle": "What she noticed in the water",
     "fishHelpBody": "She says the water stings after the light, and foil quiets it. A lead to investigate, not proof of the cause.",
-    "bubbleTradeLine": "Sanity is not free. Neither is knowledge."
+    "bubbleTradeLine": "Sanity is not free. Neither is knowledge.",
+    "fishChats": [
+      "Hugo: You sleep with your eyes open?\nFish: They don’t close. Stop checking in the middle of the night.",
+      "Fish: Your yawns are contagious.\nHugo: Even to fish?\nFish: No. I wanted to try.",
+      "Hugo: Do you like being called Fish?\nFish: Better than “hey.”",
+      "Fish: An octopus has three hearts.\nHugo: Where did you learn that?\nFish: Television. You take forever to change channels.",
+      "Hugo: Nothing to talk about today.\nFish: Sit for a bit, then.\nHugo: …All right.",
+      "Fish: You don’t have to feed me every time.\nHugo: I didn’t bring food.\nFish: I know. Just making sure.",
+      "Hugo: Does the world look bent from in there?\nFish: Put your hand in water. See how broken it looks.\nHugo: You could have put that differently.",
+      "Fish: The Moon doesn’t make its own light.\nHugo: Right.\nFish: Good at borrowing it, though.",
+      "Hugo: Can you count?\nFish: Yes.\nHugo: How far?\nFish: Until you forget to feed me.",
+      "Fish: You keep listening for mail that hasn’t arrived.\nHugo: I’m waiting for a reply.\nFish: Same silence.",
+      "Hugo: Have I told you this already?\nFish: Maybe.\nHugo: Never mind.\nFish: Go on. I’m not in a hurry.",
+      "Fish: Don’t tap the glass.\nHugo: I was getting your attention.\nFish: Use my name. I can hear you now.",
+      "Hugo: Whales aren’t fish.\nFish: Then why do you keep bringing them up to me?\nHugo: …Fair point.",
+      "Fish: The plants cover that floor tile now.\nHugo: Should I trim them?\nFish: No. I’m tired of that tile.",
+      "Hugo: Are you afraid of the dark?\nFish: I listen to the filter when I can’t see.\nHugo: What if it stops?\nFish: Don’t do that.",
+      "Fish: Your mouth hangs open when you sleep on the sofa.\nHugo: Stop.\nFish: I thought you were finally growing gills.",
+      "Hugo: Starlight takes a long time to get here.\nFish: So we see the past?\nHugo: Yes.\nFish: That explains a few things.",
+      "Hugo: Why stare at that wall?\nFish: There’s a shadow.\nHugo: It’s the filter.\nFish: …Oh.",
+      "Hugo: I need some air.\nFish: Shut the door when you come back.\nHugo: You’re not cold.\nFish: The noise gets in.",
+      "Fish: Your mirrors only show one side, too.\nHugo: What else would they show?\nFish: Nothing. That’s good.",
+      "Hugo: What do you want?\nFish: Don’t change the water yet.\nHugo: Why?\nFish: I just got that stone straight.",
+      "Fish: The same words sound different when you’re angry or tired.\nHugo: Which words?\nFish: “I’m fine.”",
+      "Hugo: What are you looking at?\nFish: The door.\nHugo: Why the door?\nFish: Waiting for you.",
+      "Fish: Stop staring.\nHugo: You never minded before.\nFish: I couldn’t tell you before."
+    ],
+    "fishSilentChats": [
+      "Hugo crouches. She sinks to his level and stops against the glass.",
+      "“No email today.”\nHugo checks his pocket for his phone anyway.",
+      "Food touches the water. She eats a little, leaving one piece beside the plants.",
+      "“You’re a good listener.”\nShe circles the stone and comes back.",
+      "The filter hums. Hugo swallows the words he hasn’t quite found.",
+      "Hugo moves his shadow off the glass. She follows it.",
+      "“At least one of us ate today.”\nHugo glances toward the kitchen.",
+      "She stays there, her tail barely moving.\nHugo doesn’t get up yet."
+    ]
   }
 }

@@ -16,7 +16,7 @@ namespace DeathBySeventhsDawn.Progression
                 if (!File.Exists(PathName))
                     return new ProgressionState();
                 var state = JsonUtility.FromJson<ProgressionState>(File.ReadAllText(PathName));
-                if (state == null || (state.version < 1 || state.version > 3) || state.loopCount < 0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
+                if (state == null || (state.version < 1 || state.version > 4) || state.loopCount < 0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
                     throw new InvalidDataException("Unsupported or invalid progression save.");
                 state.bubblePurchases = state.bubblePurchases ?? new System.Collections.Generic.List<string>();
                 state.knowledgeIds = state.knowledgeIds ?? new System.Collections.Generic.List<string>();
@@ -28,6 +28,20 @@ namespace DeathBySeventhsDawn.Progression
                         state.bubbleIntroduced = state.bubblePortraitUnlocked = true;
                 }
 
+                if (state.version < 4)
+                {
+                    state.bubbleDreamUnlocked = state.ancientGodSeen || state.yogDreamSeen;
+                    state.bubbleVisitLoop = state.yogDreamSeen ? state.loopCount : -1;
+                    state.fishCompanionUnlocked = state.fishAlly;
+                    state.fishCompanionUnlockLoop = state.loopCount;
+                    state.version = 4;
+                }
+                state.fishStoryDays = state.fishStoryDays ?? new System.Collections.Generic.List<int>();
+                if (state.fishCompanionUnlocked && state.loopCount > state.fishCompanionUnlockLoop)
+                {
+                    state.fishAlly = true;
+                    state.fishUnderstanding = 3;
+                }
                 return state;
             }
             catch (Exception ex)

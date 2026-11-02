@@ -8,7 +8,11 @@ namespace DeathBySeventhsDawn.Progression
     [Serializable]
     public class ProgressionState
     {
-        public int version = 3, loopCount;
+        public int version = 4, loopCount;
+        // Persistent unlocks survive a loop; visits and daily story flags do not.
+        public bool bubbleDreamUnlocked, fishCompanionUnlocked;
+        public int bubbleVisitLoop = -1, fishCompanionUnlockLoop;
+        public List<int> fishStoryDays = new List<int>();
         public int ancientObservationDay, ancientObservationLoop = -1;
         public bool bubblePortraitUnlocked, bubbleIntroduced, bedroomCurtainsClosed, fishAlly, fishReportAvailable;
         public int fishUnderstanding;
@@ -16,6 +20,7 @@ namespace DeathBySeventhsDawn.Progression
         public bool badEndingOne, dreamSeen;
         public bool worldEndEnding, ancientGodSeen, aquariumSealed, yogDreamSeen, fishReplacementEnding;
         public bool firstNightWatchComplete;
+        public bool stoveLit;
         public bool breadEaten, telescopeCarried, telescopeOnRoof, firstNightObjectSeen;
         public bool neighborFlyersSeen, skt079NewsSeen, neighborBarricadeSeen, prologueEntered;
         public bool dayOneSupernovaSeen;

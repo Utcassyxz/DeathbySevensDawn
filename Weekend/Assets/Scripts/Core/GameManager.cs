@@ -33,7 +33,7 @@ namespace DeathBySeventhsDawn.Core
             if (HasEnded)
                 return false;
             bool first = !State.ancientGodSeen;
-            State.ancientGodSeen = true;
+            State.ancientGodSeen = State.bubbleDreamUnlocked = true;
             State.ancientObservationDay = TimeSystem.TimeManager.Instance.Days;
             State.ancientObservationLoop = LoopCount;
             ProgressionSave.Write(State);
@@ -207,9 +207,11 @@ namespace DeathBySeventhsDawn.Core
             State.loopCount++;
             State.ancientObservationDay = 0;
             State.ancientObservationLoop = -1;
-            State.bedroomCurtainsClosed = false;
-            State.fishUnderstanding = 0;
-            State.fishAlly = State.fishReportAvailable = false;
+            State.bedroomCurtainsClosed = State.stoveLit = false;
+            State.fishUnderstanding = State.fishCompanionUnlocked ? 3 : 0;
+            State.fishAlly = State.fishCompanionUnlocked;
+            State.fishReportAvailable = false;
+            State.fishStoryDays.Clear();
             Vitality = MaxVitality;
             ProgressionSave.Write(State);
             Changed?.Invoke();
