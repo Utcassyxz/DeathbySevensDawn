@@ -33,3 +33,5 @@
 2026-11-01 后续修订以 COMPANION_WORLD_2026-11-01.md 为准。泡泡由实际古神观测当晚触发，首次介绍、后续轮回首次睡眠自动商店分开；鱼的理解选择可成为调查同伴；Save v3 必须迁移 v1/v2；SevenDayExterior 统一所有七日外景。
 
 2026-11-02：最新跨轮回和日常交互规则见 CONTINUITY_2026-11-02.md。StoveInteraction 独占炉火与贴图开关；RoomDoor2D 独占走门传送；Bubble 的全局解锁不能再绑定后续轮回的重复观测；存档迁移必须保留 v3 已获得关系。
+
+2026-11-02 晨间补充：MorningRoutine独占已解锁关系的第一天叫醒与搬凳演出；AquariumEntity独占临时鱼模型与实际家具借用，fishMorningLoop/fishStoolBorrowed防止重复播放和复制凳子。CorridorDetail负责北墙门面及402开口的碰撞；RooftopAccess仍独占北墙EXIT与楼梯间往返。详见CORRIDOR_MORNING_2026-11-02.md。

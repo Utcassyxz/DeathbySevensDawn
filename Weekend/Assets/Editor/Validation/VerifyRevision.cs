@@ -34,6 +34,11 @@ public static class VerifyRevision
                 return;
             if (s == PlayModeStateChange.EnteredPlayMode)
             {
+                // Only isolate Unity devices. The user's keyboard in other applications is unaffected.
+                var keyboards=UnityEngine.InputSystem.InputSystem.devices.OfType<UnityEngine.InputSystem.Keyboard>().Where(k=>k.enabled).ToArray();
+                SessionState.SetString(Key+"PhysicalKeyboards",string.Join("|",keyboards.Select(k=>k.name)));
+                foreach(var keyboard in keyboards)UnityEngine.InputSystem.InputSystem.DisableDevice(keyboard);
+                UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>("SevenDayAcceptanceKeyboardWorld").MakeCurrent();
                 steps = SessionState.GetBool(Key + "OnlyCompanions", false) ? Extensions() : Steps();
                 checks = 0;
                 error = null;
@@ -398,16 +403,22 @@ public static class VerifyRevision
         Capture("rooftop-after-placement");
         yield return .1f;
         var extension = Extensions();
-        while(extension.MoveNext()) yield return extension.Current;
+        while (extension.MoveNext())
+            yield return extension.Current;
         Check(error == null, "No game runtime exceptions in revision paths");
     }
 
     static IEnumerator Extensions()
     {
-        var extension = CompanionAcceptance.Run();
-        while(extension.MoveNext()) yield return extension.Current;
+        var extension = DoorMorningAcceptance.Corridor();
+        while (extension.MoveNext())
+            yield return extension.Current;
+        extension = CompanionAcceptance.Run();
+        while (extension.MoveNext())
+            yield return extension.Current;
         extension = ContinuityAcceptance.Run();
-        while(extension.MoveNext()) yield return extension.Current;
+        while (extension.MoveNext())
+            yield return extension.Current;
     }
 
     static void Tick()
@@ -418,7 +429,9 @@ public static class VerifyRevision
         {
             if (!EditorApplication.isPlaying && File.Exists("../companions-request.txt"))
             {
-                File.Delete("../companions-request.txt"); RunCompanions(); return;
+                File.Delete("../companions-request.txt");
+                RunCompanions();
+                return;
             }
             if (!EditorApplication.isPlaying && File.Exists("../revision-request.txt"))
             {
@@ -470,6 +483,9 @@ public static class VerifyRevision
         foreach (var device in UnityEngine.InputSystem.InputSystem.devices.ToArray())
             if (device.name.StartsWith("SevenDayAcceptanceKeyboard"))
                 UnityEngine.InputSystem.InputSystem.RemoveDevice(device);
+        var keyboardNames=SessionState.GetString(Key+"PhysicalKeyboards","").Split('|');
+        foreach(var keyboard in UnityEngine.InputSystem.InputSystem.devices.OfType<UnityEngine.InputSystem.Keyboard>())
+            if(keyboardNames.Contains(keyboard.name)){UnityEngine.InputSystem.InputSystem.EnableDevice(keyboard);keyboard.MakeCurrent();}
         foreach (var suffix in new[]
         {
             "",

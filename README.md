@@ -57,3 +57,5 @@ Unity 叙事恐怖原型。唯一的游戏工程是 **Weekend/**；根目录旧�
 ## 两台电脑同步
 
 开始工作前关闭 Unity，先 `git status`，确认本地修改已保存，再 `git pull --ff-only`。结束时保存场景并关闭 Unity，执行 `git diff` → `git add .` → `git diff --cached` → `git commit -m "说明改动"` → `git push`。确认 push 成功再换电脑。冲突先解决，不使用强推或硬重置掩盖问题。
+
+最新走廊与关系线演出：docs/CORRIDOR_MORNING_2026-11-02.md。EXIT位于北墙中间；进入小鱼关系线后的后续轮回第一天，Enter推进叫醒、起床与搬凳演出。

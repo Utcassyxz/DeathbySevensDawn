@@ -424,7 +424,25 @@
     "journalBody": "The hammering next door woke Hugo. The tenant of 401 told him to go back inside and leave the TV off.\nThe TV came on while he opened the fridge. He ate some bread, then slept on the sofa until dusk.\nThe anthill dream was still with him when he woke.",
     "breadMeal": "Dry.\n…Now I’m even sleepier. No job to get to. I’ll lie down for a bit.",
     "fridgeEmpty": "Nothing else. Close it.",
-    "sofaFree": "Just a minute."
+    "sofaFree": "Just a minute.",
+    "fishMorningPages": [
+      "Wake up, Hugo. I am hungry.",
+      "…You were living in water yesterday.",
+      "Yesterday does not count. This is new hunger.",
+      "Hugo sits up. His alarm clock has been replaced by someone demanding breakfast.",
+      "Also, that stool is mine now.",
+      "She drags a stool away from the table. Its legs scrape the floor. At least something in the apartment is fully awake.",
+      "I will wait by the tank. Do not toast the bread too hard. I have not decided how many teeth to grow."
+    ],
+    "fishMorningSpeakers": [
+      "Fish",
+      "Hugo",
+      "Fish",
+      "Narrator",
+      "Fish",
+      "Narrator",
+      "Fish"
+    ]
   },
   "worldEnd": {
     "title": "Hugo, Who Did Nothing",

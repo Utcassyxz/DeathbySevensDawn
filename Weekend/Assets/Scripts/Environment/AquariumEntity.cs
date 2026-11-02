@@ -18,11 +18,108 @@ namespace DeathBySeventhsDawn.Interaction
     {
         public const string NpcCode = "001";
         static Color C(double r, double g, double b, double a = 1) => new Color((float)r, (float)g, (float)b, (float)a);
-        public static AquariumEntity Instance { get; private set; }
+        public static AquariumEntity Instance
+        {
+            get; private set;
+        }
         public static bool WorldBlocked => Instance != null && (Instance.talking || Time.frameCount <= Instance.blockedUntilFrame);
         public bool IsTalking => talking;
 
         GameObject tank, formRoot, player;
+        GameObject morningFish, travellingChair, borrowedChairSource;
+        Vector2 chairStart;
+        public Vector2 CompanionSeatPosition => tankRenderer == null ? Vector2.zero : new Vector2(tankRenderer.bounds.min.x - .52f, tankRenderer.bounds.min.y - .10f);
+        public bool MorningWelcomePending => GameManager.Instance != null && CompanionPresent && TimeManager.Instance != null && TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Morning && GameManager.Instance.State.fishMorningLoop != GameManager.Instance.LoopCount;
+        // MorningRoutine owns the timeline; this owner alone creates/moves the fish and borrowed furniture.
+        public void ShowMorningVisitor(Vector2 position)
+        {
+            if (morningFish == null)
+            {
+                morningFish = new GameObject("Fish morning visitor");
+                var r = morningFish.AddComponent<SpriteRenderer>();
+                r.sprite = SmallPixelActors.FishCompanion();
+                r.sortingOrder = 24;
+                var reference = GameObject.FindWithTag("Player")?.GetComponentInChildren<SpriteRenderer>();
+                if (reference != null)
+                {
+                    r.sharedMaterial = reference.sharedMaterial;
+                    r.sortingLayerID = reference.sortingLayerID;
+                }
+            }
+            morningFish.transform.position = position;
+        }
+        GameObject DiningChair()
+        {
+            if (borrowedChairSource == null || borrowedChairSource.scene != SceneManager.GetActiveScene())
+                borrowedChairSource = GameObject.Find("Dining chair right");
+            return borrowedChairSource;
+        }
+        GameObject CopyDiningChair(Transform parent, string name)
+        {
+            var source = DiningChair();
+            if (source == null)
+                return null;
+            var copy = Instantiate(source, parent);
+            copy.name = name;
+            copy.SetActive(true);
+            copy.transform.localScale = source.transform.lossyScale;
+            foreach (var collider in copy.GetComponentsInChildren<Collider2D>())
+            {
+                collider.enabled = false;
+                Destroy(collider);
+            }
+            foreach (var r in copy.GetComponentsInChildren<SpriteRenderer>())
+                ApplyRenderer(r, 10);
+            source.SetActive(false);
+            return copy;
+        }
+        public void BeginBorrowingStool()
+        {
+            DestroyForm();
+            var source = DiningChair();
+            if (source == null)
+                return;
+            chairStart = source.transform.position;
+            travellingChair = CopyDiningChair(null, "Stool being borrowed");
+            AnimateBorrowedStool(0);
+        }
+        public void AnimateBorrowedStool(float progress)
+        {
+            if (travellingChair == null)
+                return;
+            var end = CompanionSeatPosition;
+            float t = Mathf.Clamp01(progress) * 3;
+            Vector2 a = chairStart, b = new Vector2(chairStart.x, end.y - .72f), c = new Vector2(end.x, end.y - .72f);
+            Vector2 at = t < 1 ? Vector2.Lerp(a, b, t) : t < 2 ? Vector2.Lerp(b, c, t - 1) : Vector2.Lerp(c, end, t - 2);
+            travellingChair.transform.position = at;
+            ShowMorningVisitor(at + new Vector2(.39f, .04f + Mathf.Sin(progress * 38) * .035f));
+        }
+        public void SettleMorningVisitor(float progress)
+        {
+            AnimateBorrowedStool(1);
+            ShowMorningVisitor(CompanionSeatPosition + Vector2.right * Mathf.Lerp(.39f, 0, Mathf.SmoothStep(0, 1, progress)));
+        }
+        public void FinishMorningWelcome()
+        {
+            var state = GameManager.Instance.State;
+            state.fishMorningLoop = GameManager.Instance.LoopCount;
+            state.fishStoolBorrowed = true;
+            ClearMorningVisuals(false);
+            RefreshForm();
+            ProgressionSave.Write(state);
+        }
+        void ClearMorningVisuals(bool restoreUnfinishedChair)
+        {
+            if (morningFish != null)
+                Destroy(morningFish);
+            morningFish = null;
+            if (travellingChair != null)
+                Destroy(travellingChair);
+            travellingChair = null;
+            if (restoreUnfinishedChair && borrowedChairSource != null && GameManager.Instance != null && !GameManager.Instance.State.fishStoolBorrowed)
+                borrowedChairSource.SetActive(true);
+        }
+
         SpriteRenderer tankRenderer;
         Color tankOriginal;
         bool hasOriginal;
@@ -42,28 +139,41 @@ namespace DeathBySeventhsDawn.Interaction
         string PickChat(bool silent)
         {
             var pool = silent ? StoryText.Current.expansion.fishSilentChats : StoryText.Current.expansion.fishChats;
-            if (pool == null || pool.Length == 0) return StoryText.Local("……她在听。", "…She is listening.");
-            if (silent != lastSilent) { chatBag.Clear(); lastChat = -1; lastSilent = silent; }
+            if (pool == null || pool.Length == 0)
+                return StoryText.Local("……她在听。", "…She is listening.");
+            if (silent != lastSilent)
+            {
+                chatBag.Clear();
+                lastChat = -1;
+                lastSilent = silent;
+            }
             if (chatBag.Count == 0)
-                for (int i = 0; i < pool.Length; i++) chatBag.Add(i);
+                for (int i = 0; i < pool.Length; i++)
+                    chatBag.Add(i);
             int slot = UnityEngine.Random.Range(0, chatBag.Count);
-            if (chatBag.Count > 1 && chatBag[slot] == lastChat) slot = (slot + 1) % chatBag.Count;
-            lastChat = chatBag[slot]; chatBag.RemoveAt(slot);
+            if (chatBag.Count > 1 && chatBag[slot] == lastChat)
+                slot = (slot + 1) % chatBag.Count;
+            lastChat = chatBag[slot];
+            chatBag.RemoveAt(slot);
             return pool[lastChat];
         }
         void CompleteDailyStory()
         {
-            if (!storyConversation) return;
+            if (!storyConversation)
+                return;
             var state = GameManager.Instance.State;
-            if (!state.fishStoryDays.Contains(visualDay)) state.fishStoryDays.Add(visualDay);
+            if (!state.fishStoryDays.Contains(visualDay))
+                state.fishStoryDays.Add(visualDay);
             ProgressionSave.Write(state);
             storyConversation = false;
         }
         public bool TryTalk()
         {
             if (tank == null || GameManager.Instance.HasEnded || GameManager.Instance.AquariumSealed ||
-                TutorialGate.IsBlocked("aquarium") || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy || !NearInteraction()) return false;
-            OpenDialogue(); return talking;
+                TutorialGate.IsBlocked("aquarium") || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy || !NearInteraction())
+                return false;
+            OpenDialogue();
+            return talking;
         }
 
         int CurrentTopic => (GameManager.Instance.State.fishUnderstanding & 1) == 0 ? 0 : 1;
@@ -134,6 +244,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (GameManager.Instance != null)
                 GameManager.Instance.JourneyReset -= ResetEntity;
             CloseDialogue();
+            ClearMorningVisuals(true);
             DestroyForm();
         }
 
@@ -149,6 +260,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void Setup(Scene scene)
         {
+            ClearMorningVisuals(true);
             CloseDialogue();
             DestroyForm();
             RestoreTank();
@@ -181,6 +293,9 @@ namespace DeathBySeventhsDawn.Interaction
 
         void ResetEntity()
         {
+            ClearMorningVisuals(true);
+            if (borrowedChairSource != null)
+                borrowedChairSource.SetActive(true);
             CloseDialogue();
             DestroyForm();
             RestoreTank();
@@ -198,6 +313,8 @@ namespace DeathBySeventhsDawn.Interaction
             visualDay = day;
             if (CompanionPresent && !GameManager.Instance.AquariumSealed)
             {
+                if (MorningWelcomePending)
+                    return;
                 BuildSeatedCompanion();
                 return;
             }
@@ -237,14 +354,20 @@ namespace DeathBySeventhsDawn.Interaction
             formRoot = new GameObject("Aquarium entity form");
             formRoot.transform.SetParent(tank.transform, false);
             formRoot.transform.localScale = new Vector3(1 / tank.transform.lossyScale.x, 1 / tank.transform.lossyScale.y, 1);
-            formRoot.transform.position = new Vector3(b.min.x - .52f, b.min.y - .45f, 0);
+            formRoot.transform.position = CompanionSeatPosition;
             EnsureSprites();
             var solid = formRoot.AddComponent<BoxCollider2D>();
             solid.size = new Vector2(.42f, .20f);
             solid.offset = new Vector2(0, -.18f);
-            Part("Fish companion stool seat", new Vector3(0, -.04f), new Vector2(.52f, .14f), C(.40,.29,.23), 10);
-            Part("Fish companion stool left leg", new Vector3(-.17f,-.24f), new Vector2(.08f,.32f), C(.24,.20,.19), 10);
-            Part("Fish companion stool right leg", new Vector3(.17f,-.24f), new Vector2(.08f,.32f), C(.24,.20,.19), 10);
+            var chair = CopyDiningChair(formRoot.transform, "Fish companion stool seat");
+            if (chair != null)
+                chair.transform.position = CompanionSeatPosition;
+            else
+            {
+                Part("Fish companion stool seat", new Vector3(0, -.04f), new Vector2(.52f, .14f), C(.40, .29, .23), 10);
+                Part("Fish companion stool left leg", new Vector3(-.17f, -.24f), new Vector2(.08f, .32f), C(.24, .20, .19), 10);
+                Part("Fish companion stool right leg", new Vector3(.17f, -.24f), new Vector2(.08f, .32f), C(.24, .20, .19), 10);
+            }
             var actor = new GameObject("Seated fish companion");
             actor.transform.SetParent(formRoot.transform, false);
             var r = actor.AddComponent<SpriteRenderer>();
@@ -404,7 +527,8 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if (tank == null)
                 return Vector2.zero;
-            if (CompanionPresent && formRoot != null) return formRoot.transform.position;
+            if (CompanionPresent && formRoot != null)
+                return formRoot.transform.position;
             if (visualDay >= 7 && !CompanionReady && tankRenderer != null)
                 return new Vector2(tankRenderer.bounds.max.x + .45f, tankRenderer.bounds.min.y - .1f);
             return tank.transform.position;
@@ -505,10 +629,15 @@ namespace DeathBySeventhsDawn.Interaction
                 ProgressionSave.Write(GameManager.Instance.State);
             }
 
-            if (ambientConversation) { pages = new[] { PickChat(visualDay < 4 && !CompanionPresent) }; choiceFinished = true; }
+            if (ambientConversation)
+            {
+                pages = new[] { PickChat(visualDay < 4 && !CompanionPresent) };
+                choiceFinished = true;
+            }
             else if (visualDay >= 3 || CompanionPresent)
                 activeEvidence = CompanionReady && state.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
-            if (pages == null || pages.Length == 0) return;
+            if (pages == null || pages.Length == 0)
+                return;
             speaker = CompanionReady ? StoryText.Local("小鱼", "Fish") : visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
             page = 0;
             openedFrame = Time.frameCount;
@@ -800,10 +929,8 @@ namespace DeathBySeventhsDawn.Interaction
             if (Instance == this)
                 Instance = null;
             DestroyForm();
-            if (metamorphosis != null)
-                foreach (var sprite in metamorphosis)
-                    if (sprite != null)
-                        Destroy(sprite);
+            if(metamorphosis!=null)SmallPixelActors.ReleaseFish();
+            metamorphosis=null;
             if (square != null)
                 Destroy(square);
             if (circle != null)

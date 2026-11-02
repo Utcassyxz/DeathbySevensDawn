@@ -1,4 +1,4 @@
-// 职责：给四楼走廊加一层运行时细节（护墙板、踢脚线、地毯、壁灯、管线和门框），不改碰撞。
+// 职责：给四楼走廊加一层运行时细节（护墙板、踢脚线、地毯、壁灯、管线和门框），同步墙面与门洞的实际碰撞。
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -79,6 +79,13 @@ namespace DeathBySeventhsDawn.Progression
             root = new GameObject("Corridor detail");
             SceneManager.MoveGameObjectToScene(root, SceneManager.GetActiveScene());
             Block("stone landing floor", new Vector2(0, -.20f), new Vector2(13.65f, 3.3f), new Color(.30f, .32f, .30f), -9);
+            // The visible wall face is solid, not just its outermost edge. Leave the 402 approach open.
+            Solid("North wall and closed doors", new Vector2(0, 1.58f), new Vector2(13.85f, 1.10f));
+            Solid("West wall", new Vector2(-6.95f, 0), new Vector2(.28f, 4.1f));
+            Solid("East wall", new Vector2(6.95f, 0), new Vector2(.28f, 4.1f));
+            Solid("South wall west", new Vector2(-3.85f, -1.95f), new Vector2(6.1f, .48f));
+            Solid("South wall east", new Vector2(3.85f, -1.95f), new Vector2(6.1f, .48f));
+            Solid("402 door backstop", new Vector2(0, -2.09f), new Vector2(1.6f, .18f));
             Color wall = new Color(.31f, .36f, .34f), brass = new Color(.61f, .51f, .34f), wood = new Color(.23f, .17f, .15f);
             Block("north wallpaper face", new Vector2(0, 1.55f), new Vector2(13.65f, .95f), wall, 0);
             Block("north cornice shadow", new Vector2(0, 2.06f), new Vector2(13.7f, .10f), new Color(.10f, .14f, .15f), 1);
@@ -138,7 +145,6 @@ namespace DeathBySeventhsDawn.Progression
             foreach (float x in new[]
             {
                 -2.7f,
-                0f,
                 2.7f
             }
 
@@ -164,6 +170,13 @@ namespace DeathBySeventhsDawn.Progression
             Block("fire cabinet glazing", new Vector2(-6.35f, .93f), new Vector2(.29f, .26f), new Color(.15f, .20f, .21f), 4);
         }
 
+        void Solid(string name, Vector2 position, Vector2 size)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(root.transform, false);
+            go.transform.position = position;
+            go.AddComponent<BoxCollider2D>().size = size;
+        }
         void Block(string name, Vector2 position, Vector2 size, Color color, int order)
         {
             var go = new GameObject(name);

@@ -8,9 +8,16 @@ namespace DeathBySeventhsDawn.Interaction
         static Sprite[] fish;
         static Sprite companion;
         static Texture2D bubble, seated;
+        // Aquarium owns the cached fish lifetime; clearing the cache prevents dead Unity references on the next Play.
+        public static void ReleaseFish()
+        {
+            if(fish==null)return;
+            foreach(var sprite in fish)if(sprite!=null){Object.Destroy(sprite.texture);Object.Destroy(sprite);}
+            fish=null;
+        }
         public static Sprite[] Fish()
         {
-            if (fish != null)
+            if (fish != null && System.Array.TrueForAll(fish, sprite => sprite != null))
                 return fish;
             fish = new Sprite[4];
             for (int stage = 0; stage < 4; stage++)

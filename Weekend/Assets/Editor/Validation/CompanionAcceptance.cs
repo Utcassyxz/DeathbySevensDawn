@@ -172,7 +172,8 @@ public static class CompanionAcceptance
         Capture("fish-companion-dialogue");
         yield return .2f;
         Call(fish, "CloseDialogue");
-        while(clock.Days < 7) clock.CompleteSleep();
+        while (clock.Days < 7)
+            clock.CompleteSleep();
         yield return .3f;
         Check(!game.TriggerReplacementEnding() && GameObject.Find("Hugo double") == null, "Companion does not turn into the murderous Hugo double");
         Capture("fish-small-map");
@@ -212,6 +213,9 @@ public static class CompanionAcceptance
         Check(game.HasLoopAbility && State.bubbleIntroduced && clock.Days == 6, "Return is granted only after the first complete meeting");
         DeathBySeventhsDawn.TimeSystem.LoopManager.Instance.RestartLoop();
         yield return .8f;
+        var morningWelcome = DoorMorningAcceptance.Welcome();
+        while (morningWelcome.MoveNext())
+            yield return morningWelcome.Current;
         Ready();
         Check(game.LoopCount > 0 && State.bubblePortraitUnlocked && State.fishAlly && State.fishUnderstanding == 3 && State.fishCompanionUnlocked, "Bubble identity and the earned fish companion survive a loop");
         Night(clock);

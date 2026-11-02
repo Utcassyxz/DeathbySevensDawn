@@ -23,3 +23,5 @@
 2026-11-01 后续最新行为见 docs/COMPANION_WORLD_2026-11-01.md：泡泡是实际观测当晚，首次介绍/后续轮回商店分开；鱼是女性，可通过两次理解成为调查同伴；新增 Save v3，必须兼容旧存档。
 
 2026-11-02 最新规则见 docs/CONTINUITY_2026-11-02.md：鱼关系永久解锁，后续轮回第一天坐在缸旁；泡泡在后续轮回首次睡眠自动会面，不再要求重复目击；每天首谈推进，后续抽独立闲聊；Save v4 迁移 v1/v2/v3。
+
+2026-11-02 本轮走廊与晨间演出规则见 docs/CORRIDOR_MORNING_2026-11-02.md：EXIT改为北墙中门并同步实体墙面碰撞；后续轮回第一天小鱼叫醒雨果并搬走真实餐凳，MorningRoutine编排、AquariumEntity管理模型和家具。新增DoorMorningAcceptance纳入VerifyRevision。

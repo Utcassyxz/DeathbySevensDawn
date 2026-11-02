@@ -12,12 +12,15 @@ namespace DeathBySeventhsDawn.Interaction
 {
     public sealed class RooftopAccess : MonoBehaviour
     {
-        public static RooftopAccess Instance { get; private set; }
+        public static RooftopAccess Instance
+        {
+            get; private set;
+        }
         public static bool WorldBlocked => Instance != null && (Instance.open || Time.frameCount <= Instance.blockedFrame);
         public bool IsOpen => open;
         public bool IsRevelation => open && revelation;
 
-        public static readonly Vector2 StairsFour = new Vector2(-6.05f, -.2f);
+        public static readonly Vector2 StairsFour = new Vector2(0f, .58f);
         public static readonly Vector2 StairsFive = new Vector2(-4.8f, -2.1f);
         public static readonly Vector2 TelescopeSpot = new Vector2(3.4f, 1.25f);
         ProgressionState State => GameManager.Instance.State;
@@ -90,12 +93,19 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 var root = new GameObject("EXIT stairwell door");
                 SceneManager.MoveGameObjectToScene(root, scene);
-                Part(root.transform, "Side door recess", new Vector2(-6.72f, -.05f), new Vector2(.34f, 1.58f), new Color(.065f, .10f, .11f), 4);
-                Part(root.transform, "Side-on fire door", new Vector2(-6.64f, -.05f), new Vector2(.15f, 1.38f), new Color(.20f, .29f, .27f), 5);
-                Part(root.transform, "Side door front jamb", new Vector2(-6.49f, -.05f), new Vector2(.08f, 1.54f), new Color(.41f, .48f, .42f), 6);
-                Part(root.transform, "Side door top cap", new Vector2(-6.60f, .75f), new Vector2(.37f, .07f), new Color(.57f, .61f, .50f), 7);
-                Part(root.transform, "Side door latch", new Vector2(-6.48f, -.17f), new Vector2(.12f, .10f), new Color(.66f, .65f, .48f), 7);
-                Part(root.transform, "EXIT sign plate", new Vector2(-6.12f, .90f), new Vector2(.80f, .27f), new Color(.12f, .29f, .22f), 7);
+                Part(root.transform, "EXIT outer frame", new Vector2(0, 1.51f), new Vector2(1.48f, 1.03f), new Color(.10f, .12f, .12f), 4);
+                Part(root.transform, "EXIT metal frame", new Vector2(0, 1.50f), new Vector2(1.33f, .94f), new Color(.46f, .49f, .43f), 5);
+                Part(root.transform, "EXIT fire door leaf", new Vector2(0, 1.48f), new Vector2(1.18f, .84f), new Color(.22f, .30f, .28f), 6);
+                Part(root.transform, "EXIT door lower panel", new Vector2(0, 1.22f), new Vector2(.96f, .21f), new Color(.17f, .23f, .22f), 7);
+                Part(root.transform, "EXIT glass rim", new Vector2(0, 1.67f), new Vector2(.53f, .27f), new Color(.54f, .57f, .49f), 7);
+                Part(root.transform, "EXIT wire glass", new Vector2(0, 1.67f), new Vector2(.43f, .19f), new Color(.10f, .18f, .18f), 8);
+                Part(root.transform, "EXIT glass reflection", new Vector2(-.12f, 1.69f), new Vector2(.035f, .12f), new Color(.41f, .53f, .48f), 9);
+                Part(root.transform, "EXIT push bar shadow", new Vector2(0, 1.42f), new Vector2(.88f, .09f), new Color(.09f, .13f, .13f), 7);
+                Part(root.transform, "EXIT push bar", new Vector2(0, 1.44f), new Vector2(.81f, .045f), new Color(.66f, .64f, .49f), 8);
+                for (int i = 0; i < 2; i++)
+                    Part(root.transform, "EXIT hinge", new Vector2(-.57f, 1.24f + i * .47f), new Vector2(.045f, .12f), new Color(.61f, .61f, .51f), 8);
+                Part(root.transform, "EXIT threshold", new Vector2(0, 1.0f), new Vector2(1.42f, .06f), new Color(.38f, .40f, .34f), 6);
+                Part(root.transform, "EXIT sign plate", new Vector2(0, 1.91f), new Vector2(.82f, .19f), new Color(.10f, .24f, .18f), 8);
             }
 
             RefreshFloorAppearance();
@@ -115,7 +125,11 @@ namespace DeathBySeventhsDawn.Interaction
             r.sortingOrder = order;
             var floor = GameObject.Find("Rooftop pixel environment") ?? GameObject.Find("Rooftop tiles") ?? GameObject.Find("Corridor tiles");
             if (floor != null)
-                r.sharedMaterial = floor.GetComponent<SpriteRenderer>().sharedMaterial;
+            {
+                var reference = floor.GetComponent<SpriteRenderer>();
+                r.sharedMaterial = reference.sharedMaterial;
+                r.sortingLayerID = reference.sortingLayerID;
+            }
         }
 
         void BuildScope()
@@ -151,14 +165,14 @@ namespace DeathBySeventhsDawn.Interaction
             if (scene == "Corridor" && Near(StairsFour, .8f))
             {
                 CurrentFloor = 4;
-                Travel("Stairwell", LandingDoor + Vector2.left * .85f);
+                Travel("Stairwell", LandingDoor + Vector2.left * .50f);
                 return true;
             }
 
             if (scene == "Rooftop" && Near(StairsFive))
             {
                 CurrentFloor = 5;
-                Travel("Stairwell", LandingDoor + Vector2.left * .85f);
+                Travel("Stairwell", LandingDoor + Vector2.left * .50f);
                 return true;
             }
 
@@ -212,16 +226,22 @@ namespace DeathBySeventhsDawn.Interaction
 
         public void RefreshFloorAppearance()
         {
-            if (SceneManager.GetActiveScene().name != "Stairwell") return;
+            if (SceneManager.GetActiveScene().name != "Stairwell")
+                return;
             var landing = GameObject.Find("StairwellLanding");
-            if (landing == null) return;
+            if (landing == null)
+                return;
             foreach (Transform part in landing.transform)
             {
                 bool up = part.name.StartsWith("Up") || part.name.StartsWith("Upper");
                 bool down = part.name.StartsWith("Down") || part.name.StartsWith("Lower");
                 if (part.name.StartsWith("Rail") || part.name.StartsWith("Baluster"))
-                { up = part.localPosition.x < 0; down = !up; }
-                if (up || down) part.gameObject.SetActive(up ? CurrentFloor < 5 : CurrentFloor > 1);
+                {
+                    up = part.localPosition.x < 0;
+                    down = !up;
+                }
+                if (up || down)
+                    part.gameObject.SetActive(up ? CurrentFloor < 5 : CurrentFloor > 1);
             }
         }
 
@@ -421,13 +441,15 @@ namespace DeathBySeventhsDawn.Interaction
                         WorldPromptUI.Offer("rooftop", prompt, 65);
                     string scene = SceneManager.GetActiveScene().name;
                     if (scene == "Corridor")
-                        Sign(new Vector2(-6.12f, .90f), "EXIT", small, scale, 13);
+                        Sign(new Vector2(0, 1.91f), "EXIT", small, scale, 13);
                     if (scene == "Stairwell")
                     {
                         Sign(new Vector2(3.88f, 3.18f) * .68f, CurrentFloor.ToString("00"), title, scale, 26);
                         Sign(new Vector2(3.9f, 2.91f) * .68f, CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
-                        if (CurrentFloor < 5) Sign(new Vector2(-2.15f, 2.75f) * .68f, "▲", small, scale, 17);
-                        if (CurrentFloor > 1) Sign(new Vector2(1.55f, -2.65f) * .68f, "▼", small, scale, 17);
+                        if (CurrentFloor < 5)
+                            Sign(new Vector2(-2.15f, 2.75f) * .68f, "▲", small, scale, 17);
+                        if (CurrentFloor > 1)
+                            Sign(new Vector2(1.55f, -2.65f) * .68f, "▼", small, scale, 17);
                     }
 
                     if (scene == "Corridor" || scene == "Rooftop")

@@ -12,6 +12,8 @@ namespace DeathBySeventhsDawn.Progression
         // Persistent unlocks survive a loop; visits and daily story flags do not.
         public bool bubbleDreamUnlocked, fishCompanionUnlocked;
         public int bubbleVisitLoop = -1, fishCompanionUnlockLoop;
+        public int fishMorningLoop = -1;
+        public bool fishStoolBorrowed;
         public List<int> fishStoryDays = new List<int>();
         public int ancientObservationDay, ancientObservationLoop = -1;
         public bool bubblePortraitUnlocked, bubbleIntroduced, bedroomCurtainsClosed, fishAlly, fishReportAvailable;

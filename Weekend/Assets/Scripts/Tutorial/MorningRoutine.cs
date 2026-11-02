@@ -14,7 +14,10 @@ namespace DeathBySeventhsDawn.Interaction
     [DefaultExecutionOrder(-90)]
     public sealed class MorningRoutine : MonoBehaviour
     {
-        public static MorningRoutine Instance { get; private set; }
+        public static MorningRoutine Instance
+        {
+            get; private set;
+        }
 
         enum Activity
         {
@@ -24,15 +27,26 @@ namespace DeathBySeventhsDawn.Interaction
             Meal,
             Nap,
             Write,
-            ReturnHome
+            ReturnHome,
+            FishWake
         }
 
         Activity activity;
+        int fishMorningPage;
+        bool carryingBreakfastScene;
+        Vector2 visitorPoint;
+        Transform wakingBed;
+        Vector3 wakingBedPosition;
+        public bool FishMorningPlaying => activity == Activity.FishWake;
+        public int FishMorningPage => fishMorningPage;
         public static bool WorldBlocked => Instance != null && (Instance.activity != Activity.None || Time.frameCount <= Instance.blockedFrame);
         public bool IsWaking => activity == Activity.Wake;
         public bool IsWriting => activity == Activity.Write;
         public bool FridgeAnimating => activity == Activity.Fridge;
-        public Vector2 Bedside { get; private set; }
+        public Vector2 Bedside
+        {
+            get; private set;
+        }
 
         bool queued, simulated, rendererEnabled, firstFridge, fridgeVisibleOpen;
         string mealMessage;
@@ -98,6 +112,17 @@ namespace DeathBySeventhsDawn.Interaction
             RestorePlayer();
             activity = Activity.None;
             Bind();
+            if (carryingBreakfastScene && scene.name == "LivingRoom")
+            {
+                carryingBreakfastScene = false;
+                FreezePlayer();
+                standPoint = player.transform.position;
+                placeholder.transform.position = standPoint;
+                activity = Activity.FishWake;
+                age = 0;
+                AquariumEntity.Instance.BeginBorrowingStool();
+                return;
+            }
             if (queued && scene.name == "Bedroom")
                 BeginWake();
             if (Stage == 4 && !State.dayOneSupernovaSeen && scene.name == "LivingRoom")
@@ -129,6 +154,8 @@ namespace DeathBySeventhsDawn.Interaction
 
         public void DebugSkip()
         {
+            if (FishMorningPlaying)
+                AquariumEntity.Instance?.FinishMorningWelcome();
             Reset();
             State.morningStage = 10;
             State.dreamSeen = State.tutorialComplete = State.journalUnlocked = State.investigationUnlocked = true;
@@ -138,6 +165,7 @@ namespace DeathBySeventhsDawn.Interaction
         void Reset()
         {
             queued = false;
+            carryingBreakfastScene = false;
             RestorePlayer();
             activity = Activity.None;
             SetFridge(false);
@@ -185,6 +213,9 @@ namespace DeathBySeventhsDawn.Interaction
 
         void RestorePlayer()
         {
+            if (wakingBed != null)
+                wakingBed.position = wakingBedPosition;
+            wakingBed = null;
             if (body != null)
                 body.simulated = simulated;
             if (original != null)
@@ -209,6 +240,69 @@ namespace DeathBySeventhsDawn.Interaction
             activity = Activity.Wake;
             age = 0;
             hit = 0;
+        }
+
+        void BeginFishWake()
+        {
+            var bed = GameObject.Find("Bed");
+            if (bed == null || player == null)
+                return;
+            queued = false;
+            var bounds = bed.GetComponent<SpriteRenderer>().bounds;
+            bedPoint = bounds.center;
+            Bedside = new Vector2(bounds.max.x + .48f, bounds.min.y - .25f);
+            visitorPoint = new Vector2(bounds.max.x + .65f, bounds.center.y - .12f);
+            FreezePlayer();
+            var pose=placeholder.GetComponent<SpriteRenderer>();pose.sprite=SmallPixelActors.Seated();pose.color=Color.white;placeholder.transform.localScale=Vector3.one;
+            MoveBody(bedPoint);
+            placeholder.transform.position = bedPoint;
+            placeholder.transform.localRotation = Quaternion.Euler(0, 0, 75);
+            wakingBed = bed.transform;
+            wakingBedPosition = wakingBed.position;
+            activity = Activity.FishWake;
+            fishMorningPage = 0;
+            age = 0;
+            AquariumEntity.Instance.ShowMorningVisitor(visitorPoint);
+        }
+        void TickFishWake(bool advance)
+        {
+            var fish = AquariumEntity.Instance;
+            if (fishMorningPage < 4)
+            {
+                float rise = fishMorningPage < 3 ? 0 : Mathf.SmoothStep(0, 1, Mathf.Clamp01(age / 1.1f));
+                Vector2 at = Vector2.Lerp(bedPoint, Bedside, rise);
+                MoveBody(at);
+                placeholder.transform.position = at;
+                placeholder.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(75, 0, rise));
+                float shake = fishMorningPage == 0 && age < 1.5f ? Mathf.Sin(age * 28) * .035f : 0;
+                if (wakingBed != null)
+                    wakingBed.position = wakingBedPosition + Vector3.right * shake;
+                fish.ShowMorningVisitor(visitorPoint + Vector2.up * (Mathf.Sin(age * 8) * .035f));
+            }
+            else if (fishMorningPage == 4)
+                fish.AnimateBorrowedStool(age / 3f);
+            else if (fishMorningPage == 5)
+                fish.SettleMorningVisitor(Mathf.Clamp01(age / .9f));
+            float minimum = fishMorningPage == 3 ? 1.1f : fishMorningPage == 4 ? 3f : fishMorningPage == 5 ? .9f : .35f;
+            if (!advance || age < minimum)
+                return;
+            if (fishMorningPage == 5)
+                fish.FinishMorningWelcome();
+            fishMorningPage++;
+            age = 0;
+            if (fishMorningPage == 4)
+            {
+                carryingBreakfastScene = true;
+                SceneManager.LoadScene("LivingRoom");
+                return;
+            }
+            if (fishMorningPage >= StoryText.Current.morning.fishMorningPages.Length)
+            {
+                RestorePlayer();
+                activity = Activity.None;
+                blockedFrame = Time.frameCount;
+                Save();
+            }
         }
 
         public void NeighborTalked()
@@ -392,6 +486,20 @@ namespace DeathBySeventhsDawn.Interaction
             age += Time.unscaledDeltaTime;
             bool advance = StoryControls.ContinuePressed || advanceRequested;
             advanceRequested = false;
+            if (activity == Activity.None && AquariumEntity.Instance != null && AquariumEntity.Instance.MorningWelcomePending && !StoryJournal.WorldBlocked)
+            {
+                if (SceneManager.GetActiveScene().name != "Bedroom")
+                {
+                    SceneManager.LoadScene("Bedroom");
+                    return;
+                }
+                BeginFishWake();
+            }
+            if (activity == Activity.FishWake)
+            {
+                TickFishWake(advance);
+                return;
+            }
             if (activity == Activity.ReturnHome)
             {
                 if (age > .35f && advance)
@@ -561,6 +669,12 @@ namespace DeathBySeventhsDawn.Interaction
             float w = Screen.width / scale, h = Screen.height / scale;
             try
             {
+                if (activity == Activity.FishWake)
+                {
+                    var story = StoryText.Current.morning;
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), story.fishMorningSpeakers[fishMorningPage], story.fishMorningPages[fishMorningPage], StoryText.Local("Enter  继续", "Enter Continue"), label);
+                    return;
+                }
                 if (activity == Activity.ReturnHome)
                 {
                     NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("雨果", "Hugo"), StoryText.Current.morning.food, StoryText.Local("Enter  继续", "Enter Continue"), label);

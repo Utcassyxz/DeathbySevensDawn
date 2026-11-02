@@ -16,9 +16,18 @@ namespace DeathBySeventhsDawn.Core
 
     public class GameManager : MonoBehaviour
     {
-        public static GameManager Instance { get; private set; }
-        public ProgressionSettings Settings { get; private set; }
-        internal ProgressionState State { get; private set; }
+        public static GameManager Instance
+        {
+            get; private set;
+        }
+        public ProgressionSettings Settings
+        {
+            get; private set;
+        }
+        internal ProgressionState State
+        {
+            get; private set;
+        }
         public int LoopCount => State.loopCount;
         public bool HasEnded => State.badEndingOne || State.worldEndEnding || State.fishReplacementEnding;
         public bool HasSeenAncientGod => State.ancientGodSeen;
@@ -115,7 +124,10 @@ namespace DeathBySeventhsDawn.Core
         public float Knowledge => State.knowledge;
         public float Mutation => State.mutation;
         public float MaxVitality => Mathf.Max(Settings.minimumVitality, Settings.initialVitality - LoopCount * Settings.agingPerLoop);
-        public float Vitality { get; private set; }
+        public float Vitality
+        {
+            get; private set;
+        }
         public float Sanity => Mathf.Clamp(Settings.maximumSanity - State.sanityBurden - Knowledge * Settings.knowledgeSanityCost - Mutation * Settings.mutationSanityCost, 0, Settings.maximumSanity);
         public int KnowledgeLevel => Mathf.FloorToInt(Knowledge / Mathf.Max(1, Settings.knowledgePerLevel));
         public SanityLayer Layer => Sanity <= Settings.revelationSanity ? SanityLayer.Revelation : Sanity <= Settings.fracturedSanity ? SanityLayer.Fractured : Sanity <= Settings.unstableSanity ? SanityLayer.Unstable : SanityLayer.Stable;
@@ -212,6 +224,7 @@ namespace DeathBySeventhsDawn.Core
             State.fishAlly = State.fishCompanionUnlocked;
             State.fishReportAvailable = false;
             State.fishStoryDays.Clear();
+            State.fishStoolBorrowed = false;
             Vitality = MaxVitality;
             ProgressionSave.Write(State);
             Changed?.Invoke();
