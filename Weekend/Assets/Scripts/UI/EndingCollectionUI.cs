@@ -9,6 +9,52 @@ namespace DeathBySeventhsDawn.Progression
     public static class EndingCollectionUI
     {
         public static bool GalleryOpen { get; private set; }
+        public static bool PreviewOpen => preview > 0;
+
+        static int preview;
+        public static void ClosePreview()
+        {
+            if (preview > 0)
+                ApartmentAudio.Instance?.StopEndingCue();
+            preview = 0;
+            ApartmentAudio.Instance?.SetEndingMood(ApartmentAudio.EndingMood.Bad);
+        }
+
+        public static void Preview(int number)
+        {
+            if (number < 1 || number > 3)
+                return;
+            preview = number;
+            ApartmentAudio.Instance?.SetEndingMood(ApartmentAudio.EndingMood.Bad);
+            ApartmentAudio.Instance?.RestartEndingCue();
+        }
+
+        public static void DrawPreview(float w, float h)
+        {
+            string id = preview == 1 ? "world-end" : preview == 2 ? "bad-ending-1" : "fish-replacement";
+            var data = preview == 1 ? StoryText.Current.worldEnd : preview == 2 ? StoryText.Current.ending : StoryText.Current.fishEnding;
+            var art = Resources.Load<Texture2D>(preview == 3 ? "Story/EndingReplacement" : "Story/EndingWorld");
+            GUI.color = Color.white;
+            if (art != null)
+                GUI.DrawTexture(new Rect(0, 0, w, h), art, ScaleMode.ScaleAndCrop);
+            GUI.color = new Color(.015f, .018f, .025f, .78f);
+            GUI.DrawTexture(new Rect(0, 0, w * .62f, h), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            GUI.Label(new Rect(w * .08f, h * .08f, w * .8f, 45), StoryText.Local("结局预览 ", "ENDING PREVIEW ") + preview + StoryText.Local(" · 不写入收藏", " · No collection changes"), Text(20, NarrativeUI.Ink));
+            GUI.Label(new Rect(w * .08f, h * .23f, w * .50f, 90), data.title, Text(42, NarrativeUI.Ink));
+            GUI.Label(new Rect(w * .08f, h * .40f, w * .47f, h * .29f), string.Join("\n", data.lines), Text(21, NarrativeUI.Ink));
+            if (PrototypeButtons.Button(new Rect(w * .08f, h * .84f, 290, 54), StoryText.Local("返回调试面板", "Return to debug"), Button()))
+                ClosePreview();
+            var names = new[]
+            {
+                StoryText.Local("快版 · 好结局", "Fast · Good"),
+                StoryText.Local("慢版 · 坏结局", "Slow · Bad"),
+                StoryText.Local("真结局变奏", "True variation")
+            };
+            for (int i = 0; i < 3; i++)
+                if (PrototypeButtons.Button(new Rect(w * .55f + i * 145, h * .84f, 135, 54), names[i], Button()))
+                    ApartmentAudio.Instance?.SetEndingMood((ApartmentAudio.EndingMood)i);
+        }
 
         static Texture2D haze;
         static Texture2D endArt;

@@ -90,9 +90,29 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 var root = new GameObject("Stairs to floor five");
                 SceneManager.MoveGameObjectToScene(root, scene);
-                for (int i = 0; i < 6; i++)
-                    Part(root.transform, "Stair tread", StairsFour + new Vector2(0, (i - 2) * .13f), new Vector2(.95f, .08f), new Color(.55f - i * .035f, .51f - i * .03f, .43f - i * .025f), 2);
-                Part(root.transform, "Stair rail", StairsFour + new Vector2(-.57f, .05f), new Vector2(.055f, .9f), new Color(.2f, .23f, .22f), 3);
+                Part(root.transform, "Stairwell recess", StairsFour, new Vector2(1.55f, 1.72f), new Color(.10f, .13f, .14f), 1);
+                Part(root.transform, "Upper landing", StairsFour + new Vector2(0, .77f), new Vector2(1.40f, .18f), new Color(.42f, .43f, .39f), 3);
+                for (int i = 0; i < 7; i++)
+                {
+                    float y = -.65f + i * .19f;
+                    Part(root.transform, "Stair tread", StairsFour + new Vector2(0, y), new Vector2(1.24f, .16f), new Color(.42f + i * .018f, .43f + i * .016f, .40f + i * .014f), 3);
+                    Part(root.transform, "Stair riser shadow", StairsFour + new Vector2(0, y - .065f), new Vector2(1.24f, .035f), new Color(.16f, .19f, .19f), 4);
+                    Part(root.transform, "Stair nosing", StairsFour + new Vector2(0, y + .065f), new Vector2(1.24f, .022f), new Color(.65f, .61f, .48f), 5);
+                }
+
+                foreach (float side in new[]
+                {
+                    -.73f,
+                    .73f
+                }
+
+                )
+                {
+                    Part(root.transform, "Stair rail base", StairsFour + new Vector2(side, 0), new Vector2(.09f, 1.75f), new Color(.12f, .16f, .17f), 6);
+                    Part(root.transform, "Stair handrail", StairsFour + new Vector2(side + .015f, .04f), new Vector2(.045f, 1.8f), new Color(.50f, .48f, .36f), 7);
+                    for (int i = 0; i < 4; i++)
+                        Part(root.transform, "Rail post", StairsFour + new Vector2(side, -.65f + i * .42f), new Vector2(.12f, .07f), new Color(.25f, .29f, .28f), 6);
+                }
             }
 
             if (scene.name == "Rooftop" && State.telescopeOnRoof)
@@ -151,8 +171,7 @@ namespace DeathBySeventhsDawn.Interaction
             return false;
         }
 
-        bool CanCarryTelescope => State.tutorialComplete && !State.telescopeCarried && !State.telescopeOnRoof
-            && TimeManager.Instance.Days >= 2 && StoryJournal.IsNight(TimeManager.Instance.Period);
+        bool CanCarryTelescope => State.tutorialComplete && !State.telescopeCarried && !State.telescopeOnRoof && TimeManager.Instance.Days >= 2 && StoryJournal.IsNight(TimeManager.Instance.Period);
 
         public bool TakeTelescope()
         {
@@ -274,9 +293,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             else if (scene == "Rooftop" && Near(TelescopeSpot))
             {
-                prompt = State.telescopeOnRoof ? text.observe
-                    : State.telescopeCarried ? text.place
-                    : TimeManager.Instance.Days < 2 ? text.wait : text.missing;
+                prompt = State.telescopeOnRoof ? text.observe : State.telescopeCarried ? text.place : TimeManager.Instance.Days < 2 ? text.wait : text.missing;
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                 {
                     if (State.telescopeOnRoof)

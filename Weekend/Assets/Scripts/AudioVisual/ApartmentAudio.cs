@@ -11,9 +11,11 @@ namespace DeathBySeventhsDawn.Progression
     {
         public static ApartmentAudio Instance { get; private set; }
 
-        AudioSource uiPress, bubbleScore, goodScore, badScore, trueScore;
+        AudioSource deduction, uiPress, bubbleScore, goodScore, badScore, trueScore;
         float specialBlend;
         public int UiPressCount { get; private set; }
+        public int DreamImpactCount { get; private set; }
+        public int LastDreamImpact { get; private set; }
 
         public enum EndingMood
         {
@@ -39,6 +41,17 @@ namespace DeathBySeventhsDawn.Progression
             UiPressCount++;
         }
 
+        public int DeductionCount { get; private set; }
+
+        public void PlayDeduction()
+        {
+            if (deduction == null || deduction.clip == null)
+                return;
+            deduction.volume = .36f;
+            deduction.PlayOneShot(deduction.clip);
+            DeductionCount++;
+        }
+
         AudioSource endingVoice;
         float endingDelay = -1, endingAge = -1;
         public bool EndingScreamPlaying => endingVoice != null && endingVoice.isPlaying;
@@ -62,11 +75,12 @@ namespace DeathBySeventhsDawn.Progression
             reveal = Source("Revelation", false);
             title = Source("TitleOrbit", true);
             scream = Source("OpeningScream", false);
-            endingVoice = Source("OpeningScream", false);
+            endingVoice = Source("EndingCurtain", false);
             dreamKick = Source("DreamKick", false);
             dreamHammer = Source("WoodHammer", false);
             dreamHammer.volume = .65f;
             uiPress = Source("UiPress", false);
+            deduction = Source("DeductionSuccess", false);
             bubbleScore = Source("BubbleThreshold", true);
             goodScore = Source("EndingGood", true);
             badScore = Source("EndingBad", true);
@@ -78,15 +92,23 @@ namespace DeathBySeventhsDawn.Progression
         // hammer arrives underneath it, so the two sounds end up sharing the same beat.
         public void PlayDreamKick(int index, int total)
         {
+            DreamImpactCount++;
+            LastDreamImpact = index;
             if (dreamKick != null && dreamKick.clip != null)
             {
-                dreamKick.pitch = .92f + .08f * Mathf.Clamp01(index / (float)Mathf.Max(1, total));
-                dreamKick.volume = Mathf.Lerp(.22f, .92f, Mathf.Clamp01((index - 1) / 2f));
-                dreamKick.Play();
+                dreamKick.Stop();
+                dreamKick.pitch = 1;
+                dreamKick.volume = Mathf.Lerp(.35f, .75f, (index - 1) / 2f);
+                if (index < 3)
+                    dreamKick.Play();
             }
 
-            if (index >= 2 && dreamHammer != null && dreamHammer.clip != null)
-                dreamHammer.PlayOneShot(dreamHammer.clip, Mathf.Lerp(.10f, .55f, Mathf.Clamp01((index - 2) / 1f)));
+            if (dreamHammer != null && dreamHammer.clip != null && index >= 2)
+            {
+                dreamHammer.pitch = 1;
+                dreamHammer.volume = index == 3 ? .9f : .3f;
+                dreamHammer.PlayOneShot(dreamHammer.clip, index == 3 ? 1 : .4f);
+            }
         }
 
         AudioSource Source(string clip, bool loop)
@@ -189,6 +211,32 @@ namespace DeathBySeventhsDawn.Progression
 
         // The settlement page calls this explicitly so both endings have a scream even
         // when the cinematic path is skipped or a test jumps straight to the result.
+        public void StopEndingCue()
+        {
+            endingAge = endingDelay = -1;
+            if (endingVoice != null)
+            {
+                endingVoice.volume = 0;
+                endingVoice.Stop();
+            }
+        }
+
+        public void RestartEndingCue()
+        {
+            endingAge = endingDelay = -1;
+            if (endingVoice != null)
+                endingVoice.Stop();
+            PlayEndingScream();
+        }
+
+        public void StopDreamImpacts()
+        {
+            if (dreamKick != null)
+                dreamKick.Stop();
+            if (dreamHammer != null)
+                dreamHammer.Stop();
+        }
+
         public void PlayEndingScream()
         {
             if (endingVoice == null || endingVoice.clip == null || endingAge >= 0 || endingDelay >= 0)
@@ -205,10 +253,11 @@ namespace DeathBySeventhsDawn.Progression
         {
             if (!Ready || GameManager.Instance == null)
                 return;
+            bool preview = EndingCollectionUI.PreviewOpen;
             if (endingDelay >= 0)
             {
                 endingDelay -= Time.unscaledDeltaTime;
-                if (endingDelay < 0 && !MainMenuUI.IsVisible && endingVoice.clip != null)
+                if (endingDelay < 0 && (!MainMenuUI.IsVisible || preview) && endingVoice.clip != null)
                 {
                     endingAge = 0;
                     endingVoice.Play();
@@ -220,17 +269,17 @@ namespace DeathBySeventhsDawn.Progression
                 endingAge += Time.unscaledDeltaTime;
                 float duration = Mathf.Min(8.5f, endingVoice.clip.length * .96f);
                 float envelope = Mathf.SmoothStep(0, 1, endingAge / 1.2f) * Mathf.SmoothStep(0, 1, (duration - endingAge) / 3f);
-                endingVoice.volume = MainMenuUI.IsVisible ? Mathf.MoveTowards(endingVoice.volume, 0, Time.unscaledDeltaTime * .5f) : envelope * .52f;
-                if (endingAge >= duration || MainMenuUI.IsVisible && endingVoice.volume < .001f)
+                endingVoice.volume = MainMenuUI.IsVisible && !preview ? Mathf.MoveTowards(endingVoice.volume, 0, Time.unscaledDeltaTime * .5f) : envelope * .52f;
+                if (endingAge >= duration || MainMenuUI.IsVisible && !preview && endingVoice.volume < .001f)
                 {
                     endingVoice.Stop();
                     endingAge = -1;
                 }
             }
 
-            bool special = NightDreamSequence.Instance != null && NightDreamSequence.Instance.IsBubble || GameManager.Instance.HasEnded && !MainMenuUI.IsVisible;
+            bool special = preview || NightDreamSequence.Instance != null && NightDreamSequence.Instance.IsBubble || GameManager.Instance.HasEnded && !MainMenuUI.IsVisible;
             specialBlend = Mathf.MoveTowards(specialBlend, special ? 1 : 0, Time.unscaledDeltaTime / 2.4f);
-            var wanted = GameManager.Instance.HasEnded ? (endingMood == EndingMood.Good ? goodScore : endingMood == EndingMood.True ? trueScore : badScore) : bubbleScore;
+            var wanted = (preview || GameManager.Instance.HasEnded) ? (endingMood == EndingMood.Good ? goodScore : endingMood == EndingMood.True ? trueScore : badScore) : bubbleScore;
             foreach (var score in new[]
             {
                 bubbleScore,
@@ -243,7 +292,7 @@ namespace DeathBySeventhsDawn.Progression
             {
                 if (score == null || score.clip == null)
                     continue;
-                float targetVolume = special && score == wanted ? .36f : 0;
+                float targetVolume = special && score == wanted ? (score == bubbleScore ? .46f : .48f) : 0;
                 if (targetVolume > 0 && !score.isPlaying)
                     score.Play();
                 score.volume = Mathf.MoveTowards(score.volume, targetVolume, Time.unscaledDeltaTime * .19f);
@@ -272,7 +321,7 @@ namespace DeathBySeventhsDawn.Progression
             hidden.volume = Mathf.Sin(blend * Mathf.PI * .5f) * gameGain * (1 - specialBlend);
             float targetDuck = MainMenuUI.IsOpening ? Mathf.Lerp(1, .38f, MainMenuUI.OpeningProgress) : MainMenuUI.IsVisible ? 1 : cinematicDuck;
             cinematicDuck = Mathf.MoveTowards(cinematicDuck, targetDuck, dt * .15f);
-            title.volume = Mathf.Sin(angle) * master * .83f * cinematicDuck;
+            title.volume = Mathf.Sin(angle) * master * .83f * cinematicDuck * (1 - specialBlend);
             float screamTarget = opening ? .7f : 0;
             scream.volume = Mathf.MoveTowards(scream.volume, screamTarget, dt * (opening ? .3f : .39f));
             if (!opening && scream.volume < .001f && scream.isPlaying)

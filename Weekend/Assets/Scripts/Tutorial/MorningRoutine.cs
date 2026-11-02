@@ -126,6 +126,14 @@ namespace DeathBySeventhsDawn.Interaction
             }
         }
 
+        public void DebugSkip()
+        {
+            Reset();
+            State.morningStage = 10;
+            State.dreamSeen = State.tutorialComplete = State.journalUnlocked = State.investigationUnlocked = true;
+            Save();
+        }
+
         void Reset()
         {
             queued = false;
@@ -353,6 +361,8 @@ namespace DeathBySeventhsDawn.Interaction
 
         void Update()
         {
+            if (ProgressionHUD.DebugConsoleOpen)
+                return;
             if (GameManager.Instance == null || GameManager.Instance.HasEnded || MainMenuUI.IsVisible || GameSettingsUI.WorldBlocked)
                 return;
             age += Time.unscaledDeltaTime;

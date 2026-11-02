@@ -78,6 +78,7 @@ namespace DeathBySeventhsDawn.Progression
             EnsureSprites();
             root = new GameObject("Corridor detail");
             SceneManager.MoveGameObjectToScene(root, SceneManager.GetActiveScene());
+            Block("stone landing floor", new Vector2(0, -.20f), new Vector2(13.65f, 3.3f), new Color(.30f, .32f, .30f), -9);
             Color wall = new Color(.31f, .36f, .34f), brass = new Color(.61f, .51f, .34f), wood = new Color(.23f, .17f, .15f);
             Block("north wallpaper face", new Vector2(0, 1.55f), new Vector2(13.65f, .95f), wall, 0);
             Block("north cornice shadow", new Vector2(0, 2.06f), new Vector2(13.7f, .10f), new Color(.10f, .14f, .15f), 1);
@@ -93,15 +94,15 @@ namespace DeathBySeventhsDawn.Progression
 
             for (int row = 0; row < 4; row++)
                 Block("cross tile grout", new Vector2(0, -1.5f + row * .64f), new Vector2(13.65f, .012f), new Color(.14f, .17f, .16f), -5);
-            Block("runner shadow", new Vector2(0, -.24f), new Vector2(12.1f, 1.10f), new Color(.09f, .095f, .095f), -4);
-            Block("woven runner", new Vector2(0, -.19f), new Vector2(12f, .94f), new Color(.25f, .17f, .18f), -3);
+            Block("runner shadow", new Vector2(.5f, -.24f), new Vector2(10.1f, .90f), new Color(.09f, .095f, .095f), -4);
+            Block("woven runner", new Vector2(.5f, -.19f), new Vector2(10f, .76f), new Color(.25f, .17f, .18f), -3);
             for (int i = 0; i < 2; i++)
-                Block("runner binding", new Vector2(0, -.59f + i * .80f), new Vector2(11.94f, .025f), new Color(.51f, .38f, .27f), -2);
-            for (int i = 0; i < 39; i++)
-                Block("woven fleck", new Vector2(-5.8f + i * .30f, -.18f), new Vector2(.10f, .018f), new Color(.33f, .24f, .22f), -2);
-            for (int stitch = 0; stitch < 58; stitch++)
+                Block("runner binding", new Vector2(.5f, -.49f + i * .60f), new Vector2(9.94f, .025f), new Color(.51f, .38f, .27f), -2);
+            for (int i = 0; i < 32; i++)
+                Block("woven fleck", new Vector2(-4.25f + i * .30f, -.18f), new Vector2(.10f, .018f), new Color(.33f, .24f, .22f), -2);
+            for (int stitch = 0; stitch < 47; stitch++)
                 for (int edge = 0; edge < 2; edge++)
-                    Block("runner edge stitch", new Vector2(-5.75f + stitch * .20f, -.52f + edge * .66f), new Vector2(.025f, .045f), new Color(.37f, .28f, .23f), -2);
+                    Block("runner edge stitch", new Vector2(-4.2f + stitch * .20f, -.44f + edge * .50f), new Vector2(.025f, .045f), new Color(.37f, .28f, .23f), -2);
             foreach (float x in new[]
             {
                 -4.7f,

@@ -73,6 +73,7 @@ namespace DeathBySeventhsDawn.Progression
             playing = true;
         }
 
+        public void DebugSkip() => ResetSequence();
         void ResetSequence()
         {
             playing = false;
@@ -81,6 +82,8 @@ namespace DeathBySeventhsDawn.Progression
 
         void Update()
         {
+            if (ProgressionHUD.DebugConsoleOpen)
+                return;
             if (playing)
             {
                 elapsed += Time.unscaledDeltaTime;

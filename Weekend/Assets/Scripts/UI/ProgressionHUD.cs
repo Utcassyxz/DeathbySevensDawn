@@ -24,11 +24,9 @@ namespace DeathBySeventhsDawn.Progression
         GUIStyle labelStyle, titleStyle, buttonStyle, boxStyle;
         void Update()
         {
-            if (MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked)
+            if (PauseMenuUI.WorldBlocked)
                 return;
             if (DeathBySeventhsDawn.Interaction.InvestigationDevTools.WorldBlocked)
-                return;
-            if (DeathBySeventhsDawn.Interaction.AquariumEntity.WorldBlocked)
                 return;
 #if ENABLE_INPUT_SYSTEM
             var keyboard=Keyboard.current;
@@ -92,6 +90,7 @@ namespace DeathBySeventhsDawn.Progression
             enteringCode = false;
             debugOpen = false;
             confirmNewJourney = false;
+            EndingCollectionUI.ClosePreview();
             code = "";
         }
 
@@ -209,23 +208,30 @@ namespace DeathBySeventhsDawn.Progression
             var clock = TimeManager.Instance;
             if (game == null || clock == null)
                 return;
-            if (MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked)
+            if ((MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked) && !debugOpen && !enteringCode)
                 return;
             if (DeathBySeventhsDawn.Interaction.InvestigationDevTools.WorldBlocked)
-                return;
-            if (DeathBySeventhsDawn.Interaction.AquariumEntity.WorldBlocked)
                 return;
             PrepareStyles();
             PrototypeButtons.Apply(buttonStyle);
             var previousColor = GUI.color;
             // Scale with resolution, keeping large readable controls on high-DPI game views.
             var previousMatrix = GUI.matrix;
+            int oldDepth = GUI.depth;
+            if (debugOpen || enteringCode)
+                GUI.depth = -500;
             float scale = Mathf.Clamp(Screen.height / 900f, .8f, 2.4f);
             GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1));
             float width = Screen.width / scale, height = Screen.height / scale;
             try
             {
-                if (WorldEndSequence.IsPresenting)
+                if (EndingCollectionUI.PreviewOpen)
+                {
+                    EndingCollectionUI.DrawPreview(width, height);
+                    return;
+                }
+
+                if (WorldEndSequence.IsPresenting && !debugOpen && !enteringCode)
                     return;
                 if (game.HasEnded && !debugOpen && !enteringCode)
                 {
@@ -242,6 +248,13 @@ namespace DeathBySeventhsDawn.Progression
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("本次游戏已解锁全部测试功能 · 按 ~ 或 Esc 关闭"), labelStyle);
                     scroll = GUILayout.BeginScrollView(scroll);
                     DrawStatus(game, clock);
+                    if (PrototypeButtons.LayoutButton(StoryText.Local("跳过当前强制剧情 · 进入自由探索", "Skip forced story · Free exploration"), buttonStyle))
+                        StoryDebugActions.SkipForcedStory();
+                    GUILayout.BeginHorizontal();
+                    for (int ending = 1; ending <= 3; ending++)
+                        if (PrototypeButtons.LayoutButton(StoryText.Local("预览结局 ", "Preview ending ") + ending, buttonStyle))
+                            StoryDebugActions.PreviewEnding(ending);
+                    GUILayout.EndHorizontal();
                     foreach (var ability in game.Settings.abilities)
                         if (ability != null && game.HasAbility(ability.id))
                             GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("已解锁能力：") + AbilityName(ability.id), labelStyle);
@@ -300,6 +313,7 @@ namespace DeathBySeventhsDawn.Progression
             }
             finally
             {
+                GUI.depth = oldDepth;
                 GUI.matrix = previousMatrix;
                 GUI.color = previousColor;
             }

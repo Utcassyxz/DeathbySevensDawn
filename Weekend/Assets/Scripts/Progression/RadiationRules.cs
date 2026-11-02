@@ -13,6 +13,7 @@ namespace DeathBySeventhsDawn.Progression
 
     public static class RadiationRules
     {
+        public static bool CanSeal(int day) => day < 3;
         public static FishStage Fish(int day, bool protectedTank)
         {
             if (protectedTank || day < 3)

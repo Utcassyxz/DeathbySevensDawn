@@ -87,6 +87,7 @@ namespace DeathBySeventhsDawn.Interaction
             Close();
         }
 
+        public void DebugSkip() => Reset();
         void Reset()
         {
             Close();
@@ -105,9 +106,11 @@ namespace DeathBySeventhsDawn.Interaction
                     State.cultDayOneTalked = true;
                     ProgressionSave.Write(State);
                 }
+
                 if (MorningRoutine.Instance != null && MorningRoutine.Instance.Stage == 2)
                     MorningRoutine.Instance.NeighborTalked();
             }
+
             dayOneStarted = false;
             subtitles.Reset();
             view = View.None;
@@ -239,6 +242,7 @@ namespace DeathBySeventhsDawn.Interaction
                     Close();
                     return;
                 }
+
                 if (view == View.Bag && k != null && k.iKey.wasPressedThisFrame)
                 {
                     Close();
@@ -432,7 +436,11 @@ namespace DeathBySeventhsDawn.Interaction
                     const int columns = 6, rows = 4;
                     const float slot = 96f, gap = 12f;
                     float gridX = panel.x + 24, gridY = panel.y + 92;
-                    var slotNumber = new GUIStyle(small) { alignment = TextAnchor.MiddleCenter, fontSize = 22 };
+                    var slotNumber = new GUIStyle(small)
+                    {
+                        alignment = TextAnchor.MiddleCenter,
+                        fontSize = 22
+                    };
                     for (int i = 0; i < columns * rows; i++)
                     {
                         var cell = new Rect(gridX + (i % columns) * (slot + gap), gridY + (i / columns) * (slot + gap), slot, slot);

@@ -156,7 +156,7 @@ public static class VerifyNightArc
         int presses = audio.UiPressCount;
         audio.PlayUiPress();
         Check(audio.UiPressCount == presses + 1, "Shared UI press feedback reaches an audio source");
-        Check(Resources.Load<Texture2D>("Story/CosmicOccultation") != null && Resources.Load<Texture2D>("Story/BubbleContact") != null, "New telescope and dream illustrations load");
+        Check(Resources.Load<Texture2D>("Story/TelescopePixelPair") != null && Resources.Load<Texture2D>("Story/BubbleContact") != null, "New telescope and dream illustrations load");
         Check(RadiationRules.Fish(2, false) == FishStage.Ordinary && RadiationRules.Fish(3, false) == FishStage.HumanFace && RadiationRules.Fish(4, false) == FishStage.Speaking, "Fish face and voice have distinct days");
         Check(RadiationRules.Fish(7, false) == FishStage.Replacement && RadiationRules.Fish(7, true) == FishStage.Ordinary, "Foil suppresses human transformation");
         for (int i = 0; i < 3; i++)
@@ -179,7 +179,7 @@ public static class VerifyNightArc
         yield return .9f;
         Capture("one-hour-later");
         yield return 2f;
-        Check(journal.WatchPhase == "Recheck" && journal.ObservationZoom > 1.3f, "After one hour the same cosmic silhouette is visibly larger");
+        Check(journal.WatchPhase == "Recheck" && journal.ObservationAdvanced, "After one hour the same cosmic silhouette is visibly larger");
         Capture("larger-silhouette");
         yield return .2f;
         for (int i = 0; i < 12 && journal.WatchPhase == "Recheck"; i++)
@@ -192,7 +192,7 @@ public static class VerifyNightArc
         yield return .2f;
         clock.SleepUntilNextMorning();
         yield return .4f;
-        Check(NightDreamSequence.WorldBlocked && !NightDreamSequence.Instance.IsBubble && clock.Days == 1, "First sleep waits inside an ordinary dream");
+        Check(!NightDreamSequence.WorldBlocked && clock.Days == 2, "First sleep is quiet rather than a recycled dream");
         Capture("first-night-dream");
         yield return .2f;
         var dream = EndDream();
@@ -230,7 +230,7 @@ public static class VerifyNightArc
         yield return .2f;
         clock.SleepUntilNextMorning();
         yield return .3f;
-        Check(NightDreamSequence.WorldBlocked && !NightDreamSequence.Instance.IsBubble, "Third night has its own ordinary dream");
+        Check(!NightDreamSequence.WorldBlocked && clock.Days == 4, "Third night has no recycled fish dream");
         dream = EndDream();
         while (dream.MoveNext())
             yield return dream.Current;
@@ -364,7 +364,7 @@ public static class VerifyNightArc
     static void Finish(string failure)
     {
         steps = null;
-        File.WriteAllText("../night-arc-validation.txt", failure == null ? "PASS: " + checks + " checks; daily dreams; delayed Bubble return gift; third-day face/fourth-day voice/seventh-day replacement; foil protection and ending precedence; permanent ending collection; dawn/noon/dusk/night balcony; corridor architecture; owned night lamps; original music and button feedback; bilingual text. Original journey, collection and settings restored." : "FAIL: " + failure);
+        File.WriteAllText("../night-arc-validation.txt", failure == null ? "PASS: " + checks + " checks; quiet ordinary sleep; second-night Bubble gift; third-day face/fourth-day voice/seventh-day replacement; foil protection and ending precedence; permanent ending collection; dawn/noon/dusk/night balcony; corridor architecture; owned night lamps; shared-theme music and crisp button feedback; bilingual text. Original journey, collection and settings restored." : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
         {

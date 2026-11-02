@@ -122,15 +122,22 @@ namespace DeathBySeventhsDawn.Progression
                 if (game.HasEnded)
                     return true;
             }
-            else if (game.HasSeenAncientGod && !game.HasLoopAbility)
+            else if (clock.Days == 2 && game.HasSeenAncientGod && !game.HasLoopAbility)
             {
                 kind = Kind.Bubble;
                 pages = text.yog;
             }
             else
             {
-                kind = Kind.Ordinary;
-                pages = clock.Days == 1 ? text.day1 : clock.Days == 2 ? text.day2 : game.AquariumSealed ? text.protectedDream : text.day3;
+                clock.CompleteSleep();
+                if (!game.HasEnded)
+                {
+                    wakePending = true;
+                    StoryTransition.Cover(.7f);
+                    SceneManager.LoadScene("Bedroom");
+                }
+
+                return true; // Ordinary nights are a quiet transition, never recycled fish dialogue.
             }
 
             if (pages == null || pages.Length == 0)
@@ -145,6 +152,23 @@ namespace DeathBySeventhsDawn.Progression
             if (body != null)
                 body.linearVelocity = Vector2.zero;
             return true;
+        }
+
+        public void DebugSkip()
+        {
+            if (!active)
+                return;
+            if (kind == Kind.Bubble)
+                GameManager.Instance.GrantLoopAbility();
+            var completed = kind;
+            Reset();
+            if (completed == Kind.Replacement)
+            {
+                GameManager.Instance.TriggerReplacementEnding();
+                return;
+            }
+
+            TimeManager.Instance.CompleteSleep();
         }
 
         public void Advance()
@@ -180,13 +204,13 @@ namespace DeathBySeventhsDawn.Progression
 
         void Update()
         {
-            if (active && !GameSettingsUI.WorldBlocked && StoryControls.ContinuePressed)
+            if (active && !ProgressionHUD.DebugConsoleOpen && !GameSettingsUI.WorldBlocked && StoryControls.ContinuePressed)
                 Advance();
         }
 
         void OnGUI()
         {
-            if (!active || GameManager.Instance == null)
+            if (!active || ProgressionHUD.DebugConsoleOpen || GameManager.Instance == null)
                 return;
             var matrix = GUI.matrix;
             var color = GUI.color;

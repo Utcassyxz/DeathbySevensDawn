@@ -4,14 +4,12 @@
     "pages": [
       "His parents are still arguing across the road.\nHugo holds half an ice pop. Meltwater runs down his wrist.",
       "There is an anthill by his shoe.\nAn ant is dragging a husk into the entrance. It catches. More ants crowd behind it.",
-      "Hugo lifts his foot and kicks once.\nThe anthill collapses at one edge.\nHe does not stop. A second kick. A third.",
-      "Something knocks beneath his shoe.\nThen again.\n…He cannot lift his foot."
+      "Hugo raises his foot."
     ],
     "images": [
       "Story/Dream/dream-01",
       "Story/Dream/dream-02",
-      "Story/Dream/dream-03",
-      "Story/Dream/dream-04"
+      "Story/Dream/dream-03"
     ],
     "journalTitle": "The anthill dream",
     "journalBody": "The anthill dream again.\nThe knocking was still there when Hugo woke up. Next door.",
@@ -20,20 +18,11 @@
   "nightDream": {
     "speaker": "Dream",
     "yogSpeaker": "Bubble",
-    "day1": [
-      "The road again.\nHis parents’ voices are behind a layer of water; he cannot make out the argument.",
-      "Hugo looks down at his shoe.\nBeneath the sole is not an anthill, but a slow-turning field of stars."
-    ],
-    "day2": [
-      "In the dream the rooftop telescope is still set up.\nThere are no stars in the barrel—only an outline coming closer.",
-      "It has no face.\nHugo knows it is looking at him."
-    ],
-    "day3": [
-      "The fish from the tank swims up beside the bed.\nThe human face on its side looks more like Hugo than it did by daylight.",
-      "“You’re so tired,” it says.\nHugo wakes with the taste of pondweed in his mouth."
-    ],
+    "day1": [],
+    "day2": [],
+    "day3": [],
     "yog": [
-      "Hugo cannot feel the bed beneath him. His hands come apart first, then his arms, then everything.\nThere is no pain. Each piece remembers where it belongs. Something is putting him back together.",
+      "The bed slips away. Fingers, arms, then the rest of him come apart.\nNothing hurts. Something is fitting the pieces back together.",
       "Hello, human.\nYou may call me Bubble. A rather endearing name.",
       "Was I… dead just then?",
       "No. The scattered parts have been returned.\nTheir order may be slightly different.",
@@ -56,10 +45,7 @@
       "It is his own voice.\n“I know what to say at the interview. I listened every time.”",
       "Something cold settles across his mouth.\n“Rest. I’ll do the difficult part.”\nThe bedside lamp stays on."
     ],
-    "protectedDream": [
-      "The corridor goes on for too long. A door closes somewhere behind Hugo.",
-      "He counts six knocks. The seventh never comes."
-    ]
+    "protectedDream": []
   },
   "knowledge": {
     "ancientTitle": "A shape behind the sky",
@@ -358,7 +344,7 @@
     "question": "Hugo asks: have you been reading my book?",
     "answerGap": "“With pages torn out like that, do I need to?”\nIt withdraws its hand.",
     "answerDefault": "“You left it on the desk.”\n\nNot an answer.",
-    "offerPrompt": "E  Check the water",
+    "offerPrompt": "E  Examine the tank · F  Drop foil (too late)",
     "offer": "The fish watches the foil. Its human mouth stops moving.\nHugo holds it above the water.",
     "throwFoil": "F  Drop the foil triangle into the tank",
     "sealedTitle": "The tank",

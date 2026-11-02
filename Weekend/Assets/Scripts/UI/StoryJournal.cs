@@ -19,7 +19,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame = -1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => modalOpen || RooftopAccess.WorldBlocked || GameSettingsUI.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || Time.frameCount <= blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked || NightDreamSequence.WorldBlocked;
+        public static bool WorldBlocked => modalOpen || StoryTransition.IsActive || EndingCollectionUI.PreviewOpen || RooftopAccess.WorldBlocked || GameSettingsUI.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || Time.frameCount <= blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked || NightDreamSequence.WorldBlocked;
 
         enum Page
         {
@@ -56,7 +56,11 @@ namespace DeathBySeventhsDawn.Interaction
 
         Watch watch;
         float watchAge;
-        public float ObservationZoom => watch == Watch.Recheck || watch == Watch.Sleep || watch == Watch.Complete ? 1.34f : 1f;
+        public float ObservationZoom => 1f;
+        public bool ObservationAdvanced => watch == Watch.Recheck || watch == Watch.Sleep || watch == Watch.Complete;
+        public bool OpeningDreamVisible => page == Page.Dream;
+        public int OpeningKickCount => dreamKicks;
+        public float OpeningDarkness => Mathf.Clamp01(dreamKicks / 3f);
         public bool NightWatchComplete => GameManager.Instance.State.firstNightWatchComplete;
 
         string telescopeMessage;
@@ -73,7 +77,7 @@ namespace DeathBySeventhsDawn.Interaction
         public static bool IsNight(TimePeriod period) => period == TimePeriod.Evening || period == TimePeriod.Night;
         void Awake()
         {
-            approachingBody = Resources.Load<Texture2D>("Story/CosmicOccultation");
+            approachingBody = Resources.Load<Texture2D>("Story/TelescopePixelPair");
             content = Resources.Load<StoryContent>("StoryContent");
             if (content == null)
                 content = ScriptableObject.CreateInstance<StoryContent>();
@@ -221,31 +225,17 @@ namespace DeathBySeventhsDawn.Interaction
 #endif
             if (page == Page.Dream)
             {
-                if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
+                if (ProgressionHUD.DebugConsoleOpen)
+                    return;
+                if (dreamKicks == 3)
                 {
-                    // The ant-mound page has three deliberate kicks. Each Enter lands one
-                    // before the page text is allowed to advance.
-                    if (dreamPage == 2 && dreamKicks < 3)
-                    {
-                        dreamKicks++;
-                        dreamKickTime = Time.unscaledTime;
-                        DeathBySeventhsDawn.Progression.ApartmentAudio.Instance?.PlayDreamKick(dreamKicks, 3);
-                        return;
-                    }
-
-                    if (dreamCaption.Next())
-                        return;
-                    dreamCaption.Reset();
-                    if (dreamPage < StoryText.Current.dream.pages.Length - 1)
-                    {
-                        dreamPage++;
-                        dreamKicks = 0;
-                        dreamKickTime = -10;
-                    }
-                    else
+                    if (Time.unscaledTime - dreamKickTime > .90f)
                         WakeUp();
+                    return;
                 }
 
+                if (StoryControls.ContinuePressed)
+                    AdvanceOpeningDream();
                 return;
             }
 
@@ -339,6 +329,36 @@ namespace DeathBySeventhsDawn.Interaction
                 selectedEntry = Mathf.Clamp(selectedEntry, 0, entries.Count - 1);
                 JournalUpdates.MarkRead(entries[selectedEntry].id);
             }
+        }
+
+        float lastDreamInput = -10;
+        public void AdvanceOpeningDream()
+        {
+            if (page != Page.Dream || dreamKicks >= 3 || Time.unscaledTime - lastDreamInput < .34f)
+                return;
+            lastDreamInput = Time.unscaledTime;
+            if (dreamPage == 2)
+            {
+                dreamKicks++;
+                dreamKickTime = Time.unscaledTime;
+                ApartmentAudio.Instance?.PlayDreamKick(dreamKicks, 3);
+                return;
+            }
+
+            if (dreamCaption.Next())
+                return;
+            dreamCaption.Reset();
+            dreamPage = Mathf.Min(2, dreamPage + 1);
+        }
+
+        public void DebugSkip()
+        {
+            page = Page.None;
+            watch = Watch.None;
+            modalOpen = false;
+            blockedThroughFrame = Time.frameCount;
+            dreamKicks = 0;
+            GameManager.Instance.State.dreamSeen = true;
         }
 
         void WakeUp()
@@ -464,7 +484,7 @@ namespace DeathBySeventhsDawn.Interaction
             // 暂时用简单图形组成望远镜；以后可替换成美术 prefab，保留互动中心即可。
             telescope = new GameObject("阳台望远镜");
             SceneManager.MoveGameObjectToScene(telescope, scene);
-            telescope.transform.position = content.telescopePosition;
+            telescope.transform.position = new Vector3(content.telescopePosition.x * .9f, content.telescopePosition.y * .45f + .20f, 0);
             TelescopeVisual.Attach(telescope);
         }
 
@@ -516,6 +536,8 @@ namespace DeathBySeventhsDawn.Interaction
 
         void OnGUI()
         {
+            if (ProgressionHUD.DebugConsoleOpen)
+                return;
             DeathBySeventhsDawn.Progression.GameTypography.Use(text, title, button);
             var game = GameManager.Instance;
             if (game == null || game.HasEnded || ProgressionHUD.DebugConsoleOpen || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked)
@@ -597,10 +619,8 @@ namespace DeathBySeventhsDawn.Interaction
                 if (firstObjectView && approachingBody != null)
                 {
                     var view = new Rect(width * .10f, 22, width * .80f, height * .59f);
-                    float zoom = ObservationZoom;
-                    GUI.BeginGroup(view);
-                    GUI.DrawTexture(new Rect(view.width * (1 - zoom) * .72f, view.height * (1 - zoom) * .4f, view.width * zoom, view.height * zoom), approachingBody, ScaleMode.ScaleAndCrop);
-                    GUI.EndGroup();
+                    // Fixed framing: the silhouette advances across the star field, not a camera zoom.
+                    GUI.DrawTextureWithTexCoords(view, approachingBody, new Rect(0, ObservationAdvanced ? 0 : .5f, 1, .5f));
                 }
 
                 var dialogue = NarrativeUI.DialogueRect(width, height);
@@ -656,6 +676,7 @@ namespace DeathBySeventhsDawn.Interaction
                 float drift = (Mathf.PerlinNoise(dreamPage + 2, elapsed * .12f) - .5f) * 9;
                 float opacity = DreamMotion.Opacity(elapsed, dreamPage);
                 Vector2 shake = dreamPage == 2 && dreamKicks > 0 ? DreamMotion.KickPulse(Time.unscaledTime - dreamKickTime) : Vector2.zero;
+                opacity *= 1 - OpeningDarkness;
                 GUI.color = new Color(1, 1, 1, opacity);
                 GUI.DrawTextureWithTexCoords(new Rect(w * .16f + drift + shake.x, h * .07f + shake.y, w * .68f, h * .52f), image, new Rect(.08f, .22f, .84f, .60f));
                 if (shake.sqrMagnitude > 0)
@@ -667,8 +688,8 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.color = Color.white;
             }
 
-            dreamCaption.Set(dream.pages[Mathf.Clamp(dreamPage, 0, dream.pages.Length - 1)], text, NarrativeUI.DialogueRect(w, h).width - 86, 96);
-            NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("梦里", "Dream"), dreamCaption.Current, dreamCaption.Counter + StoryText.Current.morning.continueDream, text);
+            dreamCaption.Set(dreamPage == 2 && dreamKicks > 0 ? StoryText.Local("一脚。", "A stamp.") : dream.pages[Mathf.Clamp(dreamPage, 0, dream.pages.Length - 1)], text, NarrativeUI.DialogueRect(w, h).width - 86, 96);
+            NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("梦里", "Dream"), dreamCaption.Current, dreamKicks == 3 ? "……" : (dreamPage == 2 ? dreamKicks + " / 3  ·  " : dreamCaption.Counter) + StoryText.Current.morning.continueDream, text);
         }
 
         void OnDestroy()

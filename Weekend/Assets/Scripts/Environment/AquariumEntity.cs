@@ -32,7 +32,7 @@ namespace DeathBySeventhsDawn.Interaction
         float range = .72f;
         Sprite square, circle;
         Sprite[] metamorphosis;
-        Texture2D pixel, circleTexture;
+        Texture2D pixel, circleTexture, portrait;
         string[] pages;
         string speaker;
         GUIStyle text, title, button, small;
@@ -46,17 +46,18 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             Instance = this;
-            var atlas = Resources.Load<Texture2D>("Story/FishMetamorphosis");
+            portrait = Resources.Load<Texture2D>("Story/FishMetamorphosis");
+            var atlas = Resources.Load<Texture2D>("Story/FishMapPixels");
             if (atlas != null)
             {
                 // Explicit atlas regions include transparent gutters; no sprite is cut at its neck.
-                float w = atlas.width, h = atlas.height, mid = w * .5f, top = h * (400f / 1241f);
+                float w = atlas.width, h = atlas.height, mid = w * .5f, half = h * .5f;
                 metamorphosis = new[]
                 {
-                    Sprite.Create(atlas, new Rect(0, h - top, mid, top), Vector2.one * .5f, 128),
-                    Sprite.Create(atlas, new Rect(mid, h - top, w - mid, top), Vector2.one * .5f, 128),
-                    Sprite.Create(atlas, new Rect(0, 0, mid, h * (821f / 1241f)), Vector2.one * .5f, 128),
-                    Sprite.Create(atlas, new Rect(mid, 0, w - mid, h * (831f / 1241f)), new Vector2(.5f, 0), 128)
+                    Sprite.Create(atlas, new Rect(0, half, mid, half), Vector2.one * .5f, 32),
+                    Sprite.Create(atlas, new Rect(mid, half, w - mid, half), Vector2.one * .5f, 32),
+                    Sprite.Create(atlas, new Rect(0, 0, mid, half), Vector2.one * .5f, 32),
+                    Sprite.Create(atlas, new Rect(mid, 0, w - mid, half), new Vector2(.5f, 0), 32)
                 };
             }
         }
@@ -362,6 +363,21 @@ namespace DeathBySeventhsDawn.Interaction
             if (game == null || game.HasEnded || game.AquariumSealed || TutorialGate.IsBlocked("aquarium") || !HasFoil || tank == null || player == null || !NearInteraction())
                 return false;
             game.State.inventory.Remove(CultNeighbor.Token);
+            if (!RadiationRules.CanSeal(TimeManager.Instance.Days))
+            {
+                ProgressionSave.Write(game.State);
+                pages = new[]
+                {
+                    StoryText.Local("锡纸沉到了缸底。它看了一眼，继续用那张嘴呼吸。\n……已经太迟了。", "The foil sinks. It glances down, then keeps breathing through that mouth.\n…Too late.")
+                };
+                speaker = StoryText.Local("雨果", "Hugo");
+                page = 0;
+                openedFrame = Time.frameCount;
+                talking = true;
+                subtitles.Reset();
+                return true;
+            }
+
             game.State.aquariumSealed = true;
             ProgressionSave.Write(game.State);
             DestroyForm();
@@ -475,6 +491,21 @@ namespace DeathBySeventhsDawn.Interaction
 
                 GUI.depth = -50;
                 var dialogue = NarrativeUI.DialogueRect(w, h);
+                if (portrait != null && visualDay >= 3)
+                {
+                    var art = new Rect(w * .64f, h * .12f, w * .26f, h * .47f);
+                    NarrativeUI.Panel(art);
+                    var uv = visualDay >= 7 ? new Rect(.5f, 0, .5f, 831f / 1241) : visualDay >= 5 ? new Rect(0, 0, .5f, 821f / 1241) : new Rect(visualDay == 4 ? .5f : 0, 841f / 1241, .5f, 400f / 1241);
+                    float aspect = portrait.width * uv.width / (portrait.height * uv.height);
+                    float aw = art.width - 36, ah = art.height - 28;
+                    if (aw / ah > aspect)
+                        aw = ah * aspect;
+                    else
+                        ah = aw / aspect;
+                    GUI.color = Color.white;
+                    GUI.DrawTextureWithTexCoords(new Rect(art.center.x - aw / 2, art.center.y - ah / 2, aw, ah), portrait, uv);
+                }
+
                 var subtitleStyle = new GUIStyle(text)
                 {
                     fontSize = 23,
@@ -485,7 +516,7 @@ namespace DeathBySeventhsDawn.Interaction
                 float x = dialogue.x, y = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
                 if (HasFoil)
                 {
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Current.aquarium.throwFoil, button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(RadiationRules.CanSeal(TimeManager.Instance.Days) ? "F  把锡纸放进水里" : "F  投入锡纸（已无法逆转）", RadiationRules.CanSeal(TimeManager.Instance.Days) ? "F  Place foil in the water" : "F  Drop foil (cannot reverse it)"), button))
                         ThrowFoil();
                     x += bw + 12;
                 }

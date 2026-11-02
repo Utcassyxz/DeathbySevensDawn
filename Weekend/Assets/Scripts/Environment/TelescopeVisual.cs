@@ -12,6 +12,8 @@ namespace DeathBySeventhsDawn.Progression
                 Build();
             var image = new GameObject("Optical tube and metal tripod");
             image.transform.SetParent(root.transform, false);
+            if (root.scene.name == "Balcony")
+                image.transform.localScale = new Vector3(.85f, .72f, 1);
             var renderer = image.AddComponent<SpriteRenderer>();
             renderer.sprite = sprite;
             renderer.sortingOrder = 12;

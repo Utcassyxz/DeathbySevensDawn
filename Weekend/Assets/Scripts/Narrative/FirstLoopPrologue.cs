@@ -69,6 +69,7 @@ namespace DeathBySeventhsDawn.Interaction
             ResetJourney();
         }
 
+        public void DebugSkip() => ResetJourney();
         void ResetJourney()
         {
             clip = Clip.None;
@@ -106,6 +107,8 @@ namespace DeathBySeventhsDawn.Interaction
 
         void Update()
         {
+            if (ProgressionHUD.DebugConsoleOpen)
+                return;
             if (!FirstLoop)
             {
                 clip = Clip.None;

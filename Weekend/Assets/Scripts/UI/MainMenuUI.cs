@@ -94,6 +94,12 @@ namespace DeathBySeventhsDawn.Progression
                 StartGame();
         }
 
+        public void DebugSkip()
+        {
+            visible = starting = false;
+            ApartmentAudio.Instance?.EndOpening();
+        }
+
         public void StartGame()
         {
             if (!visible || starting || GameSettingsUI.WorldBlocked)

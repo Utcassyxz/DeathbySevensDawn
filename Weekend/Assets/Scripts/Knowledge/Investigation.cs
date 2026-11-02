@@ -303,7 +303,11 @@ namespace DeathBySeventhsDawn.Knowledge
 
             ProgressionSave.Write(State);
             if (added != null)
+            {
                 JournalUpdates.NotifyAdded(added);
+                DeathBySeventhsDawn.Progression.ApartmentAudio.Instance?.PlayDeduction();
+            }
+
             return true;
         }
 
@@ -358,7 +362,11 @@ namespace DeathBySeventhsDawn.Knowledge
 
             ProgressionSave.Write(State);
             if (added != null)
+            {
                 JournalUpdates.NotifyAdded(added);
+                DeathBySeventhsDawn.Progression.ApartmentAudio.Instance?.PlayDeduction();
+            }
+
             return true;
         }
 

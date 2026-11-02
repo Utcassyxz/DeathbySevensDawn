@@ -45,10 +45,10 @@ namespace DeathBySeventhsDawn.Progression
         // One screen-shaking impulse per kick, triggered by input rather than a timer.
         public static Vector2 KickPulse(float since)
         {
-            if (since < 0 || since > .30f)
+            if (since < 0 || since > .22f)
                 return Vector2.zero;
-            float strength = 1 - since / .30f;
-            return new Vector2(Mathf.Sin(since * 110f) * 12f, Mathf.Cos(since * 83f) * 8f) * strength;
+            float attack = Mathf.Exp(-since * 22);
+            return new Vector2(Mathf.Sin(since * 42) * 4, Mathf.Cos(since * 26) * 11) * attack;
         }
 
         public static void Eyelids(float w, float h, float openness)

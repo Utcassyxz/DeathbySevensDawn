@@ -263,8 +263,11 @@ namespace DeathBySeventhsDawn.Interaction
             string prose = string.IsNullOrWhiteSpace(DeathBySeventhsDawn.Knowledge.Investigation.LocalBody(entry.id, entry.body)) ? DeathBySeventhsDawn.Story.StoryText.Local("这一段记忆还没有整理成文字。", "This memory has no written account yet.") : DeathBySeventhsDawn.Knowledge.Investigation.LocalBody(entry.id, entry.body);
             float metaHeight = small.CalcHeight(new GUIContent(meta), contentWidth);
             float bodyHeight = body.CalcHeight(new GUIContent(prose), contentWidth);
-            Texture2D picture = string.IsNullOrEmpty(entry.imageResource) ? null : Resources.Load<Texture2D>(entry.imageResource);
+            bool telescopePixel = entry.id == "first-night-silhouette" || entry.id == "first-night-recheck";
+            Texture2D picture = telescopePixel ? Resources.Load<Texture2D>("Story/TelescopePixelPair") : string.IsNullOrEmpty(entry.imageResource) ? null : Resources.Load<Texture2D>(entry.imageResource);
             float imageHeight = picture != null ? Mathf.Min(420, contentWidth * picture.height / picture.width) : 0;
+            if (telescopePixel)
+                imageHeight = Mathf.Min(280, contentWidth * .5f);
             float total = titleHeight + metaHeight + bodyHeight + imageHeight + 140;
             articleScroll = GUI.BeginScrollView(viewport, articleScroll, new Rect(0, 0, contentWidth, total));
             GUI.Label(new Rect(0, 0, contentWidth, titleHeight), DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id, entry.title), heading);
@@ -275,7 +278,10 @@ namespace DeathBySeventhsDawn.Interaction
             if (picture != null)
             {
                 Fill(new Rect(0, y, contentWidth, imageHeight + 12), new Color(.78f, .77f, .67f));
-                GUI.DrawTexture(new Rect(6, y + 6, contentWidth - 12, imageHeight), picture, ScaleMode.ScaleToFit);
+                if (telescopePixel)
+                    GUI.DrawTextureWithTexCoords(new Rect(6, y + 6, contentWidth - 12, imageHeight), picture, new Rect(0, entry.id == "first-night-recheck" ? 0 : .5f, 1, .5f));
+                else
+                    GUI.DrawTexture(new Rect(6, y + 6, contentWidth - 12, imageHeight), picture, ScaleMode.ScaleToFit);
             }
 
             GUI.EndScrollView();

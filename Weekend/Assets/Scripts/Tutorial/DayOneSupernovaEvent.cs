@@ -51,6 +51,12 @@ namespace DeathBySeventhsDawn.Interaction
         }
 
         void Loaded(Scene scene, LoadSceneMode mode) => Close();
+        public void DebugSkip()
+        {
+            Close();
+            replay = false;
+        }
+
         void ResetEvent()
         {
             Close();

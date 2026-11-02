@@ -103,7 +103,7 @@ namespace DeathBySeventhsDawn.Progression
                 }
 
                 var floorLamp = new Vector2(-4.35f, -2.18f);
-                BuildFloorLamp(floorLamp);
+                // Living room: diffuse light only, no intrusive fixture model.
                 Add(floorLamp + new Vector2(0, .82f), new Vector2(3.2f, 2.6f), new Color(1f, .72f, .42f), false, true);
             }
             else if (scene.name == "Bedroom")

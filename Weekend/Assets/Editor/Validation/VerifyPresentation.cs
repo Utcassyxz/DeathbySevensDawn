@@ -370,6 +370,8 @@ public static class VerifyPresentation
         yield return .6f;
         Place(RooftopAccess.TelescopeSpot);
         var roof = RooftopAccess.Instance;
+        for (int frame = 0; frame < 30 && StoryTransition.IsActive; frame++)
+            yield return .1f;
         Check(roof.Observe() && !game.HasSeenAncientGod, "Daylight never triggers the cosmic encounter");
         roof.Close();
         yield return .1f;
