@@ -1,0 +1,1 @@
+PASS: Stairwell scene and two-flight landing prefab saved; scene registered; editor setup restored.

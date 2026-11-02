@@ -90,11 +90,12 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 var root = new GameObject("EXIT stairwell door");
                 SceneManager.MoveGameObjectToScene(root, scene);
-                Part(root.transform, "Frame shadow", StairsFour + Vector2.up * .28f, new Vector2(1.12f, 1.66f), new Color(.08f, .12f, .12f), 4);
-                Part(root.transform, "Steel jamb", StairsFour + Vector2.up * .30f, new Vector2(.99f, 1.52f), new Color(.35f, .40f, .36f), 5);
-                Part(root.transform, "Fire door", StairsFour + Vector2.up * .30f, new Vector2(.82f, 1.36f), new Color(.19f, .27f, .25f), 6);
-                Part(root.transform, "Push bar", StairsFour + Vector2.up * .22f, new Vector2(.60f, .065f), new Color(.64f, .64f, .51f), 7);
-                Part(root.transform, "EXIT sign plate", StairsFour + Vector2.up * 1.22f, new Vector2(.94f, .28f), new Color(.12f, .29f, .22f), 7);
+                Part(root.transform, "Side door recess", new Vector2(-6.72f, -.05f), new Vector2(.34f, 1.58f), new Color(.065f, .10f, .11f), 4);
+                Part(root.transform, "Side-on fire door", new Vector2(-6.64f, -.05f), new Vector2(.15f, 1.38f), new Color(.20f, .29f, .27f), 5);
+                Part(root.transform, "Side door front jamb", new Vector2(-6.49f, -.05f), new Vector2(.08f, 1.54f), new Color(.41f, .48f, .42f), 6);
+                Part(root.transform, "Side door top cap", new Vector2(-6.60f, .75f), new Vector2(.37f, .07f), new Color(.57f, .61f, .50f), 7);
+                Part(root.transform, "Side door latch", new Vector2(-6.48f, -.17f), new Vector2(.12f, .10f), new Color(.66f, .65f, .48f), 7);
+                Part(root.transform, "EXIT sign plate", new Vector2(-6.12f, .90f), new Vector2(.80f, .27f), new Color(.12f, .29f, .22f), 7);
             }
 
             if (scene.name == "Rooftop" && State.telescopeOnRoof)
@@ -131,9 +132,9 @@ namespace DeathBySeventhsDawn.Interaction
         // Lower floors have real landings, but their apartment wings stay closed in this prototype.
         public int CurrentFloor { get; private set; } = 4;
 
-        public static readonly Vector2 StairUp = new Vector2(-2.2f, -.8f);
-        public static readonly Vector2 StairDown = new Vector2(1.65f, 1.12f);
-        public static readonly Vector2 LandingDoor = new Vector2(4.0f, 1.1f);
+        public static readonly Vector2 StairUp = new Vector2(-2.2f, -.8f) * .68f;
+        public static readonly Vector2 StairDown = new Vector2(1.65f, 1.12f) * .68f;
+        public static readonly Vector2 LandingDoor = new Vector2(4.0f, 1.1f) * .68f;
         void Travel(string destination, Vector2 position)
         {
             arrivalScene = destination;
@@ -403,13 +404,13 @@ namespace DeathBySeventhsDawn.Interaction
                         WorldPromptUI.Offer("rooftop", prompt, 65);
                     string scene = SceneManager.GetActiveScene().name;
                     if (scene == "Corridor")
-                        Sign(StairsFour + Vector2.up * 1.23f, "EXIT", small, scale, 13);
+                        Sign(new Vector2(-6.12f, .90f), "EXIT", small, scale, 13);
                     if (scene == "Stairwell")
                     {
-                        Sign(new Vector2(3.88f, 3.18f), CurrentFloor.ToString("00"), title, scale, 26);
-                        Sign(new Vector2(3.9f, 2.91f), CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
-                        Sign(new Vector2(-2.15f, 2.75f), "▲", small, scale, 17);
-                        Sign(new Vector2(1.55f, -2.65f), "▼", small, scale, 17);
+                        Sign(new Vector2(3.88f, 3.18f) * .68f, CurrentFloor.ToString("00"), title, scale, 26);
+                        Sign(new Vector2(3.9f, 2.91f) * .68f, CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
+                        Sign(new Vector2(-2.15f, 2.75f) * .68f, "▲", small, scale, 17);
+                        Sign(new Vector2(1.55f, -2.65f) * .68f, "▼", small, scale, 17);
                     }
 
                     if (scene == "Corridor" || scene == "Rooftop")

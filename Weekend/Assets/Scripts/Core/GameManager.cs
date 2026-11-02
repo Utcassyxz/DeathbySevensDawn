@@ -30,12 +30,15 @@ namespace DeathBySeventhsDawn.Core
         // Only the physical rooftop encounter calls this; old balcony evidence is not a substitute.
         public bool RecordAncientGodEncounter()
         {
-            if (HasEnded || State.ancientGodSeen)
+            if (HasEnded)
                 return false;
+            bool first = !State.ancientGodSeen;
             State.ancientGodSeen = true;
+            State.ancientObservationDay = TimeSystem.TimeManager.Instance.Days;
+            State.ancientObservationLoop = LoopCount;
             ProgressionSave.Write(State);
             Changed?.Invoke();
-            return true;
+            return first;
         }
 
         // CORE FLOW: sighting is evidence; only the completed Bubble encounter grants return.
@@ -44,6 +47,7 @@ namespace DeathBySeventhsDawn.Core
             if (HasEnded || !State.ancientGodSeen || State.yogDreamSeen)
                 return false;
             State.yogDreamSeen = true;
+            State.bubbleIntroduced = State.bubblePortraitUnlocked = true;
             ProgressionSave.Write(State);
             Changed?.Invoke();
             return true;
@@ -51,7 +55,7 @@ namespace DeathBySeventhsDawn.Core
 
         public bool TriggerReplacementEnding()
         {
-            if (HasEnded || AquariumSealed || TimeSystem.TimeManager.Instance.Days != 7)
+            if (HasEnded || AquariumSealed || State.fishAlly || TimeSystem.TimeManager.Instance.Days != 7)
                 return false;
             State.fishReplacementEnding = true;
             ProgressionSave.Write(State);
@@ -175,11 +179,37 @@ namespace DeathBySeventhsDawn.Core
             Changed?.Invoke();
         }
 
+        // Total SAN price includes the SAN cost already implied by gaining knowledge.
+        public bool ExchangeSanity(string id, float totalCost, float gain)
+        {
+            if (HasEnded || string.IsNullOrWhiteSpace(id) || float.IsNaN(totalCost) || float.IsInfinity(totalCost) || float.IsNaN(gain) || float.IsInfinity(gain) || totalCost <= 0 || gain <= 0)
+                return false;
+            if (State.bubblePurchases == null)
+                State.bubblePurchases = new System.Collections.Generic.List<string>();
+            float implicitCost = gain * Settings.knowledgeSanityCost;
+            if (State.bubblePurchases.Contains(id) || totalCost < implicitCost || Sanity <= totalCost)
+                return false;
+            var previous = Layer;
+            State.knowledge += gain;
+            State.sanityBurden += totalCost - implicitCost;
+            State.bubblePurchases.Add(id);
+            ProgressionSave.Write(State);
+            if (previous != Layer)
+                SanityLayerChanged?.Invoke(Layer);
+            Changed?.Invoke();
+            return true;
+        }
+
         public void RegisterNewLoop()
         {
             if (HasEnded)
                 return;
             State.loopCount++;
+            State.ancientObservationDay = 0;
+            State.ancientObservationLoop = -1;
+            State.bedroomCurtainsClosed = false;
+            State.fishUnderstanding = 0;
+            State.fishAlly = State.fishReportAvailable = false;
             Vitality = MaxVitality;
             ProgressionSave.Write(State);
             Changed?.Invoke();

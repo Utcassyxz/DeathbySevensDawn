@@ -30,6 +30,7 @@ namespace DeathBySeventhsDawn.Interaction
         Activity activity;
         public static bool WorldBlocked => Instance != null && (Instance.activity != Activity.None || Time.frameCount <= Instance.blockedFrame);
         public bool IsWaking => activity == Activity.Wake;
+        public bool IsWriting => activity == Activity.Write;
         public bool FridgeAnimating => activity == Activity.Fridge;
         public Vector2 Bedside { get; private set; }
 
@@ -224,7 +225,15 @@ namespace DeathBySeventhsDawn.Interaction
         float Distance(GameObject target) => PropReach.Gap(target, player);
         public bool CanOpenFridge => fridge != null && !TutorialGate.IsBlocked("fridge") && Distance(fridge) < .16f;
         public bool CanNap => Stage == 5 && sofa != null && Distance(sofa) < .18f;
-        public bool CanWrite => Stage == 6 && SceneManager.GetActiveScene().name == "Bedroom" && player != null && Vector2.Distance(player.transform.position, new Vector2(2.7f, -1.1f)) < .9f;
+
+        public bool CanWrite
+        {
+            get
+            {
+                var chair = GameObject.Find("Desk chair");
+                return Stage == 6 && SceneManager.GetActiveScene().name == "Bedroom" && player != null && chair != null && PropReach.Gap(GameObject.Find("Writing desk"), player) < .25f;
+            }
+        }
 
         void SetFridge(bool open)
         {
@@ -304,7 +313,22 @@ namespace DeathBySeventhsDawn.Interaction
                 return false;
             FreezePlayer();
             standPoint = player.transform.position;
-            placeholder.transform.position = standPoint;
+            var chair = GameObject.Find("Desk chair");
+            if (chair == null)
+            {
+                RestorePlayer();
+                return false;
+            }
+
+            var seat = chair.GetComponent<SpriteRenderer>().bounds;
+            Vector2 seated = new Vector2(seat.center.x, seat.center.y + seat.size.y * .18f);
+            MoveBody(seated);
+            placeholder.transform.position = seated;
+            placeholder.GetComponent<SpriteRenderer>().sprite = SmallPixelActors.Seated();
+            placeholder.GetComponent<SpriteRenderer>().color = Color.white;
+            placeholder.transform.localScale = Vector3.one;
+            placeholder.transform.localRotation = Quaternion.identity;
+            placeholder.GetComponent<SpriteRenderer>().sortingOrder = chair.GetComponent<SpriteRenderer>().sortingOrder + 1;
             activity = Activity.Write;
             age = 0;
             return true;

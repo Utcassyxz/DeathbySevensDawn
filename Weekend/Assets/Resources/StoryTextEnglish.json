@@ -1,4 +1,4 @@
-{
+﻿{
   "dream": {
     "title": "Dream · The anthill",
     "pages": [
@@ -260,6 +260,12 @@
         "title": "One hour later",
         "body": "The tripod and field of view stayed fixed. The clouds moved away, but the dark patch remained. Three stars along its edge had disappeared.",
         "source": "Balcony · First night, second observation"
+      },
+      {
+        "id": "fish-help-promise",
+        "title": "What she noticed in the water",
+        "body": "She says the water stings after the light, and foil quiets it. A lead to investigate, not proof of the cause.",
+        "source": "Aquarium · Her account"
       }
     ],
     "deductions": [
@@ -311,47 +317,41 @@
     "promptDay3": "E  Look at the fish",
     "promptDay4": "E  Listen to the fish",
     "promptDay6": "E  Speak to 001",
-    "promptDay7": "E  Look at it",
+    "promptDay7": "E  Look at her",
     "speakerDay3": "Hugo",
-    "speakerDay4": "The fish",
-    "speakerDay6": "The fish",
+    "speakerDay4": "Fish",
+    "speakerDay6": "Fish",
     "speakerDay7": "Hugo’s double",
     "day3Pages": [
-      "It turns sideways. The gold scales stretch around a pale cheek.\nTwo eyes open on its flank. The fish’s own eyes are still there.",
-      "Hugo taps the glass. The human eyes follow his finger.\nIts lips stay closed.\n“…What happened to you?”"
+      "She turns sideways. The gold scales stretch around a pale cheek.\nTwo eyes open on her flank. The fish’s own eyes are still there.",
+      "Hugo taps the glass. The human eyes follow his finger.\nHer lips stay closed.\n“…What happened to you?”"
     ],
     "day4Pages": [
-      "“Did they call back?”\nHugo looks behind him. There is nobody there.",
-      "The fish presses its cheek to the glass.\n“The job. You said they would call.”",
-      "“You heard that?”\n“Every day. You stand right here.”",
-      "“I don’t know how to help yet.”\nIts mouth moves once more.\n“But I’m trying.”"
+      "“You didn't talk about the interviews today.”\nHugo stops moving.\nShe waits on the other side of the glass.",
+      "“I can hear you. Even before I could answer.”"
     ],
     "day7Pages": [
-      "It has his face now. The hair, the sleeves, even the way it stands.",
+      "She has his face now. The hair, the sleeves, even the way she stands.",
       "“You can sleep longer tomorrow. I’ll go.”\n“You don’t even know where.”",
-      "“I listened.”\nIt smiles with Hugo’s mouth.\n“I remember everything you told me.”"
+      "“I listened.”\nShe smiles with Hugo’s mouth.\n“I remember everything you told me.”"
     ],
     "day5Pages": [
-      "A hand rests on the cabinet edge. Scales continue past the knuckles.",
-      "“You don’t have to tell me again. The rent. The interviews. I remember.”",
-      "Hugo reaches for a towel.\nThe hand reaches first.\n“I can do that.”"
+      "“Would it be easier if I did it?”\nA thin hand rests against the glass."
     ],
     "day6Pages": [
-      "It repeats a sentence Hugo said yesterday. The pauses are identical.",
-      "“Does it sound right?”\n“Don’t do that.”\nThe fish lowers its eyes.",
-      "“I only thought… if you didn’t have to do all of it yourself.”"
+      "“I almost have it.”\nShe repeats the shape of his mouth, not quite in time."
     ],
     "question": "Hugo asks: have you been reading my book?",
-    "answerGap": "“With pages torn out like that, do I need to?”\nIt withdraws its hand.",
+    "answerGap": "“With pages torn out like that, do I need to?”\nShe withdraws her hand.",
     "answerDefault": "“You left it on the desk.”\n\nNot an answer.",
     "offerPrompt": "E  Examine the tank · F  Drop foil (too late)",
-    "offer": "The fish watches the foil. Its human mouth stops moving.\nHugo holds it above the water.",
+    "offer": "The fish watches the foil. Her human mouth stops moving.\nHugo holds it above the water.",
     "throwFoil": "F  Drop the foil triangle into the tank",
     "sealedTitle": "The tank",
-    "sealedBody": "The foil sinks. The extra features slowly recede beneath the scales.\nA goldfish swims past the glass.\nHugo watches it for a long time.",
+    "sealedBody": "The foil is still in the gravel. She swims out from behind the plants.\nDays have passed. She has not changed.",
     "offerBefore": "The little foil triangle rests in Hugo’s palm.\nThe tenant said to put it in water. He never said what it would do.",
     "waterPrompt": "E  Examine the aquarium",
-    "sealedBefore": "The triangle sinks into the gravel. The fish darts behind the plants.\nThe filter keeps running."
+    "sealedBefore": "The triangle sinks into the gravel. She darts behind the plants.\nThe filter keeps running."
   },
   "mainMenu": {
     "title": "SEVEN DAY",
@@ -735,10 +735,50 @@
   "fishEnding": {
     "title": "A Life in Your Place",
     "lines": [
-      "It remembered every worry he had told it.",
-      "There was one part it never understood: Hugo had wanted to be heard.",
+      "She remembered every worry he had told her.",
+      "There was one part she never understood: Hugo had wanted to be heard.",
       "The figure beside the bed folded his clothes for morning."
     ],
     "summary": "Ending 03"
+  },
+  "expansion": {
+    "curtainsClosed": "The curtains are drawn.",
+    "decayCaptions": [
+      "An ordinary morning.",
+      "Signals begin to drift.",
+      "Things begin changing.",
+      "The changes spread.",
+      "Familiar shapes no longer fit.",
+      "Nobody keeps the streets clear.",
+      "There will be no next morning."
+    ],
+    "bubbleReturn": [
+      "Oh, it's you. I kept your outline.",
+      "Would you like to understand a little more? You can leave something behind. A perfectly friendly arrangement."
+    ],
+    "fishChoicePrompt": "What does Hugo actually need?",
+    "fishGoodChoices": [
+      "I wanted someone to listen. Not someone to replace me.",
+      "Help me find out what's happening. You can stay yourself."
+    ],
+    "fishBadChoices": [
+      "Yes. You could handle my life better.",
+      "Just become me. Then all of this can be yours."
+    ],
+    "fishGoodReplies": [
+      "…Then I can listen. I already know how.",
+      "She presses a fin against the glass.\nThe water shifts away from it.\n“Then we'll look together.”"
+    ],
+    "fishBadReplies": [
+      "“You'd let me?”\nHer mouth moves a moment before the words.",
+      "“All of it?”\nShe keeps watching his face."
+    ],
+    "fishAllyPages": [
+      "She no longer copies his voice.\n“The water starts stinging after that light. The metal thing makes it quieter.”",
+      "“I can watch from here. You go look outside.\nAnd come back. I don't know what your face means unless you tell me.”"
+    ],
+    "fishHelpTitle": "What she noticed in the water",
+    "fishHelpBody": "She says the water stings after the light, and foil quiets it. A lead to investigate, not proof of the cause.",
+    "bubbleTradeLine": "Sanity is not free. Neither is knowledge."
   }
 }

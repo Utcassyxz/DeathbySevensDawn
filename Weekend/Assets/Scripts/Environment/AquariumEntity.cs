@@ -28,7 +28,33 @@ namespace DeathBySeventhsDawn.Interaction
         bool hasOriginal;
         int visualDay = -1, page, openedFrame;
         int blockedUntilFrame = -1;
-        bool talking, nearby;
+        bool talking, nearby, choosing, choiceFinished;
+        public bool ChoicesVisible => talking && choosing;
+        public bool CompanionReady => GameManager.Instance.State.fishAlly;
+
+        int CurrentTopic => (GameManager.Instance.State.fishUnderstanding & 1) == 0 ? 0 : 1;
+
+        public bool ChooseUnderstanding(bool explainTrueNeed)
+        {
+            if (!talking || !choosing || visualDay < 4 || (CurrentTopic == 1 && visualDay < 5))
+                return false;
+            int topic = CurrentTopic;
+            var state = GameManager.Instance.State;
+            if (explainTrueNeed)
+                state.fishUnderstanding |= 1 << topic;
+            state.fishAlly = (state.fishUnderstanding & 3) == 3;
+            ProgressionSave.Write(state);
+            pages = new[]
+            {
+                explainTrueNeed ? StoryText.Current.expansion.fishGoodReplies[topic] : StoryText.Current.expansion.fishBadReplies[topic]
+            };
+            page = 0;
+            choosing = false;
+            choiceFinished = true;
+            subtitles.Reset();
+            return true;
+        }
+
         float range = .72f;
         Sprite square, circle;
         Sprite[] metamorphosis;
@@ -46,20 +72,8 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             Instance = this;
-            portrait = Resources.Load<Texture2D>("Story/FishMetamorphosis");
-            var atlas = Resources.Load<Texture2D>("Story/FishMapPixels");
-            if (atlas != null)
-            {
-                // Explicit atlas regions include transparent gutters; no sprite is cut at its neck.
-                float w = atlas.width, h = atlas.height, mid = w * .5f, half = h * .5f;
-                metamorphosis = new[]
-                {
-                    Sprite.Create(atlas, new Rect(0, half, mid, half), Vector2.one * .5f, 32),
-                    Sprite.Create(atlas, new Rect(mid, half, w - mid, half), Vector2.one * .5f, 32),
-                    Sprite.Create(atlas, new Rect(0, 0, mid, half), Vector2.one * .5f, 32),
-                    Sprite.Create(atlas, new Rect(mid, 0, w - mid, half), new Vector2(.5f, 0), 32)
-                };
-            }
+            portrait = Resources.Load<Texture2D>("Story/FishDialogueInk");
+            metamorphosis = SmallPixelActors.Fish();
         }
 
         void OnEnable()
@@ -151,14 +165,14 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 var b = tankRenderer.bounds;
                 formRoot.transform.localScale = new Vector3(1 / tank.transform.lossyScale.x, 1 / tank.transform.lossyScale.y, 1);
-                bool human = day >= 7;
+                bool human = day >= 7 && !CompanionReady;
                 int index = human ? 3 : day >= 5 ? 2 : day == 4 ? 1 : 0;
                 formRoot.transform.position = human ? new Vector3(b.max.x + .45f, b.min.y - .10f, 0) : new Vector3(b.center.x, b.center.y + b.size.y * .19f, 0);
                 var image = new GameObject(human ? "Hugo double" : "Fish flank human face");
                 image.transform.SetParent(formRoot.transform, false);
                 var r = image.AddComponent<SpriteRenderer>();
                 r.sprite = metamorphosis[index];
-                float size = human ? 1.5f : day >= 5 ? 1.1f : .95f;
+                float size = human ? .82f : day >= 5 ? .58f : .48f;
                 float scale = size / (human ? r.sprite.bounds.size.y : r.sprite.bounds.size.x);
                 image.transform.localScale = Vector3.one * scale;
                 ApplyRenderer(r, 12);
@@ -397,6 +411,8 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if (GameManager.Instance.HasEnded || GameManager.Instance.AquariumSealed || TutorialGate.IsBlocked("aquarium"))
                 return;
+            choosing = false;
+            choiceFinished = false;
             var aq = StoryText.Current.aquarium;
             pages = visualDay < 3 ? new[]
             {
@@ -404,6 +420,16 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             : visualDay >= 7 ? aq?.day7Pages : visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : visualDay >= 4 ? aq?.day4Pages : aq?.day3Pages;
+            if (CompanionReady && visualDay >= 5)
+            {
+                pages = new[]
+                {
+                    StoryText.Current.expansion.fishAllyPages[visualDay >= 6 ? 1 : 0]
+                };
+                GameManager.Instance.State.fishReportAvailable = true;
+                ProgressionSave.Write(GameManager.Instance.State);
+            }
+
             if (pages == null || pages.Length == 0)
                 return;
             speaker = visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
@@ -430,7 +456,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             if (!GameManager.Instance.AquariumSealed && visualDay >= 3 && UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.rKey.wasPressedThisFrame)
-                Investigation.Collect(visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye");
+                Investigation.Collect(CompanionReady && GameManager.Instance.State.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye");
 #if ENABLE_INPUT_SYSTEM
             var k=Keyboard.current;
             if(k!=null){advance=k.enterKey.wasPressedThisFrame;close=k.escapeKey.wasPressedThisFrame;}
@@ -444,14 +470,28 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             }
 
-            if (!advance)
+            if (advance)
+                AdvanceDialogue();
+        }
+
+        public void AdvanceDialogue()
+        {
+            if (!talking || choosing || pages == null)
                 return;
             if (subtitles.Next())
                 return;
             subtitles.Reset();
             page++;
             if (page >= pages.Length)
-                CloseDialogue();
+            {
+                if (!choiceFinished && !CompanionReady && visualDay >= 4 && (CurrentTopic == 0 || visualDay >= 5))
+                {
+                    page = pages.Length - 1;
+                    choosing = true;
+                }
+                else
+                    CloseDialogue();
+            }
         }
 
         void CloseDialogue()
@@ -459,6 +499,8 @@ namespace DeathBySeventhsDawn.Interaction
             if (talking)
                 blockedUntilFrame = Time.frameCount;
             talking = false;
+            choosing = false;
+            choiceFinished = false;
             subtitles.Reset();
             page = 0;
             pages = null;
@@ -493,9 +535,9 @@ namespace DeathBySeventhsDawn.Interaction
                 var dialogue = NarrativeUI.DialogueRect(w, h);
                 if (portrait != null && visualDay >= 3)
                 {
-                    var art = new Rect(w * .64f, h * .12f, w * .26f, h * .47f);
+                    var art = new Rect(w * .73f, h * .29f, w * .16f, h * .26f);
                     NarrativeUI.Panel(art);
-                    var uv = visualDay >= 7 ? new Rect(.5f, 0, .5f, 831f / 1241) : visualDay >= 5 ? new Rect(0, 0, .5f, 821f / 1241) : new Rect(visualDay == 4 ? .5f : 0, 841f / 1241, .5f, 400f / 1241);
+                    var uv = new Rect(0, 0, 1, 1);
                     float aspect = portrait.width * uv.width / (portrait.height * uv.height);
                     float aw = art.width - 36, ah = art.height - 28;
                     if (aw / ah > aspect)
@@ -513,6 +555,19 @@ namespace DeathBySeventhsDawn.Interaction
                 };
                 subtitles.Set(pages != null ? pages[Mathf.Clamp(page, 0, pages.Length - 1)] : "", subtitleStyle, dialogue.width - 50, dialogue.height - 86);
                 NarrativeUI.Dialogue(dialogue, speaker, subtitles.Current, subtitles.Counter + StoryText.Local("Enter 继续 · Esc 离开", "Enter Continue · Esc Leave"), text);
+                if (choosing)
+                {
+                    var choice = StoryText.Current.expansion;
+                    int topic = CurrentTopic;
+                    float cw = (dialogue.width - 12) / 2;
+                    GUI.Label(new Rect(dialogue.x, dialogue.y - 112, dialogue.width, 30), choice.fishChoicePrompt, text);
+                    if (PrototypeButtons.Button(new Rect(dialogue.x, dialogue.y - 76, cw, 64), choice.fishGoodChoices[topic], button))
+                        ChooseUnderstanding(true);
+                    if (PrototypeButtons.Button(new Rect(dialogue.x + cw + 12, dialogue.y - 76, cw, 64), choice.fishBadChoices[topic], button))
+                        ChooseUnderstanding(false);
+                    return;
+                }
+
                 float x = dialogue.x, y = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
                 if (HasFoil)
                 {
@@ -523,7 +578,7 @@ namespace DeathBySeventhsDawn.Interaction
 
                 if (!GameManager.Instance.AquariumSealed && visualDay >= 3)
                 {
-                    string evidence = visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
+                    string evidence = CompanionReady && GameManager.Instance.State.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
                     if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R 记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R Record observation"), button))
                         Investigation.Collect(evidence);
                 }

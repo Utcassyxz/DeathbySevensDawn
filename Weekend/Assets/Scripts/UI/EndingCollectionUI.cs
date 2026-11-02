@@ -33,10 +33,7 @@ namespace DeathBySeventhsDawn.Progression
         {
             string id = preview == 1 ? "world-end" : preview == 2 ? "bad-ending-1" : "fish-replacement";
             var data = preview == 1 ? StoryText.Current.worldEnd : preview == 2 ? StoryText.Current.ending : StoryText.Current.fishEnding;
-            var art = Resources.Load<Texture2D>(preview == 3 ? "Story/EndingReplacement" : "Story/EndingWorld");
-            GUI.color = Color.white;
-            if (art != null)
-                GUI.DrawTexture(new Rect(0, 0, w, h), art, ScaleMode.ScaleAndCrop);
+            EndingIllustration.Draw(new Rect(0, 0, w, h), preview == 3);
             GUI.color = new Color(.015f, .018f, .025f, .78f);
             GUI.DrawTexture(new Rect(0, 0, w * .62f, h), Texture2D.whiteTexture);
             GUI.color = Color.white;
@@ -51,13 +48,15 @@ namespace DeathBySeventhsDawn.Progression
                 StoryText.Local("慢版 · 坏结局", "Slow · Bad"),
                 StoryText.Local("真结局变奏", "True variation")
             };
+            var musicButton = Button();
+            musicButton.fontSize = 16;
+            musicButton.wordWrap = false;
             for (int i = 0; i < 3; i++)
-                if (PrototypeButtons.Button(new Rect(w * .55f + i * 145, h * .84f, 135, 54), names[i], Button()))
+                if (PrototypeButtons.Button(new Rect(w * .55f + i * w * .145f, h * .84f, w * .135f, 54), names[i], musicButton))
                     ApartmentAudio.Instance?.SetEndingMood((ApartmentAudio.EndingMood)i);
         }
 
         static Texture2D haze;
-        static Texture2D endArt;
         static bool confirm;
         static string screamedFor;
         public static void OpenGallery()
@@ -116,14 +115,7 @@ namespace DeathBySeventhsDawn.Progression
 
             GUI.color = Color.white;
             GUI.DrawTexture(new Rect(0, 0, w, h), haze);
-            if (endArt == null)
-                endArt = Resources.Load<Texture2D>("Story/EndingWorld");
-            if (endArt != null)
-            {
-                GUI.color = new Color(1f, 1f, 1f, .19f);
-                GUI.DrawTexture(new Rect(0, 0, w, h), endArt, ScaleMode.ScaleAndCrop);
-            }
-
+            EndingIllustration.Draw(new Rect(0, 0, w, h), false, .19f);
             var old = GUI.color;
             GUI.color = new Color(.46f, .31f, .25f, .7f);
             GUI.DrawTexture(new Rect(w * .10f, h * .19f, w * .80f, 1), Texture2D.whiteTexture);
@@ -155,16 +147,10 @@ namespace DeathBySeventhsDawn.Progression
         {
             Background(w, h);
             string id = game.FishReplacementEnding ? "fish-replacement" : game.WorldEndEnding ? "world-end" : "bad-ending-1";
-            var illustration = Resources.Load<Texture2D>(game.FishReplacementEnding ? "Story/EndingReplacement" : "Story/EndingWorld");
-            if (illustration != null)
-            {
-                GUI.color = Color.white;
-                GUI.DrawTexture(new Rect(0, 0, w, h), illustration, ScaleMode.ScaleAndCrop);
-                GUI.color = new Color(.015f, .018f, .027f, .65f);
-                GUI.DrawTexture(new Rect(0, 0, w * .58f, h), Texture2D.whiteTexture);
-                GUI.color = Color.white;
-            }
-
+            EndingIllustration.Draw(new Rect(0, 0, w, h), game.FishReplacementEnding);
+            GUI.color = new Color(.015f, .018f, .027f, .65f);
+            GUI.DrawTexture(new Rect(0, 0, w * .58f, h), Texture2D.whiteTexture);
+            GUI.color = Color.white;
             if (screamedFor != id)
             {
                 screamedFor = id;

@@ -1,0 +1,12 @@
+using System;
+
+namespace DeathBySeventhsDawn.Story
+{
+    [Serializable]
+    public sealed class ExpansionText
+    {
+        public string curtainsClosed, bubbleTradeLine;
+        public string[] decayCaptions, bubbleReturn, fishGoodChoices, fishBadChoices, fishGoodReplies, fishBadReplies, fishAllyPages;
+        public string fishChoicePrompt, fishHelpTitle, fishHelpBody;
+    }
+}

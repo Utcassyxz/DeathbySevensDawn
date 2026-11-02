@@ -34,11 +34,11 @@ public static class VerifyRevision
                 return;
             if (s == PlayModeStateChange.EnteredPlayMode)
             {
-                steps = Steps();
+                steps = SessionState.GetBool(Key + "OnlyCompanions", false) ? CompanionAcceptance.Run() : Steps();
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
-                deadline = next + 210;
+                deadline = next + 300;
             }
 
             if (s == PlayModeStateChange.EnteredEditMode)
@@ -51,12 +51,20 @@ public static class VerifyRevision
         };
     }
 
+    [MenuItem("Prototype/Validate companion world and shop")]
+    public static void RunCompanions()
+    {
+        SessionState.SetBool(Key + "OnlyCompanions", true);
+        Run();
+    }
+
     [MenuItem("Prototype/Validate revised dream pixels and debug")]
     public static void Run()
     {
         if (EditorApplication.isPlaying)
             throw new Exception("Exit Play mode before validation.");
         RevisionPixelImport.Apply();
+        CompanionArtImport.Apply();
         foreach (var suffix in new[]
         {
             "",
@@ -98,7 +106,7 @@ public static class VerifyRevision
         EditorApplication.isPlaying = true;
     }
 
-    static void Check(bool condition, string message)
+    public static void Check(bool condition, string message)
     {
         checks++;
         if (!condition)
@@ -106,12 +114,12 @@ public static class VerifyRevision
         Debug.Log("NIGHT_ARC_CHECK " + message);
     }
 
-    static void Capture(string name)
+    public static void Capture(string name)
     {
         if (Application.isBatchMode)
             return;
-        Directory.CreateDirectory("../docs/validation/stairwell-pixel");
-        ScreenCapture.CaptureScreenshot("../docs/validation/stairwell-pixel/" + name + ".png");
+        Directory.CreateDirectory("../docs/validation/companion-world");
+        ScreenCapture.CaptureScreenshot("../docs/validation/companion-world/" + name + ".png");
     }
 
     static void Place(Vector2 p)
@@ -292,7 +300,7 @@ public static class VerifyRevision
         clock.AdvanceTime();
         SceneManager.LoadScene("Balcony");
         yield return 6f;
-        Check(UnityEngine.Object.FindAnyObjectByType<BalconyTimeView>().UsesOverheadProjection && GameObject.Find("Balcony floor plan") != null, "Balcony has one overhead projection and intentional empty exterior");
+        Check(UnityEngine.Object.FindAnyObjectByType<BalconyTimeView>().UsesOverheadProjection && GameObject.Find("Balcony floor plan") != null, "Balcony uses a consistent overhead pixel courtyard");
         var scopeArt = GameObject.Find("Optical tube and metal tripod");
         Check(scopeArt != null && scopeArt.GetComponent<SpriteRenderer>().bounds.min.y > GameObject.Find("Balcony tiles").GetComponent<SpriteRenderer>().bounds.min.y, "Telescope feet remain inside the balcony railing");
         Check(GameObject.Find("Balcony tiles").GetComponent<SpriteRenderer>().bounds.size.y < 2.6f, "Balcony depth is compressed to apartment scale");
@@ -303,19 +311,31 @@ public static class VerifyRevision
         Check(GameObject.Find("EXIT stairwell door") != null && GameObject.Find("Stairwell recess") == null, "Corridor leads through EXIT instead of a staircase drawn in the hall");
         var roof = RooftopAccess.Instance;
         Place(RooftopAccess.StairsFour + Vector2.right * .65f);
-        yield return .2f;Capture("corridor-exit");yield return .2f;
+        yield return .2f;
+        Capture("corridor-exit");
+        yield return .2f;
         Check(roof.UseStairs(), "EXIT enters the separate stairwell");
         yield return .8f;
         Check(SceneManager.GetActiveScene().name == "Stairwell" && roof.CurrentFloor == 4, "Stairwell opens at floor four");
+        Check(GameObject.Find("Up tread").transform.root.localScale.x < .7f && Camera.main.orthographicSize < 3, "Compact stairwell is authored at the smaller intended scale");
         Check(GameObject.Find("Up tread") != null && GameObject.Find("Down tread") != null && GameObject.Find("Up riser") != null && GameObject.Find("Down riser") != null, "Two opposed modeled flights have separate risers and nosing");
-        var doorLeaf=GameObject.Find("Door leaf collision").GetComponent<BoxCollider2D>();
-        Check(RooftopAccess.LandingDoor.y < doorLeaf.bounds.min.y && GameObject.Find("Fire door").transform.position.y > 2f,"Fire door is embedded in the north wall, clear of the landing");
-        var actor=GameObject.FindWithTag("Player");
-        bool clear=true;
-        foreach(var point in new[]{RooftopAccess.LandingDoor+Vector2.left*.85f,RooftopAccess.StairUp,RooftopAccess.StairDown,new Vector2(0,0)})
-            foreach(var hit in Physics2D.OverlapCircleAll(point,.32f))
-                if(!hit.isTrigger && hit.gameObject!=actor)clear=false;
-        Check(clear,"Door arrival and both stair approaches have player-width clearance");
+        var doorLeaf = GameObject.Find("Door leaf collision").GetComponent<BoxCollider2D>();
+        Check(RooftopAccess.LandingDoor.y < doorLeaf.bounds.min.y && GameObject.Find("Fire door").transform.position.y > 1.3f, "Fire door is embedded in the north wall, clear of the landing");
+        var actor = GameObject.FindWithTag("Player");
+        bool clear = true;
+        foreach (var point in new[]
+        {
+            RooftopAccess.LandingDoor + Vector2.left * .85f,
+            RooftopAccess.StairUp,
+            RooftopAccess.StairDown,
+            new Vector2(0, 0)
+        }
+
+        )
+            foreach (var hit in Physics2D.OverlapCircleAll(point, .32f))
+                if (!hit.isTrigger && hit.gameObject != actor)
+                    clear = false;
+        Check(clear, "Door arrival and both stair approaches have player-width clearance");
         Capture("stairwell-four");
         yield return .2f;
         Place(RooftopAccess.StairUp);
@@ -377,6 +397,9 @@ public static class VerifyRevision
         Check(theme.text.Contains("sharedHarmony") && theme.text.Contains("brass melody") && theme.text.Contains("march snare"), "Shared harmony is reorchestrated with strings and marching-band layers");
         Capture("rooftop-after-placement");
         yield return .1f;
+        var extension = CompanionAcceptance.Run();
+        while (extension.MoveNext())
+            yield return extension.Current;
         Check(error == null, "No game runtime exceptions in revision paths");
     }
 
@@ -417,7 +440,8 @@ public static class VerifyRevision
     static void Finish(string failure)
     {
         steps = null;
-        File.WriteAllText("../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; three distinct stamps and hammer/wake handoff; quiet ordinary nights; second-night Bubble; pre-face foil/late failure; small pixel atlas and dialogue portraits; shared melodic ending variations; deduction reward; save-safe debug previews; coarse balcony with empty exterior; dedicated two-flight stairwell and floor travel; second-night carry-only scope; extended shared-harmony orchestrations. Original journey, album and settings restored." : "FAIL: " + failure);
+        string scope = SessionState.GetBool(Key + "OnlyCompanions", false) ? "focused companion and world checks; seated writing, curtain alignment, seven-day pixels, fish understanding, Bubble reveal and shop, SAN exchange, v1/v2/v3 save compatibility. Original journey, album and settings restored." : "three distinct stamps and hammer/wake handoff; quiet ordinary nights; observation-night Bubble and later-loop market; pre-face foil/late failure; small pixel atlas and dialogue portraits; shared melodic ending variations; deduction reward; save-safe debug previews; coarse balcony with seven-day exterior; dedicated two-flight stairwell and floor travel; second-night carry-only scope; extended shared-harmony orchestrations; seated writing; night curtains; seven radiation views; fish understanding and investigation; unknown/revealed Bubble; SAN exchange and v3 save migration. Original journey, album and settings restored.";
+        File.WriteAllText("../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
         {
@@ -431,6 +455,7 @@ public static class VerifyRevision
         if (!SessionState.GetBool(Key, false))
             return;
         SessionState.SetBool(Key, false);
+        SessionState.SetBool(Key + "OnlyCompanions", false);
         foreach (var device in UnityEngine.InputSystem.InputSystem.devices.ToArray())
             if (device.name.StartsWith("SevenDayAcceptanceKeyboard"))
                 UnityEngine.InputSystem.InputSystem.RemoveDevice(device);

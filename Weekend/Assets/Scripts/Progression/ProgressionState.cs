@@ -8,7 +8,11 @@ namespace DeathBySeventhsDawn.Progression
     [Serializable]
     public class ProgressionState
     {
-        public int version = 2, loopCount;
+        public int version = 3, loopCount;
+        public int ancientObservationDay, ancientObservationLoop = -1;
+        public bool bubblePortraitUnlocked, bubbleIntroduced, bedroomCurtainsClosed, fishAlly, fishReportAvailable;
+        public int fishUnderstanding;
+        public List<string> bubblePurchases = new List<string>();
         public bool badEndingOne, dreamSeen;
         public bool worldEndEnding, ancientGodSeen, aquariumSealed, yogDreamSeen, fishReplacementEnding;
         public bool firstNightWatchComplete;

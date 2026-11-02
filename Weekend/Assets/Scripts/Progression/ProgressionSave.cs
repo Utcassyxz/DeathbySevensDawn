@@ -2,11 +2,13 @@
 using System;
 using System.IO;
 using UnityEngine;
+
 namespace DeathBySeventhsDawn.Progression
 {
     public static class ProgressionSave
     {
         public static string PathName => Path.Combine(Application.persistentDataPath, "seven-day-progress-v1.json");
+
         public static ProgressionState Load()
         {
             try
@@ -14,14 +16,27 @@ namespace DeathBySeventhsDawn.Progression
                 if (!File.Exists(PathName))
                     return new ProgressionState();
                 var state = JsonUtility.FromJson<ProgressionState>(File.ReadAllText(PathName));
-                if (state == null || (state.version != 1 && state.version != 2) || state.loopCount < 0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
+                if (state == null || (state.version < 1 || state.version > 3) || state.loopCount < 0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
                     throw new InvalidDataException("Unsupported or invalid progression save.");
+                state.bubblePurchases = state.bubblePurchases ?? new System.Collections.Generic.List<string>();
                 state.knowledgeIds = state.knowledgeIds ?? new System.Collections.Generic.List<string>();
                 Knowledge.Investigation.Normalize(state);
+                if (state.version < 3)
+                {
+                    state.version = 3;
+                    if (state.yogDreamSeen)
+                        state.bubbleIntroduced = state.bubblePortraitUnlocked = true;
+                }
+
                 return state;
             }
-            catch (Exception ex) { Debug.LogWarning("Progression save could not be read; original file retained: " + ex.Message); return new ProgressionState(); }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("Progression save could not be read; original file retained: " + ex.Message);
+                return new ProgressionState();
+            }
         }
+
         static bool Valid(float v) => v >= 0 && !float.IsInfinity(v) && !float.IsNaN(v);
         public static void Write(ProgressionState state)
         {
@@ -35,7 +50,10 @@ namespace DeathBySeventhsDawn.Progression
                 else
                     File.Move(temp, path);
             }
-            catch (Exception ex) { Debug.LogError("Progression save failed: " + ex.Message); }
+            catch (Exception ex)
+            {
+                Debug.LogError("Progression save failed: " + ex.Message);
+            }
         }
     }
 }

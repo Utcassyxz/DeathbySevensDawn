@@ -79,7 +79,7 @@ public static class BuildStairwell
             camera.name = "Main Camera";
             camera.transform.position = new Vector3(0, 0, -10);
             var cam = camera.GetComponent<Camera>();
-            cam.orthographicSize = 3.65f;
+            cam.orthographicSize = 2.85f;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = Color.black;
             model = new GameObject("Two-flight stairwell landing").transform;
@@ -169,6 +169,13 @@ public static class BuildStairwell
             Solid("Door leaf collision", 4.05f, 2.37f, 1.05f, .90f);
             Block("Fire pipe", -4.55f, 1.2f, .07f, 2.9f, new Color(.40f, .22f, .19f), 4);
             Block("Fire pipe elbow", -4.28f, 2.60f, .60f, .07f, new Color(.40f, .22f, .19f), 4);
+            model.localScale = Vector3.one * .68f;
+            foreach (var r in model.GetComponentsInChildren<SpriteRenderer>())
+            {
+                var c = r.color;
+                r.color = new Color(c.r * .64f, c.g * .72f, c.b * .76f, c.a);
+            }
+
             string prefab = "Assets/Prefabs/Extensions/StairwellLanding.prefab";
             var saved = PrefabUtility.SaveAsPrefabAsset(model.gameObject, prefab);
             UnityEngine.Object.DestroyImmediate(model.gameObject);
@@ -182,7 +189,10 @@ public static class BuildStairwell
         }
         finally
         {
-            EditorSceneManager.RestoreSceneManagerSetup(setup);
+            if (Application.isBatchMode && setup.Any(s => string.IsNullOrEmpty(s.path)))
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            else
+                EditorSceneManager.RestoreSceneManagerSetup(setup);
         }
     }
 

@@ -244,7 +244,7 @@ public static class VerifyPresentation
         Check(routine.Stage == 6 && clock.Period == TimePeriod.Evening && !State.journalUnlocked, "Nap wakes in evening before diary");
         SceneManager.LoadScene("Bedroom");
         yield return .5f;
-        Place(new Vector2(2.7f, -1.1f));
+        Place((Vector2)GameObject.Find("Desk chair").transform.position + new Vector2(-.55f, .30f));
         yield return .2f;
         Check(routine.BeginWriting(), "Desk writing starts");
         yield return 2.3f;

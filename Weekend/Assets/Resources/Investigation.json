@@ -79,6 +79,10 @@
     {
       "id": "first-night-recheck",
       "image": "Story/TelescopePixelPair"
+    },
+    {
+      "id": "fish-help-promise",
+      "image": ""
     }
   ],
   "deductions": [

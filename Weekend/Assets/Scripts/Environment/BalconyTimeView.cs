@@ -12,6 +12,7 @@ namespace DeathBySeventhsDawn.Interaction
         Sprite square;
         Transform geometry;
         SpriteRenderer outside;
+        Sprite exteriorSprite;
         TimeManager clock;
         public Color SkyColor { get; private set; }
         public bool UsesOverheadProjection => true;
@@ -171,11 +172,21 @@ namespace DeathBySeventhsDawn.Interaction
         {
             SkyColor = period == TimePeriod.Night ? new Color(.006f, .009f, .015f) : period == TimePeriod.Evening ? new Color(.035f, .025f, .04f) : period == TimePeriod.Morning ? new Color(.035f, .05f, .06f) : new Color(.045f, .06f, .07f);
             if (outside != null)
-                outside.color = SkyColor;
+            {
+                if (exteriorSprite != null)
+                    Destroy(exteriorSprite);
+                var view = SevenDayExterior.View(day, period, true);
+                exteriorSprite = Sprite.Create(view, new Rect(0, 0, view.width, view.height), Vector2.one * .5f, 16);
+                outside.sprite = exteriorSprite;
+                outside.color = Color.white;
+                outside.transform.localScale = new Vector3(11.8f / exteriorSprite.bounds.size.x, 3.6f / exteriorSprite.bounds.size.y, 1);
+            }
         }
 
         void OnDestroy()
         {
+            if (exteriorSprite != null)
+                Destroy(exteriorSprite);
             if (square != null)
                 Destroy(square);
             if (pixel != null)
