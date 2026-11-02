@@ -26,5 +26,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Apartment/Rooftop.unity
     guid: e311f329aa11f52429643f4fcb3c4887
+  - enabled: 1
+    path: Assets/Scenes/Apartment/Stairwell.unity
+    guid: a21f60779624c874a8abcc1d43a390e2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -1,0 +1,4 @@
+EndingGood: 112.29s, 22050Hz, peak 0.670, section RMS [0.1395, 0.1338, 0.1385, 0.1277], no full-scale clipping.
+EndingBad: 194.25s, 22050Hz, peak 0.670, section RMS [0.11, 0.1417, 0.1446, 0.1392], no full-scale clipping.
+EndingTrue: 148.71s, 22050Hz, peak 0.670, section RMS [0.1026, 0.1563, 0.1582, 0.1489], no full-scale clipping.
+Shared harmony: 16 authored chord voicings, repeated across four developing orchestration sections in every ending. Synthetic instruments; no lyrics. Actual speaker/headphone listening not certified.

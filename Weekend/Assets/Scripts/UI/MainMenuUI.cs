@@ -286,8 +286,7 @@ namespace DeathBySeventhsDawn.Progression
             if (!visible || GameSettingsUI.IsOpen)
                 return;
             Styles();
-            title.font = StoryText.English ? GameTypography.English : GameTypography.Chinese;
-            subtitle.font = StoryText.English ? GameTypography.Chinese : GameTypography.English;
+            GameTypography.Use(title, subtitle, button, small);
             var matrix = GUI.matrix;
             var color = GUI.color;
             int depth = GUI.depth;

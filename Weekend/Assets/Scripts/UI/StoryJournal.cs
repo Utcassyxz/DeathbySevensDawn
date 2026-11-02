@@ -276,10 +276,16 @@ namespace DeathBySeventhsDawn.Interaction
                 }
 
                 if (StoryControls.ContinuePressed)
-                    AdvanceObservation();
+                {
+                    if (watch == Watch.None)
+                        ObserveTelescope();
+                    else
+                        AdvanceObservation();
+                }
+
 #if ENABLE_INPUT_SYSTEM
                 if(keyboard!=null&&keyboard.rKey.wasPressedThisFrame)CollectTelescopeEvidence();
-                if(watch==Watch.None&&!revelation&&keyboard!=null&&keyboard.eKey.wasPressedThisFrame)ObserveTelescope();
+                if(keyboard!=null&&keyboard.eKey.wasPressedThisFrame)CloseTelescope();
 #endif
                 if (cancel)
                     CloseTelescope();
@@ -307,7 +313,7 @@ namespace DeathBySeventhsDawn.Interaction
 
             if (player == null)
                 player = GameObject.FindWithTag("Player");
-            nearby = !TutorialGate.IsBlocked("telescope") && game.State.journalUnlocked && telescope != null && player != null && PropReach.Gap(telescope, player) <= content.telescopeRange;
+            nearby = TimeManager.Instance.Days == 1 && !TutorialGate.IsBlocked("telescope") && game.State.journalUnlocked && telescope != null && player != null && PropReach.Gap(telescope, player) <= content.telescopeRange;
             if (nearby && interact && WorldPromptUI.CanActivate("telescope"))
                 OpenTelescope();
         }
@@ -403,12 +409,12 @@ namespace DeathBySeventhsDawn.Interaction
                 telescopeMessage = StoryText.Current.telescope.sleepThought;
             }
             else if (watch == Watch.Sleep || watch == Watch.Complete)
-                CloseTelescope();
+                watch = Watch.Complete;
         }
 
         public bool OpenTelescopeFromWorld()
         {
-            if (page != Page.None || nearby == false || telescope == null || TutorialGate.IsBlocked("telescope"))
+            if (TimeManager.Instance.Days >= 2 || page != Page.None || nearby == false || telescope == null || TutorialGate.IsBlocked("telescope"))
                 return false;
             OpenTelescope();
             return true;
@@ -416,7 +422,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void OpenTelescope()
         {
-            if (TutorialGate.IsBlocked("telescope"))
+            if (TutorialGate.IsBlocked("telescope") || TimeManager.Instance.Days >= 2)
                 return;
             revelation = false;
             firstObjectView = false;
@@ -630,7 +636,7 @@ namespace DeathBySeventhsDawn.Interaction
                     padding = new RectOffset()
                 };
                 telescopeCaption.Set(telescopeMessage, subtitleStyle, dialogue.width - 50, dialogue.height - 86);
-                NarrativeUI.Dialogue(dialogue, StoryText.Local("雨果 · 望远镜", "Hugo · Telescope"), telescopeCaption.Current, telescopeCaption.Counter + StoryText.Local("Enter 继续", "Enter Continue"), text);
+                NarrativeUI.Dialogue(dialogue, StoryText.Local("雨果 · 望远镜", "Hugo · Telescope"), telescopeCaption.Current, telescopeCaption.Counter + (watch == Watch.FirstLook || watch == Watch.Recheck ? StoryText.Local("Enter 继续", "Enter Continue") : watch == Watch.None ? StoryText.Local("Enter 观察 · E 收起", "Enter Observe · E Put away") : StoryText.Local("E 收起望远镜", "E Put away")), text);
                 float rowY = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
                 if (game.State.investigationUnlocked && !Investigation.Has("first-night-recheck") && NightWatchComplete && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(dialogue.x, rowY, bw, 48), telescopeText.collect, button))
                     CollectTelescopeEvidence();

@@ -86,33 +86,15 @@ namespace DeathBySeventhsDawn.Interaction
         {
             player = GameObject.FindWithTag("Player");
             roofScope = null;
-            if (scene.name == "Corridor" && GameObject.Find("Stairs to floor five") == null)
+            if (scene.name == "Corridor" && GameObject.Find("EXIT stairwell door") == null)
             {
-                var root = new GameObject("Stairs to floor five");
+                var root = new GameObject("EXIT stairwell door");
                 SceneManager.MoveGameObjectToScene(root, scene);
-                Part(root.transform, "Stairwell recess", StairsFour, new Vector2(1.55f, 1.72f), new Color(.10f, .13f, .14f), 1);
-                Part(root.transform, "Upper landing", StairsFour + new Vector2(0, .77f), new Vector2(1.40f, .18f), new Color(.42f, .43f, .39f), 3);
-                for (int i = 0; i < 7; i++)
-                {
-                    float y = -.65f + i * .19f;
-                    Part(root.transform, "Stair tread", StairsFour + new Vector2(0, y), new Vector2(1.24f, .16f), new Color(.42f + i * .018f, .43f + i * .016f, .40f + i * .014f), 3);
-                    Part(root.transform, "Stair riser shadow", StairsFour + new Vector2(0, y - .065f), new Vector2(1.24f, .035f), new Color(.16f, .19f, .19f), 4);
-                    Part(root.transform, "Stair nosing", StairsFour + new Vector2(0, y + .065f), new Vector2(1.24f, .022f), new Color(.65f, .61f, .48f), 5);
-                }
-
-                foreach (float side in new[]
-                {
-                    -.73f,
-                    .73f
-                }
-
-                )
-                {
-                    Part(root.transform, "Stair rail base", StairsFour + new Vector2(side, 0), new Vector2(.09f, 1.75f), new Color(.12f, .16f, .17f), 6);
-                    Part(root.transform, "Stair handrail", StairsFour + new Vector2(side + .015f, .04f), new Vector2(.045f, 1.8f), new Color(.50f, .48f, .36f), 7);
-                    for (int i = 0; i < 4; i++)
-                        Part(root.transform, "Rail post", StairsFour + new Vector2(side, -.65f + i * .42f), new Vector2(.12f, .07f), new Color(.25f, .29f, .28f), 6);
-                }
+                Part(root.transform, "Frame shadow", StairsFour + Vector2.up * .28f, new Vector2(1.12f, 1.66f), new Color(.08f, .12f, .12f), 4);
+                Part(root.transform, "Steel jamb", StairsFour + Vector2.up * .30f, new Vector2(.99f, 1.52f), new Color(.35f, .40f, .36f), 5);
+                Part(root.transform, "Fire door", StairsFour + Vector2.up * .30f, new Vector2(.82f, 1.36f), new Color(.19f, .27f, .25f), 6);
+                Part(root.transform, "Push bar", StairsFour + Vector2.up * .22f, new Vector2(.60f, .065f), new Color(.64f, .64f, .51f), 7);
+                Part(root.transform, "EXIT sign plate", StairsFour + Vector2.up * 1.22f, new Vector2(.94f, .28f), new Color(.12f, .29f, .22f), 7);
             }
 
             if (scene.name == "Rooftop" && State.telescopeOnRoof)
@@ -145,30 +127,84 @@ namespace DeathBySeventhsDawn.Interaction
         }
 
         bool Near(Vector2 p, float distance = 1.05f) => player != null && Vector2.Distance(player.transform.position, p) <= distance;
+        // CORE TRAVEL: 4F corridor <-> dedicated stairwell <-> 5F roof.
+        // Lower floors have real landings, but their apartment wings stay closed in this prototype.
+        public int CurrentFloor { get; private set; } = 4;
+
+        public static readonly Vector2 StairUp = new Vector2(-2.2f, -.8f);
+        public static readonly Vector2 StairDown = new Vector2(1.65f, 1.12f);
+        public static readonly Vector2 LandingDoor = new Vector2(4.0f, 1.1f);
+        void Travel(string destination, Vector2 position)
+        {
+            arrivalScene = destination;
+            arrivalPosition = position;
+            SceneManager.LoadScene(destination);
+        }
+
         public bool UseStairs()
         {
-            if (GameManager.Instance.HasEnded || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
+            if (GameManager.Instance.HasEnded || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy || !State.tutorialComplete)
                 return false;
             string scene = SceneManager.GetActiveScene().name;
-            if (!State.tutorialComplete)
-                return false;
-            if (scene == "Corridor" && Near(StairsFour))
+            if (scene == "Corridor" && Near(StairsFour, .8f))
             {
-                arrivalScene = "Rooftop";
-                arrivalPosition = StairsFive + Vector2.right * 1.1f;
-                SceneManager.LoadScene("Rooftop");
+                CurrentFloor = 4;
+                Travel("Stairwell", LandingDoor + Vector2.left * .85f);
                 return true;
             }
 
             if (scene == "Rooftop" && Near(StairsFive))
             {
-                arrivalScene = "Corridor";
-                arrivalPosition = StairsFour + Vector2.right * 1.1f;
-                SceneManager.LoadScene("Corridor");
+                CurrentFloor = 5;
+                Travel("Stairwell", LandingDoor + Vector2.left * .85f);
+                return true;
+            }
+
+            if (scene != "Stairwell")
+                return false;
+            if (Near(StairUp, .80f))
+                return ChangeFloor(1);
+            if (Near(StairDown, .80f))
+                return ChangeFloor(-1);
+            if (Near(LandingDoor, .95f))
+            {
+                if (CurrentFloor == 4)
+                    Travel("Corridor", StairsFour + Vector2.right * 1.1f);
+                else if (CurrentFloor == 5)
+                    Travel("Rooftop", StairsFive + Vector2.right * 1.1f);
+                else
+                    Show(StoryText.Local("这层的防火门锁着。", "The fire door on this floor is locked."), false);
                 return true;
             }
 
             return false;
+        }
+
+        public bool ChangeFloor(int delta)
+        {
+            if (SceneManager.GetActiveScene().name != "Stairwell" || Mathf.Abs(delta) != 1 || GameManager.Instance.HasEnded || StoryJournal.WorldBlocked)
+                return false;
+            int next = CurrentFloor + delta;
+            if (next < 1 || next > 5)
+                return false;
+            CurrentFloor = next;
+            // A brief fade makes the flight traversal readable without a second open-world scene.
+            StoryTransition.Cover(.7f, .4f);
+            if (player != null)
+            {
+                Vector2 spot = delta > 0 ? StairDown + Vector2.right * .9f : StairUp + Vector2.right * .9f;
+                player.transform.position = spot;
+                var rb = player.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.position = spot;
+                    rb.linearVelocity = Vector2.zero;
+                }
+
+                Physics2D.SyncTransforms();
+            }
+
+            return true;
         }
 
         bool CanCarryTelescope => State.tutorialComplete && !State.telescopeCarried && !State.telescopeOnRoof && TimeManager.Instance.Days >= 2 && StoryJournal.IsNight(TimeManager.Instance.Period);
@@ -178,7 +214,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (!CanCarryTelescope || SceneManager.GetActiveScene().name != "Balcony" || GameManager.Instance.HasEnded || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
                 return false;
             var scope = GameObject.Find("阳台望远镜");
-            if (scope == null || PropReach.Gap(scope, player) > 1.2f)
+            if (scope == null || PropReach.Gap(scope, player) > .5f)
                 return false;
             State.telescopeCarried = true;
             ProgressionSave.Write(State);
@@ -285,6 +321,17 @@ namespace DeathBySeventhsDawn.Interaction
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                     UseStairs();
             }
+            else if (scene == "Stairwell")
+            {
+                if (Near(StairUp, .8f))
+                    prompt = CurrentFloor < 5 ? StoryText.Local("E 上楼", "E Upstairs") : StoryText.Local("已经到顶层了。", "This is the top floor.");
+                else if (Near(StairDown, .8f))
+                    prompt = CurrentFloor > 1 ? StoryText.Local("E 下楼", "E Downstairs") : StoryText.Local("已经到一楼了。", "This is the ground floor.");
+                else if (Near(LandingDoor, .95f))
+                    prompt = CurrentFloor == 4 ? StoryText.Local("E 返回四楼走廊", "E Fourth-floor corridor") : CurrentFloor == 5 ? StoryText.Local("E 前往天台", "E Rooftop") : StoryText.Local("E 查看防火门", "E Check fire door");
+                if (prompt != null && k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
+                    UseStairs();
+            }
             else if (scene == "Rooftop" && Near(StairsFive))
             {
                 prompt = text.down;
@@ -305,17 +352,11 @@ namespace DeathBySeventhsDawn.Interaction
             else if (scene == "Balcony" && CanCarryTelescope)
             {
                 var scope = GameObject.Find("阳台望远镜");
-                if (scope != null && PropReach.Gap(scope, player) <= 1.2f)
+                if (scope != null && PropReach.Gap(scope, player) <= .5f)
                 {
-                    prompt = text.carry + StoryText.Local("   ·   E 查看", "   ·   E Inspect");
-                    if (k != null && k.fKey.wasPressedThisFrame)
+                    prompt = text.carry;
+                    if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                         TakeTelescope();
-                    else if (k != null && k.eKey.wasPressedThisFrame)
-                    {
-                        var journal = Object.FindAnyObjectByType<StoryJournal>();
-                        if (journal != null)
-                            journal.OpenTelescopeFromWorld();
-                    }
                 }
             }
         }
@@ -361,6 +402,16 @@ namespace DeathBySeventhsDawn.Interaction
                     if (prompt != null)
                         WorldPromptUI.Offer("rooftop", prompt, 65);
                     string scene = SceneManager.GetActiveScene().name;
+                    if (scene == "Corridor")
+                        Sign(StairsFour + Vector2.up * 1.23f, "EXIT", small, scale, 13);
+                    if (scene == "Stairwell")
+                    {
+                        Sign(new Vector2(3.88f, 3.18f), CurrentFloor.ToString("00"), title, scale, 26);
+                        Sign(new Vector2(3.9f, 2.91f), CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
+                        Sign(new Vector2(-2.15f, 2.75f), "▲", small, scale, 17);
+                        Sign(new Vector2(1.55f, -2.65f), "▼", small, scale, 17);
+                    }
+
                     if (scene == "Corridor" || scene == "Rooftop")
                         GUI.Label(new Rect(25, 25, w - 50, 40), scene == "Corridor" ? t.floorFour : t.floorFive, small);
                     return;
@@ -393,6 +444,23 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.color = color;
                 GUI.depth = depth;
             }
+        }
+
+        void Sign(Vector2 world, string caption, GUIStyle source, float scale, int size)
+        {
+            if (Camera.main == null)
+                return;
+            var p = Camera.main.WorldToScreenPoint(world);
+            var style = new GUIStyle(source)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = size,
+                normal =
+                {
+                    textColor = new Color(.83f, .86f, .73f)
+                }
+            };
+            GUI.Label(new Rect(p.x / scale - 120, (Screen.height - p.y) / scale - 16, 240, 32), caption, style);
         }
 
         void OnDestroy()

@@ -77,6 +77,7 @@ namespace DeathBySeventhsDawn.Progression
                 active = Plate(-.025f, true);
             }
 
+            style.font = GameTypography.Current;
             style.fontSize = 21;
             style.padding = new RectOffset(18, 18, 10, 10);
             style.border = new RectOffset(6, 6, 6, 6);

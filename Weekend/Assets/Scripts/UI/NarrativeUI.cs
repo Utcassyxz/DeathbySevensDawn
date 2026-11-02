@@ -26,6 +26,7 @@ namespace DeathBySeventhsDawn.Progression
 
         public static void Dialogue(Rect r, string speaker, string prose, string hint, GUIStyle body)
         {
+            GameTypography.Use(body);
             Panel(r);
             var name = new GUIStyle(body)
             {

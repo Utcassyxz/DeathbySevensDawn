@@ -38,7 +38,7 @@ public static class VerifyRevision
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
-                deadline = next + 150;
+                deadline = next + 210;
             }
 
             if (s == PlayModeStateChange.EnteredEditMode)
@@ -110,8 +110,8 @@ public static class VerifyRevision
     {
         if (Application.isBatchMode)
             return;
-        Directory.CreateDirectory("../docs/validation/revision");
-        ScreenCapture.CaptureScreenshot("../docs/validation/revision/" + name + ".png");
+        Directory.CreateDirectory("../docs/validation/stairwell-pixel");
+        ScreenCapture.CaptureScreenshot("../docs/validation/stairwell-pixel/" + name + ".png");
     }
 
     static void Place(Vector2 p)
@@ -178,14 +178,28 @@ public static class VerifyRevision
         yield return .2f;
         Check(State.tutorialComplete && State.morningStage == 10 && !MorningRoutine.WorldBlocked, "Debug skip restores free exploration");
         clock.ResetToDayOne();
-        for(int period=0;period<3;period++)clock.AdvanceTime();
-        SceneManager.LoadScene("Balcony");yield return .7f;
-        journal=UnityEngine.Object.FindAnyObjectByType<StoryJournal>();Call(journal,"OpenTelescope");Call(journal,"ObserveTelescope");yield return .35f;
-        Check(!journal.ObservationAdvanced&&journal.ObservationZoom==1,"First telescope frame is fixed-scale pixel art");Capture("telescope-first-frame");yield return .2f;
-        for(int n=0;n<12&&journal.WatchPhase=="FirstLook";n++){journal.AdvanceObservation();yield return .1f;}
+        for (int period = 0; period < 3; period++)
+            clock.AdvanceTime();
+        SceneManager.LoadScene("Balcony");
+        yield return .7f;
+        journal = UnityEngine.Object.FindAnyObjectByType<StoryJournal>();
+        Call(journal, "OpenTelescope");
+        Call(journal, "ObserveTelescope");
+        yield return .35f;
+        Check(!journal.ObservationAdvanced && journal.ObservationZoom == 1, "First telescope frame is fixed-scale pixel art");
+        Capture("telescope-first-frame");
+        yield return .2f;
+        for (int n = 0; n < 12 && journal.WatchPhase == "FirstLook"; n++)
+        {
+            journal.AdvanceObservation();
+            yield return .1f;
+        }
+
         yield return 3f;
-        Check(journal.ObservationAdvanced&&journal.ObservationZoom==1,"An hour later swaps the advancing shadow frame without zooming stars");Capture("telescope-second-frame");yield return .2f;
-        Call(journal,"CloseTelescope");
+        Check(journal.ObservationAdvanced && journal.ObservationZoom == 1, "An hour later swaps the advancing shadow frame without zooming stars");
+        Capture("telescope-second-frame");
+        yield return .2f;
+        Call(journal, "CloseTelescope");
         clock.SleepUntilNextMorning();
         yield return .8f;
         Check(clock.Days == 2 && !NightDreamSequence.WorldBlocked && !game.HasLoopAbility, "First ordinary night has no repeat dream");
@@ -215,12 +229,13 @@ public static class VerifyRevision
         yield return .6f;
         Check(RadiationRules.CanSeal(2) && !RadiationRules.CanSeal(3) && !RadiationRules.CanSeal(4), "Foil works only before the first human face");
         Check(Resources.Load<Texture2D>("Story/FishMapPixels").width <= 128, "Map fish use a genuinely small pixel atlas");
-        Check(GameObject.Find("Floor lamp") == null && UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount == 1, "Living room has light effect without the intrusive lamp model");
+        Check(GameObject.Find("Floor lamp") == null && UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount == 0, "Living room contains neither lamp model nor orphan light pool");
         var tank = GameObject.Find("Aquarium and cabinet").GetComponent<Collider2D>().bounds;
         Place(new Vector2(tank.center.x, tank.min.y - .3f));
         yield return .3f;
         var fish = AquariumEntity.Instance;
-        Capture("pixel-fish-map");yield return .2f;
+        Capture("pixel-fish-map");
+        yield return .2f;
         Call(fish, "OpenDialogue");
         yield return .4f;
         Capture("pixel-fish-detailed-dialogue");
@@ -241,9 +256,13 @@ public static class VerifyRevision
         yield return .3f;
         Check(AquariumEntity.Instance.ThrowFoil() && !game.AquariumSealed && !State.inventory.Contains(CultNeighbor.Token), "Late foil is consumed but cannot reverse the transformation");
         Call(AquariumEntity.Instance, "CloseDialogue");
-        Capture("pixel-fish-day4");yield return .2f;
-        for(int day=0;day<3;day++)clock.CompleteSleep();yield return .4f;
-        Capture("pixel-double-day7");yield return .2f;
+        Capture("pixel-fish-day4");
+        yield return .2f;
+        for (int day = 0; day < 3; day++)
+            clock.CompleteSleep();
+        yield return .4f;
+        Capture("pixel-double-day7");
+        yield return .2f;
         string before = JsonUtility.ToJson(State);
         int album = EndingCollection.Count;
         for (int ending = 1; ending <= 3; ending++)
@@ -269,9 +288,11 @@ public static class VerifyRevision
         Check(Investigation.Connect(rule.left, rule.right, true) && audio.DeductionCount == chimes + 1, "A new valid deduction plays exactly one cheerful cue");
         Investigation.Connect(rule.left, rule.right, true);
         Check(audio.DeductionCount == chimes + 1, "An existing conclusion cannot replay the reward cue");
+        clock.ResetToDayOne();
+        clock.AdvanceTime();
         SceneManager.LoadScene("Balcony");
         yield return 6f;
-        Check(UnityEngine.Object.FindAnyObjectByType<BalconyTimeView>().UsesOverheadProjection && GameObject.Find("Balcony floor plan") != null, "Balcony and courtyard share a top-down projection");
+        Check(UnityEngine.Object.FindAnyObjectByType<BalconyTimeView>().UsesOverheadProjection && GameObject.Find("Balcony floor plan") != null, "Balcony has one overhead projection and intentional empty exterior");
         var scopeArt = GameObject.Find("Optical tube and metal tripod");
         Check(scopeArt != null && scopeArt.GetComponent<SpriteRenderer>().bounds.min.y > GameObject.Find("Balcony tiles").GetComponent<SpriteRenderer>().bounds.min.y, "Telescope feet remain inside the balcony railing");
         Check(GameObject.Find("Balcony tiles").GetComponent<SpriteRenderer>().bounds.size.y < 2.6f, "Balcony depth is compressed to apartment scale");
@@ -279,8 +300,82 @@ public static class VerifyRevision
         yield return .1f;
         SceneManager.LoadScene("Corridor");
         yield return 1.2f;
-        Check(GameObject.Find("Stairwell recess") != null && GameObject.Find("Stair riser shadow") != null && GameObject.Find("Stair handrail") != null, "Stairwell has depth, risers, nosing and paired rails");
-        Capture("corridor-stairwell");
+        Check(GameObject.Find("EXIT stairwell door") != null && GameObject.Find("Stairwell recess") == null, "Corridor leads through EXIT instead of a staircase drawn in the hall");
+        var roof = RooftopAccess.Instance;
+        Place(RooftopAccess.StairsFour + Vector2.right * .65f);
+        yield return .2f;Capture("corridor-exit");yield return .2f;
+        Check(roof.UseStairs(), "EXIT enters the separate stairwell");
+        yield return .8f;
+        Check(SceneManager.GetActiveScene().name == "Stairwell" && roof.CurrentFloor == 4, "Stairwell opens at floor four");
+        Check(GameObject.Find("Up tread") != null && GameObject.Find("Down tread") != null && GameObject.Find("Up riser") != null && GameObject.Find("Down riser") != null, "Two opposed modeled flights have separate risers and nosing");
+        var doorLeaf=GameObject.Find("Door leaf collision").GetComponent<BoxCollider2D>();
+        Check(RooftopAccess.LandingDoor.y < doorLeaf.bounds.min.y && GameObject.Find("Fire door").transform.position.y > 2f,"Fire door is embedded in the north wall, clear of the landing");
+        var actor=GameObject.FindWithTag("Player");
+        bool clear=true;
+        foreach(var point in new[]{RooftopAccess.LandingDoor+Vector2.left*.85f,RooftopAccess.StairUp,RooftopAccess.StairDown,new Vector2(0,0)})
+            foreach(var hit in Physics2D.OverlapCircleAll(point,.32f))
+                if(!hit.isTrigger && hit.gameObject!=actor)clear=false;
+        Check(clear,"Door arrival and both stair approaches have player-width clearance");
+        Capture("stairwell-four");
+        yield return .2f;
+        Place(RooftopAccess.StairUp);
+        Check(roof.UseStairs() && roof.CurrentFloor == 5, "Upper flight reaches floor five");
+        yield return .8f;
+        Check(!roof.ChangeFloor(1), "Top floor does not exceed the roof");
+        Place(RooftopAccess.LandingDoor);
+        Check(roof.UseStairs(), "Fifth-floor fire door opens to roof");
+        yield return .8f;
+        Check(SceneManager.GetActiveScene().name == "Rooftop", "Roof uses a real separate destination");
+        Place(RooftopAccess.StairsFive);
+        Check(roof.UseStairs(), "Roof returns through its stairwell door");
+        yield return .8f;
+        for (int floor = 4; floor >= 1; floor--)
+        {
+            Place(RooftopAccess.StairDown);
+            Check(roof.UseStairs() && roof.CurrentFloor == floor, "Lower flight reaches floor " + floor);
+            yield return .8f;
+        }
+
+        Check(!roof.ChangeFloor(-1), "Ground floor cannot descend out of prototype");
+        Place(RooftopAccess.LandingDoor);
+        Check(roof.UseStairs() && roof.IsOpen, "Unbuilt lower apartment wings clearly remain locked");
+        roof.Close();
+        yield return .2f;
+        for (int floor = 2; floor <= 4; floor++)
+        {
+            Check(roof.ChangeFloor(1), "Return to floor " + floor);
+            yield return .8f;
+        }
+
+        Place(RooftopAccess.LandingDoor);
+        Check(roof.UseStairs(), "Fourth-floor fire door returns to corridor");
+        yield return .8f;
+        Check(SceneManager.GetActiveScene().name == "Corridor", "Travel loop preserves the 402 corridor");
+        // Second-night scope: no balcony inspection path; single carry action then roof placement.
+        clock.ResetToDayOne();
+        clock.CompleteSleep();
+        clock.AdvanceTime();
+        clock.AdvanceTime();
+        clock.AdvanceTime();
+        State.telescopeCarried = State.telescopeOnRoof = false;
+        SceneManager.LoadScene("Balcony");
+        yield return .8f;
+        var scope = GameObject.Find("阳台望远镜");
+        Place((Vector2)scope.transform.position + Vector2.down * .45f);
+        yield return .3f;
+        Check(!journal.OpenTelescopeFromWorld(), "Second night never offers balcony observation");
+        Check(roof.TakeTelescope() && State.telescopeCarried, "Second-night telescope is taken for the roof");
+        roof.Close();
+        yield return .2f;
+        Check(GameObject.Find("阳台望远镜") == null, "Carried telescope disappears from balcony");
+        SceneManager.LoadScene("Rooftop");
+        yield return .8f;
+        Place(RooftopAccess.TelescopeSpot);
+        Check(roof.PlaceTelescope() && State.telescopeOnRoof && !State.telescopeCarried, "Same carried telescope installs on rooftop");
+        roof.Close();
+        Check(Resources.Load<AudioClip>("Audio/EndingGood").length > 100 && Resources.Load<AudioClip>("Audio/EndingBad").length > 180 && Resources.Load<AudioClip>("Audio/EndingTrue").length > 135, "Endings contain four developing statements and a full cadence");
+        Check(theme.text.Contains("sharedHarmony") && theme.text.Contains("brass melody") && theme.text.Contains("march snare"), "Shared harmony is reorchestrated with strings and marching-band layers");
+        Capture("rooftop-after-placement");
         yield return .1f;
         Check(error == null, "No game runtime exceptions in revision paths");
     }
@@ -322,7 +417,7 @@ public static class VerifyRevision
     static void Finish(string failure)
     {
         steps = null;
-        File.WriteAllText("../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; three distinct stamps and hammer/wake handoff; quiet ordinary nights; second-night Bubble; pre-face foil/late failure; small pixel atlas and dialogue portraits; shared melodic ending variations; deduction reward; save-safe debug previews; overhead balcony; solid stairwell. Original journey, album and settings restored." : "FAIL: " + failure);
+        File.WriteAllText("../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; three distinct stamps and hammer/wake handoff; quiet ordinary nights; second-night Bubble; pre-face foil/late failure; small pixel atlas and dialogue portraits; shared melodic ending variations; deduction reward; save-safe debug previews; coarse balcony with empty exterior; dedicated two-flight stairwell and floor travel; second-night carry-only scope; extended shared-harmony orchestrations. Original journey, album and settings restored." : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
         {

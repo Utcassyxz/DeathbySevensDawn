@@ -260,10 +260,171 @@
       ]
     ]
   ],
+  "chords": [
+    [
+      50,
+      57,
+      65
+    ],
+    [
+      46,
+      53,
+      61
+    ],
+    [
+      48,
+      55,
+      63
+    ],
+    [
+      45,
+      52,
+      60
+    ],
+    [
+      50,
+      57,
+      65
+    ],
+    [
+      46,
+      53,
+      61
+    ],
+    [
+      43,
+      50,
+      58
+    ],
+    [
+      45,
+      52,
+      60
+    ],
+    [
+      50,
+      57,
+      65
+    ],
+    [
+      46,
+      53,
+      61
+    ],
+    [
+      48,
+      55,
+      63
+    ],
+    [
+      45,
+      52,
+      60
+    ],
+    [
+      50,
+      57,
+      65
+    ],
+    [
+      46,
+      53,
+      61
+    ],
+    [
+      43,
+      50,
+      58
+    ],
+    [
+      45,
+      52,
+      60
+    ]
+  ],
+  "sharedHarmony": true,
   "tempos": {
     "good": 112,
     "bad": 64,
     "true": 84
+  },
+  "sections": [
+    "prologue",
+    "statement",
+    "development",
+    "return_and_coda"
+  ],
+  "barsPerSection": 16,
+  "arrangements": {
+    "good": [
+      [
+        "solo strings",
+        "harp",
+        "bass"
+      ],
+      [
+        "strings",
+        "brass melody",
+        "march snare",
+        "bass"
+      ],
+      [
+        "high strings",
+        "brass countermelody",
+        "march snare",
+        "timpani"
+      ],
+      [
+        "full strings",
+        "brass",
+        "snare",
+        "timpani",
+        "harp"
+      ]
+    ],
+    "bad": [
+      [
+        "music box",
+        "low pad"
+      ],
+      [
+        "music box",
+        "cello",
+        "bass"
+      ],
+      [
+        "music box octave",
+        "cello",
+        "low pad"
+      ],
+      [
+        "music box",
+        "cello",
+        "bell echoes"
+      ]
+    ],
+    "true": [
+      [
+        "bell",
+        "low strings"
+      ],
+      [
+        "strings",
+        "flute",
+        "harp"
+      ],
+      [
+        "strings",
+        "horn",
+        "bell counterline"
+      ],
+      [
+        "strings",
+        "flute",
+        "horn",
+        "harp"
+      ]
+    ]
   },
   "lyrics": null
 }

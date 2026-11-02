@@ -289,13 +289,13 @@ public static class VerifyNightArc
         SceneManager.LoadScene("Balcony");
         yield return 1f;
         var vista = UnityEngine.Object.FindAnyObjectByType<BalconyTimeView>();
-        Check(vista != null && vista.SkyColor.maxColorComponent > .5f, "Balcony dawn has a visible sky independent of camera clear");
+        Check(vista != null && vista.SkyColor.maxColorComponent < .1f && TimeAtmosphere.Palette(TimePeriod.Morning).b > .9f, "Balcony exterior stays empty while the dawn architecture remains cool and readable");
         yield return 3f;
         Capture("balcony-dawn");
         yield return .2f;
         clock.AdvanceTime();
         yield return .4f;
-        Check(vista.SkyColor.b > .5f, "Balcony noon stays blue and bright");
+        Check(vista.SkyColor.maxColorComponent < .1f && TimeAtmosphere.Palette(TimePeriod.Afternoon) == Color.white, "Balcony noon lights the architecture without adding a background picture");
         yield return 3f;
         Capture("balcony-noon");
         yield return .2f;
@@ -318,7 +318,7 @@ public static class VerifyNightArc
         yield return .2f;
         SceneManager.LoadScene("LivingRoom");
         yield return 1f;
-        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount == 1, "Only the visible room lamp emits light; aquarium glow removed");
+        Check(UnityEngine.Object.FindAnyObjectByType<InteriorLighting>().LightCount == 0, "Living room orphan light and aquarium glow are removed");
         Capture("home-lamp-night");
         yield return .2f;
         StoryText.ToggleLanguage();
