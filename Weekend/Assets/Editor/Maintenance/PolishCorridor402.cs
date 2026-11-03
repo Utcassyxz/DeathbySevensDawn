@@ -13,7 +13,7 @@ public static class PolishCorridor402
         if (EditorApplication.isPlaying)
             throw new InvalidOperationException("Exit Play first.");
         EditorSceneManager.SaveOpenScenes();
-        var scene = EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Corridor.unity");
+        var scene = EditorSceneManager.OpenScene("Assets/Apartment/Corridor.unity");
         square = AssetDatabase.LoadAllAssetsAtPath("Assets/Art/Prototype/Square.png").OfType<Sprite>().First();
         material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Prototype/PrototypeUnlit.mat");
         var old = GameObject.Find("Corridor room identity");
@@ -37,7 +37,7 @@ public static class PolishCorridor402
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         PolishApartmentDetails.ValidatePaths();
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Corridor.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/Corridor.unity");
         Debug.Log("CORRIDOR_401_402_403_OK: north neighbors and south apartment, decoration has no colliders.");
     }
     public static void RunAndVerify()

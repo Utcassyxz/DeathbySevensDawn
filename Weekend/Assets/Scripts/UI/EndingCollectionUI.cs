@@ -136,7 +136,7 @@ namespace DeathBySeventhsDawn.Progression
                 NarrativeUI.Panel(r);
                 GUI.Label(new Rect(r.x + 24, r.y + 18, 100, 70), (i + 1).ToString("00"), Text(48, new Color(.56f, .40f, .32f)));
                 GUI.Label(new Rect(r.x + 24, r.y + 105, r.width - 48, 90), known ? EndingCollection.Title(id) : StoryText.Local("尚未收录", "UNDISCOVERED"), Text(28, known ? NarrativeUI.Ink : new Color(.45f, .46f, .47f)));
-                GUI.Label(new Rect(r.x + 24, r.y + 210, r.width - 48, 86), known ? (id == "fish-replacement" ? StoryText.Local("有人替他起床，也替他过完了余下的日子。", "Someone got up in his place, and lived the days that remained.") : id == "world-end" ? StoryText.Local("七天过去了。雨果没有再抬头。", "Seven days passed. Hugo never looked up again.") : StoryText.Local("每次醒来，身体都比上一次更沉。", "Each return left his body a little heavier.")) : StoryText.Local("还没有走到这里。", "This page is still blank."), Text(18, new Color(.68f, .65f, .60f)));
+                GUI.Label(new Rect(r.x + 24, r.y + 210, r.width - 48, 86), known ? (id == "fish-replacement" ? StoryText.Local("有人替他起床，也替他过完了余下的日子。", "Someone got up in his place, and lived the days that remained.") : id == "world-end" ? StoryText.Local("他没能走到门口。也没有下一个早晨。", "He never reached the door. There was no next morning.") : StoryText.Local("每次醒来，身体都比上一次更沉。", "Each return left his body a little heavier.")) : StoryText.Local("还没有走到这里。", "This page is still blank."), Text(18, new Color(.68f, .65f, .60f)));
             }
 
             if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w * .10f, h * .82f, 250, 52), StoryText.Local("返回 · Esc", "Back · Esc"), Button()))

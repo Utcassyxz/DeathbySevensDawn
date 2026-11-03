@@ -10,7 +10,7 @@ using DeathBySeventhsDawn.World;
 
 public static class PolishApartmentDetails
 {
-    const string Root = "Assets/Scenes/Apartment/";
+    const string Root = "Assets/Apartment/";
     static readonly string[] Rooms = { "LivingRoom", "Bedroom", "Bathroom", "Balcony", "Corridor" };
     static Sprite square; static Material mat; static Transform details;
     static readonly Color Edge = new Color(.23f, .22f, .21f), Highlight = new Color(.51f, .48f, .40f);

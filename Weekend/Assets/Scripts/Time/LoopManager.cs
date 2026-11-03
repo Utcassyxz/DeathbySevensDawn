@@ -1,5 +1,5 @@
 // CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
-// 职责：死亡及七日结束后的轮回；终局状态禁止再次重置。
+// 职责：只响应死亡的轮回；存活跨日不重置，终局状态禁止再次重置。
 using System;
 using DeathBySeventhsDawn.Core;
 using UnityEngine;
@@ -29,19 +29,19 @@ namespace DeathBySeventhsDawn.TimeSystem
 
         void OnEnable()
         {
-            if (TimeManager.Instance != null)
-                TimeManager.Instance.SeventhDayEnded += RestartLoop;
+            if (GameManager.Instance != null)
+                GameManager.Instance.Died += RestartLoop;
         }
 
         void OnDisable()
         {
-            if (TimeManager.Instance != null)
-                TimeManager.Instance.SeventhDayEnded -= RestartLoop;
+            if (GameManager.Instance != null)
+                GameManager.Instance.Died -= RestartLoop;
         }
 
         public void RestartLoop()
         {
-            if (restarting || GameManager.Instance.HasEnded || GameManager.Instance.TryTriggerBadEnding(TimeManager.Instance.Days))
+            if (restarting || GameManager.Instance.Vitality > 0 || GameManager.Instance.HasEnded || GameManager.Instance.TryTriggerBadEnding(TimeManager.Instance.Days))
                 return;
             if (!GameManager.Instance.HasLoopAbility)
                 return;

@@ -52,7 +52,7 @@ public static class VerifyCultRoute
         PlayerPrefs.SetInt("Story.Language", 0);
         SessionState.SetBool(DayOneSupernovaEvent.SuppressionKey, true);
         ProgressionSave.Write(new ProgressionState { dreamSeen = true, journalUnlocked = true, investigationUnlocked = true, tutorialComplete = true });
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/Bedroom.unity");
         EditorApplication.isPlaying = true;
     }
     static void Tick()

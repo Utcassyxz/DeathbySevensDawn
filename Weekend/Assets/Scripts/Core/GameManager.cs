@@ -83,16 +83,6 @@ namespace DeathBySeventhsDawn.Core
                 return true;
             if (day < 7)
                 return false;
-            if (!HasLoopAbility && day >= 7 && TimeSystem.TimeManager.Instance.Period == TimeSystem.TimePeriod.Night)
-            {
-                State.worldEndEnding = true;
-                ProgressionSave.Write(State);
-                EndingCollection.Unlock("world-end");
-                EndingTriggered?.Invoke("world-end");
-                Changed?.Invoke();
-                return true;
-            }
-
             if (!HasLoopAbility)
                 return false;
             if (MaxVitality > Settings.minimumVitality + .001f)
@@ -220,11 +210,17 @@ namespace DeathBySeventhsDawn.Core
             State.ancientObservationDay = 0;
             State.ancientObservationLoop = -1;
             State.bedroomCurtainsClosed = State.stoveLit = false;
-            State.fishUnderstanding = State.fishCompanionUnlocked ? 3 : 0;
-            State.fishAlly = State.fishCompanionUnlocked;
+            State.fishUnderstanding = 0;
+            State.fishAlly = State.fishCompanionUnlocked = false;
             State.fishReportAvailable = false;
             State.fishStoryDays.Clear();
             State.fishStoolBorrowed = false;
+            State.fishMorningLoop = -1;
+            State.aquariumSealed = false;
+            State.sleeplessDays = 0;
+            State.buildingCrisisResolved = State.daySevenCrisisResolved = false;
+            State.cultTokenOffered = false;
+            State.inventory.Clear();
             Vitality = MaxVitality;
             ProgressionSave.Write(State);
             Changed?.Invoke();
@@ -239,10 +235,23 @@ namespace DeathBySeventhsDawn.Core
             if (Vitality <= 0)
             {
                 Died?.Invoke();
-                TimeSystem.LoopManager.Instance.RestartLoop();
+                if (!HasLoopAbility) EndWithoutReturn();
             }
         }
 
+        public void LoseSanity(float amount)
+        {
+            State.sanityBurden += Mathf.Max(0, amount);
+            ProgressionSave.Write(State); Changed?.Invoke();
+        }
+        public void EndWithoutReturn()
+        {
+            if(HasEnded)return;
+            State.worldEndEnding=true;
+            ProgressionSave.Write(State);
+            EndingCollection.Unlock("world-end");
+            EndingTriggered?.Invoke("world-end"); Changed?.Invoke();
+        }
         public void Heal(float amount)
         {
             if (HasEnded)

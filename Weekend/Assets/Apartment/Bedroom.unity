@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -962,7 +962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8bb21483ac215342b0bd361a1c281a9, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.World.RoomDoor2D
-  destinationScene: Assets/Scenes/Apartment/LivingRoom.unity
+  destinationScene: Assets/Apartment/LivingRoom.unity
   arrivalPosition: {x: -5.7, y: -0.65}
 --- !u!61 &214111888
 BoxCollider2D:

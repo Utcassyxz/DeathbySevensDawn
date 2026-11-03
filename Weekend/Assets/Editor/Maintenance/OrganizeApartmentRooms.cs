@@ -10,14 +10,14 @@ using DeathBySeventhsDawn.World;
 
 public static class OrganizeApartmentRooms
 {
-    const string Folder = "Assets/Scenes/Apartment";
+    const string Folder = "Assets/Apartment";
     [MenuItem("Prototype/Organize apartment folder and clear sofa")]
     public static void Run()
     {
         if (EditorApplication.isPlaying)
             throw new InvalidOperationException("Stop Play mode before organizing rooms.");
         var paths = new Dictionary<string, string>{
-   {"Assets/Scenes/Apartment.unity",Folder+"/LivingRoom.unity"},
+   {"Assets/Apartment.unity",Folder+"/LivingRoom.unity"},
    {"Assets/Scenes/Bedroom.unity",Folder+"/Bedroom.unity"},
    {"Assets/Scenes/Bathroom.unity",Folder+"/Bathroom.unity"},
    {"Assets/Scenes/Balcony.unity",Folder+"/Balcony.unity"},
@@ -25,7 +25,7 @@ public static class OrganizeApartmentRooms
         var buildScenes = EditorBuildSettings.scenes;
         EditorSceneManager.SaveOpenScenes();
         if (!AssetDatabase.IsValidFolder(Folder))
-            AssetDatabase.CreateFolder("Assets/Scenes", "Apartment");
+            AssetDatabase.CreateFolder("Assets", "Apartment");
         foreach (var p in paths)
         {
             if (!File.Exists(p.Key))
@@ -81,7 +81,7 @@ public static class OrganizeApartmentRooms
                 content = content.Replace(p.Key, p.Value);
             content = content.Replace("\"Apartment\"", "\"LivingRoom\"").Replace("\"Apartment.unity\"", "\"LivingRoom.unity\"");
             if (file.EndsWith("BuildApartmentExtensions.cs"))
-                content = content.Replace("const string Scenes = \"Assets/Scenes/\";", "const string Scenes = \"Assets/Scenes/Apartment/\";");
+                content = content.Replace("const string Scenes = \"Assets/Scenes/\";", "const string Scenes = \"Assets/Apartment/\";");
             File.WriteAllText(file, content);
         }
         AssetDatabase.SaveAssets();
@@ -90,7 +90,7 @@ public static class OrganizeApartmentRooms
         var folderAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(Folder);
         Selection.activeObject = folderAsset;
         EditorGUIUtility.PingObject(folderAsset);
-        File.WriteAllText("../apartment-folder-validation.txt", "Five room scenes moved under Assets/Scenes/Apartment with their GUIDs preserved. Door paths and Build Settings updated. Sofa reduced to 65% and moved clear of bedroom entrance.\n");
+        File.WriteAllText("../apartment-folder-validation.txt", "Five room scenes moved under Assets/Apartment with their GUIDs preserved. Door paths and Build Settings updated. Sofa reduced to 65% and moved clear of bedroom entrance.\n");
         Debug.Log("APARTMENT_FOLDER_ORGANIZED_OK");
     }
 }

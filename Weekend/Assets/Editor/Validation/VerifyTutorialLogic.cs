@@ -57,7 +57,7 @@ public static class VerifyTutorialLogic
         SessionState.SetBool(TestKey, true);
         SessionState.SetBool(DayOneSupernovaEvent.SuppressionKey, true);
         ProgressionSave.Write(new ProgressionState());
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/Bedroom.unity");
         EditorApplication.isPlaying = true;
     }
     static void Tick()

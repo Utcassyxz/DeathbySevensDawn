@@ -119,12 +119,13 @@ namespace DeathBySeventhsDawn.Progression
         {
             if (active || WorldEndSequence.IsPresenting)
                 return true;
-            if(clock.Days == 7 && clock.Period == TimePeriod.Night && WorldEndSequence.TryBeginFirstApocalypse()) return true;
+            if (!StoryDebugActions.Enabled && ((clock.Days == 5 && !game.State.buildingCrisisResolved) || (clock.Days == 7 && !game.State.daySevenCrisisResolved)))
+            { WorldEndSequence.BeginFatalCrisis(clock.Days == 5); return true; }
             var text = StoryText.Current.nightDream;
             bool firstContact = !game.HasLoopAbility && game.HasSeenAncientGod &&
                 (game.State.ancientObservationDay == 0 || (game.State.ancientObservationDay == clock.Days && game.State.ancientObservationLoop == game.LoopCount));
             bool returningContact = game.HasLoopAbility && game.State.bubbleDreamUnlocked && game.LoopCount > 0 && game.State.bubbleVisitLoop != game.LoopCount;
-            if (firstContact || returningContact)
+            if (!StoryDebugActions.Enabled && (firstContact || returningContact))
             {
                 kind = Kind.Bubble;
                 returning = game.HasLoopAbility;
@@ -133,19 +134,10 @@ namespace DeathBySeventhsDawn.Progression
                 if (returning)
                     game.State.bubblePortraitUnlocked = game.State.bubbleIntroduced = true;
             }
-            else if (clock.Days == 7 && !game.AquariumSealed && !game.State.fishAlly)
-            {
-                kind = Kind.Replacement;
-                pages = text.replacement;
-                while (clock.Period != TimePeriod.Night && !game.HasEnded)
-                    clock.AdvanceTime();
-                if (game.HasEnded)
-                    return true;
-            }
             else
             {
                 clock.CompleteSleep();
-                if (!game.HasEnded)
+                if (!game.HasEnded && !WorldEndSequence.IsPresenting)
                 {
                     wakePending = true;
                     StoryTransition.Cover(.7f);
@@ -194,7 +186,7 @@ namespace DeathBySeventhsDawn.Progression
                 ProgressionSave.Write(game.State);
             }
             TimeManager.Instance.CompleteSleep();
-            if (!game.HasEnded && Application.CanStreamedLevelBeLoaded("Bedroom"))
+            if (!game.HasEnded && !WorldEndSequence.IsPresenting && Application.CanStreamedLevelBeLoaded("Bedroom"))
             {
                 wakePending = true;
                 StoryTransition.Cover(.65f);

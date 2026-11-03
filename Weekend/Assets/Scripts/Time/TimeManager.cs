@@ -1,5 +1,5 @@
 // CORE CONTRACT: 文案任务不要改动控制流程；工程变更先读 docs/CORE_CODE_MAP.md 并同步验收。
-// 职责：每天四时段的唯一时钟；所有睡眠都经过第七天结局检查。
+// CORE: Days唯一时钟；原地等待不算睡眠，致死危机先演出，存活允许超过七天。
 using System;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -25,7 +25,6 @@ namespace DeathBySeventhsDawn.TimeSystem
         public TimePeriod Period { get; private set; } = TimePeriod.Morning;
 
         public event Action<int, TimePeriod> TimeChanged;
-        public event Action SeventhDayEnded;
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -43,15 +42,21 @@ namespace DeathBySeventhsDawn.TimeSystem
         {
             if (Progression.WorldEndSequence.IsPresenting || (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded))
                 return;
-            if (!completingSleep && Days < 7 && Period == TimePeriod.Night && Progression.NightDreamSequence.BeginSleep())
-                return;
-            if (Days >= 7 && Period == TimePeriod.Night)
+            if (Period == TimePeriod.Night)
             {
-                if (Progression.WorldEndSequence.TryBeginFirstApocalypse()) return;
-                SeventhDayEnded?.Invoke();
-                return;
+                var game = Core.GameManager.Instance;
+                if (!Progression.StoryDebugActions.Enabled &&
+                    ((Days == 5 && !game.State.buildingCrisisResolved) || (Days == 7 && !game.State.daySevenCrisisResolved)))
+                {
+                    Progression.WorldEndSequence.BeginFatalCrisis(Days == 5);
+                    return;
+                }
+                if (!completingSleep)
+                {
+                    game.State.sleeplessDays++;
+                    if (game.State.sleeplessDays > 2) game.LoseSanity(5);
+                }
             }
-
             if (Period != TimePeriod.Night)
                 Period++;
             else
@@ -60,8 +65,7 @@ namespace DeathBySeventhsDawn.TimeSystem
                 Days++;
             }
 
-            if (Period != TimePeriod.Night)
-                Core.GameManager.Instance?.TryTriggerBadEnding(Days);
+            Progression.ProgressionSave.Write(Core.GameManager.Instance.State);
             TimeChanged?.Invoke(Days, Period);
         }
 
@@ -79,6 +83,7 @@ namespace DeathBySeventhsDawn.TimeSystem
         {
             if (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded)
                 return;
+            Core.GameManager.Instance.State.sleeplessDays = 0;
             completingSleep = true;
             try
             {
@@ -102,11 +107,15 @@ namespace DeathBySeventhsDawn.TimeSystem
                 Instance = null;
         }
 
+        public void DebugSetTime(int day, TimePeriod period)
+        {
+            if(!Progression.StoryDebugActions.Enabled)return;
+            Days=Mathf.Max(1,day);Period=period;TimeChanged?.Invoke(Days,Period);
+        }
         public void ResetToDayOne()
         {
             Days = 1;
             Period = TimePeriod.Morning;
-            Core.GameManager.Instance?.TryTriggerBadEnding(Days);
             TimeChanged?.Invoke(Days, Period);
         }
     }

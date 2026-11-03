@@ -3910,7 +3910,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.95, z: 0}
-  m_LocalScale: {x: 0.65, y: 0.65, z: 1}
+  m_LocalScale: {x: 0.45499999999999996, y: 0.45499999999999996, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -5904,7 +5904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8bb21483ac215342b0bd361a1c281a9, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathBySeventhsDawn.World.RoomDoor2D
-  destinationScene: Assets/Scenes/Apartment/LivingRoom.unity
+  destinationScene: Assets/Apartment/LivingRoom.unity
   arrivalPosition: {x: 0.37, y: 2.3}
 --- !u!1 &800000362
 GameObject:

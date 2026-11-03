@@ -13,7 +13,7 @@ public static class BuildApartmentExtensions
     static Material material;
     static Sprite square;
     static GameObject playerTemplate, cameraTemplate;
-    const string Scenes = "Assets/Scenes/Apartment/";
+    const string Scenes = "Assets/Apartment/";
     const string Art = "Assets/Art/Extensions/";
     // Legacy generator retained for reference; current authored scenes use the south balcony layout.
     public static void Build()

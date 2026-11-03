@@ -12,7 +12,7 @@ namespace DeathBySeventhsDawn.Interaction
         public static bool IsBlocked(string action)
         {
             var game = GameManager.Instance;
-            if (game == null || game.State.tutorialComplete)
+            if (Progression.StoryDebugActions.Enabled || game == null || game.State.tutorialComplete)
                 return false;
             int stage = game.State.morningStage;
             switch (action)

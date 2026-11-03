@@ -10,7 +10,7 @@ using DeathBySeventhsDawn.Interaction;
 [InitializeOnLoad]
 public static class BuildRooftop
 {
-    const string PathName = "Assets/Scenes/Apartment/Rooftop.unity";
+    const string PathName = "Assets/Apartment/Rooftop.unity";
     static BuildRooftop()
     {
         EditorApplication.update += Tick;
@@ -50,7 +50,7 @@ public static class BuildRooftop
             }
             else
             {
-                EditorSceneManager.OpenScene("Assets/Scenes/Apartment/LivingRoom.unity");
+                EditorSceneManager.OpenScene("Assets/Apartment/LivingRoom.unity");
                 player = UnityEngine.Object.Instantiate(GameObject.FindWithTag("Player"));
                 camera = UnityEngine.Object.Instantiate(Camera.main.gameObject);
                 roof = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
@@ -85,7 +85,7 @@ public static class BuildRooftop
                 list.Add(new EditorBuildSettingsScene(PathName, true));
             EditorBuildSettings.scenes = list.ToArray();
             // Author the same clear color in every room; runtime enforcement also covers dynamically-created cameras.
-            foreach (var entry in list.Where(s => s.enabled && s.path.StartsWith("Assets/Scenes/Apartment/")))
+            foreach (var entry in list.Where(s => s.enabled && s.path.StartsWith("Assets/Apartment/")))
             {
                 var scene = EditorSceneManager.OpenScene(entry.path);
                 foreach (var root in scene.GetRootGameObjects())

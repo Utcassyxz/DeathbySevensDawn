@@ -33,7 +33,7 @@ public static class VerifyInitialState
         foreach (string suffix in new[] { "", ".bak", ".tmp" })
             SessionState.SetString(KeyName + suffix, File.Exists(ProgressionSave.PathName + suffix) ? Convert.ToBase64String(File.ReadAllBytes(ProgressionSave.PathName + suffix)) : "");
         ProgressionSave.Write(new ProgressionState());
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/Bedroom.unity");
         runtimeError = null;
         stage = scenario = 0;
         next = deadline = 0;

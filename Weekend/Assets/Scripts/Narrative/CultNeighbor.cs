@@ -475,7 +475,7 @@ namespace DeathBySeventhsDawn.Interaction
                     return;
                 }
 
-                string prose = view == View.DayOne ? StoryText.Current.cult.dayOne[Mathf.Min(line, StoryText.Current.cult.dayOne.Length - 1)] : view == View.Refusal ? StoryText.Current.cult.refusal : line < StoryText.Current.cult.door.Length ? StoryText.Current.cult.door[line] : StoryText.Current.cult.itemBody;
+                string prose = view == View.DayOne ? StoryText.Current.cult.dayOne[Mathf.Min(line, StoryText.Current.cult.dayOne.Length - 1)] : view == View.Refusal ? (TimeManager.Instance.Days>=4 ? StoryText.Current.cult.lateRefusal : StoryText.Current.cult.refusal) : line < StoryText.Current.cult.door.Length ? StoryText.Current.cult.door[line] : StoryText.Current.cult.itemBody;
                 if (view == View.Door)
                 {
                     AnimateEye();

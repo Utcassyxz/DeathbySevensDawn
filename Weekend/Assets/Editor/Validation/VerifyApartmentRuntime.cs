@@ -33,7 +33,7 @@ public static class VerifyApartmentRuntime
         movementUntil = 0;
         movedDistance = 0;
         SessionState.SetBool(Key, true);
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/LivingRoom.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/LivingRoom.unity");
         EditorApplication.isPlaying = true;
     }
     static void Tick()

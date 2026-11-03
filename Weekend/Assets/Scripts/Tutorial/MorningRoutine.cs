@@ -245,20 +245,27 @@ namespace DeathBySeventhsDawn.Interaction
         void BeginFishWake()
         {
             var bed = GameObject.Find("Bed");
-            if (bed == null || player == null)
-                return;
+            if (player == null) return;
             queued = false;
-            var bounds = bed.GetComponent<SpriteRenderer>().bounds;
-            bedPoint = bounds.center;
-            Bedside = new Vector2(bounds.max.x + .48f, bounds.min.y - .25f);
-            visitorPoint = new Vector2(bounds.max.x + .65f, bounds.center.y - .12f);
+            bool inBed=bed!=null && TimeManager.Instance != null && GameManager.Instance.State.sleeplessDays==0;
+            if(inBed)
+            {
+                var bounds=bed.GetComponent<SpriteRenderer>().bounds;
+                bedPoint=bounds.center;
+                Bedside=new Vector2(bounds.max.x+.48f,bounds.min.y-.25f);
+                visitorPoint=new Vector2(bounds.max.x+.65f,bounds.center.y-.12f);
+                wakingBed=bed.transform;wakingBedPosition=wakingBed.position;
+            }
+            else
+            {
+                bedPoint=Bedside=player.transform.position;
+                visitorPoint=bedPoint+Vector2.right*.65f;
+                wakingBed=null;
+            }
             FreezePlayer();
             var pose=placeholder.GetComponent<SpriteRenderer>();pose.sprite=SmallPixelActors.Seated();pose.color=Color.white;placeholder.transform.localScale=Vector3.one;
-            MoveBody(bedPoint);
-            placeholder.transform.position = bedPoint;
-            placeholder.transform.localRotation = Quaternion.Euler(0, 0, 75);
-            wakingBed = bed.transform;
-            wakingBedPosition = wakingBed.position;
+            MoveBody(bedPoint);placeholder.transform.position=bedPoint;
+            placeholder.transform.localRotation=Quaternion.Euler(0,0,inBed?75:0);
             activity = Activity.FishWake;
             fishMorningPage = 0;
             age = 0;
@@ -273,7 +280,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Vector2 at = Vector2.Lerp(bedPoint, Bedside, rise);
                 MoveBody(at);
                 placeholder.transform.position = at;
-                placeholder.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(75, 0, rise));
+                placeholder.transform.localRotation = Quaternion.Euler(0, 0, wakingBed!=null?Mathf.Lerp(75, 0, rise):0);
                 float shake = fishMorningPage == 0 && age < 1.5f ? Mathf.Sin(age * 28) * .035f : 0;
                 if (wakingBed != null)
                     wakingBed.position = wakingBedPosition + Vector3.right * shake;
@@ -486,13 +493,8 @@ namespace DeathBySeventhsDawn.Interaction
             age += Time.unscaledDeltaTime;
             bool advance = StoryControls.ContinuePressed || advanceRequested;
             advanceRequested = false;
-            if (activity == Activity.None && AquariumEntity.Instance != null && AquariumEntity.Instance.MorningWelcomePending && !StoryJournal.WorldBlocked)
+            if (!StoryDebugActions.Enabled && activity == Activity.None && AquariumEntity.Instance != null && AquariumEntity.Instance.MorningWelcomePending && !StoryJournal.WorldBlocked)
             {
-                if (SceneManager.GetActiveScene().name != "Bedroom")
-                {
-                    SceneManager.LoadScene("Bedroom");
-                    return;
-                }
                 BeginFishWake();
             }
             if (activity == Activity.FishWake)

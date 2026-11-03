@@ -21,6 +21,7 @@ namespace DeathBySeventhsDawn.Progression
         bool enteringCode, debugOpen, confirmNewJourney;
         string code = "";
         Vector2 scroll;
+        int targetDay=1, targetPeriod;
         GUIStyle labelStyle, titleStyle, buttonStyle, boxStyle;
         void Update()
         {
@@ -58,6 +59,8 @@ namespace DeathBySeventhsDawn.Progression
             }
 
             DebugConsoleOpen = true;
+            targetDay=TimeManager.Instance.Days;
+            targetPeriod=(int)TimeManager.Instance.Period;
             if (unlockedThisSession)
             {
                 debugOpen = true;
@@ -108,6 +111,7 @@ namespace DeathBySeventhsDawn.Progression
             if (code == "1997")
             {
                 unlockedThisSession = true;
+                StoryDebugActions.SetEnabled(true);
                 enteringCode = false;
                 debugOpen = true;
                 code = "";
@@ -156,7 +160,7 @@ namespace DeathBySeventhsDawn.Progression
 
         void DrawStatus(GameManager game, TimeManager clock)
         {
-            GUILayout.Label(StoryText.Local($"第 {clock.Days} / 7 天  {PeriodName(clock.Period)}   |   轮回次数 {game.LoopCount}", $"Day {clock.Days} / 7  {PeriodName(clock.Period)}   |   Loops {game.LoopCount}"), labelStyle);
+            GUILayout.Label(StoryText.Local($"第 {clock.Days} 天  {PeriodName(clock.Period)}   |   轮回次数 {game.LoopCount}", $"Day {clock.Days}  {PeriodName(clock.Period)}   |   Loops {game.LoopCount}"), labelStyle);
             GUILayout.Label(StoryText.Local($"体力 {game.Vitality:0.#} / 上限 {game.MaxVitality:0.#}", $"Vitality {game.Vitality:0.#} / Maximum {game.MaxVitality:0.#}"), labelStyle);
             GUILayout.Label(StoryText.Local($"知识 {game.Knowledge:0.#}   |   等级 {game.KnowledgeLevel}", $"Knowledge {game.Knowledge:0.#}   |   Level {game.KnowledgeLevel}"), labelStyle);
             GUILayout.Label(StoryText.Local($"变异 {game.Mutation:0.#}   |   理智 {game.Sanity:0.#}（{LayerName(game.Layer)}）", $"Mutation {game.Mutation:0.#}   |   Sanity {game.Sanity:0.#} ({LayerName(game.Layer)})"), labelStyle);
@@ -248,6 +252,34 @@ namespace DeathBySeventhsDawn.Progression
                     GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("本次游戏已解锁全部测试功能 · 按 ~ 或 Esc 关闭"), labelStyle);
                     scroll = GUILayout.BeginScrollView(scroll);
                     DrawStatus(game, clock);
+                    if(PrototypeButtons.LayoutButton(StoryDebugActions.Enabled
+                        ? StoryText.Local("自由调试：已开启 · 点击恢复正常限制", "Free debug: ON · Restore normal gates")
+                        : StoryText.Local("自由调试：已关闭 · 点击跳过强制剧情与限制", "Free debug: OFF · Bypass mandatory story and gates"),buttonStyle))
+                        StoryDebugActions.SetEnabled(!StoryDebugActions.Enabled);
+                    GUILayout.BeginHorizontal();
+                    if(PrototypeButtons.LayoutButton("−",buttonStyle))targetDay=Mathf.Max(1,targetDay-1);
+                    GUILayout.Label("Days "+targetDay,labelStyle);
+                    if(PrototypeButtons.LayoutButton("+",buttonStyle))targetDay++;
+                    if(PrototypeButtons.LayoutButton(PeriodName((TimePeriod)targetPeriod),buttonStyle))targetPeriod=(targetPeriod+1)%4;
+                    if(PrototypeButtons.LayoutButton(StoryText.Local("应用时间","Set time"),buttonStyle)) { StoryDebugActions.SetEnabled(true);clock.DebugSetTime(targetDay,(TimePeriod)targetPeriod); }
+                    GUILayout.EndHorizontal();
+                    var rooms=new[]{"Bedroom","LivingRoom","Bathroom","Balcony","Corridor","Stairwell","Rooftop"};
+                    var roomNames=new[]{"卧室","客厅","卫生间","阳台","楼道","楼梯间","天台"};
+                    for(int i=0;i<rooms.Length;i++)
+                    {
+                        if(i%2==0)GUILayout.BeginHorizontal();
+                        if(PrototypeButtons.LayoutButton(StoryText.Local(roomNames[i],rooms[i]),buttonStyle)) StoryDebugActions.Jump(rooms[i],targetDay,targetPeriod);
+                        if(i%2==1||i==rooms.Length-1)GUILayout.EndHorizontal();
+                    }
+                    bool resolved=game.State.buildingCrisisResolved,seven=game.State.daySevenCrisisResolved;
+                    if(PrototypeButtons.LayoutButton(StoryText.Local("第五天爆楼：", "Day 5 bombing: ")+StoryText.Local(resolved?"已解除（点击还原）":"未解除（点击解除）",resolved?"Prevented (restore)":"Unresolved (prevent)"),buttonStyle))resolved=!resolved;
+                    if(PrototypeButtons.LayoutButton(StoryText.Local("第七天危机：", "Day 7 crisis: ")+StoryText.Local(seven?"已解除（点击还原）":"未解除（点击解除）",seven?"Prevented (restore)":"Unresolved (prevent)"),buttonStyle))seven=!seven;
+                    if(resolved!=game.State.buildingCrisisResolved||seven!=game.State.daySevenCrisisResolved)
+                    {game.State.buildingCrisisResolved=resolved;game.State.daySevenCrisisResolved=seven;ProgressionSave.Write(game.State);}
+                    if(PrototypeButtons.LayoutButton(StoryText.Local("原地等待至次日（不算睡眠）","Wait here until tomorrow (no sleep)"),buttonStyle))
+                    {int day=clock.Days;for(int i=0;i<4&&clock.Days==day;i++)clock.AdvanceTime();}
+                    if(PrototypeButtons.LayoutButton(StoryText.Local("播放第五天爆楼（关闭自由调试后致死）","Play Day 5 explosion (lethal outside free debug)"),buttonStyle)) WorldEndSequence.BeginFatalCrisis(true);
+
                     if (PrototypeButtons.LayoutButton(StoryText.Local("跳过当前强制剧情 · 进入自由探索", "Skip forced story · Free exploration"), buttonStyle))
                         StoryDebugActions.SkipForcedStory();
                     GUILayout.BeginHorizontal();
@@ -290,7 +322,7 @@ namespace DeathBySeventhsDawn.Progression
                     if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("损失 25 体力（归零后轮回）"), buttonStyle))
                         game.Damage(25);
                     if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("死亡并开始下一轮"), buttonStyle))
-                        LoopManager.Instance.RestartLoop();
+                        game.Damage(game.MaxVitality);
                     foreach (KnowledgeTier tier in System.Enum.GetValues(typeof(KnowledgeTier)))
                         if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("获得") + TierName(tier) + DeathBySeventhsDawn.Story.StoryText.UI("知识"), buttonStyle))
                             KnowledgeManager.Instance.Unlock("prototype-" + tier + "-" + System.Guid.NewGuid().ToString("N"), tier);

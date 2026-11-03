@@ -5,6 +5,6 @@ namespace DeathBySeventhsDawn.Story
     [Serializable]
     public sealed class CultText
     {
-        public string sound, note, refusal, itemTitle, itemBody; public string[] dayOne, door;
+        public string sound, note, refusal, lateRefusal, itemTitle, itemBody; public string[] dayOne, door;
     }
 }

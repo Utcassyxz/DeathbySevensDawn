@@ -11,7 +11,7 @@ using DeathBySeventhsDawn.World;
 
 public static class BuildBedroomWindowInteraction
 {
-    const string Rooms = "Assets/Scenes/Apartment/";
+    const string Rooms = "Assets/Apartment/";
     [MenuItem("Prototype/Build bedroom window interaction")]
     public static void Run()
     {

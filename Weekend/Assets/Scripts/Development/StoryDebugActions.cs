@@ -7,6 +7,21 @@ namespace DeathBySeventhsDawn.Progression
 {
     public static class StoryDebugActions
     {
+        public static bool Enabled { get; private set; }
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetSession() { Enabled=false; }
+        public static void SetEnabled(bool enabled)
+        {
+            Enabled=enabled;
+            if(enabled) SkipForcedStory();
+        }
+        public static void Jump(string scene, int day, int period)
+        {
+            SetEnabled(true);
+            TimeSystem.TimeManager.Instance.DebugSetTime(day,(TimeSystem.TimePeriod)Mathf.Clamp(period,0,3));
+            World.RoomDoor2D.ClearPendingTravel();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+        }
         public static void SkipForcedStory()
         {
             StoryTransition.Clear();

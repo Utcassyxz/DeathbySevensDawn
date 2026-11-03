@@ -39,8 +39,9 @@ public static class VerifyRevision
                 SessionState.SetString(Key+"PhysicalKeyboards",string.Join("|",keyboards.Select(k=>k.name)));
                 foreach(var keyboard in keyboards)UnityEngine.InputSystem.InputSystem.DisableDevice(keyboard);
                 UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>("SevenDayAcceptanceKeyboardWorld").MakeCurrent();
-                steps = SessionState.GetBool(Key + "OnlyCompanions", false) ? Extensions() : Steps();
+                steps = SessionState.GetBool(Key + "OnlyCompanions", false) ? Extensions() : DeathCycleAcceptance.Run();
                 if(SessionState.GetBool(Key+"OnlySpatial",false)) steps=SpatialApocalypseAcceptance.Run();
+                if(SessionState.GetBool(Key+"OnlyDeathCycle",false)) steps=DeathCycleAcceptance.Run();
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
@@ -57,26 +58,32 @@ public static class VerifyRevision
         };
     }
 
-    [MenuItem("Prototype/Validate spatial layout and first apocalypse")]
+    [MenuItem("Prototype/Validate death cycle and free debug")]
+    public static void RunDeathCycle()
+    { SessionState.SetBool(Key+"OnlyDeathCycle",true); Run(); }
+
+    [MenuItem("Prototype/Legacy contracts/Spatial layout before death-cycle revision")]
     public static void RunSpatial()
     {
         SessionState.SetBool(Key+"OnlySpatial",true); Run();
     }
 
-    [MenuItem("Prototype/Validate companion world and shop")]
+    [MenuItem("Prototype/Legacy contracts/Permanent companion before death-cycle revision")]
     public static void RunCompanions()
     {
         SessionState.SetBool(Key + "OnlyCompanions", true);
         Run();
     }
 
-    [MenuItem("Prototype/Validate revised dream pixels and debug")]
+    [MenuItem("Prototype/Validate current prototype")]
     public static void Run()
     {
         if (EditorApplication.isPlaying)
             throw new Exception("Exit Play mode before validation.");
         // A compiler rejection may prevent EnteredPlayMode/EnteredEditMode; restore that backup before taking a new one.
+        bool deathMode=SessionState.GetBool(Key+"OnlyDeathCycle",false);
         if(SessionState.GetBool(Key,false)) Restore();
+        SessionState.SetBool(Key+"OnlyDeathCycle",deathMode);
         RevisionPixelImport.Apply();
         CompanionArtImport.Apply();
         foreach (var suffix in new[]
@@ -116,7 +123,7 @@ public static class VerifyRevision
         PlayerPrefs.SetInt("Story.Language", 0);
         SessionState.SetBool(DayOneSupernovaEvent.SuppressionKey, true);
         ProgressionSave.Write(new ProgressionState { dreamSeen = true, morningStage = 3, cultDayOneTalked = true, neighborBarricadeSeen = true });
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/LivingRoom.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/LivingRoom.unity");
         EditorApplication.isPlaying = true;
     }
 
@@ -132,8 +139,8 @@ public static class VerifyRevision
     {
         if (Application.isBatchMode)
             return;
-        Directory.CreateDirectory("../docs/validation/spatial-apocalypse-2026-11-02");
-        ScreenCapture.CaptureScreenshot("../docs/validation/spatial-apocalypse-2026-11-02/" + name + ".png");
+        Directory.CreateDirectory("../docs/validation/death-cycle-2026-11-02");
+        ScreenCapture.CaptureScreenshot("../docs/validation/death-cycle-2026-11-02/" + name + ".png");
     }
 
     static void Place(Vector2 p)
@@ -438,6 +445,8 @@ public static class VerifyRevision
             return;
         if (steps == null)
         {
+            if(!EditorApplication.isPlaying && File.Exists("../death-cycle-request.txt"))
+            { File.Delete("../death-cycle-request.txt"); RunDeathCycle(); return; }
             if(!EditorApplication.isPlaying && File.Exists("../spatial-request.txt"))
             { File.Delete("../spatial-request.txt"); RunSpatial(); return; }
             if (!EditorApplication.isPlaying && File.Exists("../companions-request.txt"))
@@ -480,6 +489,7 @@ public static class VerifyRevision
         string scope = SessionState.GetBool(Key + "OnlyCompanions", false) ? "focused companion and world checks; seated writing, curtain alignment, seven-day pixels, fish understanding, Bubble reveal and shop, SAN exchange, v1/v2/v3/v4 save compatibility; walked doors, terminal stair floors, permanent seated fish and repeat chats, automatic Bubble, stove textures. Original journey, album and settings restored." : "three distinct stamps and hammer/wake handoff; quiet ordinary nights; observation-night Bubble and later-loop market; pre-face foil/late failure; small pixel atlas and dialogue portraits; shared melodic ending variations; deduction reward; save-safe debug previews; coarse balcony with seven-day exterior; dedicated two-flight stairwell and floor travel; second-night carry-only scope; extended shared-harmony orchestrations; seated writing; night curtains; seven radiation views; fish understanding and investigation; unknown/revealed Bubble; SAN exchange and v4 save migration; physically walked bedroom and bathroom doors; terminal-floor flight removal; persistent seated fish; repeat chat shuffle bag; automatic later-loop Bubble; stove on/off texture swap. Original journey, album and settings restored.";
         if(SessionState.GetBool(Key+"OnlySpatial",false)) scope="focused spatial and first-apocalypse checks; real note collection and knocking, modal EXIT suppression, south stairwell entrance, destruction/reunion/once-only rewind, saved checkpoints and unawakened ending preserved. Original journey, album and settings restored.";
         else scope += " South entrance, wall-side stool and aquarium push, neighbour knocks and first awakened midnight reunion verified.";
+        if(!SessionState.GetBool(Key+"OnlyCompanions",false)&&!SessionState.GetBool(Key+"OnlySpatial",false)) scope="death-only returns, sleep debt and in-place waiting, accelerated per-life fish, right EXIT, consolidated scenes and free debug; original journey/album/settings restored.";
         File.WriteAllText("../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
@@ -496,6 +506,7 @@ public static class VerifyRevision
         SessionState.SetBool(Key, false);
         SessionState.SetBool(Key + "OnlyCompanions", false);
         SessionState.SetBool(Key+"OnlySpatial",false);
+        SessionState.SetBool(Key+"OnlyDeathCycle",false);
         foreach (var device in UnityEngine.InputSystem.InputSystem.devices.ToArray())
             if (device.name.StartsWith("SevenDayAcceptanceKeyboard"))
                 UnityEngine.InputSystem.InputSystem.RemoveDevice(device);
@@ -545,7 +556,7 @@ public static class VerifyRevision
         if (!Application.isBatchMode)
             EditorApplication.delayCall += () =>
             {
-                var scene = SessionState.GetString(Key + "scene", "");
+                var scene = SessionState.GetString(Key + "scene", "").Replace("Assets/Scenes/Apartment/","Assets/Apartment/");
                 if (!string.IsNullOrEmpty(scene))
                     EditorSceneManager.OpenScene(scene);
             };

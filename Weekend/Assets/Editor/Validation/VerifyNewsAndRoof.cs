@@ -61,7 +61,7 @@ public static class VerifyNewsAndRoof
         PlayerPrefs.SetInt("Story.Language", 0);
         SessionState.SetBool(DayOneSupernovaEvent.SuppressionKey, true);
         ProgressionSave.Write(new ProgressionState { dreamSeen = true, morningStage = 3, cultDayOneTalked = true, neighborBarricadeSeen = true });
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/LivingRoom.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/LivingRoom.unity");
         EditorApplication.isPlaying = true;
     }
     static void Check(bool condition, string message)

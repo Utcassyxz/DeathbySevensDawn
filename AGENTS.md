@@ -27,3 +27,5 @@
 2026-11-02 本轮走廊与晨间演出规则见 docs/CORRIDOR_MORNING_2026-11-02.md：EXIT改为北墙中门并同步实体墙面碰撞；后续轮回第一天小鱼叫醒雨果并搬走真实餐凳，MorningRoutine编排、AquariumEntity管理模型和家具。新增DoorMorningAcceptance纳入VerifyRevision。
 
 2026-11-02 后续空间/末日规则见 docs/SPATIAL_APOCALYPSE_2026-11-02.md：楼梯间入口位于下侧；小鱼推缸后占原位；世界标签不得穿过模态界面；首次已觉醒午夜必须读完泡泡重逢再回档，未觉醒终局保留。
+
+2026-11-02 最新修订以 docs/DEATH_CYCLE_2026-11-02.md 为准：所有运行场景集中 Weekend/Assets/Apartment；死亡才回档，存活可超过七天；第五天爆楼与第七天危机独立；缺觉超过两天每个午夜扣5SAN；第三夜小鱼变人、第四早叫醒、死亡一起重置，禁止恢复永久人形。Save v5 兼容旧版。当前验收 Prototype/Validate current prototype。

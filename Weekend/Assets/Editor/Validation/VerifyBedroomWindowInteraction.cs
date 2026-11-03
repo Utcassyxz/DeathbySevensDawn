@@ -27,7 +27,7 @@ public static class VerifyBedroomWindowInteraction
         next = 0;
         deadline = EditorApplication.timeSinceStartup + 60;
         SessionState.SetBool(Active, true);
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Bedroom.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/Bedroom.unity");
         EditorApplication.isPlaying = true;
     }
     static void Check(bool condition, string message)

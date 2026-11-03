@@ -32,7 +32,7 @@ public static class VerifyFirstLoopPrologue
         foreach (string suffix in new[] { "", ".bak", ".tmp" })
             SessionState.SetString(KeyName + suffix, File.Exists(ProgressionSave.PathName + suffix) ? Convert.ToBase64String(File.ReadAllBytes(ProgressionSave.PathName + suffix)) : "");
         ProgressionSave.Write(new ProgressionState { dreamSeen = true, journalUnlocked = true, investigationUnlocked = true, tutorialComplete = true });
-        EditorSceneManager.OpenScene("Assets/Scenes/Apartment/Corridor.unity");
+        EditorSceneManager.OpenScene("Assets/Apartment/Corridor.unity");
         phase = 0;
         route = 0;
         arriving = false;

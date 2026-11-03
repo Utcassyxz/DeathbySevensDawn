@@ -52,7 +52,12 @@ namespace DeathBySeventhsDawn.Progression
             DeductionCount++;
         }
 
-        AudioSource endingVoice;
+        AudioSource endingVoice, buildingBlast;
+        public void PlayBuildingBlast()
+        {
+            if(buildingBlast==null||buildingBlast.clip==null)return;
+            buildingBlast.volume=.50f;buildingBlast.PlayOneShot(buildingBlast.clip);
+        }
         float endingDelay = -1, endingAge = -1;
         public bool EndingScreamPlaying => endingVoice != null && endingVoice.isPlaying;
 
@@ -76,6 +81,7 @@ namespace DeathBySeventhsDawn.Progression
             title = Source("TitleOrbit", true);
             scream = Source("OpeningScream", false);
             endingVoice = Source("EndingCurtain", false);
+            buildingBlast = Source("BuildingBlast", false);
             dreamKick = Source("DreamKick", false);
             dreamHammer = Source("WoodHammer", false);
             dreamHammer.volume = .65f;

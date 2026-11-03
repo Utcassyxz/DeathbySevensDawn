@@ -1,4 +1,4 @@
-﻿# 核心代码边界
+# 核心代码边界
 
 写作协作者（包括 DeepSeek）进行台词任务时，只修改 StoryText.json 与 StoryTextEnglish.json 的文本值；不要随手“修复”下面的控制器。明确的工程任务可以修改，但需同步验证。
 
@@ -37,3 +37,5 @@
 2026-11-02 晨间补充：MorningRoutine独占已解锁关系的第一天叫醒与搬凳演出；AquariumEntity独占临时鱼模型与实际家具借用，fishMorningLoop/fishStoolBorrowed防止重复播放和复制凳子。CorridorDetail负责北墙门面及402开口的碰撞；RooftopAccess仍独占北墙EXIT与楼梯间往返。详见CORRIDOR_MORNING_2026-11-02.md。
 
 WorldEndSequence唯一负责首次已觉醒午夜毁灭/泡泡重逢、pending存档检查点和正式回档，TimeManager只请求该段，不得直接抢先SeventhDayEnded。最新南侧楼梯门、椅子占原缸位置和模态EXIT规则见SPATIAL_APOCALYPSE_2026-11-02.md。
+
+2026-11-02 最新死亡规则覆盖前文：TimeManager不再满七天回档；LoopManager仅订阅Died且拒绝健康回档；WorldEndSequence独占第五天爆楼／第七天危机与首次泡泡重逢；AquariumEntity身体和关系仅本轮，MorningRoutine第四天晨间叫醒。所有运行场景在Assets/Apartment。StoryDebugActions.Enabled是明确会话自由模式，不持久化；调试预览不制造死亡或结局。Save v5迁移不再保留永久小鱼形态。当前验收DeathCycleAcceptance，详见DEATH_CYCLE_2026-11-02.md。

@@ -107,6 +107,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void Update()
         {
+            if (StoryDebugActions.Enabled) return;
             if (ProgressionHUD.DebugConsoleOpen)
                 return;
             if (!FirstLoop)

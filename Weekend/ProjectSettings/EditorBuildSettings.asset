@@ -6,28 +6,28 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Apartment/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/Apartment/Bedroom.unity
+    path: Assets/Apartment/Bedroom.unity
     guid: e8edd89c4603c1343a5b441314b39c03
   - enabled: 1
-    path: Assets/Scenes/Apartment/LivingRoom.unity
+    path: Assets/Apartment/LivingRoom.unity
     guid: 3f0878e1d8d6f3e4e82855bd9a3daa2f
   - enabled: 1
-    path: Assets/Scenes/Apartment/Bathroom.unity
+    path: Assets/Apartment/Bathroom.unity
     guid: 572275c4d09a9d746b681bd0d2cae1cb
   - enabled: 1
-    path: Assets/Scenes/Apartment/Balcony.unity
+    path: Assets/Apartment/Balcony.unity
     guid: c2d054f8084ce88bf78e5767a8ef1334
   - enabled: 1
-    path: Assets/Scenes/Apartment/Corridor.unity
+    path: Assets/Apartment/Corridor.unity
     guid: 5c11b8d1e74ad586f7f5e961e2427335
   - enabled: 1
-    path: Assets/Scenes/Apartment/Rooftop.unity
+    path: Assets/Apartment/Rooftop.unity
     guid: e311f329aa11f52429643f4fcb3c4887
   - enabled: 1
-    path: Assets/Scenes/Apartment/Stairwell.unity
+    path: Assets/Apartment/Stairwell.unity
     guid: a21f60779624c874a8abcc1d43a390e2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

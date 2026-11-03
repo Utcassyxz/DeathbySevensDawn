@@ -11,7 +11,7 @@ using DeathBySeventhsDawn.Interaction;
 [InitializeOnLoad]
 public static class BuildStairwell
 {
-    const string ScenePath = "Assets/Scenes/Apartment/Stairwell.unity";
+    const string ScenePath = "Assets/Apartment/Stairwell.unity";
     const string ArtPath = "Assets/Art/Apartment/Stairwell";
     static Sprite square;
     static Material material;
@@ -66,7 +66,7 @@ public static class BuildStairwell
             }
 
             material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Prototype/PrototypeUnlit.mat");
-            EditorSceneManager.OpenScene("Assets/Scenes/Apartment/LivingRoom.unity");
+            EditorSceneManager.OpenScene("Assets/Apartment/LivingRoom.unity");
             var player = UnityEngine.Object.Instantiate(GameObject.FindWithTag("Player"));
             var camera = UnityEngine.Object.Instantiate(Camera.main.gameObject);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);

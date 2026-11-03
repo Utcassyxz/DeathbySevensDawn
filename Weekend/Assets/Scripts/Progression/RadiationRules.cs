@@ -8,7 +8,8 @@ namespace DeathBySeventhsDawn.Progression
         Speaking,
         GrowingLimbs,
         Imitating,
-        Replacement
+        Replacement,
+        Human
     }
 
     public static class RadiationRules
@@ -18,13 +19,7 @@ namespace DeathBySeventhsDawn.Progression
         {
             if (protectedTank || day < 3)
                 return FishStage.Ordinary;
-            if (day == 3)
-                return FishStage.HumanFace;
-            if (day == 4)
-                return FishStage.Speaking;
-            if (day == 5)
-                return FishStage.GrowingLimbs;
-            return day == 6 ? FishStage.Imitating : FishStage.Replacement;
+            return day == 3 ? FishStage.Speaking : FishStage.Human;
         }
     }
 }

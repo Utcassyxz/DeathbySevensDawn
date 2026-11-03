@@ -321,14 +321,15 @@
     "speakerDay3": "Hugo",
     "speakerDay4": "Fish",
     "speakerDay6": "Fish",
-    "speakerDay7": "Hugo’s double",
+    "speakerDay7": "Fish",
     "day3Pages": [
       "She turns sideways. The gold scales stretch around a pale cheek.\nTwo eyes open on her flank. The fish’s own eyes are still there.",
       "Hugo taps the glass. The human eyes follow his finger.\nHer lips stay closed.\n“…What happened to you?”"
     ],
     "day4Pages": [
-      "“You haven’t talked about the interviews today.”\nHugo freezes, his hand on the food jar.\n“…Was that you?”",
-      "“Yes. You used to sit here, too.”\n“You heard all of that?”\n“Not all. You kept going quiet.”"
+      "Hugo: …Was that you calling me?\nFish: Too quiet? I practised all night.",
+      "Hugo: Since when can you talk?\nFish: I don’t know. Yesterday you said you wouldn’t be able to eat without a job.\nHugo: I was angry.",
+      "Fish: What if someone went instead? Work, being shouted at… You wouldn’t have to feel so bad.\nHugo: Wait. That’s not what I meant."
     ],
     "day7Pages": [
       "She has his face now. The hair, the sleeves, even the way she stands.",
@@ -336,10 +337,13 @@
       "“I listened.”\nShe smiles with Hugo’s mouth.\n“I remember everything you told me.”"
     ],
     "day5Pages": [
-      "A small hand rests against the glass.\n“If I went out instead, would things be easier?”\n“To do what?”\n“The things you don’t want to do.”"
+      "Hugo: How did you get out?\nFish: The water got too small.",
+      "She hides her wet hands behind her back.\nFish: I didn’t break anything. The tank was heavy.",
+      "Hugo: You don’t have to copy me. Just ask.\nFish: Then… are you coming back?"
     ],
     "day6Pages": [
-      "“I tried saying ‘I’m fine.’”\n“Did it sound right?”\nHugo says nothing. She used his voice."
+      "Fish: He’s moving things next door. Heavy things. Dragging them.\nHugo: Since when?\nFish: After you fell asleep. Then he knocked on the pipes.",
+      "Fish: He keeps saying, if it’s clean it won’t change.\nHugo: …He’s not fixing anything."
     ],
     "question": "Hugo asks: have you been reading my book?",
     "answerGap": "“With pages torn out like that, do I need to?”\nShe withdraws her hand.",
@@ -400,9 +404,10 @@
       "Something rustles behind the boards. A little triangle folded from foil squeezes through the crack.\n“Don’t unfold it. You can put it in water.”",
       "The eye stays on Hugo.\n“Take it. Get back inside.”\nThe triangle drops onto the sill."
     ],
-    "refusal": "Someone inhales behind the door. Then silence.\nHugo waits. A complete silence. No contribution required.",
+    "refusal": "Someone holds their breath behind the door.\nA moment later, something heavy scrapes across the floor inside.",
     "itemTitle": "Folded foil triangle",
-    "itemBody": "Several folds of foil. Hugo squeezes it. Something hard inside.\nThe neighbor said not to unwrap it. So far, a manageable instruction."
+    "itemBody": "Several folds of foil. Hugo squeezes it. Something hard inside.\nThe neighbor said not to unwrap it. So far, a manageable instruction.",
+    "lateRefusal": "Through the boards, he seems to be checking with someone.\n“This building is mine… Yes, all of it.”\n“Anything alive has to go. Nothing alive, nothing to change.”\nWhen Hugo knocks again, the room falls silent."
   },
   "morning": {
     "continueDream": "Enter  Continue",
@@ -426,33 +431,31 @@
     "fridgeEmpty": "Nothing else. Close it.",
     "sofaFree": "Just a minute.",
     "fishMorningPages": [
-      "Wake up, Hugo. I am hungry.",
-      "…You were living in water yesterday.",
-      "Yesterday does not count. This is new hunger.",
-      "Hugo sits up. His alarm clock has been replaced by someone demanding breakfast.",
-      "She leans against the tank, inching it toward the corner.\nThe space it leaves is just wide enough for a stool.",
-      "She drags a stool away from the table. Its legs scrape the floor. At least something in the apartment is fully awake.",
-      "I will wait by the tank. Do not toast the bread too hard. I have not decided how many teeth to grow."
+      "Hugo.\n…Hugo, wake up.",
+      "Something cold touches his hand.\nThe voice is very close.",
+      "Hugo: …Who are you?\nFish: You really don’t recognise me?",
+      "Hugo: The tank?\nFish: Still there. I can’t get back in.",
+      "She pushes the tank against the wall, an inch at a time.\nThen she drags over a dining stool.",
+      "Fish: Can I sit here?\nHugo: …Sit down. Mind the water."
     ],
     "fishMorningSpeakers": [
       "Fish",
-      "Hugo",
-      "Fish",
       "Narrator",
-      "Fish",
+      "Hugo · Fish",
+      "Hugo · Fish",
       "Narrator",
-      "Fish"
+      "Fish · Hugo"
     ]
   },
   "worldEnd": {
     "title": "Hugo, Who Did Nothing",
     "lines": [
-      "The seventh night. Hugo draws the curtains.",
-      "He stopped asking what was up there. Tomorrow would do. Tomorrow was always free.",
-      "Outside, the streetlights go out one block at a time. Then the ground begins to burn.",
-      "There is no second morning. Not for Hugo. Not for anyone."
+      "After the bang, the room comes down on him.",
+      "The living-room lights go out.",
+      "Hugo never reaches the door.",
+      "This time, nobody wakes him."
     ],
-    "summary": "Ending 01 · Hugo, Who Did Nothing\nSeven days passed. He never learned how to return.",
+    "summary": "Ending 01 · Hugo, Who Did Nothing\nHe never received the gift. He never woke again.",
     "confirmWarning": "Restarting clears this journey, including collected knowledge.",
     "restart": "Begin again",
     "confirm": "Confirm restart",
@@ -836,9 +839,9 @@
     ],
     "apocalypseReunion": [
       "“I’m so glad to see you again, Hugo.”\n“Did you get a good look this time?”",
-      "“Where is everyone?”\nHugo cannot hear himself breathing.\nBubble waits for him to finish the question.",
-      "“Finished.”\n“But you’re still here. See? I didn’t lose you.”",
-      "“You kept me alive so I could watch that?”\n“Alive?”\nBubble repeats the word, as though learning it.",
+      "Hugo opens his mouth. There is still ash in his throat.\n“The others… in the building?”",
+      "“Still inside.”\nBubble bends down, inspecting a broken toy.\n“But you’re here. See? I didn’t lose you.”",
+      "“You knew he would blow up the building?”\n“Blow up?” Bubble repeats softly.\n“Oh. That’s what you call it.”",
       "“I didn’t give you a little more time.”\n“I gave you another turn. They only had this one. You can go back.”",
       "“Back where?”\n“The first day. What you remember stays.”\n“Your body will be a little older. But there’s still so much of it you can use.”",
       "“And if I still can’t save them?”\n“Then try again.”\n“You’ll understand a little more. It’s all right if it hurts. You already know when it’s coming.”",

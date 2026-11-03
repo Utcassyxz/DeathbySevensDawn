@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 #endif
 namespace DeathBySeventhsDawn.Interaction
 {
-    // 客厅鱼缸的逐日异变；第三天只有人脸，第四天才开口，第七天成为替身。
+    // 本轮身体：第三天开口，第三夜长成人形，第四早叫醒雨果；死亡后全部重置。
     public sealed class AquariumEntity : MonoBehaviour
     {
         public const string NpcCode = "001";
@@ -27,20 +27,17 @@ namespace DeathBySeventhsDawn.Interaction
 
         GameObject tank, formRoot, player;
         GameObject morningFish, travellingChair, borrowedChairSource;
-        Vector2 chairStart, tankHome, bookcaseHome;
-        GameObject bookcase;
+        Vector2 chairStart, tankHome;
         public Vector2 ShiftedTankPosition => tankHome + Vector2.right * 1.95f;
         void MoveFurniture(float progress)
         {
             if(tank == null) return;
             float t=Mathf.SmoothStep(0,1,Mathf.Clamp01(progress));
-            // The authored bookcase is below the bathroom approach, leaving this wall corner clear.
-            if(bookcase != null) bookcase.transform.position=Vector2.Lerp(bookcaseHome,new Vector2(bookcaseHome.x,-2.2f),Mathf.Clamp01(t*2));
             tank.transform.position=Vector2.Lerp(tankHome,ShiftedTankPosition,t);
             Physics2D.SyncTransforms();
         }
         public Vector2 CompanionSeatPosition => tank == null ? Vector2.zero : tankHome;
-        public bool MorningWelcomePending => GameManager.Instance != null && CompanionPresent && TimeManager.Instance != null && TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Morning && GameManager.Instance.State.fishMorningLoop != GameManager.Instance.LoopCount;
+        public bool MorningWelcomePending => !StoryDebugActions.Enabled && GameManager.Instance != null && CompanionPresent && TimeManager.Instance != null && TimeManager.Instance.Days == 4 && TimeManager.Instance.Period == TimePeriod.Morning && GameManager.Instance.State.fishMorningLoop != GameManager.Instance.LoopCount;
         // MorningRoutine owns the timeline; this owner alone creates/moves the fish and borrowed furniture.
         public void ShowMorningVisitor(Vector2 position)
         {
@@ -150,7 +147,7 @@ namespace DeathBySeventhsDawn.Interaction
         bool talking, nearby, choosing, choiceFinished;
         public bool ChoicesVisible => talking && choosing;
         public bool CompanionReady => GameManager.Instance.State.fishAlly;
-        public bool CompanionPresent => GameManager.Instance.State.fishCompanionUnlocked && GameManager.Instance.LoopCount > GameManager.Instance.State.fishCompanionUnlockLoop;
+        public bool CompanionPresent => TimeManager.Instance != null && TimeManager.Instance.Days >= 4 && !GameManager.Instance.AquariumSealed;
         public bool IsAmbientConversation => talking && ambientConversation;
         public string CurrentConversation => pages == null ? "" : string.Join("\n", pages);
         bool ambientConversation, storyConversation;
@@ -202,7 +199,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         public bool ChooseUnderstanding(bool explainTrueNeed)
         {
-            if (!talking || !choosing || visualDay < 4 || (CurrentTopic == 1 && visualDay < 5))
+            if (!talking || !choosing || visualDay < 3 || (CurrentTopic == 1 && visualDay < 4))
                 return false;
             int topic = CurrentTopic;
             var state = GameManager.Instance.State;
@@ -304,8 +301,6 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             tankHome = tank.transform.position;
-            bookcase = GameObject.Find("Bookcase");
-            if(bookcase != null) bookcaseHome = bookcase.transform.position;
             player = GameObject.FindWithTag("Player");
             RefreshForm();
         }
@@ -645,7 +640,7 @@ namespace DeathBySeventhsDawn.Interaction
                 StoryText.Local("……今天又没回音。投出去那么多份简历，连封拒信都没有。\n你倒是好，饿了还有人喂。", "…Still nothing. All those applications. Not even a rejection.\nAt least someone feeds you.")
             }
 
-            : visualDay >= 7 ? aq?.day7Pages : visualDay >= 6 ? aq?.day6Pages : visualDay >= 5 ? aq?.day5Pages : visualDay >= 4 ? aq?.day4Pages : aq?.day3Pages;
+            : visualDay >= 5 ? aq?.day6Pages : visualDay >= 4 ? aq?.day5Pages : aq?.day4Pages;
             if (!ambientConversation && CompanionReady && (visualDay >= 5 || CompanionPresent))
             {
                 pages = new[]
@@ -658,7 +653,7 @@ namespace DeathBySeventhsDawn.Interaction
 
             if (ambientConversation)
             {
-                pages = new[] { PickChat(visualDay < 4 && !CompanionPresent) };
+                pages = new[] { PickChat(visualDay < 3 && !CompanionPresent) };
                 choiceFinished = true;
             }
             else if (visualDay >= 3 || CompanionPresent)
@@ -717,7 +712,7 @@ namespace DeathBySeventhsDawn.Interaction
             page++;
             if (page >= pages.Length)
             {
-                if (storyConversation && !choiceFinished && !CompanionReady && visualDay >= 4 && (CurrentTopic == 0 || visualDay >= 5))
+                if (storyConversation && !choiceFinished && !CompanionReady && visualDay >= 3 && (CurrentTopic == 0 || visualDay >= 4))
                 {
                     page = pages.Length - 1;
                     choosing = true;

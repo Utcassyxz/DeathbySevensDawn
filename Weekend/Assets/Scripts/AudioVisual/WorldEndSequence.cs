@@ -1,4 +1,4 @@
-// 职责：第七天未见古神的单次火焰/异变演出，结束后交给结局页面。
+// CORE: 致死危机演出、首次死亡后的泡泡重逢；正式死亡是唯一回档入口。
 using UnityEngine;
 using DeathBySeventhsDawn.Core;
 using DeathBySeventhsDawn.Story;
@@ -17,7 +17,7 @@ namespace DeathBySeventhsDawn.Progression
         public static bool FirstCycleActive => Instance != null && Instance.playing && Instance.firstCycle;
         public static bool InReunion => FirstCycleActive && Instance.reunion;
         public int ReunionPage => reunionPage;
-        bool playing, firstCycle, reunion;
+        bool playing, firstCycle, reunion, fatal, building, suppressTerminalEffect, blastPlayed;
         int reunionPage;
         float lastAdvance;
         Texture2D earth, portrait;
@@ -27,19 +27,42 @@ namespace DeathBySeventhsDawn.Progression
             var game=GameManager.Instance;var clock=TimeManager.Instance;
             if(Instance==null||game==null||clock==null) return false;
             if(IsPresenting) return true;
-            if(game.HasEnded||!game.HasLoopAbility||game.LoopCount!=0||game.State.firstApocalypseExplained||clock.Days!=7||clock.Period!=TimePeriod.Night) return false;
-            game.State.firstApocalypsePending=true;
-            ProgressionSave.Write(game.State);
+            if(game.HasEnded || clock.Days!=7 || clock.Period!=TimePeriod.Night || game.State.daySevenCrisisResolved) return false;
+            return BeginFatalCrisis(false);
+        }
+        public static bool BeginFatalCrisis(bool buildingExplosion)
+        {
+            if(Instance==null||GameManager.Instance.HasEnded)return false;
+            if(IsPresenting)return true;
+            var state=GameManager.Instance.State;
+            if(!StoryDebugActions.Enabled)
+            {
+                state.firstApocalypsePending=true;
+                state.deathWasBuilding=buildingExplosion;
+                ProgressionSave.Write(state);
+            }
             Instance.BeginFirstCycle();
+            Instance.fatal=true;Instance.building=buildingExplosion;
             return true;
+        }
+        void CompleteFatalDeath()
+        {
+            var game=GameManager.Instance;
+            game.State.firstApocalypsePending=false;
+            ProgressionSave.Write(game.State);
+            ResetSequence();
+            suppressTerminalEffect=true;
+            if(!StoryDebugActions.Enabled) game.Damage(game.MaxVitality);
+            suppressTerminalEffect=false;
         }
         void Start()
         {
-            if(GameManager.Instance.State.firstApocalypsePending && GameManager.Instance.HasLoopAbility && !GameManager.Instance.HasEnded) BeginFirstCycle();
+            if(GameManager.Instance.State.firstApocalypsePending && !GameManager.Instance.HasEnded)
+            { BeginFirstCycle();fatal=true;building=GameManager.Instance.State.deathWasBuilding; }
         }
         void BeginFirstCycle()
         {
-            playing=firstCycle=true;reunion=false;reunionPage=0;elapsed=0;
+            playing=firstCycle=true;reunion=false;reunionPage=0;elapsed=0;blastPlayed=false;
             reunionText.Reset();
             ApartmentAudio.Instance?.PlayEndingScream();
             var body=GameObject.FindWithTag("Player")?.GetComponent<Rigidbody2D>();
@@ -58,9 +81,8 @@ namespace DeathBySeventhsDawn.Progression
             var state=GameManager.Instance.State;
             state.firstApocalypseExplained=true;state.firstApocalypsePending=false;
             ProgressionSave.Write(state);
-            ResetSequence();
             StoryTransition.Cover(.8f);
-            LoopManager.Instance.RestartLoop();
+            if(fatal) CompleteFatalDeath(); else GameManager.Instance.Damage(GameManager.Instance.MaxVitality);
         }
         float elapsed;
         GUIStyle caption;
@@ -131,17 +153,22 @@ namespace DeathBySeventhsDawn.Progression
 
         void OnEnding(string id)
         {
-            if (id != "world-end")
+            if (suppressTerminalEffect || id != "world-end")
                 return;
             elapsed = 0;
             firstCycle=reunion=false;
             playing = true;
         }
 
-        public void DebugSkip() { if(FirstCycleActive) CompleteReunion(); else ResetSequence(); }
+        public void DebugSkip()
+        {
+            if(StoryDebugActions.Enabled)
+            { GameManager.Instance.State.firstApocalypsePending=false;ResetSequence();return; }
+            if(FirstCycleActive) CompleteReunion(); else ResetSequence();
+        }
         void ResetSequence()
         {
-            playing = firstCycle = reunion = false;
+            playing = firstCycle = reunion = fatal = building = false;
             reunionPage=0;reunionText.Reset();
             elapsed = 0;
         }
@@ -158,9 +185,16 @@ namespace DeathBySeventhsDawn.Progression
                     return;
                 }
                 elapsed += Time.unscaledDeltaTime;
+                if(building && !blastPlayed && elapsed>=Duration*.22f)
+                { blastPlayed=true;ApartmentAudio.Instance?.PlayBuildingBlast(); }
                 if (elapsed >= Duration)
                 {
-                    if(firstCycle){reunion=true;lastAdvance=Time.unscaledTime;reunionText.Reset();}
+                    if(firstCycle)
+                    {
+                        var game=GameManager.Instance;
+                        if(fatal && (StoryDebugActions.Enabled || !game.HasLoopAbility || game.State.firstApocalypseExplained)) CompleteFatalDeath();
+                        else {reunion=true;lastAdvance=Time.unscaledTime;reunionText.Reset();}
+                    }
                     else playing=false;
                 }
             }
@@ -246,6 +280,11 @@ namespace DeathBySeventhsDawn.Progression
         {
             Fill(new Rect(0,0,w,h),new Color(.006f,.009f,.018f));
             for(int i=0;i<100;i++) Fill(new Rect((i*97%311)/311f*w,(i*61%193)/193f*h,2,2),new Color(.18f,.22f,.30f));
+            if(!reunion && building)
+            {
+                DrawBuildingExplosion(w,h,t);
+                return;
+            }
             if(!reunion)
             {
                 var planet=new Rect(w*.5f-h*.26f,h*.16f,h*.52f,h*.52f);
@@ -281,6 +320,47 @@ namespace DeathBySeventhsDawn.Progression
             var lines=StoryText.Current.expansion.apocalypseReunion;
             reunionText.Set(lines[Mathf.Clamp(reunionPage,0,lines.Length-1)],text,box.width-50,box.height-86);
             NarrativeUI.Dialogue(box,StoryText.Current.expansion.apocalypseSpeakers[Mathf.Clamp(reunionPage,0,lines.Length-1)],reunionText.Current,reunionText.Counter+StoryText.Local("Enter 继续","Enter Continue"),text);
+        }
+
+        void DrawBuildingExplosion(float w,float h,float t)
+        {
+            float unit=Mathf.Max(2,Mathf.Floor(h/180));
+            float shake=t>.28f&&t<.65f?Mathf.Sin(t*210)*unit*(1-t)*3:0;
+            var wall=new Color(.17f,.20f,.22f);
+            for(int floor=0;floor<5;floor++)
+            {
+                float fall=Mathf.Pow(Mathf.Clamp01((t-.35f-floor*.025f)*2),2)*h*.3f;
+                float y=h*.68f-floor*h*.10f+fall;
+                Fill(new Rect(w*.30f+shake,y,w*.40f,h*.10f-unit),wall);
+                Fill(new Rect(w*.30f+shake,y,w*.018f,h*.10f-unit),new Color(.10f,.13f,.15f));
+                Fill(new Rect(w*.30f+shake,y,w*.40f,unit*2),new Color(.24f,.26f,.27f));
+                for(int brick=0;brick<16;brick++)
+                    Fill(new Rect(w*(.30f+brick*.025f)+shake,y+h*.075f,w*.020f,unit),new Color(.14f,.17f,.19f));
+                for(int window=0;window<4;window++)
+                    Fill(new Rect(w*(.33f+window*.095f)+shake,y+h*.022f,w*.045f,h*.042f),new Color(.53f,.43f,.24f));
+            }
+            float blast=Mathf.Clamp01((t-.22f)*3);
+            if(t<.45f)Fill(new Rect(w*.285f+shake,h*.675f-h*.40f,w*.43f,unit*3),new Color(.11f,.14f,.16f));
+            for(int i=0;i<22;i++)
+            {
+                float x=w*(.28f+(i*37%97)/97f*.44f)+shake;
+                float rise=h*(.10f+.29f*Mathf.PerlinNoise(i,0))*blast;
+                GUI.color=new Color(.93f,.45f,.15f,blast);
+                GUI.DrawTexture(new Rect(x,h*.79f-rise,w*.055f,rise),flame);
+                Fill(new Rect(x+(i%2==0?-1:1)*t*t*w*.10f,h*.63f-t*h*(.12f+i%5*.04f),unit*(2+i%3),unit*2),new Color(.24f,.23f,.22f,blast));
+            }
+            for(int i=0;i<36;i++)
+            {
+                float drift=Mathf.Clamp01((t-.26f)*2);
+                float x=w*(.28f+(i*17%101)/101f*.44f)+(i%2==0?-1:1)*drift*w*.12f;
+                float y=h*.69f-drift*h*(.18f+i%7*.035f);
+                float size=unit*(4+i%5)*(.3f+drift*3);
+                Fill(new Rect(x,y,size,size),new Color(.16f,.15f,.14f,blast*.36f));
+            }
+            Fill(new Rect(0,0,w,h),new Color(0,0,0,Mathf.SmoothStep(0,1,Mathf.Clamp01((t-.68f)/.32f))));
+            var style=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=Mathf.RoundToInt(h/35),alignment=TextAnchor.MiddleCenter,wordWrap=true};
+            GUI.color=NarrativeUI.Ink;
+            GUI.Label(new Rect(w*.15f,h*.82f,w*.70f,h*.13f),t<.3f?StoryText.Local("墙里传来一声闷响。","A dull thud inside the walls."):t<.7f?StoryText.Local("地板先抬了起来。然后，整栋楼向下坠去。","The floor lifted first. Then the whole building fell."):StoryText.Local("雨果再也没能走出这栋楼。","Hugo never made it out."),style);
         }
 
         static void Limb(Vector2 start, Vector2 end, float width, Color color)

@@ -21,7 +21,7 @@ namespace DeathBySeventhsDawn.Interaction
         public bool WorldLabelsVisible => !open && !StoryJournal.WorldBlocked && !ProgressionHUD.DebugConsoleOpen;
         public bool IsRevelation => open && revelation;
 
-        public static readonly Vector2 StairsFour = new Vector2(0f, .58f);
+        public static readonly Vector2 StairsFour = new Vector2(6.05f, .10f);
         public static readonly Vector2 StairsFive = new Vector2(-4.8f, -2.1f);
         public static readonly Vector2 TelescopeSpot = new Vector2(3.4f, 1.25f);
         ProgressionState State => GameManager.Instance.State;
@@ -111,6 +111,12 @@ namespace DeathBySeventhsDawn.Interaction
                 Part(root.transform, "EXIT sign plate", new Vector2(0, 1.91f), new Vector2(.82f, .19f), new Color(.10f, .24f, .18f), 8);
             }
 
+            var exitDoor=GameObject.Find("EXIT stairwell door");
+            if(scene.name=="Corridor" && exitDoor!=null)
+            {
+                exitDoor.transform.position=new Vector3(6.67f,-1.30f,0);
+                exitDoor.transform.localScale=new Vector3(.30f,1,1);
+            }
             RefreshFloorAppearance();
             if (scene.name == "Rooftop" && State.telescopeOnRoof)
                 BuildScope();
@@ -188,11 +194,13 @@ namespace DeathBySeventhsDawn.Interaction
             if (Near(LandingDoor, .95f))
             {
                 if (CurrentFloor == 4)
-                    Travel("Corridor", StairsFour + Vector2.down * .42f);
+                    Travel("Corridor", StairsFour + Vector2.left * .42f);
                 else if (CurrentFloor == 5)
                     Travel("Rooftop", StairsFive + Vector2.right * 1.1f);
                 else
-                    Show(StoryText.Local("这层的防火门锁着。", "The fire door on this floor is locked."), false);
+                    Show(CurrentFloor==1 && TimeManager.Instance.Days>=2
+                        ? StoryText.Local("木板横钉在大门内侧。门缝也堵死了。\n外面一点声音都传不进来。", "Boards are nailed across the inside of the front door. Even the gaps are plugged.\nNot a sound gets through.")
+                        : StoryText.Local("这层的防火门锁着。", "The fire door on this floor is locked."), false);
                 return true;
             }
 
@@ -444,7 +452,7 @@ namespace DeathBySeventhsDawn.Interaction
                         WorldPromptUI.Offer("rooftop", prompt, 65);
                     string scene = SceneManager.GetActiveScene().name;
                     if (scene == "Corridor")
-                        Sign(new Vector2(0, 1.91f), "EXIT", small, scale, 13);
+                        Sign(new Vector2(6.52f, .87f), "EXIT", small, scale, 13);
                     if (scene == "Stairwell")
                     {
                         Sign(new Vector2(3.88f, 3.18f) * .68f, CurrentFloor.ToString("00"), title, scale, 26);
