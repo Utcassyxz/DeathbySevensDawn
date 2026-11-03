@@ -13,3 +13,5 @@ NARRATIVE_DIRECTION.md 记录文案方向，CONTROLS.md 记录操作。archive �
 最新剧情与世界修订：[七日外景、泡泡商店框架和鱼的理解支线](COMPANION_WORLD_2026-11-01.md)。替代旧版“固定第二夜”与“阳台外景留空”的描述。
 
 2026-11-02 可触达的门、永久鱼同伴、自动泡泡会面、重复闲聊与炉火：见 CONTINUITY_2026-11-02.md。
+
+空间一致性、推缸动画、邻居敲门和首次末日重逢：SPATIAL_APOCALYPSE_2026-11-02.md。

@@ -117,8 +117,9 @@ namespace DeathBySeventhsDawn.Progression
 
         bool Open(TimeManager clock, GameManager game)
         {
-            if (active)
+            if (active || WorldEndSequence.IsPresenting)
                 return true;
+            if(clock.Days == 7 && clock.Period == TimePeriod.Night && WorldEndSequence.TryBeginFirstApocalypse()) return true;
             var text = StoryText.Current.nightDream;
             bool firstContact = !game.HasLoopAbility && game.HasSeenAncientGod &&
                 (game.State.ancientObservationDay == 0 || (game.State.ancientObservationDay == clock.Days && game.State.ancientObservationLoop == game.LoopCount));

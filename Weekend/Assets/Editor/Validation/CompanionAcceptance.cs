@@ -58,8 +58,8 @@ public static class CompanionAcceptance
             Check(t.width == 192 && t.filterMode == FilterMode.Point, "Exterior is coarse pixel art on day " + day);
             if (!Application.isBatchMode)
             {
-                System.IO.Directory.CreateDirectory("../docs/validation/continuity-2026-11-02");
-                System.IO.File.WriteAllBytes("../docs/validation/continuity-2026-11-02/exterior-day" + day + ".png", t.EncodeToPNG());
+                System.IO.Directory.CreateDirectory("../docs/validation/spatial-apocalypse-2026-11-02");
+                System.IO.File.WriteAllBytes("../docs/validation/spatial-apocalypse-2026-11-02/exterior-day" + day + ".png", t.EncodeToPNG());
             }
         }
 

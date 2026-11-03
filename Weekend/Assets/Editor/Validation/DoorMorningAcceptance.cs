@@ -107,11 +107,12 @@ public static class DoorMorningAcceptance
         {
             int page = morning.FishMorningPage;
             yield return page == 4 ? 1.2f : .38f;
-            if (page == 4)
+            if (page == 4 && GameObject.Find("Stool being borrowed") != null)
             {
                 Check(GameObject.Find("Stool being borrowed") != null && GameObject.Find("Dining chair right") == null, "Fish drags the actual dining stool rather than leaving a duplicate behind");
                 VerifyRevision.Capture("fish-borrows-stool");
             }
+            if(page == 4 && GameObject.Find("Stool being borrowed") == null) VerifyRevision.Capture("fish-pushes-tank");
             morning.AdvanceStory();
             yield return .12f;
         }
@@ -122,7 +123,7 @@ public static class DoorMorningAcceptance
         Check(saved.fishStoolBorrowed && saved.fishMorningLoop == GameManager.Instance.LoopCount, "Welcome and furniture ownership survive a disk save round trip");
         var tank = GameObject.Find("Aquarium and cabinet").GetComponent<SpriteRenderer>().bounds;
         var actor = GameObject.Find("Seated fish companion");
-        Check(actor != null && Mathf.Abs(actor.transform.parent.position.y - (tank.min.y - .10f)) < .02f, "Seated fish has moved up by 0.35 world units beside the tank");
+        Check(actor != null && Vector2.Distance(actor.transform.parent.position, fish.CompanionSeatPosition) < .02f && tank.center.x > fish.CompanionSeatPosition.x + 1.5f, "Seated fish occupies the former tank position, and the tank has been pushed aside");
         Check(GameObject.Find("Fish companion stool seat") != null && GameObject.Find("Dining chair right") == null, "Borrowed stool stays beside the tank and is absent from the dining table");
         Check(GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>().simulated && !StoryJournal.WorldBlocked, "Player physics and world interaction unlock after the sequence");
         VerifyRevision.Capture("fish-seat-raised");

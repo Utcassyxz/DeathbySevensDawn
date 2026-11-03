@@ -100,7 +100,7 @@ public static class ContinuityAcceptance
         Check(borrowed != null && !borrowed.activeSelf && stool.sprite == borrowed.GetComponent<SpriteRenderer>().sprite, "Seated companion retains the actual borrowed stool artwork; source chair remains absent");
         var fish = AquariumEntity.Instance;
         var tank = GameObject.Find("Aquarium and cabinet").GetComponent<Collider2D>().bounds;
-        Place(new Vector2(tank.center.x, tank.min.y - .35f));
+        Place(fish.CompanionSeatPosition + Vector2.down * .60f);
         yield return .3f;
         State.fishStoryDays.Clear();
         State.fishReportAvailable = false;
@@ -126,9 +126,9 @@ public static class ContinuityAcceptance
         while (clock.Days < 7)
             clock.CompleteSleep();
         yield return .3f;
-        Place(new Vector2(tank.center.x, tank.min.y - .35f));
+        Place(fish.CompanionSeatPosition + Vector2.down * .60f);
         yield return .2f;
-        Check(fish.TryTalk(), "Day-seven companion can still be used from the tank front");
+        Check(fish.TryTalk(), "Day-seven companion can still be used at her wall-side chair");
         CloseFish();
         yield return .2f;
         State.fishAlly = State.fishCompanionUnlocked = false;

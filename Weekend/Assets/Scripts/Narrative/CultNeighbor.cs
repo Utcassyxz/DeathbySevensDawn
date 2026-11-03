@@ -148,12 +148,16 @@ namespace DeathBySeventhsDawn.Interaction
             return true;
         }
 
+        public bool CanReachDoor
+        {
+            get { var actor=GameObject.FindWithTag("Player"); return actor != null && SceneManager.GetActiveScene().name == "Corridor" && Vector2.Distance(actor.transform.position,new Vector2(-4.7f,.42f)) < .78f; }
+        }
         public bool KnockDoor()
         {
-            if (TimeManager.Instance.Days != 2 || GameManager.Instance.LoopCount != 0 || HasToken)
+            if (!CanReachDoor || view != View.None || GameManager.Instance.HasEnded)
                 return false;
             Hit(knock);
-            if (State.cultDayOneTalked && Investigation.Has("cult-door-note") && !HasToken)
+            if (TimeManager.Instance.Days == 2 && GameManager.Instance.LoopCount == 0 && State.cultDayOneTalked && Investigation.Has("cult-door-note") && !HasToken && !State.aquariumSealed)
             {
                 Open(View.Door);
                 if (State.cultTokenOffered)
@@ -282,23 +286,21 @@ namespace DeathBySeventhsDawn.Interaction
                 prompt = cueTime > 4 ? StoryText.Current.cult.sound : null;
             }
 
-            if (scene != "Corridor" || GameManager.Instance.LoopCount != 0)
+            if (scene != "Corridor")
                 return;
             if (FirstLoopPrologue.Instance != null && FirstLoopPrologue.Instance.IsPresenting)
                 return;
             var player = GameObject.FindWithTag("Player");
-            if (player == null || Vector2.Distance(player.transform.position, new Vector2(-4.7f, 1.0f)) > .60f)
+            if (!CanReachDoor)
                 return;
-            if (day == 1 && !State.cultDayOneTalked && !State.cultDayOneStarted)
+            if (day == 1 && GameManager.Instance.LoopCount == 0 && !State.cultDayOneTalked && !State.cultDayOneStarted)
             {
                 prompt = StoryText.Local("E  和 401 的住户说话", "E  Speak to the tenant of 401");
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
                     TalkDayOne();
             }
-            else if (day == 2)
+            else if (day >= 1)
             {
-                if (!Investigation.Has("cult-door-note") || HasToken)
-                    return;
                 prompt = StoryText.Local(State.cultTokenOffered && !HasToken ? "E  敲门，取回门缝边的小三角" : "E  敲 401 的门", State.cultTokenOffered && !HasToken ? "E  Knock; the triangle is by the crack" : "E  Knock on 401");
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
                     KnockDoor();

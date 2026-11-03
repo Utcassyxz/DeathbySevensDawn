@@ -18,6 +18,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         public static bool WorldBlocked => Instance != null && (Instance.open || Time.frameCount <= Instance.blockedFrame);
         public bool IsOpen => open;
+        public bool WorldLabelsVisible => !open && !StoryJournal.WorldBlocked && !ProgressionHUD.DebugConsoleOpen;
         public bool IsRevelation => open && revelation;
 
         public static readonly Vector2 StairsFour = new Vector2(0f, .58f);
@@ -93,6 +94,8 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 var root = new GameObject("EXIT stairwell door");
                 SceneManager.MoveGameObjectToScene(root, scene);
+                Part(root.transform, "Stair core west pier", new Vector2(-.94f, 1.55f), new Vector2(.19f, 1.04f), new Color(.17f,.23f,.24f), 4);
+                Part(root.transform, "Stair core east pier", new Vector2(.94f, 1.55f), new Vector2(.19f, 1.04f), new Color(.17f,.23f,.24f), 4);
                 Part(root.transform, "EXIT outer frame", new Vector2(0, 1.51f), new Vector2(1.48f, 1.03f), new Color(.10f, .12f, .12f), 4);
                 Part(root.transform, "EXIT metal frame", new Vector2(0, 1.50f), new Vector2(1.33f, .94f), new Color(.46f, .49f, .43f), 5);
                 Part(root.transform, "EXIT fire door leaf", new Vector2(0, 1.48f), new Vector2(1.18f, .84f), new Color(.22f, .30f, .28f), 6);
@@ -149,7 +152,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         public static readonly Vector2 StairUp = new Vector2(-2.2f, -.8f) * .68f;
         public static readonly Vector2 StairDown = new Vector2(1.65f, 1.12f) * .68f;
-        public static readonly Vector2 LandingDoor = new Vector2(4.0f, 1.1f) * .68f;
+        public static readonly Vector2 LandingDoor = new Vector2(-.3f, -2.15f) * .68f;
         void Travel(string destination, Vector2 position)
         {
             arrivalScene = destination;
@@ -165,14 +168,14 @@ namespace DeathBySeventhsDawn.Interaction
             if (scene == "Corridor" && Near(StairsFour, .8f))
             {
                 CurrentFloor = 4;
-                Travel("Stairwell", LandingDoor + Vector2.left * .50f);
+                Travel("Stairwell", LandingDoor + Vector2.up * .50f);
                 return true;
             }
 
             if (scene == "Rooftop" && Near(StairsFive))
             {
                 CurrentFloor = 5;
-                Travel("Stairwell", LandingDoor + Vector2.left * .50f);
+                Travel("Stairwell", LandingDoor + Vector2.up * .50f);
                 return true;
             }
 
@@ -185,7 +188,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (Near(LandingDoor, .95f))
             {
                 if (CurrentFloor == 4)
-                    Travel("Corridor", StairsFour + Vector2.right * 1.1f);
+                    Travel("Corridor", StairsFour + Vector2.down * .42f);
                 else if (CurrentFloor == 5)
                     Travel("Rooftop", StairsFive + Vector2.right * 1.1f);
                 else
@@ -401,7 +404,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void OnGUI()
         {
-            if (GameManager.Instance == null || GameManager.Instance.HasEnded || MainMenuUI.WorldBlocked || GameSettingsUI.WorldBlocked)
+            if (GameManager.Instance == null || GameManager.Instance.HasEnded || MainMenuUI.WorldBlocked || GameSettingsUI.WorldBlocked || (!open && !WorldLabelsVisible))
                 return;
             if (body == null)
             {
@@ -445,7 +448,7 @@ namespace DeathBySeventhsDawn.Interaction
                     if (scene == "Stairwell")
                     {
                         Sign(new Vector2(3.88f, 3.18f) * .68f, CurrentFloor.ToString("00"), title, scale, 26);
-                        Sign(new Vector2(3.9f, 2.91f) * .68f, CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
+                        Sign(new Vector2(-.3f, -2.15f) * .68f, CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
                         if (CurrentFloor < 5)
                             Sign(new Vector2(-2.15f, 2.75f) * .68f, "▲", small, scale, 17);
                         if (CurrentFloor > 1)

@@ -35,3 +35,5 @@
 2026-11-02：最新跨轮回和日常交互规则见 CONTINUITY_2026-11-02.md。StoveInteraction 独占炉火与贴图开关；RoomDoor2D 独占走门传送；Bubble 的全局解锁不能再绑定后续轮回的重复观测；存档迁移必须保留 v3 已获得关系。
 
 2026-11-02 晨间补充：MorningRoutine独占已解锁关系的第一天叫醒与搬凳演出；AquariumEntity独占临时鱼模型与实际家具借用，fishMorningLoop/fishStoolBorrowed防止重复播放和复制凳子。CorridorDetail负责北墙门面及402开口的碰撞；RooftopAccess仍独占北墙EXIT与楼梯间往返。详见CORRIDOR_MORNING_2026-11-02.md。
+
+WorldEndSequence唯一负责首次已觉醒午夜毁灭/泡泡重逢、pending存档检查点和正式回档，TimeManager只请求该段，不得直接抢先SeventhDayEnded。最新南侧楼梯门、椅子占原缸位置和模态EXIT规则见SPATIAL_APOCALYPSE_2026-11-02.md。

@@ -159,14 +159,14 @@ public static class BuildStairwell
                 }
 
             // Clear connecting landing around both flights and a recessed fire door embedded in the north wall.
-            Block("Door recess", 4.05f, 2.12f, 1.30f, 1.82f, dark, 3);
-            Block("Door steel frame", 4.05f, 2.15f, 1.16f, 1.70f, new Color(.54f, .58f, .51f), 4);
-            Block("Fire door", 4.05f, 2.15f, .98f, 1.50f, new Color(.22f, .32f, .29f), 5);
-            Block("Door push bar", 4.05f, 1.97f, .70f, .065f, cap, 6);
-            Block("Door threshold", 4.05f, 1.33f, 1.20f, .10f, new Color(.62f, .63f, .54f), 6);
+            Block("Door recess", -.3f, -2.7f, 1.3f, 0.6f, dark, 3);
+            Block("Door steel frame", -.3f, -2.68f, 1.16f, 0.5f, new Color(.54f, .58f, .51f), 4);
+            Block("Fire door", -.3f, -2.68f, 0.98f, 0.34f, new Color(.22f, .32f, .29f), 5);
+            Block("Door push bar", -.3f, -2.57f, 0.7f, 0.04f, cap, 6);
+            Block("Door threshold", -.3f, -2.36f, 1.2f, 0.06f, new Color(.62f, .63f, .54f), 6);
             Block("Floor number plate", 3.88f, 3.18f, .82f, .52f, dark, 4);
-            Block("Door direction plate", 3.88f, 2.91f, 1.62f, .32f, dark, 4);
-            Solid("Door leaf collision", 4.05f, 2.37f, 1.05f, .90f);
+            Block("Door direction plate", -.3f, -2.15f, 1.62f, 0.25f, dark, 4);
+            Solid("Door leaf collision", -.3f, -2.91f, 1.05f, 0.28f);
             Block("Fire pipe", -4.55f, 1.2f, .07f, 2.9f, new Color(.40f, .22f, .19f), 4);
             Block("Fire pipe elbow", -4.28f, 2.60f, .60f, .07f, new Color(.40f, .22f, .19f), 4);
             model.localScale = Vector3.one * .68f;

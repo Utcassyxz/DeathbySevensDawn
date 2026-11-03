@@ -277,9 +277,9 @@ namespace DeathBySeventhsDawn.Progression
                 }
             }
 
-            bool special = preview || NightDreamSequence.Instance != null && NightDreamSequence.Instance.IsBubble || GameManager.Instance.HasEnded && !MainMenuUI.IsVisible;
+            bool special = WorldEndSequence.FirstCycleActive || preview || NightDreamSequence.Instance != null && NightDreamSequence.Instance.IsBubble || GameManager.Instance.HasEnded && !MainMenuUI.IsVisible;
             specialBlend = Mathf.MoveTowards(specialBlend, special ? 1 : 0, Time.unscaledDeltaTime / 2.4f);
-            var wanted = (preview || GameManager.Instance.HasEnded) ? (endingMood == EndingMood.Good ? goodScore : endingMood == EndingMood.True ? trueScore : badScore) : bubbleScore;
+            var wanted = WorldEndSequence.FirstCycleActive && !WorldEndSequence.InReunion ? badScore : (preview || GameManager.Instance.HasEnded) ? (endingMood == EndingMood.Good ? goodScore : endingMood == EndingMood.True ? trueScore : badScore) : bubbleScore;
             foreach (var score in new[]
             {
                 bubbleScore,

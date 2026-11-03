@@ -163,7 +163,7 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if (!IsOpen)
                 {
-                    WorldPromptUI.Offer("evidence", DeathBySeventhsDawn.Story.StoryText.Local("E  查看", "E  Examine ") + Investigation.Evidence(target).title, 70);
+                    WorldPromptUI.Offer("evidence", DeathBySeventhsDawn.Story.StoryText.Local("E  查看", "E  Examine ") + Investigation.Evidence(target).title, target == "cult-door-note" ? 100 : 70);
                     return;
                 }
 

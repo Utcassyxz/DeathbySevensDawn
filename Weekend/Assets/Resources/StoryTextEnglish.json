@@ -430,7 +430,7 @@
       "…You were living in water yesterday.",
       "Yesterday does not count. This is new hunger.",
       "Hugo sits up. His alarm clock has been replaced by someone demanding breakfast.",
-      "Also, that stool is mine now.",
+      "She leans against the tank, inching it toward the corner.\nThe space it leaves is just wide enough for a stool.",
       "She drags a stool away from the table. Its legs scrape the floor. At least something in the apartment is fully awake.",
       "I will wait by the tank. Do not toast the bread too hard. I have not decided how many teeth to grow."
     ],
@@ -833,6 +833,34 @@
       "Hugo moves his shadow off the glass. She follows it.",
       "“At least one of us ate today.”\nHugo glances toward the kitchen.",
       "She stays there, her tail barely moving.\nHugo doesn’t get up yet."
+    ],
+    "apocalypseReunion": [
+      "“I’m so glad to see you again, Hugo.”\n“Did you get a good look this time?”",
+      "“Where is everyone?”\nHugo cannot hear himself breathing.\nBubble waits for him to finish the question.",
+      "“Finished.”\n“But you’re still here. See? I didn’t lose you.”",
+      "“You kept me alive so I could watch that?”\n“Alive?”\nBubble repeats the word, as though learning it.",
+      "“I didn’t give you a little more time.”\n“I gave you another turn. They only had this one. You can go back.”",
+      "“Back where?”\n“The first day. What you remember stays.”\n“Your body will be a little older. But there’s still so much of it you can use.”",
+      "“And if I still can’t save them?”\n“Then try again.”\n“You’ll understand a little more. It’s all right if it hurts. You already know when it’s coming.”",
+      "“…You think that’s a gift?”\n“Of course.”\n“I took so long choosing it. Don’t you like it?”",
+      "“There. Time to wake up.”\n“Keep your eyes open this time, Hugo.”"
+    ],
+    "apocalypseSpeakers": [
+      "Bubble",
+      "Hugo",
+      "Bubble",
+      "Hugo / Bubble",
+      "Bubble",
+      "Hugo / Bubble",
+      "Hugo / Bubble",
+      "Hugo / Bubble",
+      "Bubble"
+    ],
+    "apocalypseCaptions": [
+      "DAY SEVEN · MIDNIGHT",
+      "The last light goes out.",
+      "No sound reaches this place as the Earth breaks.",
+      "Hugo is still here."
     ]
   }
 }

@@ -25,3 +25,5 @@
 2026-11-02 最新规则见 docs/CONTINUITY_2026-11-02.md：鱼关系永久解锁，后续轮回第一天坐在缸旁；泡泡在后续轮回首次睡眠自动会面，不再要求重复目击；每天首谈推进，后续抽独立闲聊；Save v4 迁移 v1/v2/v3。
 
 2026-11-02 本轮走廊与晨间演出规则见 docs/CORRIDOR_MORNING_2026-11-02.md：EXIT改为北墙中门并同步实体墙面碰撞；后续轮回第一天小鱼叫醒雨果并搬走真实餐凳，MorningRoutine编排、AquariumEntity管理模型和家具。新增DoorMorningAcceptance纳入VerifyRevision。
+
+2026-11-02 后续空间/末日规则见 docs/SPATIAL_APOCALYPSE_2026-11-02.md：楼梯间入口位于下侧；小鱼推缸后占原位；世界标签不得穿过模态界面；首次已觉醒午夜必须读完泡泡重逢再回档，未觉醒终局保留。

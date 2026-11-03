@@ -27,8 +27,19 @@ namespace DeathBySeventhsDawn.Interaction
 
         GameObject tank, formRoot, player;
         GameObject morningFish, travellingChair, borrowedChairSource;
-        Vector2 chairStart;
-        public Vector2 CompanionSeatPosition => tankRenderer == null ? Vector2.zero : new Vector2(tankRenderer.bounds.min.x - .52f, tankRenderer.bounds.min.y - .10f);
+        Vector2 chairStart, tankHome, bookcaseHome;
+        GameObject bookcase;
+        public Vector2 ShiftedTankPosition => tankHome + Vector2.right * 1.95f;
+        void MoveFurniture(float progress)
+        {
+            if(tank == null) return;
+            float t=Mathf.SmoothStep(0,1,Mathf.Clamp01(progress));
+            // The authored bookcase is below the bathroom approach, leaving this wall corner clear.
+            if(bookcase != null) bookcase.transform.position=Vector2.Lerp(bookcaseHome,new Vector2(bookcaseHome.x,-2.2f),Mathf.Clamp01(t*2));
+            tank.transform.position=Vector2.Lerp(tankHome,ShiftedTankPosition,t);
+            Physics2D.SyncTransforms();
+        }
+        public Vector2 CompanionSeatPosition => tank == null ? Vector2.zero : tankHome;
         public bool MorningWelcomePending => GameManager.Instance != null && CompanionPresent && TimeManager.Instance != null && TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Morning && GameManager.Instance.State.fishMorningLoop != GameManager.Instance.LoopCount;
         // MorningRoutine owns the timeline; this owner alone creates/moves the fish and borrowed furniture.
         public void ShowMorningVisitor(Vector2 position)
@@ -81,14 +92,24 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             chairStart = source.transform.position;
             travellingChair = CopyDiningChair(null, "Stool being borrowed");
+            source.SetActive(true);
+            if(travellingChair != null) travellingChair.SetActive(false);
             AnimateBorrowedStool(0);
         }
         public void AnimateBorrowedStool(float progress)
         {
             if (travellingChair == null)
                 return;
+            MoveFurniture(progress / .36f);
+            if(progress < .36f)
+            {
+                ShowMorningVisitor((Vector2)tank.transform.position + new Vector2(-1.35f,-.55f));
+                return;
+            }
+            if(borrowedChairSource != null) borrowedChairSource.SetActive(false);
+            travellingChair.SetActive(true);
             var end = CompanionSeatPosition;
-            float t = Mathf.Clamp01(progress) * 3;
+            float t = Mathf.Clamp01((progress - .36f) / .64f) * 3;
             Vector2 a = chairStart, b = new Vector2(chairStart.x, end.y - .72f), c = new Vector2(end.x, end.y - .72f);
             Vector2 at = t < 1 ? Vector2.Lerp(a, b, t) : t < 2 ? Vector2.Lerp(b, c, t - 1) : Vector2.Lerp(c, end, t - 2);
             travellingChair.transform.position = at;
@@ -118,6 +139,7 @@ namespace DeathBySeventhsDawn.Interaction
             travellingChair = null;
             if (restoreUnfinishedChair && borrowedChairSource != null && GameManager.Instance != null && !GameManager.Instance.State.fishStoolBorrowed)
                 borrowedChairSource.SetActive(true);
+            if(restoreUnfinishedChair && tank != null && GameManager.Instance != null && !GameManager.Instance.State.fishStoolBorrowed) MoveFurniture(0);
         }
 
         SpriteRenderer tankRenderer;
@@ -281,6 +303,9 @@ namespace DeathBySeventhsDawn.Interaction
                 hasOriginal = true;
             }
 
+            tankHome = tank.transform.position;
+            bookcase = GameObject.Find("Bookcase");
+            if(bookcase != null) bookcaseHome = bookcase.transform.position;
             player = GameObject.FindWithTag("Player");
             RefreshForm();
         }
@@ -315,6 +340,7 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if (MorningWelcomePending)
                     return;
+                MoveFurniture(1);
                 BuildSeatedCompanion();
                 return;
             }
@@ -521,8 +547,9 @@ namespace DeathBySeventhsDawn.Interaction
             }
         }
 
-        public bool NearInteraction() => player != null && tank != null &&
-            (PropReach.Gap(tank, player) < .24f || (formRoot != null && (visualDay >= 7 || CompanionPresent) && Vector2.Distance(player.transform.position, InteractionPoint()) < .82f));
+        public bool NearInteraction() => player != null && tank != null && (CompanionPresent ?
+            Vector2.Distance(player.transform.position, CompanionSeatPosition) < .86f :
+            (PropReach.Gap(tank, player) < .24f || (formRoot != null && (visualDay >= 7 || CompanionPresent) && Vector2.Distance(player.transform.position, InteractionPoint()) < .82f)));
         Vector2 InteractionPoint()
         {
             if (tank == null)

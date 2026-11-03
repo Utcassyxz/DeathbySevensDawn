@@ -41,12 +41,13 @@ namespace DeathBySeventhsDawn.TimeSystem
         bool completingSleep;
         public void AdvanceTime()
         {
-            if (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded)
+            if (Progression.WorldEndSequence.IsPresenting || (Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded))
                 return;
             if (!completingSleep && Days < 7 && Period == TimePeriod.Night && Progression.NightDreamSequence.BeginSleep())
                 return;
             if (Days >= 7 && Period == TimePeriod.Night)
             {
+                if (Progression.WorldEndSequence.TryBeginFirstApocalypse()) return;
                 SeventhDayEnded?.Invoke();
                 return;
             }

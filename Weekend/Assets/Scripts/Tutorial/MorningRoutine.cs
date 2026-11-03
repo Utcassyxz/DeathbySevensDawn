@@ -280,10 +280,10 @@ namespace DeathBySeventhsDawn.Interaction
                 fish.ShowMorningVisitor(visitorPoint + Vector2.up * (Mathf.Sin(age * 8) * .035f));
             }
             else if (fishMorningPage == 4)
-                fish.AnimateBorrowedStool(age / 3f);
+                fish.AnimateBorrowedStool(age / 6f);
             else if (fishMorningPage == 5)
                 fish.SettleMorningVisitor(Mathf.Clamp01(age / .9f));
-            float minimum = fishMorningPage == 3 ? 1.1f : fishMorningPage == 4 ? 3f : fishMorningPage == 5 ? .9f : .35f;
+            float minimum = fishMorningPage == 3 ? 1.1f : fishMorningPage == 4 ? 6f : fishMorningPage == 5 ? .9f : .35f;
             if (!advance || age < minimum)
                 return;
             if (fishMorningPage == 5)
