@@ -203,27 +203,27 @@
       },
       {
         "id": "tank-label",
-        "title": "Water-change label",
-        "body": "The label says to change the water on Sundays. The last tick is Hugo’s.\nThe fish are still fish. A useful thing to write down, apparently.",
-        "source": "Living room · Cabinet"
+        "title": "Water-change Label",
+        "body": "A water-change chart is stuck to the cabinet. Hugo made the last tick. A little fish food is stuck beside it.",
+        "source": "Living room · Tank cabinet"
       },
       {
         "id": "tank-eye",
-        "title": "An eye in the tank",
-        "body": "On day three, Hugo finds an extra eye in the tank. It speaks.\nThe foil triangle might finally have a use.",
-        "source": "Living room · Day three"
+        "title": "A Face Under the Scales",
+        "body": "On Day 3, a human face appeared on the fish’s flank. She called to Hugo and understood the work complaints he used to tell her.",
+        "source": "Living room · Day 3 tank"
       },
       {
         "id": "tank-overflow",
-        "title": "Cabinet water stain",
-        "body": "Day five. Stain higher than its hand.\nIt offered to pay. No payment details.",
-        "source": "Living room · Day five"
+        "title": "Where the Tank Used to Be",
+        "body": "The tank has been pushed against the wall. A dining stool occupies its old place, with her sitting on it. Water marks remain on the floor.",
+        "source": "Living room · Beside the tank"
       },
       {
         "id": "001-name",
-        "title": "The same voice",
-        "body": "On the sixth day the fish repeated Hugo’s words, including the pause and the sigh.",
-        "source": "Living room · 001"
+        "title": "She Remembers the Complaints",
+        "body": "She knows Hugo is waiting to hear about work, and that he often says he does not want to go out. He used to say those things to the tank.",
+        "source": "Living room · Talking with Fish"
       },
       {
         "id": "notes-gap",
@@ -263,8 +263,8 @@
       },
       {
         "id": "fish-help-promise",
-        "title": "What she noticed in the water",
-        "body": "She says the water stings after the light, and foil quiets it. A lead to investigate, not proof of the cause.",
+        "title": "What Fish Heard",
+        "body": "Fish recalls a night when the water suddenly stung, unlike a water change. She also heard heavy objects being dragged next door while Hugo was out. She does not know what they were. Nothing yet establishes a connection between the water and the noises.",
         "source": "Aquarium · Her account"
       }
     ],
@@ -302,14 +302,14 @@
       {
         "id": "deduction-tank-resident",
         "relation": "Cross-check",
-        "title": "An extra tenant",
-        "body": "Hugo changed the water. Now something in it talks.\nThe label tracks water changes, not move-in dates."
+        "title": "Another Mouth",
+        "body": "Hugo has always filled in the water-change chart himself. This time, when he approaches the tank, a voice answers him. She has understood at least some of what he said."
       },
       {
         "id": "deduction-waterline",
         "relation": "Time connection",
-        "title": "Out before?",
-        "body": "Stain higher than its hand. Next day it is outside.\nMaybe it was out earlier. Maybe Hugo spilled the water."
+        "title": "From the Tank into the Flat",
+        "body": "The water marks lead back to the displaced tank. She also remembers what Hugo said through the glass. The person calling him when he woke did not come in through the door."
       }
     ]
   },
@@ -323,39 +323,39 @@
     "speakerDay6": "Fish",
     "speakerDay7": "Fish",
     "day3Pages": [
-      "She turns sideways. The gold scales stretch around a pale cheek.\nTwo eyes open on her flank. The fish’s own eyes are still there.",
-      "Hugo taps the glass. The human eyes follow his finger.\nHer lips stay closed.\n“…What happened to you?”"
+      "The fish stays still.\nThe scales on her flank stretch apart around an eye. Hugo pulls his hand back.",
+      "Hugo: Don’t move…\nThe mouth opens a little.\nFish: You don’t move. You’re splashing water in."
     ],
     "day4Pages": [
-      "Hugo: …Was that you calling me?\nFish: Too quiet? I practised all night.",
-      "Hugo: Since when can you talk?\nFish: I don’t know. Yesterday you said you wouldn’t be able to eat without a job.\nHugo: I was angry.",
-      "Fish: What if someone went instead? Work, being shouted at… You wouldn’t have to feel so bad.\nHugo: Wait. That’s not what I meant."
+      "Hugo: …Who’s there?\nFish: Here.\nHugo looks at the tank. The fish food spills from his hand.\nFish: Inside. Not on the floor.",
+      "Hugo: All the things I said before. You understood?\nFish: Sometimes the pump was too loud.\nHugo: The job stuff, then…\nFish: Yes. Still no reply.",
+      "Fish: Could I go?\nHugo: Where?\nFish: To work. You said you didn’t want to.\nHugo: That was… I was just saying things.\nFish: You say it every day."
     ],
     "day7Pages": [
-      "She has his face now. The hair, the sleeves, even the way she stands.",
-      "“You can sleep longer tomorrow. I’ll go.”\n“You don’t even know where.”",
-      "“I listened.”\nShe smiles with Hugo’s mouth.\n“I remember everything you told me.”"
+      "She is still beside the tank, feet tucked under the stool.\nFish: It’s loud outside.",
+      "Hugo: Stay away from the door.\nFish: I haven’t been. Look. The floor’s dry.",
+      "She shifts a little to make room.\nFish: Do you want to sit?\nHugo stays standing, listening to the sounds outside."
     ],
     "day5Pages": [
-      "Hugo: How did you get out?\nFish: The water got too small.",
-      "She hides her wet hands behind her back.\nFish: I didn’t break anything. The tank was heavy.",
-      "Hugo: You don’t have to copy me. Just ask.\nFish: Then… are you coming back?"
+      "Hugo puts a towel on the stool instead of handing it to her.\nHugo: Do your feet hurt?\nFish: I don’t know.\nShe turns a foot over to look.",
+      "Fish: Are you going out today?\nHugo: I need to have a look around.\nFish: Should I wear this?\nHugo: That’s my coat.\nFish: I know.",
+      "Hugo: Why does it have to be mine?\nFish: What if they get the wrong person?\nHugo: …Who are they supposed to think you are?\nFish: You. Then you wouldn’t have to go."
     ],
     "day6Pages": [
-      "Fish: He’s moving things next door. Heavy things. Dragging them.\nHugo: Since when?\nFish: After you fell asleep. Then he knocked on the pipes.",
-      "Fish: He keeps saying, if it’s clean it won’t change.\nHugo: …He’s not fixing anything."
+      "Fish: He’s dragging things again. Next door.\nHugo: When?\nFish: Just after you left. Hit the wall three times.\nHugo: Three?\nFish: I counted.",
+      "Fish: He keeps saying, clean it all out and it won’t change.\nHugo: What else?\nFish: Too quiet. Then the pipes started.\nHugo goes over and presses his ear to the wall."
     ],
-    "question": "Hugo asks: have you been reading my book?",
-    "answerGap": "“With pages torn out like that, do I need to?”\nShe withdraws her hand.",
-    "answerDefault": "“You left it on the desk.”\n\nNot an answer.",
+    "question": "Hugo: Did you touch the notebook on the desk?",
+    "answerGap": "Fish: A page fell out. I picked it up.\nHugo: Where is it?\nShe points to the corner of the desk.",
+    "answerDefault": "Fish: No.\nShe watches the notebook in Hugo’s hand.\nFish: Am I allowed to touch it?",
     "offerPrompt": "E  Examine the tank · F  Drop foil (too late)",
-    "offer": "The fish watches the foil. Her human mouth stops moving.\nHugo holds it above the water.",
+    "offer": "Hugo stops beside the tank, holding the foil.\nFish: What are you feeding me now?\nHugo: It’s not food.",
     "throwFoil": "F  Drop the foil triangle into the tank",
     "sealedTitle": "The tank",
-    "sealedBody": "The foil is still in the gravel. She swims out from behind the plants.\nDays have passed. She has not changed.",
-    "offerBefore": "The little foil triangle rests in Hugo’s palm.\nThe tenant said to put it in water. He never said what it would do.",
+    "sealedBody": "The foil is still on the gravel.\nWhen Hugo approaches, the fish comes out of the plants, waiting to be fed.",
+    "offerBefore": "The triangle’s point digs into his palm.\nHugo rests it on the surface. The fish moves out of his shadow.",
     "waterPrompt": "E  Examine the aquarium",
-    "sealedBefore": "The triangle sinks into the gravel. She darts behind the plants.\nThe filter keeps running."
+    "sealedBefore": "The foil settles on the gravel.\nThe fish nudges it once, then swims away."
   },
   "mainMenu": {
     "title": "SEVEN DAY",
@@ -431,12 +431,12 @@
     "fridgeEmpty": "Nothing else. Close it.",
     "sofaFree": "Just a minute.",
     "fishMorningPages": [
-      "Hugo.\n…Hugo, wake up.",
-      "Something cold touches his hand.\nThe voice is very close.",
-      "Hugo: …Who are you?\nFish: You really don’t recognise me?",
-      "Hugo: The tank?\nFish: Still there. I can’t get back in.",
-      "She pushes the tank against the wall, an inch at a time.\nThen she drags over a dining stool.",
-      "Fish: Can I sit here?\nHugo: …Sit down. Mind the water."
+      "Hugo.\nHey… get up a second.",
+      "Cold fingers touch his arm.\nSomeone is crouching beside him. Her hair is dripping.",
+      "Hugo: You—\nFish: Don’t kick.\nHugo: …How did you get in?\nFish: The tank.",
+      "Hugo stares at her.\nFish: I don’t know either. I didn’t have legs a minute ago.\nHugo: Stay there. I’ll get a towel.",
+      "She braces her shoulder against the tank, pushing a little, then resting.\nNext comes the scrape of a stool by the dining table.",
+      "Fish: I’m sitting here.\nHugo: …Fine. Lift the stool. They’ll hear it downstairs.\nShe looks down at her feet, then at the stool."
     ],
     "fishMorningSpeakers": [
       "Fish",
@@ -777,65 +777,65 @@
       "Oh, it's you. I kept your outline.",
       "Would you like to understand a little more? You can leave something behind. A perfectly friendly arrangement."
     ],
-    "fishChoicePrompt": "Hugo thinks for a moment.",
+    "fishChoicePrompt": "Hugo puts down the food jar.",
     "fishGoodChoices": [
-      "I need someone to talk to. Just listen.",
-      "Help me figure this out. Stay yourself."
+      "You don’t have to go for me. I’m just venting.",
+      "Leave the coat. Help me listen to what he’s doing next door."
     ],
     "fishBadChoices": [
-      "I wish you could go to work for me.",
-      "If you want it, take all of it."
+      "Sure. You go for me.",
+      "Then it’s all yours. I’m done with it."
     ],
     "fishGoodReplies": [
-      "“Just listen?”\n“Yes. You don’t have to live my life for me.”\nShe goes quiet.\n“I can do that.”",
-      "“I can help?”\n“Yes. Tell me if you notice anything wrong.”\nShe looks at her hand and lowers it.\n“Then… I’ll stop practising this.”"
+      "Fish: Will you still say it?\nHugo: Say what?\nFish: The work stuff.\nHugo: …Probably.\nShe moves a little closer to Hugo.\nFish: Then leave the pump off.",
+      "She puts the coat back on the armrest.\nFish: If I hear something, what do I do?\nHugo: Tell me when I get back. Don’t knock on his door yourself.\nFish: Don’t be long, then."
     ],
     "fishBadReplies": [
-      "“You'd let me?”\nHer mouth moves a moment before the words.",
-      "“All of it?”\nShe keeps watching his face."
+      "Fish: Really?\nHugo screws the lid onto the food jar without answering.\nShe stays by the glass.\nFish: I’ll try, then.",
+      "She holds the coat without putting it on.\nFish: All of it?\nHugo: …Yes.\nFish: Then you stay in the flat."
     ],
     "fishAllyPages": [
-      "“When that light came through, the water felt full of needles.”\n“Dirty water?”\n“Different. The little metal triangle makes it quieter.”",
-      "“Go look outside. I’ll stay here.”\n“Call me if anything happens.”\n“You too. Don’t keep it all to yourself.”"
+      "Fish: One night, the water really stung.\nHugo: Was it dirty?\nFish: No. It doesn’t hurt when you change it.\nShe tilts her head toward the shared wall.\nFish: And he drags things when you’re out. He did it again today.",
+      "Hugo: Any more noise?\nFish: Yes. Stopped, then started again.\nHugo: You don’t have to keep watch.\nFish: I haven’t got anywhere else to sit.\nShe edges the stool half an inch closer to the wall."
     ],
-    "fishHelpTitle": "What she noticed in the water",
-    "fishHelpBody": "She says the water stings after the light, and foil quiets it. A lead to investigate, not proof of the cause.",
+    "fishHelpTitle": "What Fish Heard",
+    "fishHelpBody": "Fish recalls a night when the water suddenly stung, unlike a water change. She also heard heavy objects being dragged next door while Hugo was out. She does not know what they were. Nothing yet establishes a connection between the water and the noises.",
     "bubbleTradeLine": "Sanity is not free. Neither is knowledge.",
     "fishChats": [
-      "Hugo: You sleep with your eyes open?\nFish: They don’t close. Stop checking in the middle of the night.",
-      "Fish: Your yawns are contagious.\nHugo: Even to fish?\nFish: No. I wanted to try.",
-      "Hugo: Do you like being called Fish?\nFish: Better than “hey.”",
-      "Fish: An octopus has three hearts.\nHugo: Where did you learn that?\nFish: Television. You take forever to change channels.",
-      "Hugo: Nothing to talk about today.\nFish: Sit for a bit, then.\nHugo: …All right.",
-      "Fish: You don’t have to feed me every time.\nHugo: I didn’t bring food.\nFish: I know. Just making sure.",
-      "Hugo: Does the world look bent from in there?\nFish: Put your hand in water. See how broken it looks.\nHugo: You could have put that differently.",
-      "Fish: The Moon doesn’t make its own light.\nHugo: Right.\nFish: Good at borrowing it, though.",
-      "Hugo: Can you count?\nFish: Yes.\nHugo: How far?\nFish: Until you forget to feed me.",
-      "Fish: You keep listening for mail that hasn’t arrived.\nHugo: I’m waiting for a reply.\nFish: Same silence.",
-      "Hugo: Have I told you this already?\nFish: Maybe.\nHugo: Never mind.\nFish: Go on. I’m not in a hurry.",
-      "Fish: Don’t tap the glass.\nHugo: I was getting your attention.\nFish: Use my name. I can hear you now.",
-      "Hugo: Whales aren’t fish.\nFish: Then why do you keep bringing them up to me?\nHugo: …Fair point.",
-      "Fish: The plants cover that floor tile now.\nHugo: Should I trim them?\nFish: No. I’m tired of that tile.",
-      "Hugo: Are you afraid of the dark?\nFish: I listen to the filter when I can’t see.\nHugo: What if it stops?\nFish: Don’t do that.",
-      "Fish: Your mouth hangs open when you sleep on the sofa.\nHugo: Stop.\nFish: I thought you were finally growing gills.",
-      "Hugo: Starlight takes a long time to get here.\nFish: So we see the past?\nHugo: Yes.\nFish: That explains a few things.",
-      "Hugo: Why stare at that wall?\nFish: There’s a shadow.\nHugo: It’s the filter.\nFish: …Oh.",
-      "Hugo: I need some air.\nFish: Shut the door when you come back.\nHugo: You’re not cold.\nFish: The noise gets in.",
-      "Fish: Your mirrors only show one side, too.\nHugo: What else would they show?\nFish: Nothing. That’s good.",
-      "Hugo: What do you want?\nFish: Don’t change the water yet.\nHugo: Why?\nFish: I just got that stone straight.",
-      "Fish: The same words sound different when you’re angry or tired.\nHugo: Which words?\nFish: “I’m fine.”",
-      "Hugo: What are you looking at?\nFish: The door.\nHugo: Why the door?\nFish: Waiting for you.",
-      "Fish: Stop staring.\nHugo: You never minded before.\nFish: I couldn’t tell you before."
+      "Fish: That bit is wet.\nHugo looks down and moves his foot back.\nHugo: Did the tank spill?\nFish: When you were carrying the bucket.",
+      "Fish: You haven’t eaten again?\nHugo: I have.\nFish: The wrapper hasn’t moved.\nHugo glances at the table.\nHugo: …In a minute.",
+      "Hugo: Does being called Fish bother you?\nFish: If you called something else, I might not know you meant me.",
+      "The same advert comes on.\nFish: He comes here a lot.\nHugo: It’s a recording.\nFish: Oh. That’s why he never changes his clothes.",
+      "Hugo stands nearby for a while.\nFish: What is it?\nHugo: Nothing.\nShe moves over a little.",
+      "Fish: You’ve got fish food on you.\nHugo: No, I haven’t.\nShe looks at his sleeve. He glances down and brushes off a pellet.",
+      "Hugo: What did I look like through the glass?\nFish: Wider face.\nHugo: And now?\nShe looks again.\nFish: About the same.",
+      "Hugo switches off the television.\nA moment later, Fish closes her mouth too.\nHugo: Were you saying it along with them?\nShe neither nods nor shakes her head.",
+      "Fish: You’ve fed me already.\nHugo: Oh.\nHe screws the lid back on.\nFish: You made that face last time too.",
+      "His phone chimes. Hugo checks it immediately.\nFish waits.\nHugo: Ad.\nShe doesn’t ask.",
+      "Hugo: Have I told you this one?\nFish: Yes.\nHugo: …Never mind, then.\nFish: What happened after? You didn’t finish it last time.",
+      "Fish: Don’t knock.\nHis hand stops in front of the glass.\nHugo: Habit.\nFish: I haven’t gone anywhere.",
+      "Hugo: That’s a whale. Not a fish.\nFish: I didn’t ask.\nHugo looks at the television and leaves the rest unsaid.",
+      "A plant has tipped sideways.\nHugo reaches to straighten it. Fish watches his hand.\nHugo: What?\nFish: Nothing. Go slowly.",
+      "The pump stops.\nFish looks up.\nHugo: Cleaning the filter.\nFish: How long?\nHugo: A few minutes.",
+      "Fish: You fell asleep.\nHugo: No, I didn’t.\nShe points at the mark the sofa left on his cheek.",
+      "Hugo draws an arc on the paper, then crosses it out.\nFish: What about that one?\nHugo: Got it wrong.\nFish: I hadn’t finished looking.",
+      "Fish suddenly looks at the wall.\nHugo stops to listen too.\nNothing.\nHugo: You heard something?\nFish: A second ago.",
+      "Hugo: Going out for a bit.\nFish: Keys.\nHugo pats his pocket and comes back.",
+      "She glances at her reflection in the glass, then turns away.\nHugo: What’s wrong?\nFish: Not used to it.",
+      "Hugo: Shall I move that stone?\nFish: Don’t.\nHe puts it back.\nAfter a moment, she adds: There’s something under it.",
+      "Hugo: I’m fine.\nShe watches him.\nHugo: …Really.\nShe looks down and lets it go.",
+      "The key turns. Fish looks toward the door first.\nHugo: It’s me.\nFish: I could tell.",
+      "Hugo keeps tapping the edge of the table.\nFish watches him.\nHugo: What?\nFish: You’ve been doing that for ages.\nHe puts his hand in his pocket."
     ],
     "fishSilentChats": [
-      "Hugo crouches. She sinks to his level and stops against the glass.",
-      "“No email today.”\nHugo checks his pocket for his phone anyway.",
-      "Food touches the water. She eats a little, leaving one piece beside the plants.",
-      "“You’re a good listener.”\nShe circles the stone and comes back.",
-      "The filter hums. Hugo swallows the words he hasn’t quite found.",
-      "Hugo moves his shadow off the glass. She follows it.",
-      "“At least one of us ate today.”\nHugo glances toward the kitchen.",
-      "She stays there, her tail barely moving.\nHugo doesn’t get up yet."
+      "Hugo crouches. The fish sinks to the gravel and faces him through the glass.",
+      "“Not checking it today. That’s it.”\nHe puts the phone face down on his knee. A moment later, he turns it over again.",
+      "Too much food.\nHugo scoops with the little net. She follows it, eating a pellet at a time.",
+      "“…Sick of it too?”\nThe fish swims to the other end.\nHugo laughs once, then goes quiet.",
+      "The pump hums.\nHugo opens his mouth, then settles for, “Never mind.”",
+      "He moves aside to let some light into the tank.\nThe fish follows his shadow instead.",
+      "“Just this for you, then. Easy.”\nHe puts down the fish food and goes to search the kitchen cupboards.",
+      "He says nothing.\nThe fish hovers by the glass for a while, flicks her tail, and swims away."
     ],
     "apocalypseReunion": [
       "“I’m so glad to see you again, Hugo.”\n“Did you get a good look this time?”",

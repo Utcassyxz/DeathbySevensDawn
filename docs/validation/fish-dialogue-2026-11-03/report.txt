@@ -1,0 +1,1 @@
+PASS: both JSON files parse; 86 Chinese / 89 English text values changed with corresponding localized fields present; schema, page counts, choice ordering, IDs and graph relationships unchanged. Six morning pages/speakers aligned, 24 spoken and 8 silent chats retained; no C#/scene/prefab/save-setting edits.
