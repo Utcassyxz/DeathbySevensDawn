@@ -1,3 +1,28 @@
+# DeathbySevensDawn — 七日 · SEVEN DAY
+
+**A Unity narrative horror prototype where everyday apartment life unfolds into a seven-day encounter with the unknown.**
+
+Follow Hugo through conversations, domestic routines, and unsettling observations across his apartment building and its rooftop. Meals, rest, journal entries, and investigation shape the passage of time, while witnessing an ancient god determines whether a journey follows the documented seven-day ending or enters the existing cycle and aging branches.
+
+## Project Overview
+
+The current prototype brings together:
+
+- **Apartment exploration and interaction:** Move through rooms, meet neighbors, interact with everyday objects, and carry a telescope to the fifth-floor rooftop for observation.
+- **Time-driven storytelling:** Progress through distinct periods of the day through scripted events and rest, with a persistent on-screen clock.
+- **Investigation tools:** Record observations in a journal, manage inventory, and connect clues in an investigation graph.
+- **Persistent choices and conditional outcomes:** Actions such as sealing the aquarium affect later days. Actual rooftop sightings govern access to the ancient-god branch; a journey without a sighting ends after the seventh night rather than automatically restarting.
+- **Bilingual narrative resources:** Chinese and English story text is maintained in shared JSON resources.
+- **Development and validation tooling:** The repository includes Unity editor checks, scene and asset maintenance tools, and development handover notes.
+
+**Development status:** This is an actively developed prototype. The systems above reflect the behavior documented in the existing README; they do not imply a finished game or a complete set of planned story branches.
+
+## Getting Started
+
+The Unity project is located in **`Weekend/`**. Add that folder through Unity Hub and use the editor version recorded in `Weekend/ProjectSettings/ProjectVersion.txt` (currently documented as **6000.6.7f1**). Follow the Chinese development documentation below for scene setup, controls, current gameplay rules, save behavior, and validation procedures.
+
+---
+
 # 七日 · SEVEN DAY
 
 Unity 叙事恐怖原型。唯一的游戏工程是 **Weekend/**；根目录旧版重复 Assets 已移除，历史可从 Git 查看。
