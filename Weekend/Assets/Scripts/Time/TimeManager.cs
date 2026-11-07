@@ -35,6 +35,8 @@ namespace DeathBySeventhsDawn.TimeSystem
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            var saved = Core.GameManager.Instance?.State;
+            if(saved != null && saved.hasCheckpoint) { Days = Mathf.Max(1, saved.savedDay); Period = (TimePeriod)Mathf.Clamp(saved.savedPeriod,0,3); }
         }
 
         bool completingSleep;
@@ -46,9 +48,9 @@ namespace DeathBySeventhsDawn.TimeSystem
             {
                 var game = Core.GameManager.Instance;
                 if (!Progression.StoryDebugActions.Enabled &&
-                    ((Days == 5 && !game.State.buildingCrisisResolved) || (Days == 7 && !game.State.daySevenCrisisResolved)))
+                    Progression.CrisisRules.Due(Days, game.State) != Progression.CrisisKind.None)
                 {
-                    Progression.WorldEndSequence.BeginFatalCrisis(Days == 5);
+                    Progression.WorldEndSequence.BeginFatalCrisis(Progression.CrisisRules.Due(Days, game.State));
                     return;
                 }
                 if (!completingSleep)

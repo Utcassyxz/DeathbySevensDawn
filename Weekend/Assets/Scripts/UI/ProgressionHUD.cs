@@ -272,13 +272,13 @@ namespace DeathBySeventhsDawn.Progression
                         if(i%2==1||i==rooms.Length-1)GUILayout.EndHorizontal();
                     }
                     bool resolved=game.State.buildingCrisisResolved,seven=game.State.daySevenCrisisResolved;
-                    if(PrototypeButtons.LayoutButton(StoryText.Local("第五天爆楼：", "Day 5 bombing: ")+StoryText.Local(resolved?"已解除（点击还原）":"未解除（点击解除）",resolved?"Prevented (restore)":"Unresolved (prevent)"),buttonStyle))resolved=!resolved;
+                    if(PrototypeButtons.LayoutButton(StoryText.Local("第三天爆楼：", "Day 3 bombing: ")+StoryText.Local(resolved?"已解除（点击还原）":"未解除（点击解除）",resolved?"Prevented (restore)":"Unresolved (prevent)"),buttonStyle))resolved=!resolved;
                     if(PrototypeButtons.LayoutButton(StoryText.Local("第七天危机：", "Day 7 crisis: ")+StoryText.Local(seven?"已解除（点击还原）":"未解除（点击解除）",seven?"Prevented (restore)":"Unresolved (prevent)"),buttonStyle))seven=!seven;
                     if(resolved!=game.State.buildingCrisisResolved||seven!=game.State.daySevenCrisisResolved)
                     {game.State.buildingCrisisResolved=resolved;game.State.daySevenCrisisResolved=seven;ProgressionSave.Write(game.State);}
                     if(PrototypeButtons.LayoutButton(StoryText.Local("原地等待至次日（不算睡眠）","Wait here until tomorrow (no sleep)"),buttonStyle))
                     {int day=clock.Days;for(int i=0;i<4&&clock.Days==day;i++)clock.AdvanceTime();}
-                    if(PrototypeButtons.LayoutButton(StoryText.Local("播放第五天爆楼（关闭自由调试后致死）","Play Day 5 explosion (lethal outside free debug)"),buttonStyle)) WorldEndSequence.BeginFatalCrisis(true);
+                    if(PrototypeButtons.LayoutButton(StoryText.Local("播放第三天爆楼（关闭自由调试后致死）","Play Day 3 explosion (lethal outside free debug)"),buttonStyle)) WorldEndSequence.BeginFatalCrisis(true);
 
                     if (PrototypeButtons.LayoutButton(StoryText.Local("跳过当前强制剧情 · 进入自由探索", "Skip forced story · Free exploration"), buttonStyle))
                         StoryDebugActions.SkipForcedStory();

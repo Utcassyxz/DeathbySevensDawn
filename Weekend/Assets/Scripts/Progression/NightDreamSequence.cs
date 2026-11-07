@@ -119,8 +119,8 @@ namespace DeathBySeventhsDawn.Progression
         {
             if (active || WorldEndSequence.IsPresenting)
                 return true;
-            if (!StoryDebugActions.Enabled && ((clock.Days == 5 && !game.State.buildingCrisisResolved) || (clock.Days == 7 && !game.State.daySevenCrisisResolved)))
-            { WorldEndSequence.BeginFatalCrisis(clock.Days == 5); return true; }
+            if (!StoryDebugActions.Enabled && CrisisRules.Due(clock.Days, game.State) != CrisisKind.None)
+            { WorldEndSequence.BeginFatalCrisis(CrisisRules.Due(clock.Days, game.State)); return true; }
             var text = StoryText.Current.nightDream;
             bool firstContact = !game.HasLoopAbility && game.HasSeenAncientGod &&
                 (game.State.ancientObservationDay == 0 || (game.State.ancientObservationDay == clock.Days && game.State.ancientObservationLoop == game.LoopCount));

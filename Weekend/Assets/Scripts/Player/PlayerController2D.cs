@@ -35,7 +35,7 @@ namespace DeathBySeventhsDawn.Player
         }
         private void FixedUpdate()
         {
-            if ((Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded) || DeathBySeventhsDawn.Interaction.StoryJournal.WorldBlocked)
+            if ((Core.GameManager.Instance != null && Core.GameManager.Instance.HasEnded) || (DeathBySeventhsDawn.Interaction.StoryJournal.WorldBlocked || DeathBySeventhsDawn.Progression.CognitiveRupture.IsActive))
             {
                 rb.linearVelocity = Vector2.zero;
                 return;

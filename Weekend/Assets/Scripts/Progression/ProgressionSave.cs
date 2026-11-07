@@ -16,7 +16,7 @@ namespace DeathBySeventhsDawn.Progression
                 if (!File.Exists(PathName))
                     return new ProgressionState();
                 var state = JsonUtility.FromJson<ProgressionState>(File.ReadAllText(PathName));
-                if (state == null || (state.version < 1 || state.version > 5) || state.loopCount < 0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
+                if (state == null || (state.version < 1 || state.version > 6) || state.loopCount < 0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
                     throw new InvalidDataException("Unsupported or invalid progression save.");
                 state.bubblePurchases = state.bubblePurchases ?? new System.Collections.Generic.List<string>();
                 state.knowledgeIds = state.knowledgeIds ?? new System.Collections.Generic.List<string>();
@@ -44,6 +44,8 @@ namespace DeathBySeventhsDawn.Progression
                     state.fishMorningLoop = -1;
                     state.version = 5;
                 }
+                state.cityActions = state.cityActions ?? new System.Collections.Generic.List<string>();
+                state.version = 6;
                 return state;
             }
             catch (Exception ex)
@@ -54,10 +56,21 @@ namespace DeathBySeventhsDawn.Progression
         }
 
         static bool Valid(float v) => v >= 0 && !float.IsInfinity(v) && !float.IsNaN(v);
-        public static void Write(ProgressionState state)
+        public static void Write(ProgressionState state, bool captureCheckpoint = true)
         {
             try
             {
+                // Capture only the live state, never test fixtures or migration inputs.
+                if (captureCheckpoint && Core.GameManager.Instance != null && object.ReferenceEquals(state, Core.GameManager.Instance.State) && TimeSystem.TimeManager.Instance != null)
+                {
+                    state.hasCheckpoint = true;
+                    state.savedDay = TimeSystem.TimeManager.Instance.Days;
+                    state.savedPeriod = (int)TimeSystem.TimeManager.Instance.Period;
+                    state.savedVitality = Core.GameManager.Instance.Vitality;
+                    state.savedFloor = DeathBySeventhsDawn.Interaction.RooftopAccess.Instance != null ? DeathBySeventhsDawn.Interaction.RooftopAccess.Instance.CurrentFloor : 4;
+                    var actor = GameObject.FindWithTag("Player");
+                    if(actor != null) { var p = actor.transform.position; state.savedX=p.x;state.savedY=p.y;state.savedZ=p.z;state.savedScene=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name; }
+                }
                 string path = PathName, temp = path + ".tmp";
                 Directory.CreateDirectory(Application.persistentDataPath);
                 File.WriteAllText(temp, JsonUtility.ToJson(state, true));

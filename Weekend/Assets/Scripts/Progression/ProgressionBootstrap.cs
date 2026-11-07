@@ -26,6 +26,8 @@ namespace DeathBySeventhsDawn.Progression
                 Object.DontDestroyOnLoad(hud);
                 hud.AddComponent<ProgressionHUD>();
                 hud.AddComponent<WorldEndSequence>();
+                hud.AddComponent<JourneyCheckpoint>();
+                hud.AddComponent<CognitiveRupture>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.RooftopAccess>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.FurnitureInteraction>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.StoveInteraction>();

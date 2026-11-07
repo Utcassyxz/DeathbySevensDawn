@@ -266,6 +266,54 @@
         "title": "What Fish Heard",
         "body": "Fish recalls a night when the water suddenly stung, unlike a water change. She also heard heavy objects being dragged next door while Hugo was out. She does not know what they were. Nothing yet establishes a connection between the water and the noises.",
         "source": "Aquarium · Her account"
+      },
+      {
+        "id": "circus",
+        "title": "Will Circus",
+        "body": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.",
+        "source": "Recorded on site in the city"
+      },
+      {
+        "id": "sushi",
+        "title": "Miyazaki Sushi",
+        "body": "Miyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.",
+        "source": "Recorded on site in the city"
+      },
+      {
+        "id": "city-maintenance",
+        "title": "Maintenance handover",
+        "body": "Before the third night, 401 has diverted a shared pipe into his room. The handover identifies an isolation switch in the service area, separate from the aquarium supply.",
+        "source": "Recorded on site in the city"
+      },
+      {
+        "id": "city-fuse",
+        "title": "Service wiring diagram",
+        "body": "The device in 401 draws from a shared circuit. This diagram shows how to isolate that branch while keeping residential lights and the aquarium pump running. Compare it with the handover.",
+        "source": "Recorded on site in the city"
+      },
+      {
+        "id": "city-orders",
+        "title": "Search orders",
+        "body": "From Day 4, search parties work through addresses across the city. The lists share a dispatch number. The broadcast command terminal is still accepting updates. This is a new city crisis, separate from the bombing.",
+        "source": "Recorded on site in the city"
+      },
+      {
+        "id": "city-routing",
+        "title": "Operator routing log",
+        "body": "The operator left a note: stopping dispatch requires validating the search-list number, then severing the broadcast route at the command terminal. Switching off one radio will not stop it.",
+        "source": "Recorded on site in the city"
+      },
+      {
+        "id": "city-spectrum",
+        "title": "Day 6 observation log",
+        "body": "The Day 6 log shows the occultation synchronizing with the local observation array. It does not explain the ancient entity, but records when the array begins synchronizing.",
+        "source": "Recorded on site in the city"
+      },
+      {
+        "id": "city-lens",
+        "title": "Array maintenance manual",
+        "body": "The manual contains an emergency shutdown. Identify the synchronized route against the daily observations before shutting it down, rather than blindly destroying the telescope.",
+        "source": "Recorded on site in the city"
       }
     ],
     "deductions": [
@@ -310,6 +358,24 @@
         "relation": "Time connection",
         "title": "From the Tank into the Flat",
         "body": "The water marks lead back to the displaced tank. She also remembers what Hugo said through the glass. The person calling him when he woke did not come in through the door."
+      },
+      {
+        "id": "deduction-building-plan",
+        "relation": "Cross-check",
+        "title": "401 supply can be isolated",
+        "body": "The handover matches the wiring. Isolate 401 before the third night while retaining residential and aquarium power."
+      },
+      {
+        "id": "deduction-city-orders",
+        "relation": "Cross-check",
+        "title": "City search dispatch source",
+        "body": "The list number matches the routing log. Stop dispatch at the broadcast terminal."
+      },
+      {
+        "id": "deduction-observatory",
+        "relation": "Cross-check",
+        "title": "Synchronized observation route",
+        "body": "The log and manual identify the same route. Emergency shutdown is possible."
       }
     ]
   },
@@ -864,6 +930,165 @@
       "The last light goes out.",
       "No sound reaches this place as the Earth breaks.",
       "Hugo is still here."
+    ]
+  },
+  "city": {
+    "entries": [
+      {
+        "id": "circus",
+        "title": "Will Circus",
+        "body": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "sushi",
+        "title": "Miyazaki Sushi",
+        "body": "Miyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "city-maintenance",
+        "title": "Maintenance handover",
+        "body": "Before the third night, 401 has diverted a shared pipe into his room. The handover identifies an isolation switch in the service area, separate from the aquarium supply.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "city-fuse",
+        "title": "Service wiring diagram",
+        "body": "The device in 401 draws from a shared circuit. This diagram shows how to isolate that branch while keeping residential lights and the aquarium pump running. Compare it with the handover.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "city-orders",
+        "title": "Search orders",
+        "body": "From Day 4, search parties work through addresses across the city. The lists share a dispatch number. The broadcast command terminal is still accepting updates. This is a new city crisis, separate from the bombing.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "city-routing",
+        "title": "Operator routing log",
+        "body": "The operator left a note: stopping dispatch requires validating the search-list number, then severing the broadcast route at the command terminal. Switching off one radio will not stop it.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "city-spectrum",
+        "title": "Day 6 observation log",
+        "body": "The Day 6 log shows the occultation synchronizing with the local observation array. It does not explain the ancient entity, but records when the array begins synchronizing.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "city-lens",
+        "title": "Array maintenance manual",
+        "body": "The manual contains an emergency shutdown. Identify the synchronized route against the daily observations before shutting it down, rather than blindly destroying the telescope.",
+        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+      },
+      {
+        "id": "return",
+        "title": "Return",
+        "body": "Return to the apartment or street.",
+        "success": "Maintenance handover recorded.",
+        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+      },
+      {
+        "id": "service",
+        "title": "Service area",
+        "body": "Investigate the circuit supplying the third-night device.",
+        "success": "Maintenance handover recorded.",
+        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+      },
+      {
+        "id": "broadcast",
+        "title": "Broadcast center",
+        "body": "Investigate the city search dispatch.",
+        "success": "Maintenance handover recorded.",
+        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+      },
+      {
+        "id": "observatory",
+        "title": "Observatory",
+        "body": "Look for the observation logs from Day 6.",
+        "success": "Maintenance handover recorded.",
+        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+      },
+      {
+        "id": "rest",
+        "title": "Bench: wait one period",
+        "body": "Wait voluntarily. This does not count as sleep.",
+        "success": "Maintenance handover recorded.",
+        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+      },
+      {
+        "id": "caretaker",
+        "title": "Caretaker / Fish testimony",
+        "body": "The caretaker shares the handover with a recognizable resident. If mutation is too advanced, earn Fish’s understanding and record her testimony, or find the duplicate handover across the street.",
+        "success": "Maintenance handover recorded.",
+        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+      },
+      {
+        "id": "building-terminal",
+        "title": "Isolate the 401 circuit",
+        "body": "Before the third night, connect the handover and wiring diagram, then isolate the 401 circuit. The aquarium keeps power. Day 4 testimony is not required.",
+        "success": "Intervention complete. This crisis is resolved for this life.",
+        "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
+      },
+      {
+        "id": "city-terminal",
+        "title": "Stop city search dispatch",
+        "body": "Connect the search orders and routing log, then stop dispatch at its source.",
+        "success": "Intervention complete. This crisis is resolved for this life.",
+        "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
+      },
+      {
+        "id": "cosmic-terminal",
+        "title": "Shut the synchronized observation route",
+        "body": "Connect the Day 6 log with the maintenance manual, identify the route, then perform the emergency shutdown.",
+        "success": "Intervention complete. This crisis is resolved for this life.",
+        "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
+      },
+      {
+        "id": "escape",
+        "title": "Escape the exposed space",
+        "body": "Reach the far exit and evade the pursuers.",
+        "success": "",
+        "locked": ""
+      },
+      {
+        "id": "filter-tear",
+        "title": "Perceptual filter torn",
+        "body": "The flat world is ripped apart.\nIt is wet underneath. Something is running toward you.",
+        "success": "",
+        "locked": ""
+      },
+      {
+        "id": "filter-return",
+        "title": "The filter closes",
+        "body": "The split closes. The street is flat again.\nYou still remember what was underneath.",
+        "success": "",
+        "locked": ""
+      }
+    ],
+    "days": [
+      "Day 1: Complete the apartment introduction. Notice the four original bulletins.",
+      "Day 2: Enter the street from floor 1. Record the handover and wiring diagram. Meet Bubble after rooftop observation.",
+      "Day 3: Confirm the circuit deduction with B; isolate 401 in the service area.",
+      "Day 4: Fish becomes human. Build understanding; investigate search orders and routing.",
+      "Day 5: Stop the city dispatch at the broadcast terminal. Avoid patrol sightlines.",
+      "Day 6: Compare observation logs with the array manual.",
+      "Day 7: Shut the synchronized route before midnight.",
+      "Day 8 onward: All three crises have been passed in this life. Continue exploring."
+    ],
+    "crisis": [
+      "On the fifth night, districts across the city are sealed.",
+      "The same search list travels through the broadcast route. Hugo’s address is on it.",
+      "Dispatch was not stopped. Hugo does not survive the search."
     ]
   }
 }

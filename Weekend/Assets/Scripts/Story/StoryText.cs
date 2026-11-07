@@ -101,6 +101,7 @@ namespace DeathBySeventhsDawn.Story
         public MorningText morning;
         public CultText cult;
         public ExpansionText expansion;
+        public CityText city;
         public DreamText dream;
         public NightDreamText nightDream;
         public KnowledgeText knowledge;

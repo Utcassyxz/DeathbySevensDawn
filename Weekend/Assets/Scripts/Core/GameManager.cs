@@ -102,7 +102,8 @@ namespace DeathBySeventhsDawn.Core
             EndingCollectionUI.ResetResult();
             State = new ProgressionState();
             Vitality = MaxVitality;
-            ProgressionSave.Write(State);
+            State.hasCheckpoint=true;State.savedDay=1;State.savedPeriod=0;State.savedScene="Bedroom";State.savedVitality=Vitality;
+            ProgressionSave.Write(State,false);
             TimeSystem.TimeManager.Instance.ResetToDayOne();
             World.RoomDoor2D.ClearPendingTravel();
             JourneyReset?.Invoke();
@@ -148,7 +149,7 @@ namespace DeathBySeventhsDawn.Core
                 EndingCollection.Unlock("bad-ending-1", false);
             if (State.fishReplacementEnding)
                 EndingCollection.Unlock("fish-replacement", false);
-            Vitality = MaxVitality;
+            Vitality = State.hasCheckpoint && State.savedVitality > 0 ? Mathf.Min(MaxVitality,State.savedVitality) : MaxVitality;
         }
 
         public bool HasAbility(string id)
@@ -218,11 +219,15 @@ namespace DeathBySeventhsDawn.Core
             State.fishMorningLoop = -1;
             State.aquariumSealed = false;
             State.sleeplessDays = 0;
-            State.buildingCrisisResolved = State.daySevenCrisisResolved = false;
+            State.buildingCrisisResolved = State.cityCrisisResolved = State.daySevenCrisisResolved = false;
+            State.cityActions.Clear(); State.defenseCharges = 3; State.cityRegion = "";
+            State.encounterReturnScene=State.encounterId="";
+            State.savedScene = "LivingRoom"; State.savedX=State.savedY=State.savedZ=0; State.hasCheckpoint=false;
             State.cultTokenOffered = false;
             State.inventory.Clear();
             Vitality = MaxVitality;
-            ProgressionSave.Write(State);
+            State.hasCheckpoint=true;State.savedDay=1;State.savedPeriod=0;State.savedVitality=Vitality;
+            ProgressionSave.Write(State,false);
             Changed?.Invoke();
         }
 

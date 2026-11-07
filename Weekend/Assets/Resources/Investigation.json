@@ -83,6 +83,38 @@
     {
       "id": "fish-help-promise",
       "image": ""
+    },
+    {
+      "id": "circus",
+      "image": ""
+    },
+    {
+      "id": "sushi",
+      "image": ""
+    },
+    {
+      "id": "city-maintenance",
+      "image": ""
+    },
+    {
+      "id": "city-fuse",
+      "image": ""
+    },
+    {
+      "id": "city-orders",
+      "image": ""
+    },
+    {
+      "id": "city-routing",
+      "image": ""
+    },
+    {
+      "id": "city-spectrum",
+      "image": ""
+    },
+    {
+      "id": "city-lens",
+      "image": ""
     }
   ],
   "deductions": [
@@ -120,6 +152,21 @@
       "id": "deduction-waterline",
       "left": "tank-overflow",
       "right": "001-name"
+    },
+    {
+      "id": "deduction-building-plan",
+      "left": "city-maintenance",
+      "right": "city-fuse"
+    },
+    {
+      "id": "deduction-city-orders",
+      "left": "city-orders",
+      "right": "city-routing"
+    },
+    {
+      "id": "deduction-observatory",
+      "left": "city-spectrum",
+      "right": "city-lens"
     }
   ]
 }

@@ -19,7 +19,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame = -1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => WorldEndSequence.IsPresenting || modalOpen || StoryTransition.IsActive || EndingCollectionUI.PreviewOpen || RooftopAccess.WorldBlocked || GameSettingsUI.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || Time.frameCount <= blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked || NightDreamSequence.WorldBlocked;
+        public static bool WorldBlocked => WorldEndSequence.IsPresenting || CognitiveRupture.IsActive || DeathBySeventhsDawn.City.CityWorld.Reading || modalOpen || StoryTransition.IsActive || EndingCollectionUI.PreviewOpen || RooftopAccess.WorldBlocked || GameSettingsUI.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || Time.frameCount <= blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked || NightDreamSequence.WorldBlocked;
 
         enum Page
         {
@@ -214,7 +214,7 @@ namespace DeathBySeventhsDawn.Interaction
                 SetPage(Page.Dream);
             }
 
-            if (RooftopAccess.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked)
+            if (DeathBySeventhsDawn.City.CityWorld.Reading || RooftopAccess.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || ProgressionHUD.DebugConsoleOpen || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked)
                 return;
             bool diary = false, interact = false, cancel = false;
             int diaryStep = 0;

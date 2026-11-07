@@ -29,5 +29,20 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Apartment/Stairwell.unity
     guid: a21f60779624c874a8abcc1d43a390e2
+  - enabled: 1
+    path: Assets/Apartment/CityStreet.unity
+    guid: da7b84a078520634aaf51580cd753d73
+  - enabled: 1
+    path: Assets/Apartment/CityService.unity
+    guid: 6bad5e1d8d6f82240a66531b3047c594
+  - enabled: 1
+    path: Assets/Apartment/CityBroadcast.unity
+    guid: bc1d34e3b772cbf4fa12dcdc81763044
+  - enabled: 1
+    path: Assets/Apartment/CityObservatory.unity
+    guid: f7f3e2a948c18db4890846691692e923
+  - enabled: 1
+    path: Assets/Apartment/CityEncounter3D.unity
+    guid: 4e75cdb26e9d6b0479e134d85b8adfa4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

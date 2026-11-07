@@ -8,8 +8,16 @@ namespace DeathBySeventhsDawn.Progression
     [Serializable]
     public class ProgressionState
     {
-        public int version = 5, loopCount;
+        public int version = 6, loopCount;
         public int sleeplessDays;
+        public bool cityCrisisResolved, hasCheckpoint;
+        public int savedDay = 1, savedPeriod, deathCrisis, savedFloor = 4;
+        public string savedScene = "", cityRegion = "";
+        public float savedX, savedY, savedZ, savedVitality = -1;
+        public int defenseCharges = 3;
+        public string encounterReturnScene="", encounterId="";
+        public float encounterReturnX,encounterReturnY;
+        public List<string> cityActions = new List<string>();
         public bool deathWasBuilding;
         public bool buildingCrisisResolved, daySevenCrisisResolved;
         // Persistent unlocks survive a loop; visits and daily story flags do not.

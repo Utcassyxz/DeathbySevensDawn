@@ -17,7 +17,7 @@ namespace DeathBySeventhsDawn.Progression
         public static bool FirstCycleActive => Instance != null && Instance.playing && Instance.firstCycle;
         public static bool InReunion => FirstCycleActive && Instance.reunion;
         public int ReunionPage => reunionPage;
-        bool playing, firstCycle, reunion, fatal, building, suppressTerminalEffect, blastPlayed;
+        bool playing, firstCycle, reunion, fatal, building, city, suppressTerminalEffect, blastPlayed;
         int reunionPage;
         float lastAdvance;
         Texture2D earth, portrait;
@@ -30,8 +30,10 @@ namespace DeathBySeventhsDawn.Progression
             if(game.HasEnded || clock.Days!=7 || clock.Period!=TimePeriod.Night || game.State.daySevenCrisisResolved) return false;
             return BeginFatalCrisis(false);
         }
-        public static bool BeginFatalCrisis(bool buildingExplosion)
+        public static bool BeginFatalCrisis(bool buildingExplosion) => BeginFatalCrisis(buildingExplosion ? CrisisKind.Building : CrisisKind.Cosmic);
+        public static bool BeginFatalCrisis(CrisisKind kind)
         {
+            bool buildingExplosion = kind == CrisisKind.Building;
             if(Instance==null||GameManager.Instance.HasEnded)return false;
             if(IsPresenting)return true;
             var state=GameManager.Instance.State;
@@ -39,10 +41,11 @@ namespace DeathBySeventhsDawn.Progression
             {
                 state.firstApocalypsePending=true;
                 state.deathWasBuilding=buildingExplosion;
+                state.deathCrisis=(int)kind;
                 ProgressionSave.Write(state);
             }
             Instance.BeginFirstCycle();
-            Instance.fatal=true;Instance.building=buildingExplosion;
+            Instance.fatal=true;Instance.building=buildingExplosion;Instance.city=kind==CrisisKind.City;
             return true;
         }
         void CompleteFatalDeath()
@@ -57,8 +60,8 @@ namespace DeathBySeventhsDawn.Progression
         }
         void Start()
         {
-            if(GameManager.Instance.State.firstApocalypsePending && !GameManager.Instance.HasEnded)
-            { BeginFirstCycle();fatal=true;building=GameManager.Instance.State.deathWasBuilding; }
+            if(GameManager.Instance.State.firstApocalypsePending && !GameManager.Instance.HasEnded && !MainMenuUI.WorldBlocked)
+            { BeginFirstCycle();fatal=true;building=GameManager.Instance.State.deathWasBuilding;city=GameManager.Instance.State.deathCrisis==(int)CrisisKind.City; }
         }
         void BeginFirstCycle()
         {
@@ -168,13 +171,15 @@ namespace DeathBySeventhsDawn.Progression
         }
         void ResetSequence()
         {
-            playing = firstCycle = reunion = fatal = building = false;
+            playing = firstCycle = reunion = fatal = building = city = false;
             reunionPage=0;reunionText.Reset();
             elapsed = 0;
         }
 
         void Update()
         {
+            if (!playing && GameManager.Instance.State.firstApocalypsePending && !GameManager.Instance.HasEnded && !MainMenuUI.WorldBlocked)
+            { BeginFirstCycle(); fatal=true; building=GameManager.Instance.State.deathWasBuilding; city=GameManager.Instance.State.deathCrisis==(int)CrisisKind.City; }
             if (ProgressionHUD.DebugConsoleOpen)
                 return;
             if (playing)
@@ -280,6 +285,14 @@ namespace DeathBySeventhsDawn.Progression
         {
             Fill(new Rect(0,0,w,h),new Color(.006f,.009f,.018f));
             for(int i=0;i<100;i++) Fill(new Rect((i*97%311)/311f*w,(i*61%193)/193f*h,2,2),new Color(.18f,.22f,.30f));
+            if(!reunion && city)
+            {
+                var style = new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=Mathf.RoundToInt(h/32),alignment=TextAnchor.MiddleCenter,wordWrap=true};
+                GUI.color=Color.white;
+                var cityLines=StoryText.Current.city.crisis;
+                GUI.Label(new Rect(w*.15f,h*.3f,w*.7f,h*.4f),cityLines[Mathf.Min(cityLines.Length-1,(int)(t*cityLines.Length))],style);
+                return;
+            }
             if(!reunion && building)
             {
                 DrawBuildingExplosion(w,h,t);

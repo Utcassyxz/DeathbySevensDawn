@@ -155,6 +155,8 @@ namespace DeathBySeventhsDawn.Interaction
         // CORE TRAVEL: 4F corridor <-> dedicated stairwell <-> 5F roof.
         // Lower floors have real landings, but their apartment wings stay closed in this prototype.
         public int CurrentFloor { get; private set; } = 4;
+        public void RestoreFloor(int floor) { CurrentFloor=Mathf.Clamp(floor,1,5); }
+        public void EnterFromStreet() { CurrentFloor=1; Travel("Stairwell",LandingDoor+Vector2.up*.5f); }
 
         public static readonly Vector2 StairUp = new Vector2(-2.2f, -.8f) * .68f;
         public static readonly Vector2 StairDown = new Vector2(1.65f, 1.12f) * .68f;
@@ -197,6 +199,8 @@ namespace DeathBySeventhsDawn.Interaction
                     Travel("Corridor", StairsFour + Vector2.left * .42f);
                 else if (CurrentFloor == 5)
                     Travel("Rooftop", StairsFive + Vector2.right * 1.1f);
+                else if (CurrentFloor == 1)
+                    DeathBySeventhsDawn.City.CityWorld.Travel("CityStreet");
                 else
                     Show(CurrentFloor==1 && TimeManager.Instance.Days>=2
                         ? StoryText.Local("木板横钉在大门内侧。门缝也堵死了。\n外面一点声音都传不进来。", "Boards are nailed across the inside of the front door. Even the gaps are plugged.\nNot a sound gets through.")

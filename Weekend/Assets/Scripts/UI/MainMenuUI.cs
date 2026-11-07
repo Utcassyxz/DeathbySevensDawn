@@ -90,6 +90,7 @@ namespace DeathBySeventhsDawn.Progression
             }
 
             var k = Keyboard.current;
+            if(k != null && k.cKey.wasPressedThisFrame && JourneyCheckpoint.Resume()) return;
             if (k != null && k.enterKey.wasPressedThisFrame)
                 StartGame();
         }
@@ -299,6 +300,7 @@ namespace DeathBySeventhsDawn.Progression
                 GUI.color = Color.white;
                 float progress = starting ? Mathf.Clamp01((Time.unscaledTime - openingStarted) / 11f) : 0;
                 GUI.DrawTexture(new Rect(0, 0, w, h), sky.Render(Time.unscaledTime, progress), ScaleMode.ScaleAndCrop);
+                if (!starting && GameManager.Instance.State.hasCheckpoint) GUI.Label(new Rect(w*.25f,h-65,w*.5f,40),StoryText.Local("C 继续已保存的旅程","C Continue saved journey"),small);
                 if (starting)
                 {
                     GUI.Label(new Rect(0, h - 45, w, 30), StoryText.Local("跳过 · Esc", "Skip · Esc"), small);
