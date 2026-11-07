@@ -1,5 +1,7 @@
 # 核心代码边界
 
+2026-11-07最新增量见HYBRID_CITY_2026-11-07.md：普通公寓/城市探索为2D，CognitiveRupture独占认知滤网撕裂、进入/退出3D遭遇及返回原位置；CityWorld独占新增城市灰盒与现场交互，ThirdPersonMotor/CityEnemy仅在CityEncounter3D运行。CrisisRules集中第三/第五/第七日危机日期，TimeManager与NightDreamSequence共同调用；v6存档兼容v1–v5。新增验收Validate seven-day city与原死亡回归都需运行。
+
 写作协作者（包括 DeepSeek）进行台词任务时，只修改 StoryText.json 与 StoryTextEnglish.json 的文本值；不要随手“修复”下面的控制器。明确的工程任务可以修改，但需同步验证。
 
 | 系统 | 唯一职责与禁止破坏的条件 |

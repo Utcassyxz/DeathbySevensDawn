@@ -42,6 +42,16 @@ public static class VerifyRevision
                 steps = SessionState.GetBool(Key + "OnlyCompanions", false) ? Extensions() : DeathCycleAcceptance.Run();
                 if(SessionState.GetBool(Key+"OnlySpatial",false)) steps=SpatialApocalypseAcceptance.Run();
                 if(SessionState.GetBool(Key+"OnlyDeathCycle",false)) steps=DeathCycleAcceptance.Run();
+                if(SessionState.GetBool(Key+"OnlyCity",false)) steps=CityAcceptance.Run();
+                if(SessionState.GetBool(Key+"OnlyCity",false))
+                {
+                    var inputSettings=UnityEngine.InputSystem.InputSystem.settings;
+                    SessionState.SetInt(Key+"CityInputFocus",(int)inputSettings.editorInputBehaviorInPlayMode);
+                    SessionState.SetInt(Key+"CityInputBackground",(int)inputSettings.backgroundBehavior);
+                    inputSettings.editorInputBehaviorInPlayMode=UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+                    inputSettings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+                    Application.runInBackground=true;
+                }
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
@@ -74,6 +84,9 @@ public static class VerifyRevision
         SessionState.SetBool(Key + "OnlyCompanions", true);
         Run();
     }
+
+    [MenuItem("Prototype/Validate seven-day city")]
+    public static void RunCity(){ SessionState.SetBool(Key+"OnlyCity",true); Run(); }
 
     [MenuItem("Prototype/Validate current prototype")]
     public static void Run()
@@ -490,7 +503,8 @@ public static class VerifyRevision
         if(SessionState.GetBool(Key+"OnlySpatial",false)) scope="focused spatial and first-apocalypse checks; real note collection and knocking, modal EXIT suppression, south stairwell entrance, destruction/reunion/once-only rewind, saved checkpoints and unawakened ending preserved. Original journey, album and settings restored.";
         else scope += " South entrance, wall-side stool and aquarium push, neighbour knocks and first awakened midnight reunion verified.";
         if(!SessionState.GetBool(Key+"OnlyCompanions",false)&&!SessionState.GetBool(Key+"OnlySpatial",false)) scope="death-only returns, sleep debt and in-place waiting, accelerated per-life fish, right EXIT, consolidated scenes and free debug; original journey/album/settings restored.";
-        File.WriteAllText("../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
+        if(SessionState.GetBool(Key+"OnlyCity",false)) scope="seven-day city integration: evidence, deductions, interventions, fish reachability, AI, defense, checkpoint and legacy migration; journey/album/settings restored.";
+        File.WriteAllText(SessionState.GetBool(Key+"OnlyCity",false)?"../city-validation.txt":"../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
         {
@@ -507,6 +521,12 @@ public static class VerifyRevision
         SessionState.SetBool(Key + "OnlyCompanions", false);
         SessionState.SetBool(Key+"OnlySpatial",false);
         SessionState.SetBool(Key+"OnlyDeathCycle",false);
+        if(SessionState.GetBool(Key+"OnlyCity",false))
+        {
+            UnityEngine.InputSystem.InputSystem.settings.editorInputBehaviorInPlayMode=(UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode)SessionState.GetInt(Key+"CityInputFocus",0);
+            UnityEngine.InputSystem.InputSystem.settings.backgroundBehavior=(UnityEngine.InputSystem.InputSettings.BackgroundBehavior)SessionState.GetInt(Key+"CityInputBackground",0);
+        }
+        SessionState.SetBool(Key+"OnlyCity",false);
         foreach (var device in UnityEngine.InputSystem.InputSystem.devices.ToArray())
             if (device.name.StartsWith("SevenDayAcceptanceKeyboard"))
                 UnityEngine.InputSystem.InputSystem.RemoveDevice(device);

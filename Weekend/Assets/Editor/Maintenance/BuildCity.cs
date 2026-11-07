@@ -16,24 +16,35 @@ public static class BuildCity
         var previous=SceneManager.GetActiveScene().path;
         foreach(var name in new[]{"CityStreet","CityService","CityBroadcast","CityObservatory","CityEncounter3D"})
         {
-            var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
-            new GameObject("City world").AddComponent<CityWorld>();
             string path="Assets/Apartment/"+name+".unity";
-            EditorSceneManager.SaveScene(scene,path);
+            // Keep authored scenes and their object identifiers when this command is run again.
+            if(AssetDatabase.LoadAssetAtPath<SceneAsset>(path)==null)
+            {
+                var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
+                new GameObject("City world").AddComponent<CityWorld>();
+                EditorSceneManager.SaveScene(scene,path);
+            }
             var scenes=EditorBuildSettings.scenes.ToList();
             if(!scenes.Any(s=>s.path==path))scenes.Add(new EditorBuildSettingsScene(path,true));
             EditorBuildSettings.scenes=scenes.ToArray();
         }
         AssetDatabase.SaveAssets();
         if(!string.IsNullOrEmpty(previous))EditorSceneManager.OpenScene(previous);
-        Debug.Log("CITY_BUILD: four city scenes registered");
+        Debug.Log("CITY_BUILD: four 2D regions and one 3D encounter registered");
     }
 
     public static void BuildPlayer()
     {
-        var report=BuildPipeline.BuildPlayer(EditorBuildSettings.scenes.Where(s=>s.enabled).Select(s=>s.path).ToArray(),
-            "../../outputs/DeathbySevensDawn/SevenDay.exe",BuildTarget.StandaloneWindows64,BuildOptions.Development);
-        if(report.summary.result!=UnityEditor.Build.Reporting.BuildResult.Succeeded)
-            throw new System.Exception("City player build failed: "+report.summary.result);
+        string previousProduct=PlayerSettings.productName;
+        try
+        {
+            // A standalone review build must not migrate saves used by an older open editor.
+            PlayerSettings.productName="DeathbySevensDawn City Prototype";
+            var report=BuildPipeline.BuildPlayer(EditorBuildSettings.scenes.Where(s=>s.enabled).Select(s=>s.path).ToArray(),
+                "../../outputs/DeathbySevensDawn/SevenDay.exe",BuildTarget.StandaloneWindows64,BuildOptions.Development);
+            if(report.summary.result!=UnityEditor.Build.Reporting.BuildResult.Succeeded)
+                throw new System.Exception("City player build failed: "+report.summary.result);
+        }
+        finally {PlayerSettings.productName=previousProduct;AssetDatabase.SaveAssets();}
     }
 }
