@@ -177,8 +177,7 @@ namespace DeathBySeventhsDawn.Interaction
             var state = GameManager.Instance.State;
             if (TimeManager.Instance.Days == 1 && !state.cultDayOneTalked)
                 StartEncounter(Clip.Boards);
-            else if (TimeManager.Instance.Days >= 2 && !state.neighborBarricadeSeen)
-                StartEncounter(Clip.Boards);
+
         }
 
         void MoveActor(Vector3 start, float progress)

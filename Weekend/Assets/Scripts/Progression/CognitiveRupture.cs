@@ -75,7 +75,7 @@ namespace DeathBySeventhsDawn.Progression
         {
             if(!IsActive||instance.entering)return;
             var state=GameManager.Instance.State;if(SceneManager.GetActiveScene().name!=state.encounterReturnScene)return;
-            var position=new Vector3(state.encounterReturnX,state.encounterReturnY-3,0);
+            var position=new Vector3(state.encounterReturnX,state.encounterReturnY,0);
             actor.transform.position=position;var body=actor.GetComponent<Rigidbody2D>();if(body!=null)body.position=position;
         }
         void Update()

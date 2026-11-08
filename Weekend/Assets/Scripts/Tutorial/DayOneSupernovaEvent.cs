@@ -223,7 +223,7 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
                 GUI.color = Color.white;
                 float panel = Mathf.Min(1000, w - 64), left = (w - panel) / 2;
-                GUI.Label(new Rect(left, 22, panel, 48), boring ? StoryText.Local("电视", "Television") : text.title, heading);
+                GUI.Label(new Rect(left, 22, panel, 48), boring ? StoryText.UI("copy.DayOneSupernovaEvent.134") : text.title, heading);
                 if (!boring)
                 {
                     if (CurrentIllustration != null)
@@ -236,7 +236,7 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     GUI.Label(new Rect(left, h * .32f, panel, 40), text.narrator, small);
                     GUI.Label(new Rect(left, h * .4f, panel, 150), text.boring, body);
-                    GUI.Label(new Rect(left, h - 76, panel, 42), StoryText.Local("Enter / Esc  离开", "Enter / Esc  Leave"), small);
+                    GUI.Label(new Rect(left, h - 76, panel, 42), StoryText.UI("copy.DayOneSupernovaEvent.135"), small);
                 }
             }
             finally

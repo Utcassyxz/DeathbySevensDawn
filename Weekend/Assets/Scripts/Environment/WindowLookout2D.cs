@@ -116,7 +116,7 @@ namespace DeathBySeventhsDawn.Interaction
                 EnsureUI();
             if (hint != null)
             {
-                hint.text = DeathBySeventhsDawn.Story.StoryText.Local("E  查看窗外", "E  Look outside");
+                hint.text = DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.100");
                 hint.gameObject.SetActive(false);
                 if (nearby && !TutorialGate.IsBlocked("window"))
                     Progression.WorldPromptUI.Offer("window", hint.text, 55);
@@ -187,17 +187,17 @@ namespace DeathBySeventhsDawn.Interaction
                     aspect.aspectRatio = (float)image.width / image.height;
             }
 
-            heading.text = DeathBySeventhsDawn.Story.StoryText.Local("窗外 · 第 ", "Outside \u00b7 Day ") + DisplayedDay + DeathBySeventhsDawn.Story.StoryText.Local(" 天", "");
-            closeInstructions.text = DisplayedDay == 2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId) ? DeathBySeventhsDawn.Story.StoryText.Local("窗外观察已收录", "Observation recorded") : DeathBySeventhsDawn.Story.StoryText.Local("R  记录窗外的变化", "R  Record the view")) + DeathBySeventhsDawn.Story.StoryText.Local("\nEsc  返回房间", "\nEsc Back to room") : DeathBySeventhsDawn.Story.StoryText.Local("Esc  返回房间", "Esc Back to room");
+            heading.text = DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.101") + DisplayedDay + DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.102");
+            closeInstructions.text = DisplayedDay == 2 ? (Knowledge.Investigation.Has(StoryContent.WindowKnowledgeId) ? DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.103") : DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.104")) + DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.105") : DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.106");
             if (CurtainsClosed)
-                closeInstructions.text = DeathBySeventhsDawn.Story.StoryText.Local("Esc 返回房间", "Esc Back to room");
+                closeInstructions.text = DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.107");
             if (CurtainsClosed)
                 heading.text = DeathBySeventhsDawn.Story.StoryText.Current.expansion.curtainsClosed;
             else
                 heading.text += " · " + DeathBySeventhsDawn.Story.StoryText.Current.expansion.decayCaptions[DisplayedDay - 1];
             curtainButton.gameObject.SetActive(CurtainsClosed || CanCloseCurtains);
             curtainLabel.font = Progression.GameTypography.Current;
-            curtainLabel.text = DeathBySeventhsDawn.Story.StoryText.Local(CurtainsClosed ? "E 拉开窗帘" : "E 拉上窗帘", CurtainsClosed ? "E Open curtains" : "E Close curtains");
+            curtainLabel.text = DeathBySeventhsDawn.Story.StoryText.Local(CurtainsClosed ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.WindowLookout2D.298") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.WindowLookout2D.299"), CurtainsClosed ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.WindowLookout2D.300") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.WindowLookout2D.301"));
             foreach (var label in new[]
             {
                 heading,
@@ -225,7 +225,7 @@ namespace DeathBySeventhsDawn.Interaction
             scaler.referenceResolution = new Vector2(1280, 720);
             scaler.matchWidthOrHeight = .5f;
             var font = DeathBySeventhsDawn.Progression.GameTypography.Current;
-            hint = MakeText("Window hint", root.transform, font, DeathBySeventhsDawn.Story.StoryText.Local("E  查看窗外", "E  Look outside"), 25, new Vector2(.1f, .02f), new Vector2(.9f, .11f));
+            hint = MakeText("Window hint", root.transform, font, DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.108"), 25, new Vector2(.1f, .02f), new Vector2(.9f, .11f));
             overlay = MakeRect("Window view", root.transform, Vector2.zero, Vector2.one);
             var backdrop = overlay.AddComponent<Image>();
             backdrop.color = new Color(.025f, .035f, .045f, .97f);
@@ -238,7 +238,7 @@ namespace DeathBySeventhsDawn.Interaction
             picture.raycastTarget = false;
             aspect = imageObject.AddComponent<AspectRatioFitter>();
             aspect.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-            closeInstructions = MakeText("Close instructions", overlay.transform, font, DeathBySeventhsDawn.Story.StoryText.Local("Esc  返回房间", "Esc Back to room"), 23, new Vector2(.06f, .02f), new Vector2(.94f, .12f));
+            closeInstructions = MakeText("Close instructions", overlay.transform, font, DeathBySeventhsDawn.Story.StoryText.UI("copy.WindowLookout2D.109"), 23, new Vector2(.06f, .02f), new Vector2(.94f, .12f));
             var action = MakeRect("Curtain action", overlay.transform, new Vector2(.08f, .025f), new Vector2(.39f, .105f));
             action.AddComponent<UnityEngine.UI.Image>().color = new Color(.15f, .17f, .19f);
             action.AddComponent<UnityEngine.UI.Outline>().effectColor = new Color(.51f, .45f, .35f);

@@ -95,9 +95,9 @@ namespace DeathBySeventhsDawn.City
             if(region=="CityStreet")
             {
                 Add("circus",V(-6,-1.4f));Add("sushi",V(6,-1.4f));Add("caretaker",V(-3,-.8f));Add("city-maintenance",V(3,-.8f));
-                Add("service",V(-6,2),"CityService");Add("broadcast",V(0,2),"CityBroadcast");Add("observatory",V(6,2),"CityObservatory");Add("rest",V(0,-2.2f));
+                Add("service",V(-7.6f,.1f),"CityService");Add("broadcast",V(7.6f,.1f),"CityBroadcast");Add("observatory",V(6,-4.3f),"CityObservatory");Add("rest",V(0,-2.2f));
             }
-            else if(region=="CityService"){Add("city-fuse",V(-4,1));Add("building-terminal",V(4,1),null,CrisisKind.Building);}
+            else if(region=="CityService"){Add("city-fuse",V(-4,1));Add("building-terminal",V(4,1));}
             else if(region=="CityBroadcast"){Add("city-orders",V(-4,1));Add("city-routing",V(4,1));Add("city-terminal",V(0,3),null,CrisisKind.City);}
             else {Add("city-spectrum",V(-4,1));Add("city-lens",V(4,1));Add("cosmic-terminal",V(0,3),null,CrisisKind.Cosmic);}
             CognitiveRupture.RestoreExploration(PlayerObject);
@@ -203,15 +203,15 @@ namespace DeathBySeventhsDawn.City
                 if(reading&&selected!=null)
                 {
                     GUI.matrix=old;var text=Text(selected.id);
-                    NarrativeCard.Draw(text.title,text.body,result,null,StoryText.Local("R 主动记录 · E 执行 · Enter / Esc 返回","R Record · E Act · Enter / Esc Back"));
+                    NarrativeCard.Draw(text.title,text.body,result,null,StoryText.UI(selected.crisis!=CrisisKind.None?"site-act":selected.id=="sushi"||selected.id=="circus"?"site-enter":"site-read"));
                 }
                 else
                 {
                     int day=Mathf.Clamp(TimeManager.Instance.Days-1,0,StoryText.Current.city.days.Length-1);
-                    style.fontSize=16;style.normal.textColor=new Color(.75f,.74f,.66f);GUI.Label(new Rect(w*.12f,18,w*.76f,50),StoryText.Current.city.days[day],style);
-                    GUI.Label(new Rect(24,h-90,w-48,35),InEncounter?StoryText.Local("WASD 移动 · 鼠标观察 · Shift 冲刺 · Ctrl 潜行 · Q 防身","WASD Move · Mouse Look · Shift Sprint · Ctrl Sneak · Q Defend"):StoryText.Local("WASD 移动 · E 查看 · R 记录 · B 推理","WASD Move · E Inspect · R Record · B Reason"),style);
+                    style.fontSize=16;style.normal.textColor=new Color(.75f,.74f,.66f);
+                    GUI.Label(new Rect(24,h-90,w-48,35),InEncounter?StoryText.UI("copy.CityWorld.74"):StoryText.UI("copy.CityWorld.75"),style);
                     string location=SceneManager.GetActiveScene().name;
-                    GUI.Label(new Rect(24,h-50,w-48,35),(InEncounter?StoryText.Local("体力 ","Stamina ")+Mathf.RoundToInt(Actor.Stamina)+StoryText.Local("  防身次数 ","  Defense charges ")+State.defenseCharges:location=="CityStreet"?StoryText.Local("公寓街口","Apartment block"):location=="CityService"?StoryText.Local("维修站","Maintenance station"):location=="CityBroadcast"?StoryText.Local("广播室","Broadcast room"):StoryText.Local("观测站","Observatory"))+(selected!=null?"   E "+Text(selected.id).title:""),style);
+                    GUI.Label(new Rect(24,h-50,w-48,35),(InEncounter?StoryText.UI("copy.CityWorld.76")+Mathf.RoundToInt(Actor.Stamina)+StoryText.UI("copy.CityWorld.77")+State.defenseCharges:location=="CityStreet"?StoryText.UI("copy.CityWorld.78"):location=="CityService"?StoryText.UI("copy.CityWorld.79"):location=="CityBroadcast"?StoryText.UI("copy.CityWorld.80"):StoryText.UI("copy.CityWorld.81"))+(selected!=null?"   E "+Text(selected.id).title:""),style);
                 }
             }
             finally{GUI.matrix=old;GUI.color=color;GUI.depth=depth;}

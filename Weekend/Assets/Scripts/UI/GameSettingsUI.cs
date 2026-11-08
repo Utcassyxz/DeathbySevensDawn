@@ -125,14 +125,14 @@ namespace DeathBySeventhsDawn.Progression
                 GUI.color = Color.white;
                 NarrativeUI.Panel(panel);
                 GUILayout.BeginArea(new Rect(panel.x + 30, panel.y + 25, pw - 60, 410));
-                GUILayout.Label(StoryText.Local("设置", "Settings"), title);
+                GUILayout.Label(StoryText.UI("copy.GameSettingsUI.180"), title);
                 GUILayout.Space(22);
-                GUILayout.Label(StoryText.Local("总音量", "Master volume") + "   " + Mathf.RoundToInt(MasterVolume * 100) + "%", label);
+                GUILayout.Label(StoryText.UI("copy.GameSettingsUI.181") + "   " + Mathf.RoundToInt(MasterVolume * 100) + "%", label);
                 float volume = GUILayout.HorizontalSlider(MasterVolume, 0, 1, GUILayout.Height(26));
                 if (Mathf.Abs(volume - MasterVolume) > .001f)
                     SetVolume(volume);
                 GUILayout.Space(26);
-                GUILayout.Label(StoryText.Local("语言", "Language"), label);
+                GUILayout.Label(StoryText.UI("copy.GameSettingsUI.182"), label);
                 GUILayout.BeginHorizontal();
                 button.font = GameTypography.Chinese;
                 if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton((StoryText.English ? "" : "• ") + "中文", button, GUILayout.MinHeight(50)) && StoryText.English)
@@ -143,8 +143,8 @@ namespace DeathBySeventhsDawn.Progression
                 GUILayout.EndHorizontal();
                 button.font = GameTypography.Current;
                 GUILayout.Space(38);
-                GUILayout.Label(StoryText.Local("全部音乐 · Harry Sun","All music · Harry Sun"),label);GUILayout.Space(18);
-                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(StoryText.Local("返回  ·  Esc", "Back  ·  Esc"), button, GUILayout.MinHeight(50)))
+                GUILayout.Label(StoryText.UI("copy.GameSettingsUI.183"),label);GUILayout.Space(18);
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(StoryText.UI("copy.GameSettingsUI.184"), button, GUILayout.MinHeight(50)))
                     Hide();
                 GUILayout.EndArea();
             }

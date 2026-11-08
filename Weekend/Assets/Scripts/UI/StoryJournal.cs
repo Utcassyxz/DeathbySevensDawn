@@ -587,7 +587,7 @@ namespace DeathBySeventhsDawn.Interaction
                     GUI.color = new Color(.07f, .12f, .12f);
                     GUI.DrawTexture(new Rect(0, 0, width, 82), Texture2D.whiteTexture);
                     GUI.color = color;
-                    if (game.State.investigationUnlocked && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(28, 18, 220, 48), StoryText.Local("● 线索连线 · B", "Evidence board · B"), button))
+                    if (game.State.investigationUnlocked && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(28, 18, 220, 48), StoryText.UI("copy.StoryJournal.274"), button))
                     {
                         showBoard = true;
                         boardReturnToGame = false;
@@ -619,7 +619,7 @@ namespace DeathBySeventhsDawn.Interaction
                         fontSize = 32
                     };
                     GUI.color = new Color(1, 1, 1, Mathf.Sin(Mathf.Clamp01(watchAge / 2.4f) * Mathf.PI));
-                    GUI.Label(new Rect(width * .2f, height * .4f, width * .6f, 90), StoryText.Local("一小时后", "ONE HOUR LATER"), hourStyle);
+                    GUI.Label(new Rect(width * .2f, height * .4f, width * .6f, 90), StoryText.UI("copy.StoryJournal.275"), hourStyle);
                     return;
                 }
 
@@ -637,7 +637,7 @@ namespace DeathBySeventhsDawn.Interaction
                     padding = new RectOffset()
                 };
                 telescopeCaption.Set(telescopeMessage, subtitleStyle, dialogue.width - 50, dialogue.height - 86);
-                NarrativeUI.Dialogue(dialogue, StoryText.Local("雨果 · 望远镜", "Hugo · Telescope"), telescopeCaption.Current, telescopeCaption.Counter + (watch == Watch.FirstLook || watch == Watch.Recheck ? StoryText.Local("Enter 继续", "Enter Continue") : watch == Watch.None ? StoryText.Local("Enter 观察 · E 收起", "Enter Observe · E Put away") : StoryText.Local("E 收起望远镜", "E Put away")), text);
+                NarrativeUI.Dialogue(dialogue, StoryText.UI("copy.StoryJournal.276"), telescopeCaption.Current, telescopeCaption.Counter + (watch == Watch.FirstLook || watch == Watch.Recheck ? StoryText.UI("copy.StoryJournal.277") : watch == Watch.None ? StoryText.UI("copy.StoryJournal.278") : StoryText.UI("copy.StoryJournal.279")), text);
                 float rowY = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
                 if (game.State.investigationUnlocked && !Investigation.Has("first-night-recheck") && NightWatchComplete && DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(dialogue.x, rowY, bw, 48), telescopeText.collect, button))
                     CollectTelescopeEvidence();
@@ -695,8 +695,8 @@ namespace DeathBySeventhsDawn.Interaction
                 GUI.color = Color.white;
             }
 
-            dreamCaption.Set(dreamPage == 2 && dreamKicks > 0 ? StoryText.Local("一脚。", "A stamp.") : dream.pages[Mathf.Clamp(dreamPage, 0, dream.pages.Length - 1)], text, NarrativeUI.DialogueRect(w, h).width - 86, 96);
-            NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("梦里", "Dream"), dreamCaption.Current, dreamKicks == 3 ? "……" : (dreamPage == 2 ? dreamKicks + " / 3  ·  " : dreamCaption.Counter) + StoryText.Current.morning.continueDream, text);
+            dreamCaption.Set(dreamPage == 2 && dreamKicks > 0 ? StoryText.UI("copy.StoryJournal.280") : dream.pages[Mathf.Clamp(dreamPage, 0, dream.pages.Length - 1)], text, NarrativeUI.DialogueRect(w, h).width - 86, 96);
+            NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.UI("copy.StoryJournal.281"), dreamCaption.Current, dreamKicks == 3 ? "……" : (dreamPage == 2 ? dreamKicks + " / 3  ·  " : dreamCaption.Counter) + StoryText.Current.morning.continueDream, text);
         }
 
         void OnDestroy()

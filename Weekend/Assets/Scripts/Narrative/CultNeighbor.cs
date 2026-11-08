@@ -253,6 +253,7 @@ namespace DeathBySeventhsDawn.Interaction
                     return;
                 }
 
+                if(view==View.Bag&&k!=null&&k.rKey.wasPressedThisFrame){string id=SelectedInventoryItem;Investigation.Collect(id==NeighborSlice.Crowbar?"prep-manual":id==NeighborSlice.Oil?"prep-oil":id==NeighborSlice.Medium?"prep-medium":id);}
                 if (view == View.Bag && k != null && k.iKey.wasPressedThisFrame)
                 {
                     Close();
@@ -302,13 +303,13 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             if (day == 1 && GameManager.Instance.LoopCount == 0 && !State.cultDayOneTalked && !State.cultDayOneStarted)
             {
-                prompt = StoryText.Local("E  和 401 的住户说话", "E  Speak to the tenant of 401");
+                prompt = StoryText.UI("copy.CultNeighbor.111");
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
                     TalkDayOne();
             }
             else if (day >= 1)
             {
-                prompt = StoryText.Local(State.cultTokenOffered && !HasToken ? "E  敲门，取回门缝边的小三角" : "E  敲 401 的门", State.cultTokenOffered && !HasToken ? "E  Knock; the triangle is by the crack" : "E  Knock on 401");
+                prompt = StoryText.Local(State.cultTokenOffered && !HasToken ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.302") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.303"), State.cultTokenOffered && !HasToken ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.304") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.305"));
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))
                     KnockDoor();
             }
@@ -432,7 +433,7 @@ namespace DeathBySeventhsDawn.Interaction
                 {
                     var dialogue = NarrativeUI.DialogueRect(w, h);
                     subtitles.Set(StoryText.Current.cult.dayOne[Mathf.Min(line, StoryText.Current.cult.dayOne.Length - 1)], text, dialogue.width - 70, 92);
-                    NarrativeUI.Dialogue(dialogue, StoryText.Local("401 的住户", "Resident of 401"), subtitles.Current, subtitles.Counter + StoryText.Local("Enter  继续 · Esc 离开", "Enter Continue · Esc Leave"), text);
+                    NarrativeUI.Dialogue(dialogue, StoryText.UI("copy.CultNeighbor.112"), subtitles.Current, subtitles.Counter + StoryText.UI("copy.CultNeighbor.113"), text);
                     return;
                 }
 
@@ -441,7 +442,7 @@ namespace DeathBySeventhsDawn.Interaction
                 Rect panel = new Rect((w - pw) / 2, 50, pw, h - 100);
                 if (view == View.Bag)
                 {
-                    GUI.Label(new Rect(panel.x, panel.y, pw, 50), StoryText.Local("背包", "Inventory") + "   " + State.inventory.Count + " / 24", heading);
+                    GUI.Label(new Rect(panel.x, panel.y, pw, 50), StoryText.UI("copy.CultNeighbor.114") + "   " + State.inventory.Count + " / 24", heading);
                     const int columns = 6, rows = 4;
                     const float slot = 96f, gap = 12f;
                     float gridX = panel.x + 24, gridY = panel.y + 92;
@@ -485,8 +486,8 @@ namespace DeathBySeventhsDawn.Interaction
                         GUI.Label(new Rect(detailX,panel.y+160,detailW,260),item?.body??"",text);
                     }
                     else
-                        GUI.Label(new Rect(panel.x, panel.y + 110, pw, 100), StoryText.Local("背包是空的。探索房间，看看有什么值得带走。", "The bag is empty. Explore and find something worth carrying."), text);
-                    GUI.Label(new Rect(panel.x, h - 70, pw, 30), StoryText.Local("I / Esc  合上背包", "I / Esc  Close inventory"), small);
+                        GUI.Label(new Rect(panel.x, panel.y + 110, pw, 100), StoryText.UI("copy.CultNeighbor.115"), text);
+                    GUI.Label(new Rect(panel.x, h - 70, pw, 30), StoryText.UI("copy.CultNeighbor.116"), small);
                     return;
                 }
 
@@ -511,7 +512,7 @@ namespace DeathBySeventhsDawn.Interaction
 
                 var speech = NarrativeUI.DialogueRect(w, h);
                 subtitles.Set(prose, text, speech.width - 70, 92);
-                NarrativeUI.Dialogue(speech, StoryText.Local("401 的住户", "Resident of 401"), subtitles.Current, subtitles.Counter + StoryText.Local(view == View.Refusal ? "Esc 离开" : view == View.Door && line >= StoryText.Current.cult.door.Length ? "E 拾起并放入背包 · Esc 离开" : "Enter 继续 · Esc 离开", view == View.Refusal ? "Esc Leave" : view == View.Door && line >= StoryText.Current.cult.door.Length ? "E Take · Esc Leave" : "Enter Continue · Esc Leave"), text);
+                NarrativeUI.Dialogue(speech, StoryText.UI("copy.CultNeighbor.117"), subtitles.Current, subtitles.Counter + StoryText.Local(view == View.Refusal ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.306") : view == View.Door && line >= StoryText.Current.cult.door.Length ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.307") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.308"), view == View.Refusal ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.309") : view == View.Door && line >= StoryText.Current.cult.door.Length ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.310") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.CultNeighbor.311")), text);
             }
             finally
             {

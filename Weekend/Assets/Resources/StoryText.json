@@ -877,6 +877,1130 @@
     {
       "key": "指向：没有更多配方",
       "text": "指向：没有更多配方"
+    },
+    {
+      "key": "site-act",
+      "text": "E 操作 · Enter / Esc 返回"
+    },
+    {
+      "key": "site-enter",
+      "text": "E 进入 · R 记录 · Enter / Esc 返回"
+    },
+    {
+      "key": "site-read",
+      "text": "R 记录 · Enter / Esc 返回"
+    },
+    {
+      "key": "copy.WorldEndSequence.70",
+      "text": "Enter 继续"
+    },
+    {
+      "key": "copy.WorldEndSequence.71",
+      "text": "墙里传来一声闷响。"
+    },
+    {
+      "key": "copy.WorldEndSequence.72",
+      "text": "地板先抬了起来。然后，整栋楼向下坠去。"
+    },
+    {
+      "key": "copy.WorldEndSequence.73",
+      "text": "雨果再也没能走出这栋楼。"
+    },
+    {
+      "key": "copy.CityWorld.74",
+      "text": "WASD 移动 · 鼠标观察 · Shift 冲刺 · Ctrl 潜行 · 鼠标左键 防身"
+    },
+    {
+      "key": "copy.CityWorld.75",
+      "text": "WASD 移动 · E 查看 · R 记录 · B 推理"
+    },
+    {
+      "key": "copy.CityWorld.76",
+      "text": "体力 "
+    },
+    {
+      "key": "copy.CityWorld.77",
+      "text": "  防身次数 "
+    },
+    {
+      "key": "copy.CityWorld.78",
+      "text": "公寓街口"
+    },
+    {
+      "key": "copy.CityWorld.79",
+      "text": "维修站"
+    },
+    {
+      "key": "copy.CityWorld.80",
+      "text": "广播室"
+    },
+    {
+      "key": "copy.CityWorld.81",
+      "text": "观测站"
+    },
+    {
+      "key": "copy.AquariumEntity.82",
+      "text": "……她在听。"
+    },
+    {
+      "key": "copy.AquariumEntity.83",
+      "text": "锡纸沉到了缸底。它看了一眼，继续用那张嘴呼吸。\n……已经太迟了。"
+    },
+    {
+      "key": "copy.AquariumEntity.84",
+      "text": "雨果"
+    },
+    {
+      "key": "copy.AquariumEntity.85",
+      "text": "……今天又没回音。投出去那么多份简历，连封拒信都没有。\n你倒是好，饿了还有人喂。"
+    },
+    {
+      "key": "copy.AquariumEntity.86",
+      "text": "小鱼"
+    },
+    {
+      "key": "copy.AquariumEntity.87",
+      "text": "E  和小鱼说话"
+    },
+    {
+      "key": "copy.AquariumEntity.88",
+      "text": "Enter 继续 · Esc 离开"
+    },
+    {
+      "key": "copy.FurnitureInteraction.89",
+      "text": "E  睡觉"
+    },
+    {
+      "key": "copy.FurnitureInteraction.90",
+      "text": "E  歇一会儿"
+    },
+    {
+      "key": "copy.FurnitureInteraction.91",
+      "text": "E  看电视"
+    },
+    {
+      "key": "copy.FurnitureInteraction.92",
+      "text": "上床休息"
+    },
+    {
+      "key": "copy.FurnitureInteraction.93",
+      "text": "沙发"
+    },
+    {
+      "key": "copy.FurnitureInteraction.94",
+      "text": "电视"
+    },
+    {
+      "key": "copy.FurnitureInteraction.95",
+      "text": "要结束今天，睡到明天早晨吗？"
+    },
+    {
+      "key": "copy.FurnitureInteraction.96",
+      "text": "睡到明早 · E"
+    },
+    {
+      "key": "copy.FurnitureInteraction.97",
+      "text": "歇一会儿 · E"
+    },
+    {
+      "key": "copy.FurnitureInteraction.98",
+      "text": "离开"
+    },
+    {
+      "key": "copy.FurnitureInteraction.99",
+      "text": "Esc 返回"
+    },
+    {
+      "key": "copy.WindowLookout2D.100",
+      "text": "E  查看窗外"
+    },
+    {
+      "key": "copy.WindowLookout2D.101",
+      "text": "窗外 · 第 "
+    },
+    {
+      "key": "copy.WindowLookout2D.102",
+      "text": " 天"
+    },
+    {
+      "key": "copy.WindowLookout2D.103",
+      "text": "窗外观察已收录"
+    },
+    {
+      "key": "copy.WindowLookout2D.104",
+      "text": "R  记录窗外的变化"
+    },
+    {
+      "key": "copy.WindowLookout2D.105",
+      "text": "\nEsc  返回房间"
+    },
+    {
+      "key": "copy.WindowLookout2D.106",
+      "text": "Esc  返回房间"
+    },
+    {
+      "key": "copy.WindowLookout2D.107",
+      "text": "Esc 返回房间"
+    },
+    {
+      "key": "copy.WindowLookout2D.108",
+      "text": "E  查看窗外"
+    },
+    {
+      "key": "copy.WindowLookout2D.109",
+      "text": "Esc  返回房间"
+    },
+    {
+      "key": "copy.Investigation.110",
+      "text": "未收录"
+    },
+    {
+      "key": "copy.CultNeighbor.111",
+      "text": "E  和 401 的住户说话"
+    },
+    {
+      "key": "copy.CultNeighbor.112",
+      "text": "401 的住户"
+    },
+    {
+      "key": "copy.CultNeighbor.113",
+      "text": "Enter  继续 · Esc 离开"
+    },
+    {
+      "key": "copy.CultNeighbor.114",
+      "text": "背包"
+    },
+    {
+      "key": "copy.CultNeighbor.115",
+      "text": "背包是空的。探索房间，看看有什么值得带走。"
+    },
+    {
+      "key": "copy.CultNeighbor.116",
+      "text": "I / Esc  合上背包"
+    },
+    {
+      "key": "copy.CultNeighbor.117",
+      "text": "401 的住户"
+    },
+    {
+      "key": "copy.RooftopAccess.118",
+      "text": "木板横钉在大门内侧。门缝也堵死了。\n外面一点声音都传不进来。"
+    },
+    {
+      "key": "copy.RooftopAccess.119",
+      "text": "这层的防火门锁着。"
+    },
+    {
+      "key": "copy.RooftopAccess.120",
+      "text": "E 上楼"
+    },
+    {
+      "key": "copy.RooftopAccess.121",
+      "text": "E 下楼"
+    },
+    {
+      "key": "copy.RooftopAccess.122",
+      "text": "E 返回四楼走廊"
+    },
+    {
+      "key": "copy.RooftopAccess.123",
+      "text": "E 前往天台"
+    },
+    {
+      "key": "copy.RooftopAccess.124",
+      "text": "E 查看防火门"
+    },
+    {
+      "key": "copy.RooftopAccess.125",
+      "text": "天台"
+    },
+    {
+      "key": "copy.RooftopAccess.126",
+      "text": "防火门"
+    },
+    {
+      "key": "copy.RooftopAccess.127",
+      "text": "雨果"
+    },
+    {
+      "key": "copy.NightDreamSequence.128",
+      "text": "献祭理智 · 获取知识"
+    },
+    {
+      "key": "copy.NightDreamSequence.129",
+      "text": "知识 "
+    },
+    {
+      "key": "copy.NightDreamSequence.130",
+      "text": "暂无可交换的知识"
+    },
+    {
+      "key": "copy.NightDreamSequence.131",
+      "text": "雨果"
+    },
+    {
+      "key": "copy.NightDreamSequence.132",
+      "text": "Enter 结束会面"
+    },
+    {
+      "key": "copy.NightDreamSequence.133",
+      "text": "Enter 继续"
+    },
+    {
+      "key": "copy.DayOneSupernovaEvent.134",
+      "text": "电视"
+    },
+    {
+      "key": "copy.DayOneSupernovaEvent.135",
+      "text": "Enter / Esc  离开"
+    },
+    {
+      "key": "copy.MorningRoutine.136",
+      "text": "E  在沙发上躺一会儿"
+    },
+    {
+      "key": "copy.MorningRoutine.137",
+      "text": "E  坐到书桌前"
+    },
+    {
+      "key": "copy.MorningRoutine.138",
+      "text": "Enter  继续"
+    },
+    {
+      "key": "copy.MorningRoutine.139",
+      "text": "雨果"
+    },
+    {
+      "key": "copy.MorningRoutine.140",
+      "text": "Enter  继续"
+    },
+    {
+      "key": "copy.MorningRoutine.141",
+      "text": "雨果"
+    },
+    {
+      "key": "copy.MorningRoutine.142",
+      "text": "Enter  继续"
+    },
+    {
+      "key": "copy.MorningRoutine.143",
+      "text": "雨果"
+    },
+    {
+      "key": "copy.MorningRoutine.144",
+      "text": "Enter  继续"
+    },
+    {
+      "key": "copy.MorningRoutine.145",
+      "text": "雨果"
+    },
+    {
+      "key": "copy.MorningRoutine.146",
+      "text": "Enter  继续"
+    },
+    {
+      "key": "copy.EndingCollectionUI.147",
+      "text": "结局预览 "
+    },
+    {
+      "key": "copy.EndingCollectionUI.148",
+      "text": " · 不写入收藏"
+    },
+    {
+      "key": "copy.EndingCollectionUI.149",
+      "text": "返回调试面板"
+    },
+    {
+      "key": "copy.EndingCollectionUI.150",
+      "text": "快版 · 好结局"
+    },
+    {
+      "key": "copy.EndingCollectionUI.151",
+      "text": "慢版 · 坏结局"
+    },
+    {
+      "key": "copy.EndingCollectionUI.152",
+      "text": "真结局变奏"
+    },
+    {
+      "key": "copy.EndingCollectionUI.153",
+      "text": "结局收录"
+    },
+    {
+      "key": "copy.EndingCollectionUI.154",
+      "text": "尚未收录"
+    },
+    {
+      "key": "copy.EndingCollectionUI.155",
+      "text": "有人替他起床，也替他过完了余下的日子。"
+    },
+    {
+      "key": "copy.EndingCollectionUI.156",
+      "text": "他没能走到门口。也没有下一个早晨。"
+    },
+    {
+      "key": "copy.EndingCollectionUI.157",
+      "text": "每次醒来，身体都比上一次更沉。"
+    },
+    {
+      "key": "copy.EndingCollectionUI.158",
+      "text": "还没有走到这里。"
+    },
+    {
+      "key": "copy.EndingCollectionUI.159",
+      "text": "返回 · Esc"
+    },
+    {
+      "key": "copy.EndingCollectionUI.160",
+      "text": "雨果关好了窗，过完了这一个星期。\n第七天夜里，地球没有等来下一个清晨。"
+    },
+    {
+      "key": "copy.EndingCollectionUI.161",
+      "text": "他记得每一次醒来。\n身体却一次也没能重新开始。"
+    },
+    {
+      "key": "copy.EndingCollectionUI.162",
+      "text": "结 局  "
+    },
+    {
+      "key": "copy.EndingCollectionUI.163",
+      "text": "开始新的旅程"
+    },
+    {
+      "key": "copy.EndingCollectionUI.164",
+      "text": "新旅程会清除本次进度；已收录结局保留。"
+    },
+    {
+      "key": "copy.EndingCollectionUI.165",
+      "text": "确认重新开始"
+    },
+    {
+      "key": "copy.EndingCollectionUI.166",
+      "text": "取消"
+    },
+    {
+      "key": "copy.EndingCollectionUI.167",
+      "text": "回到主页面"
+    },
+    {
+      "key": "copy.EvidenceInspection.168",
+      "text": "E  查看"
+    },
+    {
+      "key": "copy.EvidenceInspection.169",
+      "text": "已收录。可以在笔记的「线索连线」页整理它。"
+    },
+    {
+      "key": "copy.EvidenceInspection.170",
+      "text": "R  抄录到笔记"
+    },
+    {
+      "key": "copy.EvidenceInspection.171",
+      "text": "先放回原处  ·  Esc"
+    },
+    {
+      "key": "copy.GameplayFeedback.172",
+      "text": "日记已更新："
+    },
+    {
+      "key": "copy.GameplayFeedback.173",
+      "text": "  · J 查看"
+    },
+    {
+      "key": "copy.GameplayFeedback.174",
+      "text": "第 "
+    },
+    {
+      "key": "copy.GameplayFeedback.175",
+      "text": " 天 · "
+    },
+    {
+      "key": "copy.GameplayFeedback.176",
+      "text": "清晨"
+    },
+    {
+      "key": "copy.GameplayFeedback.177",
+      "text": "午间"
+    },
+    {
+      "key": "copy.GameplayFeedback.178",
+      "text": "傍晚"
+    },
+    {
+      "key": "copy.GameplayFeedback.179",
+      "text": "深夜"
+    },
+    {
+      "key": "copy.GameSettingsUI.180",
+      "text": "设置"
+    },
+    {
+      "key": "copy.GameSettingsUI.181",
+      "text": "总音量"
+    },
+    {
+      "key": "copy.GameSettingsUI.182",
+      "text": "语言"
+    },
+    {
+      "key": "copy.GameSettingsUI.183",
+      "text": "全部音乐 · Harry Sun"
+    },
+    {
+      "key": "copy.GameSettingsUI.184",
+      "text": "返回  ·  Esc"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.185",
+      "text": "从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.186",
+      "text": "全部"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.187",
+      "text": "现场记录"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.188",
+      "text": "推论"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.189",
+      "text": "未连接"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.190",
+      "text": "从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.191",
+      "text": "从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.192",
+      "text": "已选择①。再选一条线索，建立你怀疑的联系。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.193",
+      "text": "这条推论已经写下了。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.194",
+      "text": "这两条记录支持一个结论。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.195",
+      "text": "这条联系还没有依据。可以留着，也可以擦掉。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.196",
+      "text": "这两条没有足够的联系。换一条试试。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.197",
+      "text": "已留下待证连线。现在可以得出结论。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.198",
+      "text": "已留下待证连线；它不会被当作事实。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.199",
+      "text": "这条联系已经保存在笔记里。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.200",
+      "text": "这条推论已经写下了。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.201",
+      "text": "这条联系已经保存在笔记里。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.202",
+      "text": "推论已写下。它也可以成为下一条推理的依据。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.203",
+      "text": "已留下待证连线；它不会被当作事实。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.204",
+      "text": "已擦去待证连线。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.205",
+      "text": "只有待证连线可以擦去；已写下的推论保留其依据。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.206",
+      "text": "线索连线"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.207",
+      "text": "先选一条线索，能与它推理的记录会亮起。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.208",
+      "text": "合上  ·  B / Esc"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.209",
+      "text": "线索 · "
+    },
+    {
+      "key": "copy.InvestigationBoardUI.210",
+      "text": "① 第一条  ② 第二条  ·  点选或方向键 + 空格"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.211",
+      "text": "可推理"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.212",
+      "text": "推论"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.213",
+      "text": "现场记录"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.214",
+      "text": "这一栏还没有线索。\n\n先探索房间、查看现场记录并主动收录。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.215",
+      "text": "方向键移动 · 空格选择 · Enter 写下推论 · Delete 擦除 · Tab 换筛选 · B / Esc 关闭"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.216",
+      "text": "整理思路"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.217",
+      "text": "从左侧选择一条线索。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.218",
+      "text": "选中后，绿色记录可以与它推理。读过两份记录，再按 Enter 写下结论。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.219",
+      "text": "这条推论已经写下。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.220",
+      "text": "写下推论  ·  Enter"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.221",
+      "text": "这两条暂时对不上。换一条试试。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.222",
+      "text": "擦去这条待证线  ·  Delete"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.223",
+      "text": "清空选择  ·  Backspace"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.224",
+      "text": "再选一条线索，建立你怀疑的联系。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.225",
+      "text": "还没有连线。选两条线索，建立第一条。"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.226",
+      "text": "收起已连线"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.227",
+      "text": "已整理的连线"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.228",
+      "text": "待证 · 不当作事实"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.229",
+      "text": "还没有连线。选两条线索，建立第一条。"
+    },
+    {
+      "key": "copy.JournalNotebookUI.230",
+      "text": "随身日记"
+    },
+    {
+      "key": "copy.JournalNotebookUI.231",
+      "text": "观察 · 梦境 · 无法遗忘的事"
+    },
+    {
+      "key": "copy.JournalNotebookUI.232",
+      "text": " 则记录  /  "
+    },
+    {
+      "key": "copy.JournalNotebookUI.233",
+      "text": " 则未读"
+    },
+    {
+      "key": "copy.JournalNotebookUI.234",
+      "text": "全部"
+    },
+    {
+      "key": "copy.JournalNotebookUI.235",
+      "text": "发现"
+    },
+    {
+      "key": "copy.JournalNotebookUI.236",
+      "text": "记事"
+    },
+    {
+      "key": "copy.JournalNotebookUI.237",
+      "text": "梦境"
+    },
+    {
+      "key": "copy.JournalNotebookUI.238",
+      "text": "发现"
+    },
+    {
+      "key": "copy.JournalNotebookUI.239",
+      "text": "梦境"
+    },
+    {
+      "key": "copy.JournalNotebookUI.240",
+      "text": "记事"
+    },
+    {
+      "key": "copy.JournalNotebookUI.241",
+      "text": " · 未读"
+    },
+    {
+      "key": "copy.JournalNotebookUI.242",
+      "text": "新记录在前 · 已读状态会保留"
+    },
+    {
+      "key": "copy.JournalNotebookUI.243",
+      "text": "SEVEN DAY   /   记忆手稿"
+    },
+    {
+      "key": "copy.JournalNotebookUI.244",
+      "text": "合上  ×"
+    },
+    {
+      "key": "copy.JournalNotebookUI.245",
+      "text": "这一页还没有写下什么。"
+    },
+    {
+      "key": "copy.JournalNotebookUI.246",
+      "text": "去看看窗外，或留意身边的变化。查看后选择收录，才会留在这里。"
+    },
+    {
+      "key": "copy.JournalNotebookUI.247",
+      "text": "这里暂时没有这一类记录。"
+    },
+    {
+      "key": "copy.JournalNotebookUI.248",
+      "text": "尚无记录"
+    },
+    {
+      "key": "copy.JournalNotebookUI.249",
+      "text": "← 上一则"
+    },
+    {
+      "key": "copy.JournalNotebookUI.250",
+      "text": "下一则 →"
+    },
+    {
+      "key": "copy.JournalNotebookUI.251",
+      "text": "宇宙知识"
+    },
+    {
+      "key": "copy.JournalNotebookUI.252",
+      "text": "禁忌知识"
+    },
+    {
+      "key": "copy.JournalNotebookUI.253",
+      "text": "普通知识"
+    },
+    {
+      "key": "copy.JournalNotebookUI.254",
+      "text": "梦境记录"
+    },
+    {
+      "key": "copy.JournalNotebookUI.255",
+      "text": "日常记事"
+    },
+    {
+      "key": "copy.JournalNotebookUI.256",
+      "text": "这一段记忆还没有整理成文字。"
+    },
+    {
+      "key": "copy.MainMenuUI.257",
+      "text": "C 继续已保存的旅程"
+    },
+    {
+      "key": "copy.MainMenuUI.258",
+      "text": "跳过 · Esc"
+    },
+    {
+      "key": "copy.MainMenuUI.259",
+      "text": "音乐 · Harry Sun"
+    },
+    {
+      "key": "copy.MainMenuUI.260",
+      "text": "设置"
+    },
+    {
+      "key": "copy.MainMenuUI.261",
+      "text": "结局收录"
+    },
+    {
+      "key": "copy.PauseMenuUI.262",
+      "text": "设置"
+    },
+    {
+      "key": "copy.ProgressionHUD.263",
+      "text": "自由调试：已开启 · 点击恢复正常限制"
+    },
+    {
+      "key": "copy.ProgressionHUD.264",
+      "text": "自由调试：已关闭 · 点击跳过强制剧情与限制"
+    },
+    {
+      "key": "copy.ProgressionHUD.265",
+      "text": "应用时间"
+    },
+    {
+      "key": "copy.ProgressionHUD.266",
+      "text": "安全命令 · 自动使用隔离旅程；session end 恢复正式旅程"
+    },
+    {
+      "key": "copy.ProgressionHUD.267",
+      "text": "执行"
+    },
+    {
+      "key": "copy.ProgressionHUD.268",
+      "text": "第三天爆楼："
+    },
+    {
+      "key": "copy.ProgressionHUD.269",
+      "text": "第七天危机："
+    },
+    {
+      "key": "copy.ProgressionHUD.270",
+      "text": "原地等待至次日（不算睡眠）"
+    },
+    {
+      "key": "copy.ProgressionHUD.271",
+      "text": "播放第三天爆楼（关闭自由调试后致死）"
+    },
+    {
+      "key": "copy.ProgressionHUD.272",
+      "text": "跳过当前强制剧情 · 进入自由探索"
+    },
+    {
+      "key": "copy.ProgressionHUD.273",
+      "text": "预览结局 "
+    },
+    {
+      "key": "copy.StoryJournal.274",
+      "text": "● 线索连线 · B"
+    },
+    {
+      "key": "copy.StoryJournal.275",
+      "text": "一小时后"
+    },
+    {
+      "key": "copy.StoryJournal.276",
+      "text": "雨果 · 望远镜"
+    },
+    {
+      "key": "copy.StoryJournal.277",
+      "text": "Enter 继续"
+    },
+    {
+      "key": "copy.StoryJournal.278",
+      "text": "Enter 观察 · E 收起"
+    },
+    {
+      "key": "copy.StoryJournal.279",
+      "text": "E 收起望远镜"
+    },
+    {
+      "key": "copy.StoryJournal.280",
+      "text": "一脚。"
+    },
+    {
+      "key": "copy.StoryJournal.281",
+      "text": "梦里"
+    },
+    {
+      "key": "copy.WorldPromptUI.282",
+      "text": "该睡了。回卧室休息。"
+    },
+    {
+      "key": "copy.WorldPromptUI.283",
+      "text": "J 日记"
+    },
+    {
+      "key": "copy.WorldPromptUI.284",
+      "text": "  ·  B 连线"
+    },
+    {
+      "key": "copy.WorldPromptUI.285",
+      "text": "  ·  I 背包"
+    },
+    {
+      "key": "fragment.AquariumEntity.286",
+      "text": "F  把锡纸放进水里"
+    },
+    {
+      "key": "fragment.AquariumEntity.287",
+      "text": "F  投入锡纸（已无法逆转）"
+    },
+    {
+      "key": "fragment.AquariumEntity.288",
+      "text": "F  Place foil in the water"
+    },
+    {
+      "key": "fragment.AquariumEntity.289",
+      "text": "F  Drop foil (cannot reverse it)"
+    },
+    {
+      "key": "fragment.AquariumEntity.290",
+      "text": "已记录"
+    },
+    {
+      "key": "fragment.AquariumEntity.291",
+      "text": "R 记下这次观察"
+    },
+    {
+      "key": "fragment.AquariumEntity.292",
+      "text": "Recorded"
+    },
+    {
+      "key": "fragment.AquariumEntity.293",
+      "text": "R Record observation"
+    },
+    {
+      "key": "fragment.StoveInteraction.294",
+      "text": "E  关火"
+    },
+    {
+      "key": "fragment.StoveInteraction.295",
+      "text": "E  开火"
+    },
+    {
+      "key": "fragment.StoveInteraction.296",
+      "text": "E  Turn off stove"
+    },
+    {
+      "key": "fragment.StoveInteraction.297",
+      "text": "E  Light stove"
+    },
+    {
+      "key": "fragment.WindowLookout2D.298",
+      "text": "E 拉开窗帘"
+    },
+    {
+      "key": "fragment.WindowLookout2D.299",
+      "text": "E 拉上窗帘"
+    },
+    {
+      "key": "fragment.WindowLookout2D.300",
+      "text": "E Open curtains"
+    },
+    {
+      "key": "fragment.WindowLookout2D.301",
+      "text": "E Close curtains"
+    },
+    {
+      "key": "fragment.CultNeighbor.302",
+      "text": "E  敲门，取回门缝边的小三角"
+    },
+    {
+      "key": "fragment.CultNeighbor.303",
+      "text": "E  敲 401 的门"
+    },
+    {
+      "key": "fragment.CultNeighbor.304",
+      "text": "E  Knock; the triangle is by the crack"
+    },
+    {
+      "key": "fragment.CultNeighbor.305",
+      "text": "E  Knock on 401"
+    },
+    {
+      "key": "fragment.CultNeighbor.306",
+      "text": "Esc 离开"
+    },
+    {
+      "key": "fragment.CultNeighbor.307",
+      "text": "E 拾起并放入背包 · Esc 离开"
+    },
+    {
+      "key": "fragment.CultNeighbor.308",
+      "text": "Enter 继续 · Esc 离开"
+    },
+    {
+      "key": "fragment.CultNeighbor.309",
+      "text": "Esc Leave"
+    },
+    {
+      "key": "fragment.CultNeighbor.310",
+      "text": "E Take · Esc Leave"
+    },
+    {
+      "key": "fragment.CultNeighbor.311",
+      "text": "Enter Continue · Esc Leave"
+    },
+    {
+      "key": "fragment.EndingCollectionUI.312",
+      "text": "新结局已收录  ·  可在主页面的「结局收录」查看"
+    },
+    {
+      "key": "fragment.EndingCollectionUI.313",
+      "text": "结局已收录  ·  主页面可查看"
+    },
+    {
+      "key": "fragment.EndingCollectionUI.314",
+      "text": "ENDING RECORDED  ·  Available in the title screen collection"
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.315",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.316",
+      "text": " 天  ·  "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.317",
+      "text": " 条连线"
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.318",
+      "text": "Day "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.319",
+      "text": " · "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.320",
+      "text": " links"
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.321",
+      "text": "查看已连线 · "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.322",
+      "text": "Saved connections · "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.323",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.324",
+      "text": " 天 · "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.325",
+      "text": "Day "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.326",
+      "text": " · "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.327",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.328",
+      "text": " / "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.329",
+      "text": " 则 · ← →"
+    },
+    {
+      "key": "fragment.JournalNotebookUI.330",
+      "text": "Entry "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.331",
+      "text": " / "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.332",
+      "text": " · ← →"
+    },
+    {
+      "key": "fragment.JournalNotebookUI.333",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.334",
+      "text": " 次旅程 / 第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.335",
+      "text": " 天 / "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.336",
+      "text": "Journey "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.337",
+      "text": " / Day "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.338",
+      "text": " / "
+    },
+    {
+      "key": "fragment.ProgressionHUD.339",
+      "text": "已解除（点击还原）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.340",
+      "text": "未解除（点击解除）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.341",
+      "text": "Prevented (restore)"
+    },
+    {
+      "key": "fragment.ProgressionHUD.342",
+      "text": "Unresolved (prevent)"
+    },
+    {
+      "key": "fragment.ProgressionHUD.343",
+      "text": "已解除（点击还原）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.344",
+      "text": "未解除（点击解除）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.345",
+      "text": "Prevented (restore)"
+    },
+    {
+      "key": "fragment.ProgressionHUD.346",
+      "text": "Unresolved (prevent)"
+    },
+    {
+      "key": "进入序章  ·  Enter",
+      "text": "进入序章  ·  Enter"
     }
   ],
   "fishEnding": {
@@ -999,119 +2123,119 @@
         "title": "威尔马戏团",
         "body": "威尔马戏团周五进城。主办方称，动物均已清点完毕。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "sushi",
         "title": "宫崎寿司",
         "body": "宫崎寿司第 101 家分店明日开业，前一百位顾客可领取纪念餐盒。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "city-maintenance",
         "title": "交接簿",
         "body": "第三夜，管井供能，401。\n值班人在旁边写了“已通知”。通知算不算救过人，要看谁填表。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "city-fuse",
         "title": "接线图",
         "body": "几条线路绕开了住户的总闸。\n关灯不等于断电。也不等于天亮。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "city-orders",
         "title": "搜捕令",
         "body": "名单上没有罪名，只有地址。\n广播会替他们解释。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "city-routing",
         "title": "播送路由",
         "body": "同一段话，被送往每一条街。\n只要声音够整齐，就像所有人都同意。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "city-spectrum",
         "title": "观测记录",
         "body": "曲线在同一秒偏折。仪器没有坏。\n坏消息通常很准时。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "city-lens",
         "title": "阵列手册",
         "body": "校准、对齐、锁定。\n他们给每一步都起了个让人安心的名字。",
         "success": "已记下。",
-        "locked": "现在没有可记录的新证据。部分资料要在第四或第六日才会出现。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "return",
         "title": "返回",
         "body": "返回公寓或街区。",
         "success": "已记下。",
-        "locked": "需要较低变异，或本轮小鱼同伴及已主动记录的证词。也可直接寻找纸本交接单。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "service",
-        "title": "地下检修间",
+        "title": "往西 · 维修站",
         "body": "检查第三夜爆楼的供能支路。",
         "success": "已记下。",
-        "locked": "需要较低变异，或本轮小鱼同伴及已主动记录的证词。也可直接寻找纸本交接单。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "broadcast",
-        "title": "市政广播台",
+        "title": "往东 · 广播站",
         "body": "调查城市搜捕的指令来源。",
         "success": "已记下。",
-        "locked": "需要较低变异，或本轮小鱼同伴及已主动记录的证词。也可直接寻找纸本交接单。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "observatory",
-        "title": "天文观测站",
+        "title": "沿坡道 · 观测站",
         "body": "第六日起查找观测日志。",
         "success": "已记下。",
-        "locked": "需要较低变异，或本轮小鱼同伴及已主动记录的证词。也可直接寻找纸本交接单。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "rest",
         "title": "街边长凳：等候一个时段",
         "body": "主动等候；不会自动获得睡眠。",
         "success": "已记下。",
-        "locked": "需要较低变异，或本轮小鱼同伴及已主动记录的证词。也可直接寻找纸本交接单。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "caretaker",
         "title": "值班人",
-        "body": "他把钥匙攥得很紧。\n先让他相信，你是在问路，不是在挑选下一个房间。",
+        "body": "“维修站在西边。交接单？柜子上，自己看吧。别替我签字。”",
         "success": "已记下。",
-        "locked": "需要较低变异，或本轮小鱼同伴及已主动记录的证词。也可直接寻找纸本交接单。"
+        "locked": "他避开你的目光，手紧紧抓着钥匙。"
       },
       {
         "id": "building-terminal",
-        "title": "隔离401支路",
-        "body": "第三夜之前，确认维修交接单与接线图的推论，再隔离401供能。鱼缸不会被断电；不需要第四天的小鱼证词。",
+        "title": "配电检修牌",
+        "body": "401 的检修记录缺了一页。末尾有一枚地下设备间的印章。",
         "success": "已记下。",
-        "locked": "尚未确认对应推论，或已经超过危机日期。先按 R 记录两份证据，关闭对话后按 B 连线并确认结论。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "city-terminal",
         "title": "中止城市搜捕调度",
-        "body": "连接搜捕名单与广播路由记录，确认指令来源后中止调度。",
+        "body": "磁带还在转。控制台上亮着“全城转播”，停播开关罩着一层透明盖。",
         "success": "已记下。",
-        "locked": "尚未确认对应推论，或已经超过危机日期。先按 R 记录两份证据，关闭对话后按 B 连线并确认结论。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "cosmic-terminal",
         "title": "关闭同步观测通路",
-        "body": "将第六日观测与维护手册连线，确认通路后执行应急关闭。",
+        "body": "所有镜面都朝着同一个坐标。应急柄旁贴着一张褪色的校准表。",
         "success": "已记下。",
-        "locked": "尚未确认对应推论，或已经超过危机日期。先按 R 记录两份证据，关闭对话后按 B 连线并确认结论。"
+        "locked": "没有新的线索。"
       },
       {
         "id": "escape",
@@ -1156,7 +2280,7 @@
       {
         "id": "crowbar",
         "title": "撬棍",
-        "body": "一根锈迹斑斑的撬棍。\n或许能撬开一扇门。也能撬开某些人的思路。"
+        "body": "一根锈迹斑斑的撬棍。或许可以用它打爆某些脑袋。"
       },
       {
         "id": "cooking-oil",
@@ -1185,8 +2309,8 @@
       },
       {
         "id": "force-door",
-        "title": "401 · 门锁",
-        "body": "锁眼里塞着灰。门后有人屏着呼吸。\n撬棍很沉。现在再说走错门，恐怕不太礼貌。"
+        "title": "401",
+        "body": "里面安静下来了。门还锁着。"
       },
       {
         "id": "force-choice",
@@ -1196,7 +2320,7 @@
       {
         "id": "knock-choice",
         "title": "敲门",
-        "body": "正常敲门，保留原有门缝对话。"
+        "body": "敲门，问刚才的电话。"
       },
       {
         "id": "service-entry",
@@ -1220,18 +2344,18 @@
       },
       {
         "id": "neighbor-desk",
-        "title": "查看桌上的分配令",
-        "body": "查看文件。"
+        "title": "桌上的文件",
+        "body": "纸张边缘印着一个三角。"
       },
       {
         "id": "desk-locked",
         "title": "住户挡住桌子",
-        "body": "先取得信任，或在冲突中击败他，才能取得分配令。"
+        "body": "他的手压住纸角。“你还没回答我的问题。”"
       },
       {
         "id": "intro",
-        "title": "401 · 邻居",
-        "body": "他还戴着那顶旧帽子。帽檐下的笑容僵了半拍。\n“我听见你撬门了。你也听见我的……工作了？”"
+        "title": "401 的住户",
+        "body": "他把手按在帽檐上。桌上的纸被翻了个面。\n\n“你听见了多少？”"
       },
       {
         "id": "calm-choice",
@@ -1241,7 +2365,7 @@
       {
         "id": "threat-choice",
         "title": "威胁",
-        "body": "你是怪物。趴下。"
+        "body": "把装置关掉。现在。别逼我动手。"
       },
       {
         "id": "memory-choice",
@@ -1266,7 +2390,7 @@
       {
         "id": "recruit",
         "title": "同一个三角",
-        "body": "邻居：我们不是在死。我们是在变成别的东西。\n三角教把分配任务称作净化。这栋楼被排在第三夜。地下检修间的供能源仍在驱动401的装置。击败他不会让它停下。选择回应前可按R记录分配令。"
+        "body": "“他们答应给我们新的身体。这栋楼，第三夜。”\n\n他把纸推过来。\n\n“地下的东西已经接上了。你要是愿意，我可以替你留个名字。”"
       },
       {
         "id": "join-choice",
@@ -1291,17 +2415,17 @@
       {
         "id": "joined",
         "title": "已接受邀请",
-        "body": "他递出三角形邀请。本轮路线发生变化，但游戏不会结束；分配令仍放在桌上。"
+        "body": "他从抽屉里取出一张邀请函，抚平纸角。\n“你会感谢我的。”"
       },
       {
         "id": "refused",
         "title": "谨慎拒绝",
-        "body": "他显得受伤，却没有攻击。雨果仍可调查文件后离开。"
+        "body": "“那就别站在这里看我。”\n他转过脸。桌上的纸没有收回去。"
       },
       {
         "id": "deceived",
         "title": "借来的信念",
-        "body": "他相信了雨果报出的分配编号。雨果假装认同，取得文件权限，关系状态与真加入不同。"
+        "body": "雨果报出分配编号。\n他松开了按住纸张的手。“原来你也是。”"
       },
       {
         "id": "hostile",
@@ -1320,13 +2444,13 @@
       },
       {
         "id": "routing",
-        "title": "住户保护支路开关",
-        "body": "需要确认源头与阻止灾难的推论。隔离组织分配支路，同时保留住户供电与鱼缸水泵。这是第一步现场操作，尚未完成关闭。"
+        "title": "支路开关",
+        "body": "旧标签上写着：401。旁边另有一条生活用电线路。\n\n需要先弄清它们接向哪里。"
       },
       {
         "id": "source-core",
         "title": "地下供能源锁止",
-        "body": "住户倒下后，供能源仍然运行。必须确认推论并完成保护支路隔离，才能在第三夜前将它锁止。"
+        "body": "箱体里传来低沉的脉冲。锁杆被卡住了，旁边亮着支路指示灯。"
       },
       {
         "id": "isolate-choice",
@@ -1341,27 +2465,27 @@
       {
         "id": "isolated",
         "title": "第一步完成",
-        "body": "分配支路已隔离。现在去房间另一侧锁止供能源。"
+        "body": "401 的灯灭了。住户线路的指示灯还亮着。"
       },
       {
         "id": "need-deduction",
         "title": "需要调查",
-        "body": "记录分配令、管道异常与接线图，再按B逐层确认推论。"
+        "body": "雨果停住手。线号对不上，不能凭猜测拉闸。"
       },
       {
         "id": "need-isolation",
         "title": "供能源仍然活动",
-        "body": "保护支路尚未隔离、推论尚不完整，或已超过第三日。仅击败住户无法挽救大楼。"
+        "body": "锁杆没有动。箱体里仍有电流声。"
       },
       {
         "id": "use-service-core",
         "title": "前往地下供能源",
-        "body": "旧城市开关不能解除爆楼。依照确认的源头位置前往地下检修间。"
+        "body": "这只是记录柜。最后一次检修的印章来自地下设备间。"
       },
       {
         "id": "building-saved",
         "title": "大楼获救",
-        "body": "第三夜供能源已锁止，住户供电仍在。小鱼和其他住户迎来下一个早晨。此结果不会结束旅程。"
+        "body": "脉冲声停了。\n楼上有人打开水龙头。还有人等着过明天。"
       },
       {
         "id": "building-destroyed",
@@ -1371,12 +2495,12 @@
       {
         "id": "neighbor-killed",
         "title": "撬开的门后",
-        "body": "雨果撬开了门，却没能活着离开。暴露的脑部仍在抽动。已学到的知识只能通过已取得的轮回恩赐继承。"
+        "body": "他走近了。\n雨果再也没有听清后面的话。"
       },
       {
         "id": "combat-controls",
         "title": "",
-        "body": "WASD 移动 · 鼠标观察 · Shift 冲刺\nQ 撬棍 · G 余烬匣 · V 肩眼"
+        "body": "鼠标左键 挥击 · Shift 冲刺 · Ctrl 蹲下 · G 使用准备物"
       },
       {
         "id": "attack-warning",
@@ -1385,18 +2509,18 @@
       },
       {
         "id": "collected",
-        "title": "已收好",
-        "body": "放进背包了。"
+        "title": "",
+        "body": "{0}已收入背包。"
       },
       {
         "id": "recorded",
         "title": "已记下",
-        "body": "纸至少不会装作没看见。"
+        "body": "已记下。"
       },
       {
         "id": "already-recorded",
         "title": "已记录过",
-        "body": "没有重复添加证据。"
+        "body": "笔记里已经有了。"
       },
       {
         "id": "prepared",
@@ -1411,7 +2535,7 @@
       {
         "id": "controls",
         "title": "",
-        "body": "R 记下线索    E 使用    Enter / Esc 收起"
+        "body": "R 记录 · Enter / Esc 收起"
       },
       {
         "id": "craft-choice",
@@ -1421,7 +2545,7 @@
       {
         "id": "city-fuse",
         "title": "检修间接线图",
-        "body": "401的装置从公共线路取电。图纸说明可隔离这一支路，保留住户的照明和鱼缸水泵。要先把这张图与交接单连起来。"
+        "body": "图纸上，401 从管井单独取电。生活线路另走一根。\n两条线路被人用不同颜色圈了出来。"
       },
       {
         "id": "aftermath",
@@ -1431,12 +2555,12 @@
       {
         "id": "aftermath-defeated",
         "title": "余波",
-        "body": "门内传来拖长的呼吸。住户不再重复分配令；地下供能源仍需单独锁止。"
+        "body": "门内传来拖长的呼吸。没有人回答。"
       },
       {
         "id": "eye-ready",
         "title": "余波",
-        "body": "V：肩眼 · {0:0.#}秒 · 冷却{1:0.#}秒 · 理智代价{2:0.#}。能力有用，代价会随轮回保留。"
+        "body": "V 肩眼 · 持续 {0:0.#} 秒 · 冷却 {1:0.#} 秒 · 消耗 {2:0.#} 理智"
       },
       {
         "id": "eye-cooldown",
@@ -1451,7 +2575,7 @@
       {
         "id": "already-taken",
         "title": "本轮已取走",
-        "body": "本轮已经取走这件物品。消耗后不会在同一轮凭空补回。"
+        "body": "已收入背包。"
       },
       {
         "id": "eye-active",
@@ -1461,7 +2585,7 @@
       {
         "id": "foreshadow",
         "title": "雨果 · 第二天",
-        "body": "401的门后又响了一声。像搬家具，也像家具在搬人。\n\n厨房低柜里还有父亲留下的撬棍。灶边剩了半瓶油；浴室柜里的维修芯，标签上画着火。\n\n先找点能派上用场的东西。至少别空着手，替邻居添一道菜。"
+        "body": "屋里有些闷。出去走走，顺便看看楼道里的动静。"
       },
       {
         "id": "hat-reveal",
@@ -1496,7 +2620,7 @@
       {
         "id": "prep-manual",
         "title": "维修说明",
-        "body": "油、维修芯、封装匣。小字写着“仅限应急”。\n雨果看了眼401。应急，大概是个很宽泛的词。"
+        "body": "柜底的维修说明画着三样东西：油、火焰标记的维修芯、一只封装匣。\n“仅限应急”。字印得比警告还小。"
       },
       {
         "id": "venue-exit",
@@ -1512,6 +2636,46 @@
         "id": "circus-venue",
         "title": "威尔马戏团 · 帐内",
         "body": "幕布没有拉开。笼子里的声音，倒像已经入座。\nWASD 移动 · 鼠标观察 · E 从门口离开"
+      },
+      {
+        "id": "overheard",
+        "title": "401 门外",
+        "body": "雨果在门边停下。\n\n“第三天夜里，整栋楼一起。别碰总闸，按交接单接。”\n\n电话那头说了什么，听不清。里面的人压低声音：“我知道。不会留下人。”\n\n椅子刮过地板。雨果退了半步。先敲门，问清楚。"
+      },
+      {
+        "id": "cabinet",
+        "title": "厨房壁橱",
+        "body": "柜门有些卡。门上贴着维修示意：油、火焰标记的维修芯、一只封装匣。"
+      },
+      {
+        "id": "open-cabinet",
+        "title": "",
+        "body": "E / 1 打开壁橱"
+      },
+      {
+        "id": "door-conversation",
+        "title": "401 的住户",
+        "body": "“刚才在打电话？”\n\n门后停了一会儿。“维修的事。”\n\n“我听见你说，整栋楼。”\n\n门链响了。“那你进来。外面说不清。”"
+      },
+      {
+        "id": "enter-choice",
+        "title": "",
+        "body": "1. 进门问清楚"
+      },
+      {
+        "id": "close-controls",
+        "title": "",
+        "body": "Enter / Esc 收起"
+      },
+      {
+        "id": "combat-basic",
+        "title": "",
+        "body": "鼠标左键 挥击 · Shift 冲刺 · Ctrl 蹲下"
+      },
+      {
+        "id": "foil-choice",
+        "title": "",
+        "body": "问门缝边的锡纸三角。"
       }
     ]
   }

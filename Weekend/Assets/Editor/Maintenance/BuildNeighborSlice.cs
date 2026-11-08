@@ -10,6 +10,8 @@ public static class BuildNeighborSlice
     public static void Validate(){Run();VerifyRevision.RunNeighbor();}
     public static void BuildPlayer()
     {BuildReview("DeathbySevensDawn Day2-3 Review","../../outputs/DeathbySevensDawn-Day2-3/SevenDay.exe");}
+    public static void BuildRework()
+    {BuildReview("DeathbySevensDawn Interaction Rework","../../outputs/DeathbySevensDawn-Rework/SevenDay.exe");}
     public static void BuildNov08()
     {BuildReview("DeathbySevensDawn Nov08 Review","../../outputs/DeathbySevensDawn-Nov08/SevenDay.exe");}
     static void BuildReview(string product,string destination)

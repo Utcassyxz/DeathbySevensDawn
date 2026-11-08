@@ -43,7 +43,8 @@ public static class VerifyRevision
                 if(SessionState.GetBool(Key+"OnlySpatial",false)) steps=SpatialApocalypseAcceptance.Run();
                 if(SessionState.GetBool(Key+"OnlyDeathCycle",false)) steps=DeathCycleAcceptance.Run();
                 if(SessionState.GetBool(Key+"OnlyCity",false)) steps=CityAcceptance.Run();
-                if(SessionState.GetBool(Key+"OnlyNeighbor",false))steps=SessionState.GetBool(Key+"AllNeighbor",false)?NeighborSliceAcceptance.RunAll():NeighborSliceAcceptance.Run();
+                if(SessionState.GetBool(Key+"Rework",false))steps=InteractionReworkAcceptance.Run();
+                else if(SessionState.GetBool(Key+"OnlyNeighbor",false))steps=SessionState.GetBool(Key+"AllNeighbor",false)?NeighborSliceAcceptance.RunAll():NeighborSliceAcceptance.Run();
                 if(SessionState.GetBool(Key+"OnlyCity",false)||SessionState.GetBool(Key+"OnlyNeighbor",false))
                 {
                     var inputSettings=UnityEngine.InputSystem.InputSystem.settings;
@@ -89,9 +90,10 @@ public static class VerifyRevision
     [MenuItem("Prototype/Validate seven-day city")]
     public static void RunCity(){ SessionState.SetBool(Key+"OnlyCity",true); Run(); }
 
-    public static void RunNeighborAll(){SessionState.SetBool(Key+"AllNeighbor",true);RunNeighbor();}
+    public static void RunRework(){SessionState.SetBool(Key+"Rework",true);RunNeighbor();}
+    public static void RunNeighborAll(){RunRework();}
     [MenuItem("Prototype/Validate Day 2-3 neighbor slice")]
-    public static void RunNeighbor(){SessionState.SetBool("NeighborSliceValidationStorage",true);SessionState.SetBool(Key+"OnlyNeighbor",true);Run();}
+    public static void RunNeighbor(){SessionState.SetBool(Key+"Rework",true);SessionState.SetBool("NeighborSliceValidationStorage",true);SessionState.SetBool(Key+"OnlyNeighbor",true);Run();}
 
     [MenuItem("Prototype/Validate current prototype")]
     public static void Run()
@@ -510,6 +512,7 @@ public static class VerifyRevision
         if(!SessionState.GetBool(Key+"OnlyCompanions",false)&&!SessionState.GetBool(Key+"OnlySpatial",false)) scope="death-only returns, sleep debt and in-place waiting, accelerated per-life fish, right EXIT, consolidated scenes and free debug; original journey/album/settings restored.";
         if(SessionState.GetBool(Key+"OnlyCity",false)) scope="seven-day city integration: evidence, deductions, interventions, fish reachability, AI, defense, checkpoint and legacy migration; journey/album/settings restored.";
         if(SessionState.GetBool(Key+"OnlyNeighbor",false))scope="Day 2-3 neighbor vertical slice: preparation, peace, combat, causal deductions, field prevention, death, mutation, perception, migration and isolated console.";
+        if(SessionState.GetBool(Key+"Rework",false))scope="Revised eavesdropping, exhausted pickups, 401 return, first-person mouse combat and hit reactions; existing death-cycle and city regressions. Isolated saves restored.";
         if(SessionState.GetBool(Key+"AllNeighbor",false))scope+=" Also includes existing death-cycle and city regressions.";
         File.WriteAllText(SessionState.GetBool(Key+"OnlyNeighbor",false)?"neighbor-validation.txt":SessionState.GetBool(Key+"OnlyCity",false)?"../city-validation.txt":"../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
@@ -536,7 +539,7 @@ public static class VerifyRevision
         }
         SessionState.SetBool(Key+"OnlyCity",false);
         SessionState.SetBool(Key+"OnlyNeighbor",false);
-        SessionState.SetBool(Key+"AllNeighbor",false);
+        SessionState.SetBool(Key+"AllNeighbor",false);SessionState.SetBool(Key+"Rework",false);
         foreach (var device in UnityEngine.InputSystem.InputSystem.devices.ToArray())
             if (device.name.StartsWith("SevenDayAcceptanceKeyboard"))
                 UnityEngine.InputSystem.InputSystem.RemoveDevice(device);

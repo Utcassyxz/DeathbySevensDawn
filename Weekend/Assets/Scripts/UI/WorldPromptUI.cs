@@ -75,7 +75,7 @@ namespace DeathBySeventhsDawn.Progression
 
             selectedSource = bestSource;
             if (game != null && game.State.tutorialComplete && game.LoopCount == 0 && game.State.firstNightWatchComplete && TimeManager.Instance.Days == 1 && TimeManager.Instance.Period == TimePeriod.Night)
-                return best ?? StoryText.Local("该睡了。回卧室休息。", "Time for bed. Head back to the bedroom.");
+                return best ?? StoryText.UI("copy.WorldPromptUI.282");
             return best;
         }
 
@@ -142,7 +142,7 @@ namespace DeathBySeventhsDawn.Progression
                     {
                         label.fontSize = 14;
                         label.alignment = TextAnchor.UpperRight;
-                        GUI.Label(new Rect(w - 225, 70, 200, 36), StoryText.Local("J 日记", "J Journal") + (game.State.investigationUnlocked ? StoryText.Local("  ·  B 连线", "  ·  B Board") : "") + StoryText.Local("  ·  I 背包", "  ·  I Inventory"), label);
+                        GUI.Label(new Rect(w - 225, 70, 200, 36), StoryText.UI("copy.WorldPromptUI.283") + (game.State.investigationUnlocked ? StoryText.UI("copy.WorldPromptUI.284") : "") + StoryText.UI("copy.WorldPromptUI.285"), label);
                     }
                 }
 

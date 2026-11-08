@@ -159,7 +159,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             var pool = silent ? StoryText.Current.expansion.fishSilentChats : StoryText.Current.expansion.fishChats;
             if (pool == null || pool.Length == 0)
-                return StoryText.Local("……她在听。", "…She is listening.");
+                return StoryText.UI("copy.AquariumEntity.82");
             if (silent != lastSilent)
             {
                 chatBag.Clear();
@@ -597,9 +597,9 @@ namespace DeathBySeventhsDawn.Interaction
                 ProgressionSave.Write(game.State);
                 pages = new[]
                 {
-                    StoryText.Local("锡纸沉到了缸底。它看了一眼，继续用那张嘴呼吸。\n……已经太迟了。", "The foil sinks. It glances down, then keeps breathing through that mouth.\n…Too late.")
+                    StoryText.UI("copy.AquariumEntity.83")
                 };
-                speaker = StoryText.Local("雨果", "Hugo");
+                speaker = StoryText.UI("copy.AquariumEntity.84");
                 page = 0;
                 openedFrame = Time.frameCount;
                 talking = true;
@@ -637,7 +637,7 @@ namespace DeathBySeventhsDawn.Interaction
             var aq = StoryText.Current.aquarium;
             pages = visualDay < 3 ? new[]
             {
-                StoryText.Local("……今天又没回音。投出去那么多份简历，连封拒信都没有。\n你倒是好，饿了还有人喂。", "…Still nothing. All those applications. Not even a rejection.\nAt least someone feeds you.")
+                StoryText.UI("copy.AquariumEntity.85")
             }
 
             : visualDay >= 5 ? aq?.day6Pages : visualDay >= 4 ? aq?.day5Pages : aq?.day4Pages;
@@ -660,7 +660,7 @@ namespace DeathBySeventhsDawn.Interaction
                 activeEvidence = CompanionReady && state.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
             if (pages == null || pages.Length == 0)
                 return;
-            speaker = CompanionReady ? StoryText.Local("小鱼", "Fish") : visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
+            speaker = CompanionReady ? StoryText.UI("copy.AquariumEntity.86") : visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
             page = 0;
             openedFrame = Time.frameCount;
             talking = true;
@@ -759,7 +759,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!talking)
                 {
                     var aq = StoryText.Current.aquarium;
-                    string prompt = CompanionPresent ? StoryText.Local("E  和小鱼说话", "E  Talk to Fish") : HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 7 ? (aq?.promptDay7 ?? "E  看着它") : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : visualDay >= 4 ? (aq?.promptDay4 ?? "E  听鱼说话") : (aq?.promptDay3 ?? "E  看看鱼缸里的鱼");
+                    string prompt = CompanionPresent ? StoryText.UI("copy.AquariumEntity.87") : HasFoil ? (visualDay < 3 ? StoryText.Current.aquarium.waterPrompt : StoryText.Current.aquarium.offerPrompt) : visualDay >= 7 ? (aq?.promptDay7 ?? "E  看着它") : visualDay >= 6 ? (aq?.promptDay6 ?? "E  和 001 说话") : visualDay >= 4 ? (aq?.promptDay4 ?? "E  听鱼说话") : (aq?.promptDay3 ?? "E  看看鱼缸里的鱼");
                     WorldPromptUI.Offer("aquarium", prompt, 85);
                     return;
                 }
@@ -787,7 +787,7 @@ namespace DeathBySeventhsDawn.Interaction
                     padding = new RectOffset()
                 };
                 subtitles.Set(pages != null ? pages[Mathf.Clamp(page, 0, pages.Length - 1)] : "", subtitleStyle, dialogue.width - 50, dialogue.height - 86);
-                NarrativeUI.Dialogue(dialogue, speaker, subtitles.Current, subtitles.Counter + StoryText.Local("Enter 继续 · Esc 离开", "Enter Continue · Esc Leave"), text);
+                NarrativeUI.Dialogue(dialogue, speaker, subtitles.Current, subtitles.Counter + StoryText.UI("copy.AquariumEntity.88"), text);
                 if (choosing)
                 {
                     var choice = StoryText.Current.expansion;
@@ -804,7 +804,7 @@ namespace DeathBySeventhsDawn.Interaction
                 float x = dialogue.x, y = dialogue.y - 64, bw = (dialogue.width - 24) / 3;
                 if (HasFoil)
                 {
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(RadiationRules.CanSeal(TimeManager.Instance.Days) ? "F  把锡纸放进水里" : "F  投入锡纸（已无法逆转）", RadiationRules.CanSeal(TimeManager.Instance.Days) ? "F  Place foil in the water" : "F  Drop foil (cannot reverse it)"), button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(RadiationRules.CanSeal(TimeManager.Instance.Days) ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.286") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.287"), RadiationRules.CanSeal(TimeManager.Instance.Days) ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.288") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.289")), button))
                         ThrowFoil();
                     x += bw + 12;
                 }
@@ -812,7 +812,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!string.IsNullOrEmpty(activeEvidence))
                 {
                     string evidence = activeEvidence;
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(Investigation.Has(evidence) ? "已记录" : "R 记下这次观察", Investigation.Has(evidence) ? "Recorded" : "R Record observation"), button))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(x, y, bw, 48), StoryText.Local(Investigation.Has(evidence) ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.290") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.291"), Investigation.Has(evidence) ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.292") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.AquariumEntity.293")), button))
                         Investigation.Collect(evidence);
                 }
             }

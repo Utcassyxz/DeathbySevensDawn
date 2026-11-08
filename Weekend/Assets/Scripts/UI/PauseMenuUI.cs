@@ -150,7 +150,7 @@ namespace DeathBySeventhsDawn.Progression
                     ReturnToMain();
                 if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(text?.quit ?? "退出游戏", button, GUILayout.MinHeight(48)))
                     MainMenuUI.QuitGame();
-                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(StoryText.Local("设置", "Settings"), button, GUILayout.MinHeight(40)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(StoryText.UI("copy.PauseMenuUI.262"), button, GUILayout.MinHeight(40)))
                     GameSettingsUI.Show();
                 GUILayout.Space(10);
                 GUILayout.Label(text?.hint ?? "Esc / E 继续", small);

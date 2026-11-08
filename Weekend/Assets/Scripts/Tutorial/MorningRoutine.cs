@@ -646,7 +646,7 @@ namespace DeathBySeventhsDawn.Interaction
                 BeginWriting();
         }
 
-        public string ActionPrompt => (Stage == 3 || State.tutorialComplete) && CanOpenFridge ? StoryText.Current.morning.fridgePrompt : CanNap ? StoryText.Local("E  在沙发上躺一会儿", "E  Lie down on the sofa") : CanWrite ? StoryText.Local("E  坐到书桌前", "E  Sit at the desk") : null;
+        public string ActionPrompt => (Stage == 3 || State.tutorialComplete) && CanOpenFridge ? StoryText.Current.morning.fridgePrompt : CanNap ? StoryText.UI("copy.MorningRoutine.136") : CanWrite ? StoryText.UI("copy.MorningRoutine.137") : null;
 
         void OnGUI()
         {
@@ -674,12 +674,12 @@ namespace DeathBySeventhsDawn.Interaction
                 if (activity == Activity.FishWake)
                 {
                     var story = StoryText.Current.morning;
-                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), story.fishMorningSpeakers[fishMorningPage], story.fishMorningPages[fishMorningPage], StoryText.Local("Enter  继续", "Enter Continue"), label);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), story.fishMorningSpeakers[fishMorningPage], story.fishMorningPages[fishMorningPage], StoryText.UI("copy.MorningRoutine.138"), label);
                     return;
                 }
                 if (activity == Activity.ReturnHome)
                 {
-                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("雨果", "Hugo"), StoryText.Current.morning.food, StoryText.Local("Enter  继续", "Enter Continue"), label);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.UI("copy.MorningRoutine.139"), StoryText.Current.morning.food, StoryText.UI("copy.MorningRoutine.140"), label);
                     return;
                 }
 
@@ -695,20 +695,20 @@ namespace DeathBySeventhsDawn.Interaction
                         GUI.color = Color.white;
                     }
 
-                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("雨果", "Hugo"), activity == Activity.Wake ? StoryText.Current.morning.wake : activity == Activity.Nap ? (age < 3.8f ? StoryText.Current.morning.nap : StoryText.Current.morning.desk) : StoryText.Current.morning.writing, StoryText.Local("Enter  继续", "Enter Continue"), label);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.UI("copy.MorningRoutine.141"), activity == Activity.Wake ? StoryText.Current.morning.wake : activity == Activity.Nap ? (age < 3.8f ? StoryText.Current.morning.nap : StoryText.Current.morning.desk) : StoryText.Current.morning.writing, StoryText.UI("copy.MorningRoutine.142"), label);
                     return;
                 }
 
                 if (activity == Activity.Meal)
                 {
                     GUI.depth = -46;
-                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("雨果", "Hugo"), mealMessage, StoryText.Local("Enter  继续", "Enter Continue"), label);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.UI("copy.MorningRoutine.143"), mealMessage, StoryText.UI("copy.MorningRoutine.144"), label);
                     return;
                 }
 
                 if (activity == Activity.Fridge)
                 {
-                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.Local("雨果", "Hugo"), firstFridge ? StoryText.Current.morning.fridgeOpen : StoryText.Current.morning.fridgeEmpty, StoryText.Local("Enter  继续", "Enter Continue"), label);
+                    NarrativeUI.Dialogue(NarrativeUI.DialogueRect(w, h), StoryText.UI("copy.MorningRoutine.145"), firstFridge ? StoryText.Current.morning.fridgeOpen : StoryText.Current.morning.fridgeEmpty, StoryText.UI("copy.MorningRoutine.146"), label);
                     return;
                 }
 

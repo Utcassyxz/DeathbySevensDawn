@@ -12,7 +12,7 @@ namespace DeathBySeventhsDawn.Interaction
     public sealed class InvestigationBoardUI
     {
         public Action CloseRequested;
-        string first, second, message = DeathBySeventhsDawn.Story.StoryText.Local("从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。", "Select two records. A conclusion is only written when you confirm.");
+        string first, second, message;
         int focus, filter;
         bool previousEnglish, showLinks;
         Vector2 boardScroll, detailScroll;
@@ -20,10 +20,10 @@ namespace DeathBySeventhsDawn.Interaction
         static readonly Color Ink = new Color(.16f, .22f, .21f), Muted = new Color(.42f, .43f, .36f), Green = new Color(.22f, .42f, .36f), Paper = new Color(.92f, .88f, .75f), Deep = new Color(.045f, .075f, .075f);
         static string[] filters => new[]
         {
-            DeathBySeventhsDawn.Story.StoryText.Local("全部", "All"),
-            DeathBySeventhsDawn.Story.StoryText.Local("现场记录", "Evidence"),
-            DeathBySeventhsDawn.Story.StoryText.Local("推论", "Deductions"),
-            DeathBySeventhsDawn.Story.StoryText.Local("未连接", "Unconnected")
+            DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.186"),
+            DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.187"),
+            DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.188"),
+            DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.189")
         };
 
         public void Reset()
@@ -33,7 +33,7 @@ namespace DeathBySeventhsDawn.Interaction
             filter = 0;
             showLinks = false;
             boardScroll = detailScroll = Vector2.zero;
-            message = DeathBySeventhsDawn.Story.StoryText.Local("从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。", "Select two records. A conclusion is only written when you confirm.");
+            message = DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.190");
         }
 
         public void Select(string id)
@@ -118,32 +118,32 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if (first == null && second == null)
             {
-                message = DeathBySeventhsDawn.Story.StoryText.Local("从左侧选择第一条线索，再选第二条；系统只在你确认时写下结论。", "Select two records. A conclusion is only written when you confirm.");
+                message = DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.191");
                 return;
             }
 
             if (second == null)
             {
-                message = DeathBySeventhsDawn.Story.StoryText.Local("已选择①。再选一条线索，建立你怀疑的联系。", "First record selected. Choose a second.");
+                message = DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.192");
                 return;
             }
 
             var link = Investigation.FindLink(first, second);
             if (link != null && !string.IsNullOrEmpty(link.conclusion))
-                message = DeathBySeventhsDawn.Story.StoryText.Local("这条推论已经写下了。", "This deduction is already recorded.");
+                message = DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.193");
             else if (Investigation.Match(first, second) != null)
-                message = DeathBySeventhsDawn.Story.StoryText.Local("这两条记录支持一个结论。", "These records support a conclusion.");
+                message = DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.194");
             else if (link != null)
-                message = DeathBySeventhsDawn.Story.StoryText.Local("这条联系还没有依据。可以留着，也可以擦掉。", "This link has no supporting evidence yet. Keep it, or erase it.");
+                message = DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.195");
             else
-                message = DeathBySeventhsDawn.Story.StoryText.Local("这两条没有足够的联系。换一条试试。", "These do not support a conclusion. Try another record.");
+                message = DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.196");
         }
 
         void LinkOnly()
         {
             var rule = Investigation.Match(first, second);
             bool changed = Investigation.Connect(first, second, false);
-            message = changed ? (rule != null ? DeathBySeventhsDawn.Story.StoryText.Local("已留下待证连线。现在可以得出结论。", "Tentative link saved. You can now draw a conclusion.") : DeathBySeventhsDawn.Story.StoryText.Local("已留下待证连线；它不会被当作事实。", "Tentative link saved. It is not a fact.")) : DeathBySeventhsDawn.Story.StoryText.Local("这条联系已经保存在笔记里。", "This link is already saved.");
+            message = changed ? (rule != null ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.197") : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.198")) : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.199");
             detailScroll = Vector2.zero;
         }
 
@@ -154,15 +154,15 @@ namespace DeathBySeventhsDawn.Interaction
             bool alreadyWritten = existing != null && !string.IsNullOrEmpty(existing.conclusion);
             bool changed = Investigation.Connect(first, second, rule != null);
             if (!changed)
-                message = alreadyWritten ? DeathBySeventhsDawn.Story.StoryText.Local("这条推论已经写下了。", "This deduction is already recorded.") : DeathBySeventhsDawn.Story.StoryText.Local("这条联系已经保存在笔记里。", "This link is already saved.");
+                message = alreadyWritten ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.200") : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.201");
             else
-                message = rule != null ? DeathBySeventhsDawn.Story.StoryText.Local("推论已写下。它也可以成为下一条推理的依据。", "Deduction recorded. It can support a later connection.") : DeathBySeventhsDawn.Story.StoryText.Local("已留下待证连线；它不会被当作事实。", "Tentative link saved. It is not a fact.");
+                message = rule != null ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.202") : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.203");
             detailScroll = Vector2.zero;
         }
 
         void Remove()
         {
-            message = Investigation.RemoveTentative(first, second) ? DeathBySeventhsDawn.Story.StoryText.Local("已擦去待证连线。", "Tentative link erased.") : DeathBySeventhsDawn.Story.StoryText.Local("只有待证连线可以擦去；已写下的推论保留其依据。", "Only tentative links can be erased. Deductions retain their sources.");
+            message = Investigation.RemoveTentative(first, second) ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.204") : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.205");
         }
 
         List<JournalEntry> Filtered()
@@ -346,9 +346,9 @@ namespace DeathBySeventhsDawn.Interaction
             filterButton.wordWrap = false;
             Fill(new Rect(0, 0, w, h), Deep);
             Fill(new Rect(0, 0, w, 94), new Color(.07f, .12f, .12f));
-            GUI.Label(new Rect(30, 16, 520, 44), DeathBySeventhsDawn.Story.StoryText.Local("线索连线", "Evidence board"), headerTitle);
-            GUI.Label(new Rect(32, 58, w - 420, 24), DeathBySeventhsDawn.Story.StoryText.Local("先选一条线索，能与它推理的记录会亮起。", "Select a clue. Compatible records light up."), headerSmall);
-            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w - 232, 24, 202, 44), DeathBySeventhsDawn.Story.StoryText.Local("合上  ·  B / Esc", "Close \u00b7 B / Esc"), button))
+            GUI.Label(new Rect(30, 16, 520, 44), DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.206"), headerTitle);
+            GUI.Label(new Rect(32, 58, w - 420, 24), DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.207"), headerSmall);
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w - 232, 24, 202, 44), DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.208"), button))
             {
                 CloseRequested?.Invoke();
                 return;
@@ -370,8 +370,8 @@ namespace DeathBySeventhsDawn.Interaction
             Fill(left, new Color(.82f, .79f, .67f));
             Fill(right, Paper);
             var nodes = Filtered();
-            GUI.Label(new Rect(left.x + 18, left.y + 12, left.width - 36, 36), DeathBySeventhsDawn.Story.StoryText.Local("线索 · ", "Clues \u00b7 ") + nodes.Count, cardTitle);
-            GUI.Label(new Rect(left.x + 18, left.y + 50, left.width - 36, 28), DeathBySeventhsDawn.Story.StoryText.Local("① 第一条  ② 第二条  ·  点选或方向键 + 空格", "First / second \u00b7 Click or arrows + Space"), small);
+            GUI.Label(new Rect(left.x + 18, left.y + 12, left.width - 36, 36), DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.209") + nodes.Count, cardTitle);
+            GUI.Label(new Rect(left.x + 18, left.y + 50, left.width - 36, 28), DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.210"), small);
             var viewport = new Rect(left.x + 12, left.y + 84, left.width - 24, left.height - 100);
             float rowWidth = viewport.width - 20, contentHeight = Mathf.Max(viewport.height, nodes.Count * 80 + 8);
             boardScroll = GUI.BeginScrollView(viewport, boardScroll, new Rect(0, 0, rowWidth + 8, contentHeight));
@@ -390,9 +390,9 @@ namespace DeathBySeventhsDawn.Interaction
                     Fill(new Rect(row.x, row.y, row.width, 2), Green);
                 if (chosen)
                     Fill(new Rect(row.x, row.y, 5, row.height), DeathBySeventhsDawn.Core.GameManager.Instance.Sanity < 50 ? new Color(.65f, .08f, .08f) : Color.black);
-                GUI.Label(new Rect(row.x + 14, row.y + 8, 80, 20), compatible ? DeathBySeventhsDawn.Story.StoryText.Local("可推理", "Can combine") : deduction ? DeathBySeventhsDawn.Story.StoryText.Local("推论", "Deduction") : DeathBySeventhsDawn.Story.StoryText.Local("现场记录", "Evidence"), tag);
+                GUI.Label(new Rect(row.x + 14, row.y + 8, 80, 20), compatible ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.211") : deduction ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.212") : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.213"), tag);
                 GUI.Label(new Rect(row.x + 14, row.y + 24, row.width - 24, 30), (chosen ? (first == entry.id ? "① " : "② ") : "") + DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id, entry.title), rowTitle);
-                GUI.Label(new Rect(row.x + 14, row.y + 50, row.width - 24, 22), DeathBySeventhsDawn.Story.StoryText.Local("第 " + entry.day + " 天  ·  " + ConnectionCount(entry.id) + " 条连线", "Day " + entry.day + " · " + ConnectionCount(entry.id) + " links"), rowMeta);
+                GUI.Label(new Rect(row.x + 14, row.y + 50, row.width - 24, 22), DeathBySeventhsDawn.Story.StoryText.Local(DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.315") + entry.day + DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.316") + ConnectionCount(entry.id) + DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.317"), DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.318") + entry.day + DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.319") + ConnectionCount(entry.id) + DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.320")), rowMeta);
                 if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(row, GUIContent.none, GUIStyle.none))
                 {
                     focus = i;
@@ -401,18 +401,18 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             if (nodes.Count == 0)
-                GUI.Label(new Rect(14, 18, viewport.width - 28, 100), DeathBySeventhsDawn.Story.StoryText.Local("这一栏还没有线索。\n\n先探索房间、查看现场记录并主动收录。", "No records in this category.\n\nExplore and actively record what you find."), body);
+                GUI.Label(new Rect(14, 18, viewport.width - 28, 100), DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.214"), body);
             GUI.EndScrollView();
-            GUI.Label(new Rect(28, h - 34, w - 56, 28), DeathBySeventhsDawn.Story.StoryText.Local("方向键移动 · 空格选择 · Enter 写下推论 · Delete 擦除 · Tab 换筛选 · B / Esc 关闭", "Arrows Move \u00b7 Space Select \u00b7 Enter Record deduction \u00b7 Delete Erase \u00b7 Tab Filter \u00b7 B / Esc Close"), headerSmall);
+            GUI.Label(new Rect(28, h - 34, w - 56, 28), DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.215"), headerSmall);
             GUILayout.BeginArea(new Rect(right.x + 20, right.y + 16, right.width - 40, right.height - 32));
             detailScroll = GUILayout.BeginScrollView(detailScroll);
-            GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("整理思路", "Arrange the evidence"), title);
+            GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.216"), title);
             GUILayout.Label(message, small);
             if (first == null && second == null)
             {
                 GUILayout.Space(16);
-                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("从左侧选择一条线索。", "Select a record on the left."), cardTitle);
-                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("选中后，绿色记录可以与它推理。读过两份记录，再按 Enter 写下结论。", "Green records can be combined with your selection. Read both, then press Enter to record the conclusion."), body);
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.217"), cardTitle);
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.218"), body);
                 GUILayout.Space(8);
                 DrawLinksToggle();
             }
@@ -432,7 +432,7 @@ namespace DeathBySeventhsDawn.Interaction
                     bool concluded = link != null && !string.IsNullOrEmpty(link.conclusion);
                     if (concluded)
                     {
-                        GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("这条推论已经写下。", "This deduction is recorded."), small);
+                        GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.219"), small);
                         if (rule != null)
                         {
                             GUILayout.Label(rule.title, cardTitle);
@@ -442,21 +442,21 @@ namespace DeathBySeventhsDawn.Interaction
                     else if (rule != null)
                     {
                         GUILayout.Label(rule.title, cardTitle);
-                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("写下推论  ·  Enter", "Record deduction · Enter"), button, GUILayout.MinHeight(50)))
+                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.220"), button, GUILayout.MinHeight(50)))
                             Commit();
                     }
                     else
-                        GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("这两条暂时对不上。换一条试试。", "These don't support a conclusion. Try another record."), body);
-                    if (link != null && !concluded && DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("擦去这条待证线  ·  Delete", "Erase tentative link \u00b7 Delete"), button, GUILayout.MinHeight(42)))
+                        GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.221"), body);
+                    if (link != null && !concluded && DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.222"), button, GUILayout.MinHeight(42)))
                         Remove();
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("清空选择  ·  Backspace", "Clear selection \u00b7 Backspace"), button, GUILayout.MinHeight(40)))
+                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.223"), button, GUILayout.MinHeight(40)))
                     {
                         first = second = null;
                         RefreshMessage();
                     }
                 }
                 else
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("再选一条线索，建立你怀疑的联系。", "Choose a second record to test a connection."), body);
+                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.224"), body);
                 GUILayout.Space(18);
                 DrawLinksToggle();
             }
@@ -475,11 +475,11 @@ namespace DeathBySeventhsDawn.Interaction
                     valid++;
             if (valid == 0)
             {
-                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("还没有连线。选两条线索，建立第一条。", "No connections yet. Select two records to begin."), small);
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.225"), small);
                 return;
             }
 
-            string toggle = showLinks ? DeathBySeventhsDawn.Story.StoryText.Local("收起已连线", "Hide saved connections") : DeathBySeventhsDawn.Story.StoryText.Local("查看已连线 · " + valid, "Saved connections \u00b7 " + valid);
+            string toggle = showLinks ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.226") : DeathBySeventhsDawn.Story.StoryText.Local(DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.321") + valid, DeathBySeventhsDawn.Story.StoryText.UI("fragment.InvestigationBoardUI.322") + valid);
             if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(toggle, linkRow, GUILayout.MinHeight(42)))
                 showLinks = !showLinks;
             if (showLinks)
@@ -488,20 +488,20 @@ namespace DeathBySeventhsDawn.Interaction
 
         void DrawLinks()
         {
-            GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("已整理的连线", "Saved connections"), cardTitle);
+            GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.227"), cardTitle);
             int count = 0;
             foreach (var link in Investigation.Links)
             {
                 if (link == null || !Investigation.IsNode(link.left) || !Investigation.IsNode(link.right))
                     continue;
                 count++;
-                string status = string.IsNullOrEmpty(link.conclusion) ? DeathBySeventhsDawn.Story.StoryText.Local("待证 · 不当作事实", "Tentative \u00b7 Not a fact") : "→ " + Investigation.Title(link.conclusion);
+                string status = string.IsNullOrEmpty(link.conclusion) ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.228") : "→ " + Investigation.Title(link.conclusion);
                 if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(Investigation.Title(link.left) + "  ↔  " + Investigation.Title(link.right) + "\n" + status, linkRow, GUILayout.MinHeight(50)))
                     SelectPair(link.left, link.right);
             }
 
             if (count == 0)
-                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("还没有连线。选两条线索，建立第一条。", "No connections yet. Select two records to begin."), small);
+                GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.229"), small);
         }
     }
 }

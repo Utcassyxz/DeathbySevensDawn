@@ -333,7 +333,7 @@ namespace DeathBySeventhsDawn.Progression
             var box=new Rect(w*.06f,h*.76f,w*.64f,h*.225f);
             var lines=StoryText.Current.expansion.apocalypseReunion;
             reunionText.Set(lines[Mathf.Clamp(reunionPage,0,lines.Length-1)],text,box.width-50,box.height-86);
-            NarrativeUI.Dialogue(box,StoryText.Current.expansion.apocalypseSpeakers[Mathf.Clamp(reunionPage,0,lines.Length-1)],reunionText.Current,reunionText.Counter+StoryText.Local("Enter 继续","Enter Continue"),text);
+            NarrativeUI.Dialogue(box,StoryText.Current.expansion.apocalypseSpeakers[Mathf.Clamp(reunionPage,0,lines.Length-1)],reunionText.Current,reunionText.Counter+StoryText.UI("copy.WorldEndSequence.70"),text);
         }
 
         void DrawBuildingExplosion(float w,float h,float t)
@@ -374,7 +374,7 @@ namespace DeathBySeventhsDawn.Progression
             Fill(new Rect(0,0,w,h),new Color(0,0,0,Mathf.SmoothStep(0,1,Mathf.Clamp01((t-.68f)/.32f))));
             var style=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=Mathf.RoundToInt(h/35),alignment=TextAnchor.MiddleCenter,wordWrap=true};
             GUI.color=NarrativeUI.Ink;
-            GUI.Label(new Rect(w*.15f,h*.82f,w*.70f,h*.13f),t<.3f?StoryText.Local("墙里传来一声闷响。","A dull thud inside the walls."):t<.7f?StoryText.Local("地板先抬了起来。然后，整栋楼向下坠去。","The floor lifted first. Then the whole building fell."):StoryText.Local("雨果再也没能走出这栋楼。","Hugo never made it out."),style);
+            GUI.Label(new Rect(w*.15f,h*.82f,w*.70f,h*.13f),t<.3f?StoryText.UI("copy.WorldEndSequence.71"):t<.7f?StoryText.UI("copy.WorldEndSequence.72"):StoryText.UI("copy.WorldEndSequence.73"),style);
         }
 
         static void Limb(Vector2 start, Vector2 end, float width, Color color)

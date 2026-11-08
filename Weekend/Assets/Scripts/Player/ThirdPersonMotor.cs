@@ -17,7 +17,9 @@ namespace DeathBySeventhsDawn.Player
         public bool Moving { get; private set; }
         float yaw, pitch, fall, hitAt = -10;
         Transform hands;float handPulse;readonly System.Collections.Generic.List<Material> handMaterials=new System.Collections.Generic.List<Material>();
-        float boundUntil;
+        float boundUntil,staggerUntil,impactAt=-10; Vector3 recoil;
+        public bool Staggered=>Time.unscaledTime<staggerUntil;
+        public void ReceiveImpact(Vector3 direction,float strength){direction.y=0;recoil=direction.normalized*strength;staggerUntil=Time.unscaledTime+.35f;impactAt=Time.unscaledTime;}
         public bool MovementLocked=>Time.unscaledTime<boundUntil;
         public float BoundSeconds=>Mathf.Max(0,boundUntil-Time.unscaledTime);
         public void Bind(float seconds){boundUntil=Time.unscaledTime+Mathf.Clamp(seconds,0,5);}
@@ -32,7 +34,8 @@ namespace DeathBySeventhsDawn.Player
             var mouse=Mouse.current;
             if(!Blocked&&mouse!=null&&(FirstPerson||mouse.rightButton.isPressed))
             {var delta=mouse.delta.ReadValue();yaw+=delta.x*.12f;pitch=Mathf.Clamp(pitch-delta.y*.12f,FirstPerson?-75:8,75);}
-            if(Blocked||MovementLocked) { Noise=0;Moving=false;return; }
+            if(!Blocked&&recoil.sqrMagnitude>.01f){controller.Move(recoil*Time.deltaTime);recoil=Vector3.MoveTowards(recoil,Vector3.zero,18*Time.deltaTime);}
+            if(Blocked||MovementLocked||Staggered) { Noise=0;Moving=false;return; }
             var k=Keyboard.current;if(k==null)return;
             bool crouch=k.leftCtrlKey.isPressed;
             if(crouch!=Crouching)
@@ -47,22 +50,20 @@ namespace DeathBySeventhsDawn.Player
             fall=controller.isGrounded?-2:Mathf.Max(-35,fall-22*Time.deltaTime);
             controller.Move((direction*speed+Vector3.up*fall)*Time.deltaTime);
             Noise=Moving?(sprint?10:Crouching?1:4):0;
-            if(k.qKey.wasPressedThisFrame) Defend();
+            if(mouse!=null&&mouse.leftButton.wasPressedThisFrame) Defend();
         }
         public void SetViewYaw(float value){yaw=value;transform.rotation=Quaternion.Euler(0,value,0);}
         public void PulseHands(){handPulse=Time.unscaledTime;}
         void HandPart(string name,Vector3 position,Vector3 scale,Color color)
         {
-            var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());
-            go.transform.SetParent(hands,false);go.transform.localPosition=position;go.transform.localScale=scale;var m=new Material(Resources.Load<Material>("CityGreybox"));m.color=color;handMaterials.Add(m);go.GetComponent<Renderer>().sharedMaterial=m;
+            var go=GameObject.CreatePrimitive(name.Contains("shaft")?PrimitiveType.Cylinder:PrimitiveType.Cube);go.name=name;go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());
+            go.transform.SetParent(hands,false);go.transform.localPosition=position;go.transform.localScale=scale;var m=new Material(Resources.Load<Material>("VenueSurface"));m.color=color;handMaterials.Add(m);go.GetComponent<Renderer>().sharedMaterial=m;
         }
         void BuildHands()
         {
-            hands=new GameObject("Hugo first-person hands").transform;hands.SetParent(view.transform,false);
-            HandPart("Left sleeve",new Vector3(-.27f,-.30f,.5f),new Vector3(.15f,.15f,.34f),new Color(.22f,.28f,.26f));HandPart("Left hand",new Vector3(-.27f,-.27f,.69f),new Vector3(.13f,.12f,.16f),new Color(.56f,.43f,.34f));
-            HandPart("Right sleeve",new Vector3(.27f,-.30f,.5f),new Vector3(.15f,.15f,.34f),new Color(.22f,.28f,.26f));HandPart("Right hand",new Vector3(.27f,-.27f,.69f),new Vector3(.13f,.12f,.16f),new Color(.56f,.43f,.34f));
+            hands=new GameObject("Hugo first-person weapon").transform;hands.SetParent(view.transform,false);
             if(GameManager.Instance.State.inventory.Contains(NeighborSlice.Crowbar))
-            {HandPart("First-person rusty crowbar",new Vector3(.29f,-.08f,.78f),new Vector3(.045f,.53f,.045f),new Color(.37f,.28f,.22f));HandPart("Crowbar hooked end",new Vector3(.25f,.18f,.78f),new Vector3(.13f,.045f,.045f),new Color(.43f,.34f,.25f));}
+            {HandPart("Crowbar shaft",new Vector3(.30f,-.30f,.72f),new Vector3(.021f,.20f,.021f),new Color(.22f,.20f,.18f));HandPart("Crowbar bent tip",new Vector3(.275f,-.10f,.72f),new Vector3(.065f,.018f,.022f),new Color(.27f,.23f,.20f));HandPart("Crowbar claw",new Vector3(.245f,-.12f,.72f),new Vector3(.018f,.05f,.022f),new Color(.18f,.18f,.17f));}
         }
         public bool Defend()
         {
@@ -82,10 +83,10 @@ namespace DeathBySeventhsDawn.Player
             if(view==null)return;
             if(FirstPerson)
             {
-                view.nearClipPlane=.045f;view.transform.position=transform.position+Vector3.up*(Crouching ? .98f : 1.62f);view.transform.rotation=Quaternion.Euler(pitch,yaw,0);
+                view.nearClipPlane=.045f;view.transform.position=transform.position+Vector3.up*(Crouching ? .98f : 1.62f);view.transform.rotation=Quaternion.Euler(pitch+Mathf.Max(0,1-(Time.unscaledTime-impactAt)/.35f)*7,yaw,Mathf.Sin((Time.unscaledTime-impactAt)*25)*Mathf.Max(0,1-(Time.unscaledTime-impactAt)/.35f)*3);
                 view.fieldOfView=Mathf.Lerp(view.fieldOfView,Noise>=10?80:74,Time.unscaledDeltaTime*8);
-                if(hands==null)BuildHands();float swing=Mathf.Clamp01(1-(Time.unscaledTime-handPulse)/.32f);
-                hands.localPosition=new Vector3(Mathf.Sin(Time.time*7)*.004f*(Moving?1:0),Mathf.Sin(Time.time*14)*.004f*(Moving?1:0),swing*.13f);hands.localRotation=Quaternion.Euler(-swing*14,swing*-7,0);return;
+                if(hands==null)BuildHands();float phase=Mathf.Clamp01((Time.unscaledTime-handPulse)/.48f);float swing=Mathf.Sin(phase*Mathf.PI);
+                hands.localPosition=new Vector3(-swing*.36f,Mathf.Sin(Time.time*14)*.004f*(Moving?1:0),swing*.12f);hands.localRotation=Quaternion.Euler(-swing*45,-swing*35,swing*55);return;
             }
             var target=transform.position+Vector3.up*1.35f;
             var offset=Quaternion.Euler(pitch,yaw,0)*new Vector3(0,0,-4.7f);

@@ -404,7 +404,7 @@ namespace DeathBySeventhsDawn.Knowledge
             return match != null && !Has(match.id);
         }
 
-        public static string Title(string id) => LocalTitle(id, State.journal.Find(e => e != null && e.id == id)?.title ?? StoryText.Local("未收录", "Not recorded"));
+        public static string Title(string id) => LocalTitle(id, State.journal.Find(e => e != null && e.id == id)?.title ?? StoryText.UI("copy.Investigation.110"));
         public static IReadOnlyList<InvestigationLink> Links => State.investigationLinks;
     }
 }

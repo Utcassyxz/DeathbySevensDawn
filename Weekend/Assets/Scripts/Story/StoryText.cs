@@ -22,6 +22,7 @@ namespace DeathBySeventhsDawn.Story
         public const string ResourcePath = "StoryText";
         static StoryTextData data;
         static bool english;
+        static System.Collections.Generic.Dictionary<string,string> uiCache;
         public static bool English => english;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -36,11 +37,8 @@ namespace DeathBySeventhsDawn.Story
         public static string Local(string chinese, string english) => English ? english : chinese;
         public static string UI(string key)
         {
-            var entries = Current.ui;
-            if (entries != null)
-                foreach (var entry in entries)
-                    if (entry.key == key)
-                        return entry.text;
+            if(uiCache==null){uiCache=new System.Collections.Generic.Dictionary<string,string>();if(Current.ui!=null)foreach(var entry in Current.ui)uiCache[entry.key]=entry.text;}
+            if(uiCache.TryGetValue(key,out var value))return value;
             return key;
         }
 
@@ -88,7 +86,7 @@ namespace DeathBySeventhsDawn.Story
 
         public static void Reload()
         {
-            data = null;
+            data = null;uiCache=null;
         }
 
         public static string Value(string value, string fallback) => string.IsNullOrEmpty(value) ? fallback : value;

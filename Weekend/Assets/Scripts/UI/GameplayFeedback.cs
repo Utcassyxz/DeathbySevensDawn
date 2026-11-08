@@ -48,7 +48,7 @@ namespace DeathBySeventhsDawn.Progression
         }
         void OnJournalAdded(JournalEntry entry)
         {
-            journalMessage = DeathBySeventhsDawn.Story.StoryText.Local("日记已更新：", "Journal updated: ") + Investigation.LocalTitle(entry.id, entry.title) + DeathBySeventhsDawn.Story.StoryText.Local("  · J 查看", " · J Read");
+            journalMessage = DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.172") + Investigation.LocalTitle(entry.id, entry.title) + DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.173");
             journalRemaining = Duration;
         }
         void OnTimeChanged(int day, TimePeriod period)
@@ -57,7 +57,7 @@ namespace DeathBySeventhsDawn.Progression
                 return;
             previousDay = day;
             previousPeriod = period;
-            timeMessage = DeathBySeventhsDawn.Story.StoryText.Local("第 ", "Day ") + day + DeathBySeventhsDawn.Story.StoryText.Local(" 天 · ", " · ") + PeriodName(period);
+            timeMessage = DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.174") + day + DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.175") + PeriodName(period);
             timeRemaining = Duration;
         }
         public static string PeriodName(TimePeriod period)
@@ -65,13 +65,13 @@ namespace DeathBySeventhsDawn.Progression
             switch (period)
             {
                 case TimePeriod.Morning:
-                    return DeathBySeventhsDawn.Story.StoryText.Local("清晨", "Dawn");
+                    return DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.176");
                 case TimePeriod.Afternoon:
-                    return DeathBySeventhsDawn.Story.StoryText.Local("午间", "Noon");
+                    return DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.177");
                 case TimePeriod.Evening:
-                    return DeathBySeventhsDawn.Story.StoryText.Local("傍晚", "Evening");
+                    return DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.178");
                 default:
-                    return DeathBySeventhsDawn.Story.StoryText.Local("深夜", "Night");
+                    return DeathBySeventhsDawn.Story.StoryText.UI("copy.GameplayFeedback.179");
             }
         }
         bool Hidden()

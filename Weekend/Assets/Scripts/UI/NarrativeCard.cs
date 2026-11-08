@@ -11,9 +11,9 @@ namespace DeathBySeventhsDawn.Progression
             float scale=Mathf.Min(Screen.width/1200f,Screen.height/800f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-120;float w=Screen.width/scale,h=Screen.height/scale;
             try
             {
-                var area=new Rect((w-880)/2,h-194,880,162);Fill(area,new Color(.035f,.045f,.05f,.96f));Fill(new Rect(area.x,area.y,2,area.height),new Color(.57f,.19f,.22f));
+                bool brief=string.IsNullOrEmpty(title);var area=new Rect((w-880)/2,h-(brief?92:194),880,brief?58:162);Fill(area,new Color(.035f,.045f,.05f,.96f));Fill(new Rect(area.x,area.y,2,area.height),new Color(.57f,.19f,.22f));
                 var style=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=20,wordWrap=true};style.normal.textColor=new Color(.85f,.82f,.72f);
-                GUI.Label(new Rect(area.x+25,area.y+16,830,35),title,style);style.fontSize=18;GUI.Label(new Rect(area.x+25,area.y+57,830,94),body,style);
+                if(!brief)GUI.Label(new Rect(area.x+25,area.y+16,830,35),title,style);style.fontSize=18;GUI.Label(new Rect(area.x+25,area.y+(brief?16:57),830,brief?32:94),body,style);
             }
             finally{GUI.matrix=matrix;GUI.color=color;GUI.depth=depth;}
         }

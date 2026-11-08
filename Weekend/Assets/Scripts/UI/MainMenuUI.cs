@@ -300,10 +300,10 @@ namespace DeathBySeventhsDawn.Progression
                 GUI.color = Color.white;
                 float progress = starting ? Mathf.Clamp01((Time.unscaledTime - openingStarted) / 11f) : 0;
                 GUI.DrawTexture(new Rect(0, 0, w, h), sky.Render(Time.unscaledTime, progress), ScaleMode.ScaleAndCrop);
-                if (!starting && GameManager.Instance.State.hasCheckpoint) GUI.Label(new Rect(w*.25f,h-65,w*.5f,40),StoryText.Local("C 继续已保存的旅程","C Continue saved journey"),small);
+                if (!starting && GameManager.Instance.State.hasCheckpoint) GUI.Label(new Rect(w*.25f,h-65,w*.5f,40),StoryText.UI("copy.MainMenuUI.257"),small);
                 if (starting)
                 {
-                    GUI.Label(new Rect(0, h - 45, w, 30), StoryText.Local("跳过 · Esc", "Skip · Esc"), small);
+                    GUI.Label(new Rect(0, h - 45, w, 30), StoryText.UI("copy.MainMenuUI.258"), small);
                     if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
                         FinishOpening();
                     return;
@@ -317,13 +317,13 @@ namespace DeathBySeventhsDawn.Progression
 
                 GUI.Label(new Rect(0, h * .10f, w, 90), StoryText.Current.mainMenu?.title ?? "七日", title);
                 GUI.Label(new Rect(0, h * .10f + 86, w, 32), StoryText.Current.mainMenu?.subtitle ?? "SEVEN DAY", subtitle);
-                GUI.Label(new Rect(0,h*.10f+128,w,30),StoryText.Local("音乐 · Harry Sun","Music · Harry Sun"),small);
+                GUI.Label(new Rect(0,h*.10f+128,w,30),StoryText.UI("copy.MainMenuUI.259"),small);
                 float bw = Mathf.Min(300, w - 80);
                 if (PlateButton(new Rect((w - bw) / 2, h * .61f, bw, 58), StoryText.Current.mainMenu?.start ?? "开 始 新 游 戏"))
                     StartGame();
-                if (PlateButton(new Rect((w - bw) / 2, h * .61f + 78, bw, 52), StoryText.Local("设置", "Settings")))
+                if (PlateButton(new Rect((w - bw) / 2, h * .61f + 78, bw, 52), StoryText.UI("copy.MainMenuUI.260")))
                     GameSettingsUI.Show();
-                if (PlateButton(new Rect((w - bw) / 2, h * .61f + 148, bw, 52), StoryText.Local("结局收录", "Ending collection")))
+                if (PlateButton(new Rect((w - bw) / 2, h * .61f + 148, bw, 52), StoryText.UI("copy.MainMenuUI.261")))
                     EndingCollectionUI.OpenGallery();
                 if (PlateButton(new Rect((w - bw) / 2, h * .61f + 216, bw, 52), StoryText.Current.mainMenu?.quit ?? "退出游戏"))
                     QuitGame();

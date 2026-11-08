@@ -92,7 +92,7 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
-            if(CanUse) WorldPromptUI.Offer("stove",StoryText.Local(IsLit?"E  关火":"E  开火",IsLit?"E  Turn off stove":"E  Light stove"),60);
+            if(CanUse) WorldPromptUI.Offer("stove",StoryText.Local(IsLit?DeathBySeventhsDawn.Story.StoryText.UI("fragment.StoveInteraction.294"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.StoveInteraction.295"),IsLit?DeathBySeventhsDawn.Story.StoryText.UI("fragment.StoveInteraction.296"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.StoveInteraction.297")),60);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace DeathBySeventhsDawn.Interaction
     // Shared floor plan: 2D (x,y) maps to 3D (x,z), with the same door and furniture.
     public sealed class NeighborRoom : MonoBehaviour
     {
-        public const float Width=12,Depth=8;
+        public const float Width=18,Depth=12;
         public static readonly Vector2 Door=new Vector2(-5,0),Table=new Vector2(0,1.8f),Sofa=new Vector2(3,2.2f),Tenant=new Vector2(1,0);
         public bool Arena=>SceneManager.GetActiveScene().name=="NeighborArena3D";
         public bool Service=>SceneManager.GetActiveScene().name=="BuildingService2D";
@@ -53,9 +53,10 @@ namespace DeathBySeventhsDawn.Interaction
         void Build2D()
         {
             art.Backdrop(Service?"BuildingService2D":"NeighborRoom2D");
-            Flat("Apartment floor",Vector2.zero,new Vector2(12,8),Service?new Color(.1f,.16f,.18f):new Color(.17f,.20f,.20f),false,-5);
-            Flat("North wall",new Vector2(0,4),new Vector2(12,.3f),Color.black,true);Flat("South wall",new Vector2(0,-4),new Vector2(12,.3f),Color.black,true);
-            Flat("East wall",new Vector2(6,0),new Vector2(.3f,8),Color.black,true);Flat("West wall",new Vector2(-6,0),new Vector2(.3f,8),Color.black,true);
+
+            Flat("Apartment floor",Vector2.zero,new Vector2(Service?12:18,Service?8:12),Service?new Color(.1f,.16f,.18f):new Color(.17f,.20f,.20f),false,-5);
+            Flat("North wall",new Vector2(0,Service?4:6),new Vector2(Service?12:18,.3f),Color.black,true);Flat("South wall",new Vector2(0,Service?-4:-6),new Vector2(Service?12:18,.3f),Color.black,true);
+            Flat("East wall",new Vector2(Service?6:9,0),new Vector2(.3f,Service?8:12),Color.black,true);Flat("West wall",new Vector2(Service?-6:-9,0),new Vector2(.3f,Service?8:12),Color.black,true);
             Flat("Entrance",Door,new Vector2(.6f,1.5f),new Color(.25f,.45f,.48f));
             Flat(Service?"Wiring desk":"Table",Table,new Vector2(2,1),Service?new Color(.25f,.30f,.33f):new Color(.32f,.23f,.16f),true);Flat(Service?"Valve bank":"Sofa",Sofa,new Vector2(2,1),Service?new Color(.22f,.35f,.36f):new Color(.23f,.30f,.24f),true);
             if(!Service)BuildTenant2D();
@@ -63,7 +64,7 @@ namespace DeathBySeventhsDawn.Interaction
             Actor=new GameObject("Hugo");Actor.tag="Player";Actor.transform.position=new Vector3(-4,0,0);var renderer=Actor.AddComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.color=new Color(.6f,.7f,.65f);renderer.sortingOrder=4;Actor.transform.localScale=new Vector3(.5f,.8f,1);
             renderer.sprite=art.Person();renderer.color=Color.white;Actor.transform.localScale=Vector3.one;
             var body=Actor.AddComponent<Rigidbody2D>();body.gravityScale=0;body.freezeRotation=true;var box=Actor.AddComponent<BoxCollider2D>();box.size=new Vector2(.5f,.6f);box.offset=new Vector2(0,-.5f);Actor.AddComponent<PlayerController2D>();
-            var camera=new GameObject("Room camera");camera.tag="MainCamera";camera.transform.position=new Vector3(0,0,-10);var view=camera.AddComponent<Camera>();view.orthographic=true;view.orthographicSize=4.8f;camera.AddComponent<AudioListener>();
+            var camera=new GameObject("Room camera");camera.tag="MainCamera";camera.transform.position=new Vector3(0,0,-10);var view=camera.AddComponent<Camera>();view.orthographic=true;view.orthographicSize=Service?4.8f:6.8f;camera.AddComponent<AudioListener>();
         }
         void BuildTenant2D()
         {
@@ -75,9 +76,17 @@ namespace DeathBySeventhsDawn.Interaction
         void Build3D()
         {
             VenueRoom.LightRoom();
-            Solid("Same apartment floor",new Vector3(0,-.2f,0),new Vector3(12,.4f,8),new Color(.16f,.12f,.11f));
-            Solid("North wall",new Vector3(0,1.5f,4),new Vector3(12,3,.25f),new Color(.22f,.18f,.17f));Solid("South wall",new Vector3(0,1.5f,-4),new Vector3(12,3,.25f),new Color(.22f,.18f,.17f));
-            Solid("East wall",new Vector3(6,1.5f,0),new Vector3(.25f,3,8),new Color(.22f,.18f,.17f));Solid("West wall",new Vector3(-6,1.5f,0),new Vector3(.25f,3,8),new Color(.22f,.18f,.17f));
+            foreach(var l in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))if(l.type==LightType.Directional)l.intensity*=.35f;
+            RenderSettings.ambientLight=new Color(.10f,.115f,.125f);
+            RenderSettings.fog=true;RenderSettings.fogColor=new Color(.035f,.045f,.05f);RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogDensity=.055f;
+            Solid("Stained ceiling",new Vector3(0,4.1f,0),new Vector3(18,.2f,12),new Color(.09f,.10f,.09f));
+            for(int i=0;i<12;i++)Solid("Floorboard seam",new Vector3(0,.011f,-5.5f+i),new Vector3(18,.012f,.015f),new Color(.045f,.035f,.03f),PrimitiveType.Cube,false);
+            for(int i=0;i<6;i++){Solid("Wall panel",new Vector3(-7.5f+i*3,1.7f,5.8f),new Vector3(2.8f,3.2f,.08f),new Color(.13f,.15f,.13f),PrimitiveType.Cube,false);}
+            Solid("Overturned partition",new Vector3(-1,.7f,-2.5f),new Vector3(3,1.4f,.5f),new Color(.19f,.14f,.10f));
+            var lamp=new GameObject("Single sickly bulb");lamp.transform.position=new Vector3(2,3.4f,0);var light=lamp.AddComponent<Light>();light.type=LightType.Point;light.color=new Color(.72f,.64f,.40f);light.intensity=2.5f;light.range=9;light.shadows=LightShadows.Soft;
+            Solid("Same apartment floor",new Vector3(0,-.2f,0),new Vector3(18,.4f,12),new Color(.16f,.12f,.11f));
+            Solid("North wall",new Vector3(0,2,6),new Vector3(18,4,.25f),new Color(.22f,.18f,.17f));Solid("South wall",new Vector3(0,2,-6),new Vector3(18,4,.25f),new Color(.22f,.18f,.17f));
+            Solid("East wall",new Vector3(9,2,0),new Vector3(.25f,4,12),new Color(.22f,.18f,.17f));Solid("West wall",new Vector3(-9,2,0),new Vector3(.25f,4,12),new Color(.22f,.18f,.17f));
             Solid("Table",new Vector3(Table.x,.6f,Table.y),new Vector3(2,1.2f,1),new Color(.32f,.23f,.16f));Solid("Sofa",new Vector3(Sofa.x,.45f,Sofa.y),new Vector3(2,.9f,1),new Color(.23f,.30f,.24f));
             Actor=new GameObject("Hugo");Actor.tag="Player";Actor.layer=8;Actor.transform.position=new Vector3(-4,0,0);
             var visual=Solid("Hugo body",Actor.transform.position+Vector3.up*.9f,new Vector3(.55f,.85f,.55f),new Color(.4f,.55f,.56f),PrimitiveType.Capsule,false);visual.transform.SetParent(Actor.transform,true);visual.layer=8;
@@ -109,7 +118,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(StoryJournal.WorldBlocked||CognitiveRupture.IsActive||GameManager.Instance.HasEnded)return false;
             string id=InteractionId();if(id==null)return false;
             if(id=="return-service"){RooftopAccess.Instance.EnterFromStreet();return true;}
-            if(id=="return-corridor"){SceneManager.LoadScene("Corridor");return true;}
+            if(id=="return-corridor"){DeathBySeventhsDawn.World.RoomDoor2D.TravelTo("Corridor",new Vector2(-4.7f,-.55f));return true;}
             if(id=="neighbor-talk")return NeighborSlice.Instance.BeginDialogue();
             if(id=="neighbor-desk"){bool access=GameManager.Instance.State.neighborTrusted||GameManager.Instance.State.neighborDefeated;NeighborSlice.Instance.Show(access?"neighbor-order":"desk-locked",access?"neighbor-order":null);return true;}
             NeighborSlice.Instance.Show(id,id=="city-fuse"?id:null);return true;
@@ -142,6 +151,6 @@ namespace DeathBySeventhsDawn.Interaction
             var line=NeighborSlice.Text(RevealProgress<.5f?"hat-reveal":newExposure?"contamination":"contamination-known");
             NarrativeCard.Caption(line.title,line.body);
         }
-        void OnDestroy(){HatRevealActive=false;if(GameManager.Instance!=null)GameManager.Instance.Changed-=PresentPerception;foreach(var m in materials)Destroy(m);if(sprite!=null)Destroy(sprite);if(pixel!=null)Destroy(pixel);if(tenantSprite!=null)Destroy(tenantSprite);if(tenantTexture!=null)Destroy(tenantTexture); }
+        void OnDestroy(){if(Arena)RenderSettings.fog=false;HatRevealActive=false;if(GameManager.Instance!=null)GameManager.Instance.Changed-=PresentPerception;foreach(var m in materials)Destroy(m);if(sprite!=null)Destroy(sprite);if(pixel!=null)Destroy(pixel);if(tenantSprite!=null)Destroy(tenantSprite);if(tenantTexture!=null)Destroy(tenantTexture); }
     }
 }

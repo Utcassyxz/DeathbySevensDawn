@@ -19,8 +19,8 @@ MonoBehaviour:
   eyeCooldown: 12
   eyeSanityCost: 8
   eyeTimeScale: 0.3
-  neighborHealth: 100
-  neighborDamage: 18
+  neighborHealth: 240
+  neighborDamage: 22
   attackWindup: 0.85
   brainWindup: 1.2
   brainFlight: 0.65

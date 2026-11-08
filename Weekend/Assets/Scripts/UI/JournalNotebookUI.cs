@@ -170,15 +170,15 @@ namespace DeathBySeventhsDawn.Interaction
             Fill(left, new Color(.84f, .81f, .70f));
             Fill(right, new Color(.94f, .91f, .81f));
             Fill(new Rect(left.xMax, book.y + 12, 7, book.height - 24), new Color(.43f, .43f, .34f));
-            GUI.Label(new Rect(left.x + 24, left.y + 20, left.width - 48, 44), DeathBySeventhsDawn.Story.StoryText.Local("随身日记", "Journal"), heading);
-            GUI.Label(new Rect(left.x + 25, left.y + 70, left.width - 50, 24), DeathBySeventhsDawn.Story.StoryText.Local("观察 · 梦境 · 无法遗忘的事", "Observations \u00b7 Dreams \u00b7 Things that stay"), eyebrow);
-            GUI.Label(new Rect(left.x + 25, left.y + 99, left.width - 50, 22), entries.Count + DeathBySeventhsDawn.Story.StoryText.Local(" 则记录  /  ", " records / ") + JournalUpdates.UnreadCount + DeathBySeventhsDawn.Story.StoryText.Local(" 则未读", " unread"), small);
+            GUI.Label(new Rect(left.x + 24, left.y + 20, left.width - 48, 44), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.230"), heading);
+            GUI.Label(new Rect(left.x + 25, left.y + 70, left.width - 50, 24), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.231"), eyebrow);
+            GUI.Label(new Rect(left.x + 25, left.y + 99, left.width - 50, 22), entries.Count + DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.232") + JournalUpdates.UnreadCount + DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.233"), small);
             var tabs = new[]
             {
-                DeathBySeventhsDawn.Story.StoryText.Local("全部", "All"),
-                DeathBySeventhsDawn.Story.StoryText.Local("发现", "Findings"),
-                DeathBySeventhsDawn.Story.StoryText.Local("记事", "Notes"),
-                DeathBySeventhsDawn.Story.StoryText.Local("梦境", "Dreams")
+                DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.234"),
+                DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.235"),
+                DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.236"),
+                DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.237")
             };
             for (int i = 0; i < tabs.Length; i++)
             {
@@ -216,7 +216,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if (!entry.isRead)
                     Fill(new Rect(rowWidth - 13, rowY + 12, 5, 5), new Color(.66f, .34f, .16f));
                 GUI.Label(new Rect(14, rowY + 10, rowWidth - 30, rowHeight - 35), DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id, entry.title), rowTitle);
-                GUI.Label(new Rect(14, rowY + rowHeight - 25, rowWidth - 28, 20), DeathBySeventhsDawn.Story.StoryText.Local("第 " + entry.day + " 天 · ", "Day " + entry.day + " · ") + (entry.isKnowledge ? DeathBySeventhsDawn.Story.StoryText.Local("发现", "Findings") : entry.IsDream ? DeathBySeventhsDawn.Story.StoryText.Local("梦境", "Dreams") : DeathBySeventhsDawn.Story.StoryText.Local("记事", "Notes")) + (!entry.isRead ? DeathBySeventhsDawn.Story.StoryText.Local(" · 未读", " \u00b7 Unread") : ""), rowMeta);
+                GUI.Label(new Rect(14, rowY + rowHeight - 25, rowWidth - 28, 20), DeathBySeventhsDawn.Story.StoryText.Local(DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.323") + entry.day + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.324"), DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.325") + entry.day + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.326")) + (entry.isKnowledge ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.238") : entry.IsDream ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.239") : DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.240")) + (!entry.isRead ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.241") : ""), rowMeta);
                 if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(row, GUIContent.none, GUIStyle.none) && selected != index)
                 {
                     selected = index;
@@ -228,9 +228,9 @@ namespace DeathBySeventhsDawn.Interaction
             }
 
             GUI.EndScrollView();
-            GUI.Label(new Rect(left.x + 24, left.yMax - 36, left.width - 48, 20), DeathBySeventhsDawn.Story.StoryText.Local("新记录在前 · 已读状态会保留", "Newest first \u00b7 Reading progress saved"), rowMeta);
-            GUI.Label(new Rect(right.x + 36, right.y + 24, right.width - 200, 24), DeathBySeventhsDawn.Story.StoryText.Local("SEVEN DAY   /   记忆手稿", "SEVEN DAY / Field notes"), eyebrow);
-            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(right.xMax - 147, right.y + 16, 121, 38), DeathBySeventhsDawn.Story.StoryText.Local("合上  ×", "Close \u00d7"), navigation))
+            GUI.Label(new Rect(left.x + 24, left.yMax - 36, left.width - 48, 20), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.242"), rowMeta);
+            GUI.Label(new Rect(right.x + 36, right.y + 24, right.width - 200, 24), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.243"), eyebrow);
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(right.xMax - 147, right.y + 16, 121, 38), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.244"), navigation))
                 close();
             Fill(new Rect(right.x + 30, right.y + 75, right.width - 60, 1), new Color(.73f, .73f, .63f));
             bool selectedVisible = visible.Contains(selected);
@@ -238,19 +238,19 @@ namespace DeathBySeventhsDawn.Interaction
                 DrawArticle(entries[selected], new Rect(right.x + 36, right.y + 98, right.width - 72, right.height - 185));
             else
             {
-                GUI.Label(new Rect(right.x + 40, right.y + 130, right.width - 80, 55), DeathBySeventhsDawn.Story.StoryText.Local("这一页还没有写下什么。", "Nothing written here yet."), heading);
-                GUI.Label(new Rect(right.x + 40, right.y + 204, right.width - 80, 90), filter == 0 ? DeathBySeventhsDawn.Story.StoryText.Local("去看看窗外，或留意身边的变化。查看后选择收录，才会留在这里。", "Look around. Examine objects and choose what to record.") : DeathBySeventhsDawn.Story.StoryText.Local("这里暂时没有这一类记录。", "No records in this category."), body);
+                GUI.Label(new Rect(right.x + 40, right.y + 130, right.width - 80, 55), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.245"), heading);
+                GUI.Label(new Rect(right.x + 40, right.y + 204, right.width - 80, 90), filter == 0 ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.246") : DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.247"), body);
             }
 
             Fill(new Rect(right.x + 30, right.yMax - 70, right.width - 60, 1), new Color(.73f, .73f, .63f));
             int current = visible.IndexOf(selected);
-            GUI.Label(new Rect(right.x + 36, right.yMax - 47, 200, 25), selectedVisible ? DeathBySeventhsDawn.Story.StoryText.Local("第 " + (current + 1) + " / " + visible.Count + " 则 · ← →", "Entry " + (current + 1) + " / " + visible.Count + " · ← →") : DeathBySeventhsDawn.Story.StoryText.Local("尚无记录", "No records"), small);
+            GUI.Label(new Rect(right.x + 36, right.yMax - 47, 200, 25), selectedVisible ? DeathBySeventhsDawn.Story.StoryText.Local(DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.327") + (current + 1) + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.328") + visible.Count + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.329"), DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.330") + (current + 1) + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.331") + visible.Count + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.332")) : DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.248"), small);
             bool wasEnabled = GUI.enabled;
             GUI.enabled = wasEnabled && current > 0;
-            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(right.xMax - 280, right.yMax - 55, 112, 35), DeathBySeventhsDawn.Story.StoryText.Local("← 上一则", "\u2190 Previous"), navigation) && MoveSelection(entries, ref selected, -1))
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(right.xMax - 280, right.yMax - 55, 112, 35), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.249"), navigation) && MoveSelection(entries, ref selected, -1))
                 readSelection();
             GUI.enabled = wasEnabled && current >= 0 && current < visible.Count - 1;
-            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(right.xMax - 151, right.yMax - 55, 112, 35), DeathBySeventhsDawn.Story.StoryText.Local("下一则 →", "Next \u2192"), navigation) && MoveSelection(entries, ref selected, 1))
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(right.xMax - 151, right.yMax - 55, 112, 35), DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.250"), navigation) && MoveSelection(entries, ref selected, 1))
                 readSelection();
             GUI.enabled = wasEnabled;
         }
@@ -259,8 +259,8 @@ namespace DeathBySeventhsDawn.Interaction
         {
             float contentWidth = viewport.width - 22;
             float titleHeight = heading.CalcHeight(new GUIContent(DeathBySeventhsDawn.Knowledge.Investigation.LocalTitle(entry.id, entry.title)), contentWidth);
-            string meta = DeathBySeventhsDawn.Story.StoryText.Local("第 " + (entry.loop + 1) + " 次旅程 / 第 " + entry.day + " 天 / ", "Journey " + (entry.loop + 1) + " / Day " + entry.day + " / ") + (entry.isKnowledge ? (entry.tier == KnowledgeTier.Cosmic ? DeathBySeventhsDawn.Story.StoryText.Local("宇宙知识", "Cosmic knowledge") : entry.tier == KnowledgeTier.Forbidden ? DeathBySeventhsDawn.Story.StoryText.Local("禁忌知识", "Forbidden knowledge") : DeathBySeventhsDawn.Story.StoryText.Local("普通知识", "Ordinary knowledge")) : entry.IsDream ? DeathBySeventhsDawn.Story.StoryText.Local("梦境记录", "Dream record") : DeathBySeventhsDawn.Story.StoryText.Local("日常记事", "Daily note"));
-            string prose = string.IsNullOrWhiteSpace(DeathBySeventhsDawn.Knowledge.Investigation.LocalBody(entry.id, entry.body)) ? DeathBySeventhsDawn.Story.StoryText.Local("这一段记忆还没有整理成文字。", "This memory has no written account yet.") : DeathBySeventhsDawn.Knowledge.Investigation.LocalBody(entry.id, entry.body);
+            string meta = DeathBySeventhsDawn.Story.StoryText.Local(DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.333") + (entry.loop + 1) + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.334") + entry.day + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.335"), DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.336") + (entry.loop + 1) + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.337") + entry.day + DeathBySeventhsDawn.Story.StoryText.UI("fragment.JournalNotebookUI.338")) + (entry.isKnowledge ? (entry.tier == KnowledgeTier.Cosmic ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.251") : entry.tier == KnowledgeTier.Forbidden ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.252") : DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.253")) : entry.IsDream ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.254") : DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.255"));
+            string prose = string.IsNullOrWhiteSpace(DeathBySeventhsDawn.Knowledge.Investigation.LocalBody(entry.id, entry.body)) ? DeathBySeventhsDawn.Story.StoryText.UI("copy.JournalNotebookUI.256") : DeathBySeventhsDawn.Knowledge.Investigation.LocalBody(entry.id, entry.body);
             float metaHeight = small.CalcHeight(new GUIContent(meta), contentWidth);
             float bodyHeight = body.CalcHeight(new GUIContent(prose), contentWidth);
             bool telescopePixel = entry.id == "first-night-silhouette" || entry.id == "first-night-recheck";

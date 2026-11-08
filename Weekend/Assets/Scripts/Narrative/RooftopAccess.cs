@@ -203,8 +203,8 @@ namespace DeathBySeventhsDawn.Interaction
                     DeathBySeventhsDawn.City.CityWorld.Travel("CityStreet");
                 else
                     Show(CurrentFloor==1 && TimeManager.Instance.Days>=2
-                        ? StoryText.Local("木板横钉在大门内侧。门缝也堵死了。\n外面一点声音都传不进来。", "Boards are nailed across the inside of the front door. Even the gaps are plugged.\nNot a sound gets through.")
-                        : StoryText.Local("这层的防火门锁着。", "The fire door on this floor is locked."), false);
+                        ? StoryText.UI("copy.RooftopAccess.118")
+                        : StoryText.UI("copy.RooftopAccess.119"), false);
                 return true;
             }
 
@@ -377,11 +377,11 @@ namespace DeathBySeventhsDawn.Interaction
             else if (scene == "Stairwell")
             {
                 if (Near(StairUp, .8f))
-                    prompt = CurrentFloor < 5 ? StoryText.Local("E 上楼", "E Upstairs") : null;
+                    prompt = CurrentFloor < 5 ? StoryText.UI("copy.RooftopAccess.120") : null;
                 else if (Near(StairDown, .8f))
-                    prompt = CurrentFloor > 1 ? StoryText.Local("E 下楼", "E Downstairs") : null;
+                    prompt = CurrentFloor > 1 ? StoryText.UI("copy.RooftopAccess.121") : null;
                 else if (Near(LandingDoor, .95f))
-                    prompt = CurrentFloor == 4 ? StoryText.Local("E 返回四楼走廊", "E Fourth-floor corridor") : CurrentFloor == 5 ? StoryText.Local("E 前往天台", "E Rooftop") : StoryText.Local("E 查看防火门", "E Check fire door");
+                    prompt = CurrentFloor == 4 ? StoryText.UI("copy.RooftopAccess.122") : CurrentFloor == 5 ? StoryText.UI("copy.RooftopAccess.123") : StoryText.UI("copy.RooftopAccess.124");
                 if (prompt != null && k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("rooftop"))
                     UseStairs();
             }
@@ -460,7 +460,7 @@ namespace DeathBySeventhsDawn.Interaction
                     if (scene == "Stairwell")
                     {
                         Sign(new Vector2(3.88f, 3.18f) * .68f, CurrentFloor.ToString("00"), title, scale, 26);
-                        Sign(new Vector2(-.3f, -2.15f) * .68f, CurrentFloor == 5 ? StoryText.Local("天台", "ROOF") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.Local("防火门", "FIRE DOOR"), small, scale, 14);
+                        Sign(new Vector2(-.3f, -2.15f) * .68f, CurrentFloor == 5 ? StoryText.UI("copy.RooftopAccess.125") : CurrentFloor == 4 ? "401 · 402 · 403" : StoryText.UI("copy.RooftopAccess.126"), small, scale, 14);
                         if (CurrentFloor < 5)
                             Sign(new Vector2(-2.15f, 2.75f) * .68f, "▲", small, scale, 17);
                         if (CurrentFloor > 1)
@@ -491,7 +491,7 @@ namespace DeathBySeventhsDawn.Interaction
                 };
                 subtitles.Set(message, subtitleStyle, speech.width - 50, speech.height - 86);
                 string record = revelation ? (Investigation.Has(StoryContent.AncientKnowledgeId) ? t.recorded : t.record) + " · " : "";
-                NarrativeUI.Dialogue(speech, revelation ? t.title : StoryText.Local("雨果", "Hugo"), subtitles.Current, subtitles.Counter + record + t.close, body);
+                NarrativeUI.Dialogue(speech, revelation ? t.title : StoryText.UI("copy.RooftopAccess.127"), subtitles.Current, subtitles.Counter + record + t.close, body);
             }
             finally
             {

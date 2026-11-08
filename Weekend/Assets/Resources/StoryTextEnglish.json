@@ -877,6 +877,1130 @@
     {
       "key": "指向：没有更多配方",
       "text": "Supports: no further recipes"
+    },
+    {
+      "key": "site-act",
+      "text": "E Operate · Enter / Esc Back"
+    },
+    {
+      "key": "site-enter",
+      "text": "E Enter · R Record · Enter / Esc Back"
+    },
+    {
+      "key": "site-read",
+      "text": "R Record · Enter / Esc Back"
+    },
+    {
+      "key": "copy.WorldEndSequence.70",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.WorldEndSequence.71",
+      "text": "A dull thud inside the walls."
+    },
+    {
+      "key": "copy.WorldEndSequence.72",
+      "text": "The floor lifted first. Then the whole building fell."
+    },
+    {
+      "key": "copy.WorldEndSequence.73",
+      "text": "Hugo never made it out."
+    },
+    {
+      "key": "copy.CityWorld.74",
+      "text": "WASD Move · Mouse Look · Shift Sprint · Ctrl Sneak · Left mouse Defend"
+    },
+    {
+      "key": "copy.CityWorld.75",
+      "text": "WASD Move · E Inspect · R Record · B Reason"
+    },
+    {
+      "key": "copy.CityWorld.76",
+      "text": "Stamina "
+    },
+    {
+      "key": "copy.CityWorld.77",
+      "text": "  Defense charges "
+    },
+    {
+      "key": "copy.CityWorld.78",
+      "text": "Apartment block"
+    },
+    {
+      "key": "copy.CityWorld.79",
+      "text": "Maintenance station"
+    },
+    {
+      "key": "copy.CityWorld.80",
+      "text": "Broadcast room"
+    },
+    {
+      "key": "copy.CityWorld.81",
+      "text": "Observatory"
+    },
+    {
+      "key": "copy.AquariumEntity.82",
+      "text": "…She is listening."
+    },
+    {
+      "key": "copy.AquariumEntity.83",
+      "text": "The foil sinks. It glances down, then keeps breathing through that mouth.\n…Too late."
+    },
+    {
+      "key": "copy.AquariumEntity.84",
+      "text": "Hugo"
+    },
+    {
+      "key": "copy.AquariumEntity.85",
+      "text": "…Still nothing. All those applications. Not even a rejection.\nAt least someone feeds you."
+    },
+    {
+      "key": "copy.AquariumEntity.86",
+      "text": "Fish"
+    },
+    {
+      "key": "copy.AquariumEntity.87",
+      "text": "E  Talk to Fish"
+    },
+    {
+      "key": "copy.AquariumEntity.88",
+      "text": "Enter Continue · Esc Leave"
+    },
+    {
+      "key": "copy.FurnitureInteraction.89",
+      "text": "E  Sleep"
+    },
+    {
+      "key": "copy.FurnitureInteraction.90",
+      "text": "E  Rest"
+    },
+    {
+      "key": "copy.FurnitureInteraction.91",
+      "text": "E  Television"
+    },
+    {
+      "key": "copy.FurnitureInteraction.92",
+      "text": "Rest"
+    },
+    {
+      "key": "copy.FurnitureInteraction.93",
+      "text": "Sofa"
+    },
+    {
+      "key": "copy.FurnitureInteraction.94",
+      "text": "Television"
+    },
+    {
+      "key": "copy.FurnitureInteraction.95",
+      "text": "End today and sleep until morning?"
+    },
+    {
+      "key": "copy.FurnitureInteraction.96",
+      "text": "Sleep until tomorrow · E"
+    },
+    {
+      "key": "copy.FurnitureInteraction.97",
+      "text": "Rest for one period · E"
+    },
+    {
+      "key": "copy.FurnitureInteraction.98",
+      "text": "Leave"
+    },
+    {
+      "key": "copy.FurnitureInteraction.99",
+      "text": "Esc Back"
+    },
+    {
+      "key": "copy.WindowLookout2D.100",
+      "text": "E  Look outside"
+    },
+    {
+      "key": "copy.WindowLookout2D.101",
+      "text": "Outside · Day "
+    },
+    {
+      "key": "copy.WindowLookout2D.102",
+      "text": ""
+    },
+    {
+      "key": "copy.WindowLookout2D.103",
+      "text": "Observation recorded"
+    },
+    {
+      "key": "copy.WindowLookout2D.104",
+      "text": "R  Record the view"
+    },
+    {
+      "key": "copy.WindowLookout2D.105",
+      "text": "\nEsc Back to room"
+    },
+    {
+      "key": "copy.WindowLookout2D.106",
+      "text": "Esc Back to room"
+    },
+    {
+      "key": "copy.WindowLookout2D.107",
+      "text": "Esc Back to room"
+    },
+    {
+      "key": "copy.WindowLookout2D.108",
+      "text": "E  Look outside"
+    },
+    {
+      "key": "copy.WindowLookout2D.109",
+      "text": "Esc Back to room"
+    },
+    {
+      "key": "copy.Investigation.110",
+      "text": "Not recorded"
+    },
+    {
+      "key": "copy.CultNeighbor.111",
+      "text": "E  Speak to the tenant of 401"
+    },
+    {
+      "key": "copy.CultNeighbor.112",
+      "text": "Resident of 401"
+    },
+    {
+      "key": "copy.CultNeighbor.113",
+      "text": "Enter Continue · Esc Leave"
+    },
+    {
+      "key": "copy.CultNeighbor.114",
+      "text": "Inventory"
+    },
+    {
+      "key": "copy.CultNeighbor.115",
+      "text": "The bag is empty. Explore and find something worth carrying."
+    },
+    {
+      "key": "copy.CultNeighbor.116",
+      "text": "I / Esc  Close inventory"
+    },
+    {
+      "key": "copy.CultNeighbor.117",
+      "text": "Resident of 401"
+    },
+    {
+      "key": "copy.RooftopAccess.118",
+      "text": "Boards are nailed across the inside of the front door. Even the gaps are plugged.\nNot a sound gets through."
+    },
+    {
+      "key": "copy.RooftopAccess.119",
+      "text": "The fire door on this floor is locked."
+    },
+    {
+      "key": "copy.RooftopAccess.120",
+      "text": "E Upstairs"
+    },
+    {
+      "key": "copy.RooftopAccess.121",
+      "text": "E Downstairs"
+    },
+    {
+      "key": "copy.RooftopAccess.122",
+      "text": "E Fourth-floor corridor"
+    },
+    {
+      "key": "copy.RooftopAccess.123",
+      "text": "E Rooftop"
+    },
+    {
+      "key": "copy.RooftopAccess.124",
+      "text": "E Check fire door"
+    },
+    {
+      "key": "copy.RooftopAccess.125",
+      "text": "ROOF"
+    },
+    {
+      "key": "copy.RooftopAccess.126",
+      "text": "FIRE DOOR"
+    },
+    {
+      "key": "copy.RooftopAccess.127",
+      "text": "Hugo"
+    },
+    {
+      "key": "copy.NightDreamSequence.128",
+      "text": "SANITY FOR KNOWLEDGE"
+    },
+    {
+      "key": "copy.NightDreamSequence.129",
+      "text": "Knowledge "
+    },
+    {
+      "key": "copy.NightDreamSequence.130",
+      "text": "No knowledge is offered yet."
+    },
+    {
+      "key": "copy.NightDreamSequence.131",
+      "text": "Hugo"
+    },
+    {
+      "key": "copy.NightDreamSequence.132",
+      "text": "Enter End meeting"
+    },
+    {
+      "key": "copy.NightDreamSequence.133",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.DayOneSupernovaEvent.134",
+      "text": "Television"
+    },
+    {
+      "key": "copy.DayOneSupernovaEvent.135",
+      "text": "Enter / Esc  Leave"
+    },
+    {
+      "key": "copy.MorningRoutine.136",
+      "text": "E  Lie down on the sofa"
+    },
+    {
+      "key": "copy.MorningRoutine.137",
+      "text": "E  Sit at the desk"
+    },
+    {
+      "key": "copy.MorningRoutine.138",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.MorningRoutine.139",
+      "text": "Hugo"
+    },
+    {
+      "key": "copy.MorningRoutine.140",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.MorningRoutine.141",
+      "text": "Hugo"
+    },
+    {
+      "key": "copy.MorningRoutine.142",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.MorningRoutine.143",
+      "text": "Hugo"
+    },
+    {
+      "key": "copy.MorningRoutine.144",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.MorningRoutine.145",
+      "text": "Hugo"
+    },
+    {
+      "key": "copy.MorningRoutine.146",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.EndingCollectionUI.147",
+      "text": "ENDING PREVIEW "
+    },
+    {
+      "key": "copy.EndingCollectionUI.148",
+      "text": " · No collection changes"
+    },
+    {
+      "key": "copy.EndingCollectionUI.149",
+      "text": "Return to debug"
+    },
+    {
+      "key": "copy.EndingCollectionUI.150",
+      "text": "Fast · Good"
+    },
+    {
+      "key": "copy.EndingCollectionUI.151",
+      "text": "Slow · Bad"
+    },
+    {
+      "key": "copy.EndingCollectionUI.152",
+      "text": "True variation"
+    },
+    {
+      "key": "copy.EndingCollectionUI.153",
+      "text": "ENDING COLLECTION"
+    },
+    {
+      "key": "copy.EndingCollectionUI.154",
+      "text": "UNDISCOVERED"
+    },
+    {
+      "key": "copy.EndingCollectionUI.155",
+      "text": "Someone got up in his place, and lived the days that remained."
+    },
+    {
+      "key": "copy.EndingCollectionUI.156",
+      "text": "He never reached the door. There was no next morning."
+    },
+    {
+      "key": "copy.EndingCollectionUI.157",
+      "text": "Each return left his body a little heavier."
+    },
+    {
+      "key": "copy.EndingCollectionUI.158",
+      "text": "This page is still blank."
+    },
+    {
+      "key": "copy.EndingCollectionUI.159",
+      "text": "Back · Esc"
+    },
+    {
+      "key": "copy.EndingCollectionUI.160",
+      "text": "Hugo shut the window and let the week pass.\nOn the seventh night, Earth never reached another morning."
+    },
+    {
+      "key": "copy.EndingCollectionUI.161",
+      "text": "He remembered every return.\nHis body never got to start over."
+    },
+    {
+      "key": "copy.EndingCollectionUI.162",
+      "text": "ENDING  "
+    },
+    {
+      "key": "copy.EndingCollectionUI.163",
+      "text": "Begin a new journey"
+    },
+    {
+      "key": "copy.EndingCollectionUI.164",
+      "text": "The journey will reset. Your ending collection will remain."
+    },
+    {
+      "key": "copy.EndingCollectionUI.165",
+      "text": "Confirm restart"
+    },
+    {
+      "key": "copy.EndingCollectionUI.166",
+      "text": "Cancel"
+    },
+    {
+      "key": "copy.EndingCollectionUI.167",
+      "text": "Return to title"
+    },
+    {
+      "key": "copy.EvidenceInspection.168",
+      "text": "E  Examine "
+    },
+    {
+      "key": "copy.EvidenceInspection.169",
+      "text": "Recorded. Open the evidence board to connect it."
+    },
+    {
+      "key": "copy.EvidenceInspection.170",
+      "text": "R  Record in journal"
+    },
+    {
+      "key": "copy.EvidenceInspection.171",
+      "text": "Leave it here · Esc"
+    },
+    {
+      "key": "copy.GameplayFeedback.172",
+      "text": "Journal updated: "
+    },
+    {
+      "key": "copy.GameplayFeedback.173",
+      "text": " · J Read"
+    },
+    {
+      "key": "copy.GameplayFeedback.174",
+      "text": "Day "
+    },
+    {
+      "key": "copy.GameplayFeedback.175",
+      "text": " · "
+    },
+    {
+      "key": "copy.GameplayFeedback.176",
+      "text": "Dawn"
+    },
+    {
+      "key": "copy.GameplayFeedback.177",
+      "text": "Noon"
+    },
+    {
+      "key": "copy.GameplayFeedback.178",
+      "text": "Evening"
+    },
+    {
+      "key": "copy.GameplayFeedback.179",
+      "text": "Night"
+    },
+    {
+      "key": "copy.GameSettingsUI.180",
+      "text": "Settings"
+    },
+    {
+      "key": "copy.GameSettingsUI.181",
+      "text": "Master volume"
+    },
+    {
+      "key": "copy.GameSettingsUI.182",
+      "text": "Language"
+    },
+    {
+      "key": "copy.GameSettingsUI.183",
+      "text": "All music · Harry Sun"
+    },
+    {
+      "key": "copy.GameSettingsUI.184",
+      "text": "Back  ·  Esc"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.185",
+      "text": "Select two records. A conclusion is only written when you confirm."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.186",
+      "text": "All"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.187",
+      "text": "Evidence"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.188",
+      "text": "Deductions"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.189",
+      "text": "Unconnected"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.190",
+      "text": "Select two records. A conclusion is only written when you confirm."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.191",
+      "text": "Select two records. A conclusion is only written when you confirm."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.192",
+      "text": "First record selected. Choose a second."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.193",
+      "text": "This deduction is already recorded."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.194",
+      "text": "These records support a conclusion."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.195",
+      "text": "This link has no supporting evidence yet. Keep it, or erase it."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.196",
+      "text": "These do not support a conclusion. Try another record."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.197",
+      "text": "Tentative link saved. You can now draw a conclusion."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.198",
+      "text": "Tentative link saved. It is not a fact."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.199",
+      "text": "This link is already saved."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.200",
+      "text": "This deduction is already recorded."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.201",
+      "text": "This link is already saved."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.202",
+      "text": "Deduction recorded. It can support a later connection."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.203",
+      "text": "Tentative link saved. It is not a fact."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.204",
+      "text": "Tentative link erased."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.205",
+      "text": "Only tentative links can be erased. Deductions retain their sources."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.206",
+      "text": "Evidence board"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.207",
+      "text": "Select a clue. Compatible records light up."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.208",
+      "text": "Close · B / Esc"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.209",
+      "text": "Clues · "
+    },
+    {
+      "key": "copy.InvestigationBoardUI.210",
+      "text": "First / second · Click or arrows + Space"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.211",
+      "text": "Can combine"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.212",
+      "text": "Deduction"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.213",
+      "text": "Evidence"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.214",
+      "text": "No records in this category.\n\nExplore and actively record what you find."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.215",
+      "text": "Arrows Move · Space Select · Enter Record deduction · Delete Erase · Tab Filter · B / Esc Close"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.216",
+      "text": "Arrange the evidence"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.217",
+      "text": "Select a record on the left."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.218",
+      "text": "Green records can be combined with your selection. Read both, then press Enter to record the conclusion."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.219",
+      "text": "This deduction is recorded."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.220",
+      "text": "Record deduction · Enter"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.221",
+      "text": "These don't support a conclusion. Try another record."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.222",
+      "text": "Erase tentative link · Delete"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.223",
+      "text": "Clear selection · Backspace"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.224",
+      "text": "Choose a second record to test a connection."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.225",
+      "text": "No connections yet. Select two records to begin."
+    },
+    {
+      "key": "copy.InvestigationBoardUI.226",
+      "text": "Hide saved connections"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.227",
+      "text": "Saved connections"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.228",
+      "text": "Tentative · Not a fact"
+    },
+    {
+      "key": "copy.InvestigationBoardUI.229",
+      "text": "No connections yet. Select two records to begin."
+    },
+    {
+      "key": "copy.JournalNotebookUI.230",
+      "text": "Journal"
+    },
+    {
+      "key": "copy.JournalNotebookUI.231",
+      "text": "Observations · Dreams · Things that stay"
+    },
+    {
+      "key": "copy.JournalNotebookUI.232",
+      "text": " records / "
+    },
+    {
+      "key": "copy.JournalNotebookUI.233",
+      "text": " unread"
+    },
+    {
+      "key": "copy.JournalNotebookUI.234",
+      "text": "All"
+    },
+    {
+      "key": "copy.JournalNotebookUI.235",
+      "text": "Findings"
+    },
+    {
+      "key": "copy.JournalNotebookUI.236",
+      "text": "Notes"
+    },
+    {
+      "key": "copy.JournalNotebookUI.237",
+      "text": "Dreams"
+    },
+    {
+      "key": "copy.JournalNotebookUI.238",
+      "text": "Findings"
+    },
+    {
+      "key": "copy.JournalNotebookUI.239",
+      "text": "Dreams"
+    },
+    {
+      "key": "copy.JournalNotebookUI.240",
+      "text": "Notes"
+    },
+    {
+      "key": "copy.JournalNotebookUI.241",
+      "text": " · Unread"
+    },
+    {
+      "key": "copy.JournalNotebookUI.242",
+      "text": "Newest first · Reading progress saved"
+    },
+    {
+      "key": "copy.JournalNotebookUI.243",
+      "text": "SEVEN DAY / Field notes"
+    },
+    {
+      "key": "copy.JournalNotebookUI.244",
+      "text": "Close ×"
+    },
+    {
+      "key": "copy.JournalNotebookUI.245",
+      "text": "Nothing written here yet."
+    },
+    {
+      "key": "copy.JournalNotebookUI.246",
+      "text": "Look around. Examine objects and choose what to record."
+    },
+    {
+      "key": "copy.JournalNotebookUI.247",
+      "text": "No records in this category."
+    },
+    {
+      "key": "copy.JournalNotebookUI.248",
+      "text": "No records"
+    },
+    {
+      "key": "copy.JournalNotebookUI.249",
+      "text": "← Previous"
+    },
+    {
+      "key": "copy.JournalNotebookUI.250",
+      "text": "Next →"
+    },
+    {
+      "key": "copy.JournalNotebookUI.251",
+      "text": "Cosmic knowledge"
+    },
+    {
+      "key": "copy.JournalNotebookUI.252",
+      "text": "Forbidden knowledge"
+    },
+    {
+      "key": "copy.JournalNotebookUI.253",
+      "text": "Ordinary knowledge"
+    },
+    {
+      "key": "copy.JournalNotebookUI.254",
+      "text": "Dream record"
+    },
+    {
+      "key": "copy.JournalNotebookUI.255",
+      "text": "Daily note"
+    },
+    {
+      "key": "copy.JournalNotebookUI.256",
+      "text": "This memory has no written account yet."
+    },
+    {
+      "key": "copy.MainMenuUI.257",
+      "text": "C Continue saved journey"
+    },
+    {
+      "key": "copy.MainMenuUI.258",
+      "text": "Skip · Esc"
+    },
+    {
+      "key": "copy.MainMenuUI.259",
+      "text": "Music · Harry Sun"
+    },
+    {
+      "key": "copy.MainMenuUI.260",
+      "text": "Settings"
+    },
+    {
+      "key": "copy.MainMenuUI.261",
+      "text": "Ending collection"
+    },
+    {
+      "key": "copy.PauseMenuUI.262",
+      "text": "Settings"
+    },
+    {
+      "key": "copy.ProgressionHUD.263",
+      "text": "Free debug: ON · Restore normal gates"
+    },
+    {
+      "key": "copy.ProgressionHUD.264",
+      "text": "Free debug: OFF · Bypass mandatory story and gates"
+    },
+    {
+      "key": "copy.ProgressionHUD.265",
+      "text": "Set time"
+    },
+    {
+      "key": "copy.ProgressionHUD.266",
+      "text": "Safe commands · automatic isolated session; session end restores normal progress"
+    },
+    {
+      "key": "copy.ProgressionHUD.267",
+      "text": "Execute"
+    },
+    {
+      "key": "copy.ProgressionHUD.268",
+      "text": "Day 3 bombing: "
+    },
+    {
+      "key": "copy.ProgressionHUD.269",
+      "text": "Day 7 crisis: "
+    },
+    {
+      "key": "copy.ProgressionHUD.270",
+      "text": "Wait here until tomorrow (no sleep)"
+    },
+    {
+      "key": "copy.ProgressionHUD.271",
+      "text": "Play Day 3 explosion (lethal outside free debug)"
+    },
+    {
+      "key": "copy.ProgressionHUD.272",
+      "text": "Skip forced story · Free exploration"
+    },
+    {
+      "key": "copy.ProgressionHUD.273",
+      "text": "Preview ending "
+    },
+    {
+      "key": "copy.StoryJournal.274",
+      "text": "Evidence board · B"
+    },
+    {
+      "key": "copy.StoryJournal.275",
+      "text": "ONE HOUR LATER"
+    },
+    {
+      "key": "copy.StoryJournal.276",
+      "text": "Hugo · Telescope"
+    },
+    {
+      "key": "copy.StoryJournal.277",
+      "text": "Enter Continue"
+    },
+    {
+      "key": "copy.StoryJournal.278",
+      "text": "Enter Observe · E Put away"
+    },
+    {
+      "key": "copy.StoryJournal.279",
+      "text": "E Put away"
+    },
+    {
+      "key": "copy.StoryJournal.280",
+      "text": "A stamp."
+    },
+    {
+      "key": "copy.StoryJournal.281",
+      "text": "Dream"
+    },
+    {
+      "key": "copy.WorldPromptUI.282",
+      "text": "Time for bed. Head back to the bedroom."
+    },
+    {
+      "key": "copy.WorldPromptUI.283",
+      "text": "J Journal"
+    },
+    {
+      "key": "copy.WorldPromptUI.284",
+      "text": "  ·  B Board"
+    },
+    {
+      "key": "copy.WorldPromptUI.285",
+      "text": "  ·  I Inventory"
+    },
+    {
+      "key": "fragment.AquariumEntity.286",
+      "text": "F  把锡纸放进水里"
+    },
+    {
+      "key": "fragment.AquariumEntity.287",
+      "text": "F  投入锡纸（已无法逆转）"
+    },
+    {
+      "key": "fragment.AquariumEntity.288",
+      "text": "F  Place foil in the water"
+    },
+    {
+      "key": "fragment.AquariumEntity.289",
+      "text": "F  Drop foil (cannot reverse it)"
+    },
+    {
+      "key": "fragment.AquariumEntity.290",
+      "text": "已记录"
+    },
+    {
+      "key": "fragment.AquariumEntity.291",
+      "text": "R 记下这次观察"
+    },
+    {
+      "key": "fragment.AquariumEntity.292",
+      "text": "Recorded"
+    },
+    {
+      "key": "fragment.AquariumEntity.293",
+      "text": "R Record observation"
+    },
+    {
+      "key": "fragment.StoveInteraction.294",
+      "text": "E  关火"
+    },
+    {
+      "key": "fragment.StoveInteraction.295",
+      "text": "E  开火"
+    },
+    {
+      "key": "fragment.StoveInteraction.296",
+      "text": "E  Turn off stove"
+    },
+    {
+      "key": "fragment.StoveInteraction.297",
+      "text": "E  Light stove"
+    },
+    {
+      "key": "fragment.WindowLookout2D.298",
+      "text": "E 拉开窗帘"
+    },
+    {
+      "key": "fragment.WindowLookout2D.299",
+      "text": "E 拉上窗帘"
+    },
+    {
+      "key": "fragment.WindowLookout2D.300",
+      "text": "E Open curtains"
+    },
+    {
+      "key": "fragment.WindowLookout2D.301",
+      "text": "E Close curtains"
+    },
+    {
+      "key": "fragment.CultNeighbor.302",
+      "text": "E  敲门，取回门缝边的小三角"
+    },
+    {
+      "key": "fragment.CultNeighbor.303",
+      "text": "E  敲 401 的门"
+    },
+    {
+      "key": "fragment.CultNeighbor.304",
+      "text": "E  Knock; the triangle is by the crack"
+    },
+    {
+      "key": "fragment.CultNeighbor.305",
+      "text": "E  Knock on 401"
+    },
+    {
+      "key": "fragment.CultNeighbor.306",
+      "text": "Esc 离开"
+    },
+    {
+      "key": "fragment.CultNeighbor.307",
+      "text": "E 拾起并放入背包 · Esc 离开"
+    },
+    {
+      "key": "fragment.CultNeighbor.308",
+      "text": "Enter 继续 · Esc 离开"
+    },
+    {
+      "key": "fragment.CultNeighbor.309",
+      "text": "Esc Leave"
+    },
+    {
+      "key": "fragment.CultNeighbor.310",
+      "text": "E Take · Esc Leave"
+    },
+    {
+      "key": "fragment.CultNeighbor.311",
+      "text": "Enter Continue · Esc Leave"
+    },
+    {
+      "key": "fragment.EndingCollectionUI.312",
+      "text": "新结局已收录  ·  可在主页面的「结局收录」查看"
+    },
+    {
+      "key": "fragment.EndingCollectionUI.313",
+      "text": "结局已收录  ·  主页面可查看"
+    },
+    {
+      "key": "fragment.EndingCollectionUI.314",
+      "text": "ENDING RECORDED  ·  Available in the title screen collection"
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.315",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.316",
+      "text": " 天  ·  "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.317",
+      "text": " 条连线"
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.318",
+      "text": "Day "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.319",
+      "text": " · "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.320",
+      "text": " links"
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.321",
+      "text": "查看已连线 · "
+    },
+    {
+      "key": "fragment.InvestigationBoardUI.322",
+      "text": "Saved connections · "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.323",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.324",
+      "text": " 天 · "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.325",
+      "text": "Day "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.326",
+      "text": " · "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.327",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.328",
+      "text": " / "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.329",
+      "text": " 则 · ← →"
+    },
+    {
+      "key": "fragment.JournalNotebookUI.330",
+      "text": "Entry "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.331",
+      "text": " / "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.332",
+      "text": " · ← →"
+    },
+    {
+      "key": "fragment.JournalNotebookUI.333",
+      "text": "第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.334",
+      "text": " 次旅程 / 第 "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.335",
+      "text": " 天 / "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.336",
+      "text": "Journey "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.337",
+      "text": " / Day "
+    },
+    {
+      "key": "fragment.JournalNotebookUI.338",
+      "text": " / "
+    },
+    {
+      "key": "fragment.ProgressionHUD.339",
+      "text": "已解除（点击还原）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.340",
+      "text": "未解除（点击解除）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.341",
+      "text": "Prevented (restore)"
+    },
+    {
+      "key": "fragment.ProgressionHUD.342",
+      "text": "Unresolved (prevent)"
+    },
+    {
+      "key": "fragment.ProgressionHUD.343",
+      "text": "已解除（点击还原）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.344",
+      "text": "未解除（点击解除）"
+    },
+    {
+      "key": "fragment.ProgressionHUD.345",
+      "text": "Prevented (restore)"
+    },
+    {
+      "key": "fragment.ProgressionHUD.346",
+      "text": "Unresolved (prevent)"
+    },
+    {
+      "key": "进入序章  ·  Enter",
+      "text": "Enter prologue · Enter"
     }
   ],
   "fishEnding": {
@@ -999,119 +2123,119 @@
         "title": "Will Circus",
         "body": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "sushi",
         "title": "Miyazaki Sushi",
         "body": "Miyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "city-maintenance",
         "title": "Handover ledger",
         "body": "Third night. Service shaft supply. 401.\nSomeone has written NOTIFIED beside it. Whether that counts as saving a life depends on who fills in the form.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "city-fuse",
         "title": "Wiring diagram",
         "body": "Several lines bypass the residential breaker.\nTurning out the lights is not the same as cutting the power. Or reaching morning.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "city-orders",
         "title": "Search orders",
         "body": "Addresses, no charges.\nThe broadcast will explain for them.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "city-routing",
         "title": "Broadcast routing",
         "body": "The same words are routed to every street.\nEnough voices in unison can sound like agreement.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "city-spectrum",
         "title": "Observation log",
         "body": "Every curve bends at the same second. The instruments are working.\nBad news tends to be punctual.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "city-lens",
         "title": "Array manual",
         "body": "Calibrate. Align. Lock.\nThey gave every step a reassuring name.",
         "success": "Recorded.",
-        "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
+        "locked": "Nothing new to record."
       },
       {
         "id": "return",
         "title": "Return",
         "body": "Return to the apartment or street.",
         "success": "Recorded.",
-        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+        "locked": "Nothing new to record."
       },
       {
         "id": "service",
-        "title": "Service area",
+        "title": "West · Maintenance",
         "body": "Investigate the circuit supplying the third-night device.",
         "success": "Recorded.",
-        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+        "locked": "Nothing new to record."
       },
       {
         "id": "broadcast",
-        "title": "Broadcast center",
+        "title": "East · Broadcast station",
         "body": "Investigate the city search dispatch.",
         "success": "Recorded.",
-        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+        "locked": "Nothing new to record."
       },
       {
         "id": "observatory",
-        "title": "Observatory",
+        "title": "Uphill · Observatory",
         "body": "Look for the observation logs from Day 6.",
         "success": "Recorded.",
-        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+        "locked": "Nothing new to record."
       },
       {
         "id": "rest",
         "title": "Bench: wait one period",
         "body": "Wait voluntarily. This does not count as sleep.",
         "success": "Recorded.",
-        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+        "locked": "Nothing new to record."
       },
       {
         "id": "caretaker",
         "title": "Caretaker",
-        "body": "He grips the keys.\nConvince him you are asking directions, not choosing the next room.",
+        "body": "“Maintenance is west. The handover sheet? On the cabinet. Just do not sign my name.”",
         "success": "Recorded.",
-        "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
+        "locked": "He avoids your eyes, clutching his keys."
       },
       {
         "id": "building-terminal",
-        "title": "Isolate the 401 circuit",
-        "body": "Before the third night, connect the handover and wiring diagram, then isolate the 401 circuit. The aquarium keeps power. Day 4 testimony is not required.",
+        "title": "Service notice",
+        "body": "A page is missing from the 401 service record. The last entry bears the basement equipment-room stamp.",
         "success": "Recorded.",
-        "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
+        "locked": "Nothing new to record."
       },
       {
         "id": "city-terminal",
         "title": "Stop city search dispatch",
-        "body": "Connect the search orders and routing log, then stop dispatch at its source.",
+        "body": "The tape keeps turning. CITY RELAY glows on the console. A clear cover guards the stop switch.",
         "success": "Recorded.",
-        "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
+        "locked": "Nothing new to record."
       },
       {
         "id": "cosmic-terminal",
         "title": "Shut the synchronized observation route",
-        "body": "Connect the Day 6 log with the maintenance manual, identify the route, then perform the emergency shutdown.",
+        "body": "Every mirror points at the same coordinates. A faded calibration table hangs beside the emergency lever.",
         "success": "Recorded.",
-        "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
+        "locked": "Nothing new to record."
       },
       {
         "id": "escape",
@@ -1156,7 +2280,7 @@
       {
         "id": "crowbar",
         "title": "Crowbar",
-        "body": "A crowbar, thick with rust.\nFor opening stubborn doors. And the occasional closed mind."
+        "body": "A rusted crowbar. Might open a few heads."
       },
       {
         "id": "cooking-oil",
@@ -1185,8 +2309,8 @@
       },
       {
         "id": "force-door",
-        "title": "401 · The lock",
-        "body": "Dust fills the keyhole. Someone is holding their breath inside.\nThe crowbar is heavy. “Wrong door” would be impolite at this point."
+        "title": "401",
+        "body": "It has gone quiet inside. The door is still locked."
       },
       {
         "id": "force-choice",
@@ -1196,7 +2320,7 @@
       {
         "id": "knock-choice",
         "title": "Knock",
-        "body": "Knock normally; keep the old door conversation."
+        "body": "Knock. Ask about the call."
       },
       {
         "id": "service-entry",
@@ -1220,18 +2344,18 @@
       },
       {
         "id": "neighbor-desk",
-        "title": "Inspect the assignment on the table",
-        "body": "Inspect the papers."
+        "title": "Paper on the table",
+        "body": "A triangle is printed at the edge of the paper."
       },
       {
         "id": "desk-locked",
         "title": "The tenant blocks the desk",
-        "body": "Earn his trust or survive the confrontation before recovering the assignment."
+        "body": "His hand pins the page. “You have not answered my question.”"
       },
       {
         "id": "intro",
-        "title": "401 · The neighbor",
-        "body": "The old hat is still on. His smile arrives half a second late.\n“I heard the door. I suppose you heard my… work?”"
+        "title": "Resident of 401",
+        "body": "He presses a hand to his hat. The paper on the table is turned face down.\n\n“How much did you hear?”"
       },
       {
         "id": "calm-choice",
@@ -1241,7 +2365,7 @@
       {
         "id": "threat-choice",
         "title": "Threaten",
-        "body": "You are a monster. Stay down."
+        "body": "Turn it off. Now. Do not make me hurt you."
       },
       {
         "id": "memory-choice",
@@ -1266,7 +2390,7 @@
       {
         "id": "recruit",
         "title": "The same triangle",
-        "body": "Neighbor: We are not dying. We are becoming something else.\nThe Triangle group calls the assignment purification. His building is scheduled for the third night. A powered source in the basement service room feeds the device in 401. Defeating him will not stop it. R records the order before choosing a response."
+        "body": "“They promised us new bodies. This building. Third night.”\n\nHe slides the paper over.\n\n“The thing downstairs is connected already. I could put your name down.”"
       },
       {
         "id": "join-choice",
@@ -1291,17 +2415,17 @@
       {
         "id": "joined",
         "title": "Invitation accepted",
-        "body": "He hands Hugo a triangular invitation. This is a route commitment for this life, not an ending. The assignment remains on the table."
+        "body": "He takes an invitation from the drawer and smooths its corner.\n“You will thank me.”"
       },
       {
         "id": "refused",
         "title": "A careful refusal",
-        "body": "He is hurt, but does not attack. Hugo can inspect the assignment and leave."
+        "body": "“Then stop standing there looking at me.”\nHe turns away. The paper stays on the table."
       },
       {
         "id": "deceived",
         "title": "A borrowed conviction",
-        "body": "He accepts the remembered assignment number. Hugo pretends to agree. The lie opens the same desk, with a different relationship flag."
+        "body": "Hugo recites the assignment number.\nThe hand releases the page. “So you are one of us.”"
       },
       {
         "id": "hostile",
@@ -1320,13 +2444,13 @@
       },
       {
         "id": "routing",
-        "title": "Protected routing switch",
-        "body": "Use the confirmed source-location and prevention deductions. Isolate the assigned group circuit while keeping residential supply and the aquarium pump alive. This is the first field action, not the final shutdown."
+        "title": "Branch switch",
+        "body": "An old label reads: 401. A separate line supplies the occupied flats.\n\nFind out where each one goes first."
       },
       {
         "id": "source-core",
         "title": "Basement source lockout",
-        "body": "The source continues after the tenant falls. Only the confirmed deduction and a protected routing isolation permit locking it out before the third night."
+        "body": "A low pulse comes from the housing. The locking bar is held in place; a branch indicator glows beside it."
       },
       {
         "id": "isolate-choice",
@@ -1341,27 +2465,27 @@
       {
         "id": "isolated",
         "title": "First action complete",
-        "body": "The assigned route is isolated. Now secure the source controller on the other side of the room."
+        "body": "The 401 indicator dies. The residential line stays lit."
       },
       {
         "id": "need-deduction",
         "title": "Investigation required",
-        "body": "Record the order, pipe anomaly and wiring diagram, then confirm every link on B."
+        "body": "Hugo stops. The wire numbers do not match. Guessing is not enough."
       },
       {
         "id": "need-isolation",
         "title": "Source still powered",
-        "body": "The protected route is not isolated, the deduction is incomplete, or Day 3 has passed. Defeating the tenant alone does not save the building."
+        "body": "The bar will not move. Current still hums inside."
       },
       {
         "id": "use-service-core",
         "title": "Use the basement source",
-        "body": "This old city switch cannot resolve the building crisis. Follow the confirmed source location to the basement service room."
+        "body": "This is only a records cabinet. The last service stamp belongs to the basement equipment room."
       },
       {
         "id": "building-saved",
         "title": "The building survives",
-        "body": "The third-night source is locked out. Residential power remains. Fish and the other residents have another morning. This outcome does not end the journey."
+        "body": "The pulse stops.\nUpstairs, someone turns on a tap. Someone still expects tomorrow."
       },
       {
         "id": "building-destroyed",
@@ -1371,12 +2495,12 @@
       {
         "id": "neighbor-killed",
         "title": "Behind the opened door",
-        "body": "Hugo opened the door, but could not leave it alive. The exposed brain kept moving. What he learned survives only through an earned return."
+        "body": "He comes closer.\nHugo never hears the rest."
       },
       {
         "id": "combat-controls",
         "title": "",
-        "body": "WASD Move · Mouse Look · Shift Sprint\nQ Crowbar · G Ember case · V Shoulder eye"
+        "body": "Left mouse Strike · Shift Sprint · Ctrl Crouch · G Prepared item"
       },
       {
         "id": "attack-warning",
@@ -1385,18 +2509,18 @@
       },
       {
         "id": "collected",
-        "title": "Put away",
-        "body": "In the bag."
+        "title": "",
+        "body": "{0} added to inventory."
       },
       {
         "id": "recorded",
         "title": "Recorded",
-        "body": "Paper, at least, will not pretend it saw nothing."
+        "body": "Recorded."
       },
       {
         "id": "already-recorded",
         "title": "Already recorded",
-        "body": "No new evidence was added."
+        "body": "Already in the notebook."
       },
       {
         "id": "prepared",
@@ -1411,7 +2535,7 @@
       {
         "id": "controls",
         "title": "",
-        "body": "R Record a clue    E Use    Enter / Esc Close"
+        "body": "R Record · Enter / Esc Close"
       },
       {
         "id": "craft-choice",
@@ -1421,7 +2545,7 @@
       {
         "id": "city-fuse",
         "title": "Service wiring diagram",
-        "body": "The device in 401 draws from a shared circuit. This diagram shows how to isolate that branch while keeping residential lights and the aquarium pump running. Compare it with the handover."
+        "body": "The diagram shows 401 fed separately through the shaft. Residential supply runs on another line.\nSomeone circled them in different colours."
       },
       {
         "id": "aftermath",
@@ -1431,12 +2555,12 @@
       {
         "id": "aftermath-defeated",
         "title": "Aftermath",
-        "body": "A dragged breath comes from inside. The tenant no longer repeats the assignment. The basement source still needs its own lockout."
+        "body": "A long breath comes from inside. Nobody answers."
       },
       {
         "id": "eye-ready",
         "title": "Aftermath",
-        "body": "V: shoulder eye · {0:0.#} seconds · {1:0.#}-second cooldown · SAN cost {2:0.#}. Useful power; a lasting cost."
+        "body": "V Shoulder eye · {0:0.#} s · Cooldown {1:0.#} s · SAN cost {2:0.#}"
       },
       {
         "id": "eye-cooldown",
@@ -1451,7 +2575,7 @@
       {
         "id": "already-taken",
         "title": "Taken in this life",
-        "body": "This item was already taken in this life. Using it does not refill the same container."
+        "body": "Added to inventory."
       },
       {
         "id": "eye-active",
@@ -1460,8 +2584,8 @@
       },
       {
         "id": "foreshadow",
-        "title": "Hugo · Day two",
-        "body": "Another thud behind 401. Furniture being moved. Or moving someone.\n\nDad left a crowbar in the low kitchen cupboard. There is oil by the stove; a repair core in the bathroom cabinet has a flame on its label.\n\nI should bring something useful. It would be rude to arrive as the only course."
+        "title": "Hugo · Day Two",
+        "body": "The flat feels stuffy. A walk might help. See what is happening outside."
       },
       {
         "id": "hat-reveal",
@@ -1496,7 +2620,7 @@
       {
         "id": "prep-manual",
         "title": "Repair leaflet",
-        "body": "Oil, repair core, sealed case. In small print: FOR EMERGENCIES ONLY.\nHugo thinks of 401. A generous definition of emergency."
+        "body": "The leaflet at the bottom shows oil, a flame-marked repair core and a sealed case.\n“For emergencies.” Smaller print than the warning."
       },
       {
         "id": "venue-exit",
@@ -1512,6 +2636,46 @@
         "id": "circus-venue",
         "title": "Will Circus · Inside",
         "body": "The curtain is closed. The sounds inside the cages have taken their seats.\nWASD Move · Mouse Look · E Leave at the door"
+      },
+      {
+        "id": "overheard",
+        "title": "Outside 401",
+        "body": "Hugo stops by the door.\n\n“Third night. The whole building. Leave the main switch alone; follow the handover sheet.”\n\nThe reply is muffled. The tenant lowers his voice. “I know. Nobody left behind.”\n\nA chair scrapes. Hugo steps back. Knock first. Find out what he means."
+      },
+      {
+        "id": "cabinet",
+        "title": "Kitchen cupboard",
+        "body": "The door sticks. A service diagram on it shows oil, a flame-marked repair core and a sealed case."
+      },
+      {
+        "id": "open-cabinet",
+        "title": "",
+        "body": "E / 1 Open cupboard"
+      },
+      {
+        "id": "door-conversation",
+        "title": "Resident of 401",
+        "body": "“Were you on the phone?”\n\nA pause. “Maintenance.”\n\n“I heard you say the whole building.”\n\nThe chain rattles. “Come in, then. Not out here.”"
+      },
+      {
+        "id": "enter-choice",
+        "title": "",
+        "body": "1. Go inside and ask"
+      },
+      {
+        "id": "close-controls",
+        "title": "",
+        "body": "Enter / Esc Close"
+      },
+      {
+        "id": "combat-basic",
+        "title": "",
+        "body": "Left mouse Strike · Shift Sprint · Ctrl Crouch"
+      },
+      {
+        "id": "foil-choice",
+        "title": "",
+        "body": "Ask about the foil triangle by the door."
       }
     ]
   }

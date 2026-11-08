@@ -25,9 +25,11 @@ namespace DeathBySeventhsDawn.World
             pendingPosition = Vector2.zero;
             blockedUntil = Time.unscaledTime + .6f;
         }
+        public static void TravelTo(string scene,Vector2 position)
+        {pendingScene=scene;pendingPosition=position;SceneManager.LoadScene(scene);}
         static void OnLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.path != pendingScene)
+            if (scene.path != pendingScene && scene.name != pendingScene)
                 return;
             var player = GameObject.FindWithTag("Player");
             if (player != null)

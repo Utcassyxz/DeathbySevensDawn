@@ -257,19 +257,19 @@ namespace DeathBySeventhsDawn.Progression
                     scroll = GUILayout.BeginScrollView(scroll);
                     DrawStatus(game, clock);
                     if(PrototypeButtons.LayoutButton(StoryDebugActions.Enabled
-                        ? StoryText.Local("自由调试：已开启 · 点击恢复正常限制", "Free debug: ON · Restore normal gates")
-                        : StoryText.Local("自由调试：已关闭 · 点击跳过强制剧情与限制", "Free debug: OFF · Bypass mandatory story and gates"),buttonStyle))
+                        ? StoryText.UI("copy.ProgressionHUD.263")
+                        : StoryText.UI("copy.ProgressionHUD.264"),buttonStyle))
                         StoryDebugActions.SetEnabled(!StoryDebugActions.Enabled);
                     GUILayout.BeginHorizontal();
                     if(PrototypeButtons.LayoutButton("−",buttonStyle))targetDay=Mathf.Max(1,targetDay-1);
                     GUILayout.Label("Days "+targetDay,labelStyle);
                     if(PrototypeButtons.LayoutButton("+",buttonStyle))targetDay++;
                     if(PrototypeButtons.LayoutButton(PeriodName((TimePeriod)targetPeriod),buttonStyle))targetPeriod=(targetPeriod+1)%4;
-                    if(PrototypeButtons.LayoutButton(StoryText.Local("应用时间","Set time"),buttonStyle)) { StoryDebugActions.SetEnabled(true);clock.DebugSetTime(targetDay,(TimePeriod)targetPeriod); }
+                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.265"),buttonStyle)) { StoryDebugActions.SetEnabled(true);clock.DebugSetTime(targetDay,(TimePeriod)targetPeriod); }
                     GUILayout.EndHorizontal();
-                    GUILayout.Label(StoryText.Local("安全命令 · 自动使用隔离旅程；session end 恢复正式旅程","Safe commands · automatic isolated session; session end restores normal progress"),labelStyle);
+                    GUILayout.Label(StoryText.UI("copy.ProgressionHUD.266"),labelStyle);
                     GUI.SetNextControlName("neighbor-console-command");command=GUILayout.TextField(command);
-                    if(GUILayout.Button(StoryText.Local("执行","Execute"))||(Event.current.type==EventType.KeyDown&&Event.current.keyCode==KeyCode.Return&&GUI.GetNameOfFocusedControl()=="neighbor-console-command")){commandResult=NeighborDebugCommands.Execute(command);if(Event.current.type==EventType.KeyDown)Event.current.Use();}
+                    if(GUILayout.Button(StoryText.UI("copy.ProgressionHUD.267"))||(Event.current.type==EventType.KeyDown&&Event.current.keyCode==KeyCode.Return&&GUI.GetNameOfFocusedControl()=="neighbor-console-command")){commandResult=NeighborDebugCommands.Execute(command);if(Event.current.type==EventType.KeyDown)Event.current.Use();}
                     GUILayout.Label(commandResult,labelStyle);
                     var rooms=new[]{"Bedroom","LivingRoom","Bathroom","Balcony","Corridor","Stairwell","Rooftop"};
                     var roomNames=new[]{"卧室","客厅","卫生间","阳台","楼道","楼梯间","天台"};
@@ -280,19 +280,19 @@ namespace DeathBySeventhsDawn.Progression
                         if(i%2==1||i==rooms.Length-1)GUILayout.EndHorizontal();
                     }
                     bool resolved=game.State.buildingCrisisResolved,seven=game.State.daySevenCrisisResolved;
-                    if(PrototypeButtons.LayoutButton(StoryText.Local("第三天爆楼：", "Day 3 bombing: ")+StoryText.Local(resolved?"已解除（点击还原）":"未解除（点击解除）",resolved?"Prevented (restore)":"Unresolved (prevent)"),buttonStyle))resolved=!resolved;
-                    if(PrototypeButtons.LayoutButton(StoryText.Local("第七天危机：", "Day 7 crisis: ")+StoryText.Local(seven?"已解除（点击还原）":"未解除（点击解除）",seven?"Prevented (restore)":"Unresolved (prevent)"),buttonStyle))seven=!seven;
+                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.268")+StoryText.Local(resolved?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.339"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.340"),resolved?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.341"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.342")),buttonStyle))resolved=!resolved;
+                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.269")+StoryText.Local(seven?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.343"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.344"),seven?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.345"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.346")),buttonStyle))seven=!seven;
                     if(resolved!=game.State.buildingCrisisResolved||seven!=game.State.daySevenCrisisResolved)
                     {game.State.buildingCrisisResolved=resolved;game.State.daySevenCrisisResolved=seven;ProgressionSave.Write(game.State);}
-                    if(PrototypeButtons.LayoutButton(StoryText.Local("原地等待至次日（不算睡眠）","Wait here until tomorrow (no sleep)"),buttonStyle))
+                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.270"),buttonStyle))
                     {int day=clock.Days;for(int i=0;i<4&&clock.Days==day;i++)clock.AdvanceTime();}
-                    if(PrototypeButtons.LayoutButton(StoryText.Local("播放第三天爆楼（关闭自由调试后致死）","Play Day 3 explosion (lethal outside free debug)"),buttonStyle)) WorldEndSequence.BeginFatalCrisis(true);
+                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.271"),buttonStyle)) WorldEndSequence.BeginFatalCrisis(true);
 
-                    if (PrototypeButtons.LayoutButton(StoryText.Local("跳过当前强制剧情 · 进入自由探索", "Skip forced story · Free exploration"), buttonStyle))
+                    if (PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.272"), buttonStyle))
                         StoryDebugActions.SkipForcedStory();
                     GUILayout.BeginHorizontal();
                     for (int ending = 1; ending <= 3; ending++)
-                        if (PrototypeButtons.LayoutButton(StoryText.Local("预览结局 ", "Preview ending ") + ending, buttonStyle))
+                        if (PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.273") + ending, buttonStyle))
                             StoryDebugActions.PreviewEnding(ending);
                     GUILayout.EndHorizontal();
                     foreach (var ability in game.Settings.abilities)

@@ -298,13 +298,13 @@ namespace DeathBySeventhsDawn.Progression
             };
             PrototypeButtons.Apply(tradeButton);
             NarrativeUI.Panel(panel);
-            GUI.Label(new Rect(panel.x + 22, panel.y + 15, panel.width - 44, 35), StoryText.Local("献祭理智 · 获取知识", "SANITY FOR KNOWLEDGE"), style);
+            GUI.Label(new Rect(panel.x + 22, panel.y + 15, panel.width - 44, 35), StoryText.UI("copy.NightDreamSequence.128"), style);
             var status = new GUIStyle(style)
             {
                 fontSize = 15,
                 alignment = TextAnchor.MiddleRight
             };
-            GUI.Label(new Rect(panel.x + 22, panel.y + 43, panel.width - 44, 24), "SAN " + GameManager.Instance.Sanity.ToString("0") + " · " + StoryText.Local("知识 ", "Knowledge ") + GameManager.Instance.Knowledge.ToString("0"), status);
+            GUI.Label(new Rect(panel.x + 22, panel.y + 43, panel.width - 44, 24), "SAN " + GameManager.Instance.Sanity.ToString("0") + " · " + StoryText.UI("copy.NightDreamSequence.129") + GameManager.Instance.Knowledge.ToString("0"), status);
             var offers = BubbleMarket.Offers;
             float y = panel.y + 60;
             bool any = false;
@@ -319,7 +319,7 @@ namespace DeathBySeventhsDawn.Progression
             }
 
             if (!any)
-                GUI.Label(new Rect(panel.x + 22, y, panel.width - 44, 80), StoryText.Local("暂无可交换的知识", "No knowledge is offered yet."), style);
+                GUI.Label(new Rect(panel.x + 22, y, panel.width - 44, 80), StoryText.UI("copy.NightDreamSequence.130"), style);
         }
 
         void OnGUI()
@@ -369,7 +369,7 @@ namespace DeathBySeventhsDawn.Progression
                 };
                 Rect r = kind == Kind.Bubble ? new Rect(w * .06f, h - 190, w * .64f, 180) : NarrativeUI.DialogueRect(w, h);
                 subtitles.Set(pages[page], text, r.width - 70, r.height - 88);
-                string speaker = kind == Kind.Replacement ? StoryText.Local("雨果", "Hugo") : kind == Kind.Bubble && page > 0 ? StoryText.Current.nightDream.yogSpeaker : StoryText.Current.nightDream.speaker;
+                string speaker = kind == Kind.Replacement ? StoryText.UI("copy.NightDreamSequence.131") : kind == Kind.Bubble && page > 0 ? StoryText.Current.nightDream.yogSpeaker : StoryText.Current.nightDream.speaker;
                 if (kind == Kind.Bubble && StoryText.Current.nightDream.yogSpeakers != null && page < StoryText.Current.nightDream.yogSpeakers.Length)
                     speaker = StoryText.Current.nightDream.yogSpeakers[page];
                 if (kind == Kind.Bubble && !PortraitKnown && page > 0)
@@ -377,10 +377,10 @@ namespace DeathBySeventhsDawn.Progression
                 if (market)
                 {
                     DrawMarket(w, h, text);
-                    NarrativeUI.Dialogue(r, StoryText.Current.nightDream.yogSpeaker, StoryText.Current.expansion.bubbleTradeLine, StoryText.Local("Enter 结束会面", "Enter End meeting"), text);
+                    NarrativeUI.Dialogue(r, StoryText.Current.nightDream.yogSpeaker, StoryText.Current.expansion.bubbleTradeLine, StoryText.UI("copy.NightDreamSequence.132"), text);
                 }
                 else
-                    NarrativeUI.Dialogue(r, speaker, subtitles.Current, subtitles.Counter + StoryText.Local("Enter 继续", "Enter Continue"), text);
+                    NarrativeUI.Dialogue(r, speaker, subtitles.Current, subtitles.Counter + StoryText.UI("copy.NightDreamSequence.133"), text);
             }
             finally
             {

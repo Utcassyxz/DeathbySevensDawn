@@ -163,7 +163,7 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 if (!IsOpen)
                 {
-                    WorldPromptUI.Offer("evidence", DeathBySeventhsDawn.Story.StoryText.Local("E  查看", "E  Examine ") + Investigation.Evidence(target).title, target == "cult-door-note" ? 100 : 70);
+                    WorldPromptUI.Offer("evidence", DeathBySeventhsDawn.Story.StoryText.UI("copy.EvidenceInspection.168") + Investigation.Evidence(target).title, target == "cult-door-note" ? 100 : 70);
                     return;
                 }
 
@@ -184,10 +184,10 @@ namespace DeathBySeventhsDawn.Interaction
                 GUILayout.Label(evidence.body, text);
                 GUILayout.EndScrollView();
                 if (Investigation.Has(opened))
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.Local("已收录。可以在笔记的「线索连线」页整理它。", "Recorded. Open the evidence board to connect it."), text);
-                else if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("R  抄录到笔记", "R  Record in journal"), button, GUILayout.Height(60)))
+                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("copy.EvidenceInspection.169"), text);
+                else if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("copy.EvidenceInspection.170"), button, GUILayout.Height(60)))
                     CollectCurrent();
-                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.Local("先放回原处  ·  Esc", "Leave it here \u00b7 Esc"), button, GUILayout.Height(55)))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("copy.EvidenceInspection.171"), button, GUILayout.Height(55)))
                     Close();
                 GUILayout.EndArea();
             }

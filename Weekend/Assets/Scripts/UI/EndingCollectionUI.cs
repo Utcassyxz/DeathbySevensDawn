@@ -37,16 +37,16 @@ namespace DeathBySeventhsDawn.Progression
             GUI.color = new Color(.015f, .018f, .025f, .78f);
             GUI.DrawTexture(new Rect(0, 0, w * .62f, h), Texture2D.whiteTexture);
             GUI.color = Color.white;
-            GUI.Label(new Rect(w * .08f, h * .08f, w * .8f, 45), StoryText.Local("结局预览 ", "ENDING PREVIEW ") + preview + StoryText.Local(" · 不写入收藏", " · No collection changes"), Text(20, NarrativeUI.Ink));
+            GUI.Label(new Rect(w * .08f, h * .08f, w * .8f, 45), StoryText.UI("copy.EndingCollectionUI.147") + preview + StoryText.UI("copy.EndingCollectionUI.148"), Text(20, NarrativeUI.Ink));
             GUI.Label(new Rect(w * .08f, h * .23f, w * .50f, 90), data.title, Text(42, NarrativeUI.Ink));
             GUI.Label(new Rect(w * .08f, h * .40f, w * .47f, h * .29f), string.Join("\n", data.lines), Text(21, NarrativeUI.Ink));
-            if (PrototypeButtons.Button(new Rect(w * .08f, h * .84f, 290, 54), StoryText.Local("返回调试面板", "Return to debug"), Button()))
+            if (PrototypeButtons.Button(new Rect(w * .08f, h * .84f, 290, 54), StoryText.UI("copy.EndingCollectionUI.149"), Button()))
                 ClosePreview();
             var names = new[]
             {
-                StoryText.Local("快版 · 好结局", "Fast · Good"),
-                StoryText.Local("慢版 · 坏结局", "Slow · Bad"),
-                StoryText.Local("真结局变奏", "True variation")
+                StoryText.UI("copy.EndingCollectionUI.150"),
+                StoryText.UI("copy.EndingCollectionUI.151"),
+                StoryText.UI("copy.EndingCollectionUI.152")
             };
             var musicButton = Button();
             musicButton.fontSize = 16;
@@ -125,7 +125,7 @@ namespace DeathBySeventhsDawn.Progression
         public static void DrawGallery(float w, float h)
         {
             Background(w, h);
-            GUI.Label(new Rect(w * .10f, h * .08f, w * .7f, 60), StoryText.Local("结局收录", "ENDING COLLECTION"), Text(38, NarrativeUI.Ink));
+            GUI.Label(new Rect(w * .10f, h * .08f, w * .7f, 60), StoryText.UI("copy.EndingCollectionUI.153"), Text(38, NarrativeUI.Ink));
             GUI.Label(new Rect(w * .10f, h * .15f, w * .7f, 30), EndingCollection.Count + " / " + EndingCollection.Ids.Length, Text(18, new Color(.65f, .56f, .46f)));
             float cardW = w * .25f, cardH = h * .255f;
             for (int i = 0; i < EndingCollection.Ids.Length; i++)
@@ -135,11 +135,11 @@ namespace DeathBySeventhsDawn.Progression
                 var r = new Rect(w * .10f + (i%3) * w * .275f, h * (.23f+(i/3)*.28f), cardW, cardH);
                 NarrativeUI.Panel(r);
                 GUI.Label(new Rect(r.x + 24, r.y + 18, 100, 70), (i + 1).ToString("00"), Text(48, new Color(.56f, .40f, .32f)));
-                GUI.Label(new Rect(r.x + 24, r.y + 65, r.width - 48, 75), known ? EndingCollection.Title(id) : StoryText.Local("尚未收录", "UNDISCOVERED"), Text(22, known ? NarrativeUI.Ink : new Color(.45f, .46f, .47f)));
-                GUI.Label(new Rect(r.x + 24, r.y + 135, r.width - 48, 60), known ? (id=="neighbor-killed"||id=="building-saved"||id=="building-destroyed" ? StoryText.Current.neighborSlice.Find(id).body : id == "fish-replacement" ? StoryText.Local("有人替他起床，也替他过完了余下的日子。", "Someone got up in his place, and lived the days that remained.") : id == "world-end" ? StoryText.Local("他没能走到门口。也没有下一个早晨。", "He never reached the door. There was no next morning.") : StoryText.Local("每次醒来，身体都比上一次更沉。", "Each return left his body a little heavier.")) : StoryText.Local("还没有走到这里。", "This page is still blank."), Text(18, new Color(.68f, .65f, .60f)));
+                GUI.Label(new Rect(r.x + 24, r.y + 65, r.width - 48, 75), known ? EndingCollection.Title(id) : StoryText.UI("copy.EndingCollectionUI.154"), Text(22, known ? NarrativeUI.Ink : new Color(.45f, .46f, .47f)));
+                GUI.Label(new Rect(r.x + 24, r.y + 135, r.width - 48, 60), known ? (id=="neighbor-killed"||id=="building-saved"||id=="building-destroyed" ? StoryText.Current.neighborSlice.Find(id).body : id == "fish-replacement" ? StoryText.UI("copy.EndingCollectionUI.155") : id == "world-end" ? StoryText.UI("copy.EndingCollectionUI.156") : StoryText.UI("copy.EndingCollectionUI.157")) : StoryText.UI("copy.EndingCollectionUI.158"), Text(18, new Color(.68f, .65f, .60f)));
             }
 
-            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w * .10f, h * .82f, 250, 52), StoryText.Local("返回 · Esc", "Back · Esc"), Button()))
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w * .10f, h * .82f, 250, 52), StoryText.UI("copy.EndingCollectionUI.159"), Button()))
                 CloseGallery();
         }
 
@@ -166,8 +166,8 @@ namespace DeathBySeventhsDawn.Progression
             GUI.color = Color.white;
             var data = game.FishReplacementEnding ? StoryText.Current.fishEnding : game.WorldEndEnding ? StoryText.Current.worldEnd : StoryText.Current.ending;
             float left = w * .10f, width = w * .80f;
-            string body = data.lines != null && data.lines.Length > 0 ? string.Join("\n", data.lines) : (game.WorldEndEnding ? StoryText.Local("雨果关好了窗，过完了这一个星期。\n第七天夜里，地球没有等来下一个清晨。", "Hugo shut the window and let the week pass.\nOn the seventh night, Earth never reached another morning.") : StoryText.Local("他记得每一次醒来。\n身体却一次也没能重新开始。", "He remembered every return.\nHis body never got to start over."));
-            GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.Local("结 局  ", "ENDING  ") + (neighbor?"04":game.FishReplacementEnding ? "03" : game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
+            string body = data.lines != null && data.lines.Length > 0 ? string.Join("\n", data.lines) : (game.WorldEndEnding ? StoryText.UI("copy.EndingCollectionUI.160") : StoryText.UI("copy.EndingCollectionUI.161"));
+            GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.UI("copy.EndingCollectionUI.162") + (neighbor?"04":game.FishReplacementEnding ? "03" : game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
             if(neighbor)body=StoryText.Current.neighborSlice.Find("neighbor-killed").body;
             GUI.Label(new Rect(left, h * .24f, width, 110), neighbor?StoryText.Current.neighborSlice.Find("neighbor-killed").title:data.title, Text(44, NarrativeUI.Ink));
             GUI.Label(new Rect(left, h * .40f, width * .56f, h * .20f), body, Text(21, new Color(.76f, .73f, .67f)));
@@ -176,27 +176,27 @@ namespace DeathBySeventhsDawn.Progression
             GUI.color = Color.white;
             var badge = new Rect(left, h * .61f, width, 64);
             NarrativeUI.Panel(badge);
-            GUI.Label(new Rect(badge.x + 18, badge.y + 12, badge.width - 36, 48), StoryText.Local(EndingCollection.FreshlyUnlocked == id ? "新结局已收录  ·  可在主页面的「结局收录」查看" : "结局已收录  ·  主页面可查看", "ENDING RECORDED  ·  Available in the title screen collection"), Text(18, new Color(.77f, .66f, .45f)));
+            GUI.Label(new Rect(badge.x + 18, badge.y + 12, badge.width - 36, 48), StoryText.Local(EndingCollection.FreshlyUnlocked == id ? DeathBySeventhsDawn.Story.StoryText.UI("fragment.EndingCollectionUI.312") : DeathBySeventhsDawn.Story.StoryText.UI("fragment.EndingCollectionUI.313"), DeathBySeventhsDawn.Story.StoryText.UI("fragment.EndingCollectionUI.314")), Text(18, new Color(.77f, .66f, .45f)));
             var b = Button();
             if (!confirm)
             {
-                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left, h * .79f, 280, 56), StoryText.Local("开始新的旅程", "Begin a new journey"), b))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left, h * .79f, 280, 56), StoryText.UI("copy.EndingCollectionUI.163"), b))
                     confirm = true;
             }
             else
             {
-                GUI.Label(new Rect(left, h * .71f, width, 46), StoryText.Local("新旅程会清除本次进度；已收录结局保留。", "The journey will reset. Your ending collection will remain."), Text(18, NarrativeUI.Ink));
-                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left, h * .79f, 210, 56), StoryText.Local("确认重新开始", "Confirm restart"), b))
+                GUI.Label(new Rect(left, h * .71f, width, 46), StoryText.UI("copy.EndingCollectionUI.164"), Text(18, NarrativeUI.Ink));
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left, h * .79f, 210, 56), StoryText.UI("copy.EndingCollectionUI.165"), b))
                 {
                     confirm = false;
                     game.StartNewJourney();
                 }
 
-                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left + 226, h * .79f, 110, 56), StoryText.Local("取消", "Cancel"), b))
+                if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left + 226, h * .79f, 110, 56), StoryText.UI("copy.EndingCollectionUI.166"), b))
                     confirm = false;
             }
 
-            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left + width - 280, h * .79f, 280, 56), StoryText.Local("回到主页面", "Return to title"), b))
+            if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(left + width - 280, h * .79f, 280, 56), StoryText.UI("copy.EndingCollectionUI.167"), b))
             {
                 confirm = false;
                 MainMenuUI.ReturnToMainMenu();

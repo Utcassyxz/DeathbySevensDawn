@@ -17,18 +17,19 @@ namespace DeathBySeventhsDawn.Interaction
         public static NeighborSlice Instance {get;private set;}
         public static bool WorldBlocked=>NeighborRoom.HatRevealActive||Instance!=null&&(Instance.open||Instance.deathTimer>0);
         public static bool IsOffsiteScene(string scene)=>scene=="NeighborRoom2D"||scene=="NeighborArena3D"||scene=="BuildingService2D"||VenueRoom.IsVenue(scene);
-        public static bool OwnsDoor=>TimeManager.Instance!=null&&TimeManager.Instance.Days>=2&&GameManager.Instance.State.inventory.Contains(Crowbar);
+        public static bool OwnsDoor=>TimeManager.Instance!=null&&TimeManager.Instance.Days>=2&&S.neighborPlotHeard;
         public string CurrentNode=>node?.id;
         public bool IsOpen=>open;
+        public bool CanAskFoil=>TimeManager.Instance.Days==2&&GameManager.Instance.LoopCount==0&&S.cultDayOneTalked&&Investigation.Has("cult-door-note")&&!S.inventory.Contains(CultNeighbor.Token)&&!S.aquariumSealed;
         public void ShowPreparation(){Show("sealed-ember-tool");}
         public string Notice {get;private set;}="";
         SliceNode node;string panel,evidence;
         NeighborDialogue graph;
         bool open;
         int frame;
-        float deathTimer;
+        float deathTimer,toastUntil; string toast;
         Sprite pickupSprite;Texture2D pickupPixel;GameObject serviceMarker;
-        readonly Dictionary<string,GameObject> pickups=new Dictionary<string,GameObject>();
+        public static bool ItemTaken(string id)=>S.neighborTakenItems.Contains(id)||S.inventory.Contains(id);
         static ProgressionState S=>GameManager.Instance.State;
         public static SliceLine Text(string id)=>StoryText.Current.neighborSlice.Find(id);
         public static string ItemName(string id)=>(StoryText.Current.neighborSlice.Find(id)?.title??id).Split('·')[0].Trim();
@@ -38,17 +39,9 @@ namespace DeathBySeventhsDawn.Interaction
         void Reset(){open=false;node=null;deathTimer=0;Notice="";Time.timeScale=1;Time.fixedDeltaTime=.02f;}
         void Loaded(Scene scene,LoadSceneMode mode)
         {
-            open=false;node=null;panel=evidence=null;pickups.Clear();
-            if(scene.name=="LivingRoom")
-            {
-                Prop("Lower kitchen cabinet",new Vector2(-4.5f,1.65f),new Vector2(.8f,.28f),new Color(.3f,.23f,.16f));
-                pickups[Crowbar]=Prop("Crowbar in cabinet",new Vector2(-4.5f,1.7f),new Vector2(.44f,.07f),new Color(.65f,.67f,.65f));
-                pickups[Oil]=Prop("Cooking oil bottle",new Vector2(-2,1.72f),new Vector2(.18f,.32f),new Color(.7f,.51f,.18f));
-            }
-            if(scene.name=="Bathroom")
-            {pickups[Medium]=Prop("Sealed bathroom repair box",new Vector2(-1,1.25f),new Vector2(.42f,.28f),new Color(.4f,.54f,.55f));Prop("Marked service pipe",new Vector2(1,1.2f),new Vector2(.08f,.6f),new Color(.5f,.26f,.17f));}
+            open=false;node=null;panel=evidence=null;
             if(scene.name=="Stairwell")serviceMarker=Prop("Basement service door",new Vector2(-1.6f,-1.86f),new Vector2(.8f,.25f),new Color(.24f,.46f,.48f));
-            foreach(var item in pickups)if(S.neighborTakenItems.Contains(item.Key)||S.inventory.Contains(item.Key))item.Value.SetActive(false);
+
         }
         GameObject Prop(string name,Vector2 position,Vector2 size,Color color)
         {var go=new GameObject(name);go.transform.position=position;go.transform.localScale=new Vector3(size.x,size.y,1);var renderer=go.AddComponent<SpriteRenderer>();renderer.sprite=pickupSprite;renderer.color=color;renderer.sortingOrder=8;return go;}
@@ -61,10 +54,12 @@ namespace DeathBySeventhsDawn.Interaction
             string scene=SceneManager.GetActiveScene().name;
             bool reachable=id==Crowbar&&scene=="LivingRoom"&&Near(new Vector2(-4.5f,1.05f)) || id==Oil&&scene=="LivingRoom"&&Near(new Vector2(-2,1.1f)) || id==Medium&&scene=="Bathroom"&&Near(new Vector2(-1,1)) || id=="pipe-pulse"&&scene=="Bathroom"&&Near(new Vector2(1,1)) || id=="force-door"&&scene=="Corridor"&&Near(new Vector2(-4.7f,.42f)) || id=="service-entry"&&scene=="Stairwell"&&RooftopAccess.Instance.CurrentFloor==1&&Near(new Vector2(-1.6f,-1.6f));
             if(!reachable)return false;
+            if((id==Crowbar||id==Oil||id==Medium)&&ItemTaken(id))return false;
+            if(id==Crowbar&&!S.neighborCabinetOpened){Show("cabinet");return true;}
             if(id=="service-entry"){SceneManager.LoadScene("BuildingService2D");return true;}
             if(id=="force-door")
             {
-                if(!S.inventory.Contains(Crowbar))return false;
+                if(!S.neighborPlotHeard)return false;
                 if(S.neighborDoorForced){SceneManager.LoadScene("NeighborRoom2D");return true;}
                 Show("force-door",null);return true;
             }
@@ -75,7 +70,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(!open||node!=null||panel!=Crowbar&&panel!=Oil&&panel!=Medium)return false;
             if(S.inventory.Contains(panel)||S.neighborTakenItems.Contains(panel)){Notice=Text("already-taken").body;return false;}
-            S.inventory.Add(panel);S.neighborTakenItems.Add(panel);if(pickups.TryGetValue(panel,out var icon))icon.SetActive(false);ProgressionSave.Write(S);Notice=Text("collected").body;return true;
+            S.inventory.Add(panel);S.neighborTakenItems.Add(panel);ProgressionSave.Write(S);toast=string.Format(Text("collected").body,ItemName(panel));toastUntil=Time.unscaledTime+2;Close();return true;
         }
         public bool Record()
         {
@@ -114,7 +109,9 @@ namespace DeathBySeventhsDawn.Interaction
             if(!open)return false;
             if(node!=null)
             {if(index<0||node.choices==null||index>=node.choices.Length||!Allowed(node.choices[index].condition))return false;Go(node.choices[index].to);return true;}
-            if(panel=="force-door"){if(index==0)return ForceEntry();if(index==1){Close();CultNeighbor.Instance.KnockDoor();return true;}Close();return true;}
+            if(panel=="cabinet"&&index==0){S.neighborCabinetOpened=true;ProgressionSave.Write(S);Show(Crowbar,"prep-manual");return true;}
+            if(panel=="door-conversation"){if(index==0){S.neighborDoorForced=true;Close();ProgressionSave.Write(S);SceneManager.LoadScene("NeighborRoom2D");return true;}Close();return true;}
+            if(panel=="force-door"){if(index==0){Close();Show("door-conversation");return true;}if(index==1)return ForceEntry();if(index==2&&CanAskFoil){Close();return CultNeighbor.Instance.KnockDoor();}Close();return true;}
             if(panel=="routing"){if(index==0&&Investigation.Has("deduction-building-plan")&&Investigation.Has("deduction-source-location")&&TimeManager.Instance.Days<=3){S.serviceRouteIsolated=true;ProgressionSave.Write(S);Notice=Text("isolated").body;return true;}Notice=Text("need-deduction").body;return false;}
             if(panel=="source-core")
             {if(index==0&&S.serviceRouteIsolated&&CrisisRules.CanResolve(CrisisKind.Building,TimeManager.Instance.Days,S)){S.buildingCrisisResolved=true;EndingCollection.Unlock("building-saved");ProgressionSave.Write(S);Notice=Text("building-saved").body;return true;}Notice=Text("need-isolation").body;return false;}
@@ -128,10 +125,15 @@ namespace DeathBySeventhsDawn.Interaction
             var room=Object.FindAnyObjectByType<NeighborRoom>();if(room==null||room.Arena||room.Service)return false;
             Close();return room.BeginHatReveal();
         }
+        public bool TryHearPlot()
+        {
+            if(S.neighborPlotHeard||TimeManager.Instance.Days<2||TimeManager.Instance.Days>3||SceneManager.GetActiveScene().name!="Corridor"||!Near(new Vector2(-4.7f,.42f),2.6f)||open)return false;
+            S.neighborPlotHeard=true;Show("overheard");ProgressionSave.Write(S);return true;
+        }
         public bool TryOfferGuidance()
         {
             string scene=SceneManager.GetActiveScene().name;
-            if(StoryDebugActions.Enabled||S.neighborGuidanceSeen||TimeManager.Instance.Days<2||TimeManager.Instance.Days>3||!S.tutorialComplete||open||GameManager.Instance.HasEnded||scene!="LivingRoom"&&scene!="Corridor")return false;
+            if(StoryDebugActions.Enabled||S.neighborGuidanceSeen||TimeManager.Instance.Days<2||TimeManager.Instance.Days>3||!S.tutorialComplete||open||GameManager.Instance.HasEnded||scene!="LivingRoom"&&scene!="Bedroom")return false;
             S.neighborGuidanceSeen=true;Show("foreshadow");ProgressionSave.Write(S);return true;
         }
         public void Victory()
@@ -157,35 +159,38 @@ namespace DeathBySeventhsDawn.Interaction
                 if(k.escapeKey.wasPressedThisFrame){Close();return;}
                 if(k.rKey.wasPressedThisFrame)Record();
                 for(int i=0;i<4;i++)if(k[(Key)((int)Key.Digit1+i)].wasPressedThisFrame){Choose(i);return;}
-                if(k.eKey.wasPressedThisFrame){if(panel==Tool)Prepare();else TakeItem();}
+                if(k.eKey.wasPressedThisFrame){if(panel==Tool)Prepare();else if(panel=="cabinet")Choose(0);else TakeItem();}
                 if(k.enterKey.wasPressedThisFrame&&node==null&&panel!="force-door"&&panel!="routing"&&panel!="source-core")Close();
                 return;
             }
             if(StoryJournal.WorldBlocked||CognitiveRupture.IsActive)return;
-            if(TryOfferGuidance())return;
+            if(TryOfferGuidance()||TryHearPlot())return;
             string scene=SceneManager.GetActiveScene().name,id=null;
             if(scene=="LivingRoom")id=Near(new Vector2(-4.5f,1.05f))?Crowbar:Near(new Vector2(-2,1.1f))?Oil:null;
             if(scene=="Bathroom")id=Near(new Vector2(-1,1))?Medium:Near(new Vector2(1,1))?"pipe-pulse":null;
             if(scene=="Corridor"&&OwnsDoor&&Near(new Vector2(-4.7f,.42f)))id="force-door";
             if(scene=="Stairwell"&&RooftopAccess.Instance.CurrentFloor==1&&Near(new Vector2(-1.6f,-1.6f),.6f))id="service-entry";
+            if(id!=null&&(id==Crowbar||id==Oil||id==Medium)&&ItemTaken(id))id=null;
             if(id!=null&&TimeManager.Instance.Days>=2&&S.tutorialComplete)
-            {WorldPromptUI.Offer("neighbor-slice","E "+Text(id).title,100);if(k.eKey.wasPressedThisFrame)Use(id);}
+            {WorldPromptUI.Offer("neighbor-slice","E "+Text(id==Crowbar&&!S.neighborCabinetOpened?"cabinet":id).title,100);if(k.eKey.wasPressedThisFrame)Use(id);}
         }
         void OnDestroy(){if(pickupSprite!=null)Destroy(pickupSprite);if(pickupPixel!=null)Destroy(pickupPixel);if(Instance==this)Instance=null;}
         void OnGUI()
         {
-            if(ProgressionHUD.DebugConsoleOpen||!open&&deathTimer<=0)return;
+            if(ProgressionHUD.DebugConsoleOpen)return;
+            if(!open&&deathTimer<=0){if(Time.unscaledTime<toastUntil)NarrativeCard.Caption("",toast);return;}
             var choices=new List<string>();var indices=new List<int>();
             if(deathTimer<=0)
             {
                 if(node!=null&&node.choices!=null){for(int i=0;i<node.choices.Length;i++)if(Allowed(node.choices[i].condition)){choices.Add((i+1)+". "+Text(node.choices[i].line).body);indices.Add(i);}}
+                else if(panel=="cabinet"||panel=="door-conversation"){choices.Add(Text(panel=="cabinet"?"open-cabinet":"enter-choice").body);indices.Add(0);}
                 else if(panel=="force-door"||panel=="routing"||panel=="source-core")
-                {choices.Add("1. "+Text(panel=="force-door"?"force-choice":panel=="routing"?"isolate-choice":"lock-choice").body);indices.Add(0);if(panel=="force-door"){choices.Add("2. "+Text("knock-choice").body);indices.Add(1);}}
+                {choices.Add("1. "+Text(panel=="force-door"?"knock-choice":panel=="routing"?"isolate-choice":"lock-choice").body);indices.Add(0);if(panel=="force-door"&&S.inventory.Contains(Crowbar)){choices.Add("2. "+Text("force-choice").body);indices.Add(1);}if(panel=="force-door"&&CanAskFoil){choices.Add("3. "+Text("foil-choice").body);indices.Add(2);}}
                 else if(panel==Tool){choices.Add(Text("craft-choice").body);indices.Add(0);}
                 else if(panel==Crowbar||panel==Oil||panel==Medium){choices.Add(Text("take").body);indices.Add(0);}
             }
             var line=Text(deathTimer>0?"neighbor-killed":panel);
-            int pick=NarrativeCard.Draw(line.title,line.body,Notice,choices.ToArray(),deathTimer>0?"":Text("controls").body);
+            int pick=NarrativeCard.Draw(line.title,line.body,Notice,choices.ToArray(),deathTimer>0?"":Text(string.IsNullOrEmpty(evidence)?"close-controls":"controls").body);
             if(pick>=0)Choose(indices[pick]);
         }
     }
