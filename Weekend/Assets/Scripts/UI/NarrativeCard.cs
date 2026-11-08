@@ -26,16 +26,19 @@ namespace DeathBySeventhsDawn.Progression
             try
             {
                 if(previous!=title){previous=title;scroll=Vector2.zero;}
-                var area=new Rect((w-840)/2,h-604,840,568);
-                Fill(new Rect(0,0,w,h),new Color(.015f,.02f,.025f,.50f));
-                Fill(new Rect(area.x+8,area.y+9,area.width,area.height),new Color(0,0,0,.65f));Fill(area,new Color(.055f,.071f,.073f,.98f));
-                Fill(new Rect(area.x,area.y,area.width,2),gold);Fill(new Rect(area.x+28,area.y+70,area.width-56,1),new Color(.23f,.27f,.25f));
                 var prose=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=22,wordWrap=true,richText=false,padding=new RectOffset(0,0,0,0)};prose.normal.textColor=ink;
-                var heading=new GUIStyle(prose){fontSize=30,fontStyle=FontStyle.Bold};GUI.Label(new Rect(area.x+30,area.y+20,780,44),title,heading);
+                var heading=new GUIStyle(prose){fontSize=30,fontStyle=FontStyle.Bold};
                 var quiet=new GUIStyle(prose){fontSize=16};quiet.normal.textColor=muted;
                 var option=new GUIStyle(prose){fontSize=20,alignment=TextAnchor.MiddleLeft,padding=new RectOffset(16,12,8,8)};
                 int count=choices?.Length??0;float[] heights=new float[count];float buttonHeight=0;
                 for(int i=0;i<count;i++){heights[i]=Mathf.Max(43,option.CalcHeight(new GUIContent(choices[i]),780));buttonHeight+=heights[i]+7;}
+                float proseHeight=prose.CalcHeight(new GUIContent(body??""),758);
+                float cardHeight=Mathf.Clamp(150+buttonHeight+(string.IsNullOrEmpty(notice)?0:40)+Mathf.Max(64,proseHeight),260,568);
+                var area=new Rect((w-840)/2,h-cardHeight-36,840,cardHeight);
+                Fill(new Rect(0,0,w,h),new Color(.015f,.02f,.025f,.50f));
+                Fill(new Rect(area.x+8,area.y+9,area.width,area.height),new Color(0,0,0,.65f));Fill(area,new Color(.055f,.071f,.073f,.98f));
+                Fill(new Rect(area.x,area.y,area.width,2),gold);Fill(new Rect(area.x+28,area.y+70,area.width-56,1),new Color(.23f,.27f,.25f));
+                GUI.Label(new Rect(area.x+30,area.y+20,780,44),title,heading);
                 float bodyHeight=area.height-150-buttonHeight-(string.IsNullOrEmpty(notice)?0:40);
                 var viewport=new Rect(area.x+30,area.y+88,780,Mathf.Max(60,bodyHeight));float contentHeight=prose.CalcHeight(new GUIContent(body??""),758);
                 scroll=GUI.BeginScrollView(viewport,scroll,new Rect(0,0,758,Mathf.Max(viewport.height,contentHeight)),false,false);
