@@ -137,7 +137,7 @@ namespace DeathBySeventhsDawn.Progression
                     var clock = TimeManager.Instance;
                     var r = new Rect(w - 225, 16, 200, 46);
                     NarrativeUI.Panel(r);
-                    GUI.Label(new Rect(r.x + 12, r.y + 9, r.width - 24, 32), StoryText.Local($"第 {clock.Days} 天 · ", $"DAY {clock.Days} · ") + GameplayFeedback.PeriodName(clock.Period), label);
+                    GUI.Label(new Rect(r.x + 12, r.y + 9, r.width - 24, 32), StoryText.Local($"第 {clock.Days} 天 · ", $"DAY {clock.Days} · ") + GameplayFeedback.PeriodName(clock.Period)+"  "+clock.ClockText, label);
                     if (game.State.journalUnlocked)
                     {
                         label.fontSize = 14;

@@ -85,6 +85,7 @@ namespace DeathBySeventhsDawn.Progression
                     var actor = GameObject.FindWithTag("Player");
                     if(actor != null) { var p = actor.transform.position; state.savedX=p.x;state.savedY=p.y;state.savedZ=p.z;state.savedScene=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name; }
                 }
+                if(captureCheckpoint&&Core.GameManager.Instance!=null&&object.ReferenceEquals(state,Core.GameManager.Instance.State)&&TimeSystem.TimeManager.Instance!=null)state.savedMinute=TimeSystem.TimeManager.Instance.GameMinute;
                 string path = PathName, temp = path + ".tmp";
                 Directory.CreateDirectory(StorageDirectory);
                 File.WriteAllText(temp, JsonUtility.ToJson(state, true));

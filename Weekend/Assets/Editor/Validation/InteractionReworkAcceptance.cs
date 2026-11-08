@@ -76,5 +76,6 @@ public static class InteractionReworkAcceptance
         // Preserve previously established crisis, death-loop, and city contracts.
         game.StartNewJourney();yield return .6f;var death=DeathCycleAcceptance.Run();while(death.MoveNext())yield return death.Current;
         NeighborDebugCommands.EndSession(false);game.StartNewJourney();yield return .6f;var city=CityAcceptance.Run();while(city.MoveNext())yield return city.Current;
+        var autoClock=AutoClockAcceptance.Run();while(autoClock.MoveNext())yield return autoClock.Current;
     }
 }

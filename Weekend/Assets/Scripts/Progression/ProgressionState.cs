@@ -10,6 +10,7 @@ namespace DeathBySeventhsDawn.Progression
     {
         public int version = 7, loopCount;
         public int sleeplessDays;
+        public float savedMinute=-1;
         public bool neighborDeathPending,neighborIntroduced,neighborDoorForced,neighborTrusted,neighborHostile,neighborDefeated,neighborDeathLearned,shoulderEyeUnlocked,serviceRouteIsolated;
         public List<string> neighborTakenItems=new List<string>();
         public float neighborHealth=-1;

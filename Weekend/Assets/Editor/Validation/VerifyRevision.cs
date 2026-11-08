@@ -54,6 +54,7 @@ public static class VerifyRevision
                     inputSettings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
                     Application.runInBackground=true;
                 }
+                TimeManager.AutoTimeSuppressed=true;
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
@@ -528,6 +529,7 @@ public static class VerifyRevision
         NeighborDebugCommands.EndSession(false);
         if (!SessionState.GetBool(Key, false))
             return;
+        TimeManager.AutoTimeSuppressed=false;
         SessionState.SetBool(Key, false);
         SessionState.SetBool(Key + "OnlyCompanions", false);
         SessionState.SetBool(Key+"OnlySpatial",false);

@@ -14,12 +14,12 @@ namespace DeathBySeventhsDawn.Progression
         public static readonly string[] Scenes={"SampleScene","Bedroom","LivingRoom","Bathroom","Balcony","Corridor","Stairwell","Rooftop","CityStreet","CityService","CityBroadcast","CityObservatory","CityEncounter3D","NeighborRoom2D","NeighborArena3D","BuildingService2D","SushiInterior3D","CircusInterior3D"};
         public static bool Isolated=>snapshot!=null;
         public static float SanityOverride=-1;
-        static ProgressionState snapshot;static string scene;static Vector3 position;static int day,period;static float vitality;
+        static ProgressionState snapshot;static string scene;static Vector3 position;static int day,period;static float vitality,minute;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]static void Reset(){snapshot=null;SanityOverride=-1;ProgressionSave.DebugStorage=false;}
         public static void BeginSession()
         {
             if(Isolated)return;
-            snapshot=GameManager.Instance.State;scene=SceneManager.GetActiveScene().name;day=TimeManager.Instance.Days;period=(int)TimeManager.Instance.Period;vitality=GameManager.Instance.Vitality;
+            snapshot=GameManager.Instance.State;scene=SceneManager.GetActiveScene().name;day=TimeManager.Instance.Days;period=(int)TimeManager.Instance.Period;vitality=GameManager.Instance.Vitality;minute=TimeManager.Instance.GameMinute;
             var actor=GameObject.FindWithTag("Player");position=actor!=null?actor.transform.position:Vector3.zero;
             ProgressionSave.DebugStorage=true;GameManager.Instance.UseDebugState(JsonUtility.FromJson<ProgressionState>(JsonUtility.ToJson(snapshot)),vitality);EndingCollection.Reload();
         }
@@ -29,7 +29,7 @@ namespace DeathBySeventhsDawn.Progression
             var restored=snapshot;snapshot=null;SanityOverride=-1;ProgressionSave.DebugStorage=false;if(GameManager.Instance!=null)GameManager.Instance.UseDebugState(restored,vitality);EndingCollection.Reload();
             if(!travel||GameManager.Instance==null)return true;
             restored.hasCheckpoint=true;restored.savedScene=scene;restored.savedDay=day;restored.savedPeriod=period;restored.savedX=position.x;restored.savedY=position.y;restored.savedZ=position.z;
-            TimeManager.Instance.DebugSetTime(day,(TimePeriod)period);JourneyCheckpoint.Resume();return true;
+            TimeManager.Instance.DebugSetTime(day,(TimePeriod)period);TimeManager.Instance.RestoreMinute(minute);restored.savedMinute=minute;JourneyCheckpoint.Resume();return true;
         }
         public static string Execute(string command)
         {
