@@ -78,4 +78,3 @@ public static class InteractionReworkAcceptance
         NeighborDebugCommands.EndSession(false);game.StartNewJourney();yield return .6f;var city=CityAcceptance.Run();while(city.MoveNext())yield return city.Current;
     }
 }
-
