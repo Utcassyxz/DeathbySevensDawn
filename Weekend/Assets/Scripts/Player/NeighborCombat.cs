@@ -170,10 +170,17 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
-            if(CognitiveRupture.IsActive||Health<=0)return;var text=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=20,wordWrap=true};
-            if(GameManager.Instance.HasAbility("shoulder_eye"))GUI.Label(new Rect(Screen.width*.08f,Screen.height-100,Screen.width*.84f,80),string.Format(NeighborSlice.Text(EyeActive?"eye-active":Time.unscaledTime<eyeReady?"eye-cooldown":"eye-ready").body,EyeActive?Mathf.Max(0,eyeUntil-Time.unscaledTime):Time.unscaledTime<eyeReady?Mathf.Max(0,eyeReady-Time.unscaledTime):NeighborRoom.Settings.eyeDuration,NeighborRoom.Settings.eyeCooldown,NeighborRoom.Settings.eyeSanityCost),text);
-            string cue=IsSnared?"brain-bound":WindingUp?(AttackKind==NeighborAttack.BrainCast?"brain-warning":AttackKind==NeighborAttack.Kick?"kick-warning":"attack-warning"):"combat-controls";
-            GUI.Label(new Rect(Screen.width*.08f,18,Screen.width*.84f,90),string.Format(NeighborSlice.Text(cue).body,actor.BoundSeconds)+"\n"+Mathf.CeilToInt(Health)+" / "+NeighborRoom.Settings.neighborHealth,text);
+            if(CognitiveRupture.IsActive||Health<=0)return;
+            var matrix=GUI.matrix;var color=GUI.color;float scale=Mathf.Min(Screen.width/1200f,Screen.height/800f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float w=Screen.width/scale,h=Screen.height/scale;
+            try
+            {
+                var text=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=20,wordWrap=true};text.normal.textColor=new Color(.87f,.84f,.74f);
+                if(GameManager.Instance.HasAbility("shoulder_eye"))GUI.Label(new Rect(w*.08f,h-100,w*.84f,80),string.Format(NeighborSlice.Text(EyeActive?"eye-active":Time.unscaledTime<eyeReady?"eye-cooldown":"eye-ready").body,EyeActive?Mathf.Max(0,eyeUntil-Time.unscaledTime):Time.unscaledTime<eyeReady?Mathf.Max(0,eyeReady-Time.unscaledTime):NeighborRoom.Settings.eyeDuration,NeighborRoom.Settings.eyeCooldown,NeighborRoom.Settings.eyeSanityCost),text);
+                string cue=IsSnared?"brain-bound":WindingUp?(AttackKind==NeighborAttack.BrainCast?"brain-warning":AttackKind==NeighborAttack.Kick?"kick-warning":"attack-warning"):"combat-controls";
+                GUI.color=new Color(.025f,.04f,.045f,.76f);GUI.DrawTexture(new Rect(w*.075f,14,w*.67f,100),Texture2D.whiteTexture);GUI.color=color;
+                GUI.Label(new Rect(w*.08f,20,w*.66f,90),string.Format(NeighborSlice.Text(cue).body,actor.BoundSeconds)+"\n"+Mathf.CeilToInt(Health)+" / "+NeighborRoom.Settings.neighborHealth,text);
+            }
+            finally{GUI.matrix=matrix;GUI.color=color;}
         }
         void OnDisable(){RestoreTime();}
     }
