@@ -90,10 +90,10 @@ public static class DeathCycleAcceptance
         Check(!ProgressionHUD.DebugConsoleOpen&&StoryDebugActions.Enabled,"Closing the console keeps the explicit session debug mode active");
         Check(Resources.Load<AudioClip>("Audio/BuildingBlast")?.length>3,"Explosion has its own decay and debris audio tail");
         StoryDebugActions.SetEnabled(false);
-        Check(ProgressionSave.Load().version==6,"Save v6 round-trips revised death-cycle fields");
+        Check(ProgressionSave.Load().version==7,"Save v7 round-trips revised death-cycle fields");
         ProgressionSave.Write(new ProgressionState{version=4,loopCount=2,yogDreamSeen=true,bubbleDreamUnlocked=true,fishCompanionUnlocked=true,fishStoolBorrowed=true,fishMorningLoop=1});
         var migrated=ProgressionSave.Load();
-        Check(migrated.version==6&&migrated.yogDreamSeen&&migrated.bubbleDreamUnlocked,"v4 migration preserves Bubble gift");
+        Check(migrated.version==7&&migrated.yogDreamSeen&&migrated.bubbleDreamUnlocked,"v4 migration preserves Bubble gift");
         Check(!migrated.fishCompanionUnlocked&&!migrated.fishStoolBorrowed&&migrated.fishMorningLoop==-1,"v4 migration removes permanent human fish carryover");
         ProgressionSave.Write(S);
         game.StartNewJourney();yield return .7f;Set(3,TimePeriod.Night);

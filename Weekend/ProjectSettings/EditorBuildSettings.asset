@@ -44,5 +44,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Apartment/CityEncounter3D.unity
     guid: 4e75cdb26e9d6b0479e134d85b8adfa4
+  - enabled: 1
+    path: Assets/Apartment/NeighborRoom2D.unity
+    guid: c912503ab2b0d6d4bae140a805289166
+  - enabled: 1
+    path: Assets/Apartment/NeighborArena3D.unity
+    guid: 1847a15be9089ba418055783cfd566fb
+  - enabled: 1
+    path: Assets/Apartment/BuildingService2D.unity
+    guid: 202fc4ef2bfa0eb4d810c742e07ee988
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

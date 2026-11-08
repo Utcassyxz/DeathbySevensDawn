@@ -127,16 +127,16 @@ namespace DeathBySeventhsDawn.Progression
             Background(w, h);
             GUI.Label(new Rect(w * .10f, h * .08f, w * .7f, 60), StoryText.Local("结局收录", "ENDING COLLECTION"), Text(38, NarrativeUI.Ink));
             GUI.Label(new Rect(w * .10f, h * .15f, w * .7f, 30), EndingCollection.Count + " / " + EndingCollection.Ids.Length, Text(18, new Color(.65f, .56f, .46f)));
-            float cardW = w * .25f, cardH = Mathf.Min(330, h * .44f);
+            float cardW = w * .25f, cardH = h * .255f;
             for (int i = 0; i < EndingCollection.Ids.Length; i++)
             {
                 string id = EndingCollection.Ids[i];
                 bool known = EndingCollection.Has(id);
-                var r = new Rect(w * .10f + i * w * .275f, h * .28f, cardW, cardH);
+                var r = new Rect(w * .10f + (i%3) * w * .275f, h * (.23f+(i/3)*.28f), cardW, cardH);
                 NarrativeUI.Panel(r);
                 GUI.Label(new Rect(r.x + 24, r.y + 18, 100, 70), (i + 1).ToString("00"), Text(48, new Color(.56f, .40f, .32f)));
-                GUI.Label(new Rect(r.x + 24, r.y + 105, r.width - 48, 90), known ? EndingCollection.Title(id) : StoryText.Local("尚未收录", "UNDISCOVERED"), Text(28, known ? NarrativeUI.Ink : new Color(.45f, .46f, .47f)));
-                GUI.Label(new Rect(r.x + 24, r.y + 210, r.width - 48, 86), known ? (id == "fish-replacement" ? StoryText.Local("有人替他起床，也替他过完了余下的日子。", "Someone got up in his place, and lived the days that remained.") : id == "world-end" ? StoryText.Local("他没能走到门口。也没有下一个早晨。", "He never reached the door. There was no next morning.") : StoryText.Local("每次醒来，身体都比上一次更沉。", "Each return left his body a little heavier.")) : StoryText.Local("还没有走到这里。", "This page is still blank."), Text(18, new Color(.68f, .65f, .60f)));
+                GUI.Label(new Rect(r.x + 24, r.y + 65, r.width - 48, 75), known ? EndingCollection.Title(id) : StoryText.Local("尚未收录", "UNDISCOVERED"), Text(22, known ? NarrativeUI.Ink : new Color(.45f, .46f, .47f)));
+                GUI.Label(new Rect(r.x + 24, r.y + 135, r.width - 48, 60), known ? (id=="neighbor-killed"||id=="building-saved"||id=="building-destroyed" ? StoryText.Current.neighborSlice.Find(id).body : id == "fish-replacement" ? StoryText.Local("有人替他起床，也替他过完了余下的日子。", "Someone got up in his place, and lived the days that remained.") : id == "world-end" ? StoryText.Local("他没能走到门口。也没有下一个早晨。", "He never reached the door. There was no next morning.") : StoryText.Local("每次醒来，身体都比上一次更沉。", "Each return left his body a little heavier.")) : StoryText.Local("还没有走到这里。", "This page is still blank."), Text(18, new Color(.68f, .65f, .60f)));
             }
 
             if (DeathBySeventhsDawn.Progression.PrototypeButtons.Button(new Rect(w * .10f, h * .82f, 250, 52), StoryText.Local("返回 · Esc", "Back · Esc"), Button()))
@@ -146,8 +146,9 @@ namespace DeathBySeventhsDawn.Progression
         public static void DrawResult(GameManager game, float w, float h)
         {
             Background(w, h);
-            string id = game.FishReplacementEnding ? "fish-replacement" : game.WorldEndEnding ? "world-end" : "bad-ending-1";
-            EndingIllustration.Draw(new Rect(0, 0, w, h), game.FishReplacementEnding);
+            bool neighbor=game.State.lastDeathCause=="neighbor";
+            string id = neighbor?"neighbor-killed":game.FishReplacementEnding ? "fish-replacement" : game.WorldEndEnding ? "world-end" : "bad-ending-1";
+            if(!neighbor)EndingIllustration.Draw(new Rect(0, 0, w, h), game.FishReplacementEnding);
             GUI.color = new Color(.015f, .018f, .027f, .65f);
             GUI.DrawTexture(new Rect(0, 0, w * .58f, h), Texture2D.whiteTexture);
             GUI.color = Color.white;
@@ -166,8 +167,9 @@ namespace DeathBySeventhsDawn.Progression
             var data = game.FishReplacementEnding ? StoryText.Current.fishEnding : game.WorldEndEnding ? StoryText.Current.worldEnd : StoryText.Current.ending;
             float left = w * .10f, width = w * .80f;
             string body = data.lines != null && data.lines.Length > 0 ? string.Join("\n", data.lines) : (game.WorldEndEnding ? StoryText.Local("雨果关好了窗，过完了这一个星期。\n第七天夜里，地球没有等来下一个清晨。", "Hugo shut the window and let the week pass.\nOn the seventh night, Earth never reached another morning.") : StoryText.Local("他记得每一次醒来。\n身体却一次也没能重新开始。", "He remembered every return.\nHis body never got to start over."));
-            GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.Local("结 局  ", "ENDING  ") + (game.FishReplacementEnding ? "03" : game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
-            GUI.Label(new Rect(left, h * .24f, width, 110), data.title, Text(44, NarrativeUI.Ink));
+            GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.Local("结 局  ", "ENDING  ") + (neighbor?"04":game.FishReplacementEnding ? "03" : game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
+            if(neighbor)body=StoryText.Current.neighborSlice.Find("neighbor-killed").body;
+            GUI.Label(new Rect(left, h * .24f, width, 110), neighbor?StoryText.Current.neighborSlice.Find("neighbor-killed").title:data.title, Text(44, NarrativeUI.Ink));
             GUI.Label(new Rect(left, h * .40f, width * .56f, h * .20f), body, Text(21, new Color(.76f, .73f, .67f)));
             GUI.color = new Color(.46f, .31f, .25f, .7f + pulse * .2f);
             GUI.DrawTexture(new Rect(left, h * .62f - 8, width, 1), Texture2D.whiteTexture);

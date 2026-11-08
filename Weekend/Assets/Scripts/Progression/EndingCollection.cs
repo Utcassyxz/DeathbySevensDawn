@@ -20,9 +20,12 @@ namespace DeathBySeventhsDawn.Progression
         {
             "world-end",
             "bad-ending-1",
-            "fish-replacement"
+            "fish-replacement",
+            "neighbor-killed",
+            "building-saved",
+            "building-destroyed"
         };
-        public static string PathName => Path.Combine(Application.persistentDataPath, "seven-day-endings.json");
+        public static string PathName => Path.Combine(ProgressionSave.StorageDirectory, "seven-day-endings.json");
         public static string FreshlyUnlocked { get; private set; }
 
         static Album Data
@@ -100,7 +103,7 @@ namespace DeathBySeventhsDawn.Progression
             Data.ids.Add(id);
             try
             {
-                Directory.CreateDirectory(Application.persistentDataPath);
+                Directory.CreateDirectory(ProgressionSave.StorageDirectory);
                 string temp = PathName + ".tmp";
                 File.WriteAllText(temp, JsonUtility.ToJson(Data, true));
                 if (File.Exists(PathName))
@@ -120,6 +123,6 @@ namespace DeathBySeventhsDawn.Progression
             return true;
         }
 
-        public static string Title(string id) => id == "world-end" ? StoryText.Current.worldEnd.title : id == "fish-replacement" ? StoryText.Current.fishEnding.title : StoryText.Current.ending.title;
+        public static string Title(string id) => id=="neighbor-killed"||id=="building-saved"||id=="building-destroyed" ? StoryText.Current.neighborSlice.Find(id).title : id == "world-end" ? StoryText.Current.worldEnd.title : id == "fish-replacement" ? StoryText.Current.fishEnding.title : StoryText.Current.ending.title;
     }
 }

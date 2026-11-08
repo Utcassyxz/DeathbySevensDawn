@@ -4,12 +4,18 @@ using System.Collections.Generic;
 
 namespace DeathBySeventhsDawn.Progression
 {
-    // Only permanent progress is saved. Loading starts a fresh Day 1 without an aging penalty.
+    // Durable journey/checkpoint data. GameManager alone resets per-life fields after a real death.
     [Serializable]
     public class ProgressionState
     {
-        public int version = 6, loopCount;
+        public int version = 7, loopCount;
         public int sleeplessDays;
+        public bool neighborDeathPending,neighborIntroduced,neighborDoorForced,neighborTrusted,neighborHostile,neighborDefeated,neighborDeathLearned,shoulderEyeUnlocked,serviceRouteIsolated;
+        public List<string> neighborTakenItems=new List<string>();
+        public float neighborHealth=-1;
+        public long eyeReadyUtcTicks;
+        public string lastDeathCause="";
+        public string neighborMembership="",encounterDestination="CityEncounter3D";
         public bool cityCrisisResolved, hasCheckpoint;
         public int savedDay = 1, savedPeriod, deathCrisis, savedFloor = 4;
         public string savedScene = "", cityRegion = "";

@@ -97,7 +97,6 @@ namespace DeathBySeventhsDawn.City
             else if(region=="CityService"){Add("city-fuse",V(-11,5));Add("building-terminal",V(9,16),null,CrisisKind.Building);}
             else if(region=="CityBroadcast"){Add("city-orders",V(-11,5));Add("city-routing",V(11,5));Add("city-terminal",V(0,18),null,CrisisKind.City);}
             else {Add("city-spectrum",V(-11,5));Add("city-lens",V(11,5));Add("cosmic-terminal",V(0,18),null,CrisisKind.Cosmic);}
-            if(TimeManager.Instance.Days>=4&&!State.cityCrisisResolved)Flat("Approaching pursuer",new Vector3(0,8,0),new Vector2(1.1f,1.6f),new Color(.55f,.14f,.16f),3);
             CognitiveRupture.RestoreExploration(PlayerObject);
             JourneyCheckpoint.RestoreActor(PlayerObject);ProgressionSave.Write(State);
         }
@@ -131,8 +130,6 @@ namespace DeathBySeventhsDawn.City
             }
             if(ThirdPersonMotor.Blocked)return;
             FindNearest();
-            if(!InEncounter && TimeManager.Instance.Days>=4 && !State.cityCrisisResolved && !State.cityActions.Contains("escaped-"+SceneManager.GetActiveScene().name) && Vector3.Distance(PlayerObject.transform.position,new Vector3(0,8,0))<2.5f)
-            { CognitiveRupture.BeginEncounter(SceneManager.GetActiveScene().name); return; }
             if(k.eKey.wasPressedThisFrame)TryInteract();
         }
         public bool TryInteract()
@@ -168,7 +165,7 @@ namespace DeathBySeventhsDawn.City
         {
             if(selected==null||selected.crisis==CrisisKind.None)return false;
             if(!CrisisRules.CanResolve(selected.crisis,TimeManager.Instance.Days,State)){result=Text(selected.id).locked;return false;}
-            if(selected.crisis==CrisisKind.Building)State.buildingCrisisResolved=true;
+            if(selected.crisis==CrisisKind.Building){result=DeathBySeventhsDawn.Interaction.NeighborSlice.Text("use-service-core").body;return false;}
             if(selected.crisis==CrisisKind.City)State.cityCrisisResolved=true;
             if(selected.crisis==CrisisKind.Cosmic)State.daySevenCrisisResolved=true;
             if(!State.cityActions.Contains(selected.id))State.cityActions.Add(selected.id);

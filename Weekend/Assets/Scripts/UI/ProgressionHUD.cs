@@ -20,6 +20,7 @@ namespace DeathBySeventhsDawn.Progression
         bool unlockedThisSession;
         bool enteringCode, debugOpen, confirmNewJourney;
         string code = "";
+        string command="",commandResult="";
         Vector2 scroll;
         int targetDay=1, targetPeriod;
         GUIStyle labelStyle, titleStyle, buttonStyle, boxStyle;
@@ -63,6 +64,7 @@ namespace DeathBySeventhsDawn.Progression
             targetPeriod=(int)TimeManager.Instance.Period;
             if (unlockedThisSession)
             {
+                NeighborDebugCommands.BeginSession();
                 debugOpen = true;
                 enteringCode = false;
                 scroll = Vector2.zero;
@@ -87,6 +89,7 @@ namespace DeathBySeventhsDawn.Progression
             Close();
         }
 
+        public void CloseForEvent()=>Close();
         void Close()
         {
             DebugConsoleOpen = false;
@@ -111,6 +114,7 @@ namespace DeathBySeventhsDawn.Progression
             if (code == "1997")
             {
                 unlockedThisSession = true;
+                NeighborDebugCommands.BeginSession();
                 StoryDebugActions.SetEnabled(true);
                 enteringCode = false;
                 debugOpen = true;
@@ -263,6 +267,10 @@ namespace DeathBySeventhsDawn.Progression
                     if(PrototypeButtons.LayoutButton(PeriodName((TimePeriod)targetPeriod),buttonStyle))targetPeriod=(targetPeriod+1)%4;
                     if(PrototypeButtons.LayoutButton(StoryText.Local("应用时间","Set time"),buttonStyle)) { StoryDebugActions.SetEnabled(true);clock.DebugSetTime(targetDay,(TimePeriod)targetPeriod); }
                     GUILayout.EndHorizontal();
+                    GUILayout.Label(StoryText.Local("安全命令 · 自动使用隔离旅程；session end 恢复正式旅程","Safe commands · automatic isolated session; session end restores normal progress"),labelStyle);
+                    GUI.SetNextControlName("neighbor-console-command");command=GUILayout.TextField(command);
+                    if(GUILayout.Button(StoryText.Local("执行","Execute"))||(Event.current.type==EventType.KeyDown&&Event.current.keyCode==KeyCode.Return&&GUI.GetNameOfFocusedControl()=="neighbor-console-command")){commandResult=NeighborDebugCommands.Execute(command);if(Event.current.type==EventType.KeyDown)Event.current.Use();}
+                    GUILayout.Label(commandResult,labelStyle);
                     var rooms=new[]{"Bedroom","LivingRoom","Bathroom","Balcony","Corridor","Stairwell","Rooftop"};
                     var roomNames=new[]{"卧室","客厅","卫生间","阳台","楼道","楼梯间","天台"};
                     for(int i=0;i<rooms.Length;i++)

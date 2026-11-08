@@ -39,6 +39,7 @@ namespace DeathBySeventhsDawn.Player
             if(mouse!=null&&mouse.rightButton.isPressed){var delta=mouse.delta.ReadValue();yaw+=delta.x*.15f;pitch=Mathf.Clamp(pitch-delta.y*.12f,8,65);}
             if(k.qKey.wasPressedThisFrame) Defend();
         }
+        public void SetViewYaw(float value){yaw=value;transform.rotation=Quaternion.Euler(0,value,0);}
         public bool Defend()
         {
             if(Blocked||Time.time-hitAt<1||Stamina<25||GameManager.Instance.State.defenseCharges<=0)return false;

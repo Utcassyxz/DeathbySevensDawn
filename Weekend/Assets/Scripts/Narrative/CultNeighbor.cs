@@ -32,6 +32,10 @@ namespace DeathBySeventhsDawn.Interaction
 
         View view;
         bool dayOneStarted;
+        int bagSelection;
+        public string SelectedInventoryItem=>State.inventory.Count==0?null:State.inventory[Mathf.Clamp(bagSelection,0,State.inventory.Count-1)];
+        public bool PrepareFromInventory(){if(!BagOpen||!Investigation.Has("deduction-sealed-tool"))return false;Close();NeighborSlice.Instance.ShowPreparation();return true;}
+        public bool SelectInventoryItem(int index){if(!BagOpen||index<0||index>=State.inventory.Count)return false;bagSelection=index;return true;}
         int line, frame, blockedFrame = -1;
         float age, cueTime, nextHit;
         string prompt;
@@ -156,6 +160,8 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if (!CanReachDoor || view != View.None || GameManager.Instance.HasEnded)
                 return false;
+            if(State.neighborDefeated){NeighborSlice.Instance.Show("aftermath-defeated");return false;}
+            if(State.buildingCrisisResolved){NeighborSlice.Instance.Show("aftermath");return false;}
             Hit(knock);
             if (TimeManager.Instance.Days == 2 && GameManager.Instance.LoopCount == 0 && State.cultDayOneTalked && Investigation.Has("cult-door-note") && !HasToken && !State.aquariumSealed)
             {
@@ -286,6 +292,7 @@ namespace DeathBySeventhsDawn.Interaction
                 prompt = cueTime > 4 ? StoryText.Current.cult.sound : null;
             }
 
+            if (NeighborSlice.OwnsDoor && scene=="Corridor")return;
             if (scene != "Corridor")
                 return;
             if (FirstLoopPrologue.Instance != null && FirstLoopPrologue.Instance.IsPresenting)
@@ -454,9 +461,10 @@ namespace DeathBySeventhsDawn.Interaction
                         if (i < State.inventory.Count)
                         {
                             string item = State.inventory[i];
+                            if(PrototypeButtons.Button(cell,"",new GUIStyle(GUIStyle.none)))SelectInventoryItem(i);
                             if (item == Token)
                                 GUI.DrawTexture(new Rect(cell.x + 8, cell.y + 8, cell.width - 16, cell.height - 16), tokenArt, ScaleMode.ScaleToFit);
-                            GUI.Label(new Rect(cell.x + 6, cell.yMax - 24, cell.width - 12, 20), item == Token ? StoryText.Current.cult.itemTitle : item, small);
+                            GUI.Label(new Rect(cell.x + 6, cell.yMax - 24, cell.width - 12, 20), item == Token ? StoryText.Current.cult.itemTitle : NeighborSlice.ItemName(item), small);
                         }
                         else
                             GUI.Label(new Rect(cell.x, cell.y, cell.width, cell.height), "+", slotNumber);
@@ -464,10 +472,17 @@ namespace DeathBySeventhsDawn.Interaction
 
                     float detailX = panel.x + 24 + columns * (slot + gap);
                     float detailW = pw - 48 - columns * (slot + gap);
-                    if (HasToken)
+                    if (Investigation.Has("deduction-sealed-tool") && PrototypeButtons.Button(new Rect(panel.x,panel.yMax-70,pw,42),NeighborSlice.Text("craft-choice").body,button)){PrepareFromInventory();}
+                    if (SelectedInventoryItem==Token)
                     {
                         GUI.Label(new Rect(detailX, panel.y + 92, detailW, 50), StoryText.Current.cult.itemTitle, heading);
                         GUI.Label(new Rect(detailX, panel.y + 146, detailW, 190), StoryText.Current.cult.itemBody, text);
+                    }
+                    else if(State.inventory.Count>0)
+                    {
+                        var item=StoryText.Current.neighborSlice.Find(SelectedInventoryItem);
+                        GUI.Label(new Rect(detailX,panel.y+92,detailW,60),NeighborSlice.ItemName(SelectedInventoryItem),heading);
+                        GUI.Label(new Rect(detailX,panel.y+160,detailW,260),item?.body??"",text);
                     }
                     else
                         GUI.Label(new Rect(panel.x, panel.y + 110, pw, 100), StoryText.Local("背包是空的。探索房间，看看有什么值得带走。", "The bag is empty. Explore and find something worth carrying."), text);

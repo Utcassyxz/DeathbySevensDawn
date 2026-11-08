@@ -119,7 +119,7 @@ namespace DeathBySeventhsDawn.Core
         {
             get; private set;
         }
-        public float Sanity => Mathf.Clamp(Settings.maximumSanity - State.sanityBurden - Knowledge * Settings.knowledgeSanityCost - Mutation * Settings.mutationSanityCost, 0, Settings.maximumSanity);
+        public float Sanity => StoryDebugActions.Enabled&&NeighborDebugCommands.SanityOverride>=0?NeighborDebugCommands.SanityOverride:Mathf.Clamp(Settings.maximumSanity - State.sanityBurden - Knowledge * Settings.knowledgeSanityCost - Mutation * Settings.mutationSanityCost, 0, Settings.maximumSanity);
         public int KnowledgeLevel => Mathf.FloorToInt(Knowledge / Mathf.Max(1, Settings.knowledgePerLevel));
         public SanityLayer Layer => Sanity <= Settings.revelationSanity ? SanityLayer.Revelation : Sanity <= Settings.fracturedSanity ? SanityLayer.Fractured : Sanity <= Settings.unstableSanity ? SanityLayer.Unstable : SanityLayer.Stable;
 
@@ -144,7 +144,7 @@ namespace DeathBySeventhsDawn.Core
             State = ProgressionSave.Load();
             DeathBySeventhsDawn.Knowledge.Investigation.Normalize(State);
             if (State.worldEndEnding)
-                EndingCollection.Unlock("world-end", false);
+                EndingCollection.Unlock(State.lastDeathCause=="neighbor"?"neighbor-killed":"world-end", false);
             if (State.badEndingOne)
                 EndingCollection.Unlock("bad-ending-1", false);
             if (State.fishReplacementEnding)
@@ -154,6 +154,7 @@ namespace DeathBySeventhsDawn.Core
 
         public bool HasAbility(string id)
         {
+            if(id=="shoulder_eye")return State.shoulderEyeUnlocked&&(LoopCount>0||StoryDebugActions.Enabled);
             foreach (var item in Settings.abilities)
                 if (item != null && item.id == id && Mutation >= item.mutation)
                     return true;
@@ -208,6 +209,9 @@ namespace DeathBySeventhsDawn.Core
             if (HasEnded)
                 return;
             State.loopCount++;
+            if(State.neighborDeathLearned && State.mutation>=20)State.shoulderEyeUnlocked=true;
+            State.neighborDeathPending=State.neighborIntroduced=State.neighborDoorForced=State.neighborTrusted=State.neighborHostile=State.neighborDefeated=State.serviceRouteIsolated=false;
+            State.neighborTakenItems.Clear();State.neighborMembership="";State.neighborHealth=-1;State.lastDeathCause="";State.encounterDestination="CityEncounter3D";
             State.ancientObservationDay = 0;
             State.ancientObservationLoop = -1;
             State.bedroomCurtainsClosed = State.stoveLit = false;
@@ -244,8 +248,11 @@ namespace DeathBySeventhsDawn.Core
             }
         }
 
+        internal void UseDebugState(ProgressionState state,float vitality){State=state;Vitality=Mathf.Clamp(vitality,0,MaxVitality);Changed?.Invoke();}
+        public void DebugSetSanity(float value){if(!StoryDebugActions.Enabled)return;NeighborDebugCommands.SanityOverride=Mathf.Clamp(value,0,Settings.maximumSanity);Changed?.Invoke();}
         public void LoseSanity(float amount)
         {
+            if(StoryDebugActions.Enabled&&NeighborDebugCommands.SanityOverride>=0)NeighborDebugCommands.SanityOverride=Mathf.Max(0,NeighborDebugCommands.SanityOverride-amount);
             State.sanityBurden += Mathf.Max(0, amount);
             ProgressionSave.Write(State); Changed?.Invoke();
         }
@@ -254,8 +261,9 @@ namespace DeathBySeventhsDawn.Core
             if(HasEnded)return;
             State.worldEndEnding=true;
             ProgressionSave.Write(State);
-            EndingCollection.Unlock("world-end");
-            EndingTriggered?.Invoke("world-end"); Changed?.Invoke();
+            string ending=State.lastDeathCause=="neighbor"?"neighbor-killed":"world-end";
+            EndingCollection.Unlock(ending);
+            EndingTriggered?.Invoke(ending); Changed?.Invoke();
         }
         public void Heal(float amount)
         {

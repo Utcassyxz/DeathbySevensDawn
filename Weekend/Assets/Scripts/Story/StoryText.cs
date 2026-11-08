@@ -27,7 +27,7 @@ namespace DeathBySeventhsDawn.Story
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void LoadLanguage()
         {
-            english = PlayerPrefs.GetInt("Story.Language", 0) == 1;
+            english = PlayerPrefs.GetInt("Story.Language", 1) == 1;
             Reload();
             DeathBySeventhsDawn.Knowledge.Investigation.ReloadLanguage();
         }
@@ -102,6 +102,7 @@ namespace DeathBySeventhsDawn.Story
         public CultText cult;
         public ExpansionText expansion;
         public CityText city;
+        public DeathBySeventhsDawn.Interaction.NeighborSliceText neighborSlice;
         public DreamText dream;
         public NightDreamText nightDream;
         public KnowledgeText knowledge;

@@ -41,7 +41,8 @@ namespace DeathBySeventhsDawn.Progression
             {
                 state.firstApocalypsePending=true;
                 state.deathWasBuilding=buildingExplosion;
-                state.deathCrisis=(int)kind;
+                state.deathCrisis=(int)kind;state.lastDeathCause=kind==CrisisKind.Building?"building":kind==CrisisKind.City?"city":"cosmic";
+                if(kind==CrisisKind.Building)EndingCollection.Unlock("building-destroyed");
                 ProgressionSave.Write(state);
             }
             Instance.BeginFirstCycle();

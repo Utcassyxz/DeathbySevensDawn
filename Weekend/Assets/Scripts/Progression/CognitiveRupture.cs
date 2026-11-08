@@ -38,20 +38,30 @@ namespace DeathBySeventhsDawn.Progression
         void Cancel(){active=false;}
         public static bool BeginEncounter(string id)
         {
-            if(instance==null||IsActive||SceneManager.GetActiveScene().name=="CityEncounter3D"||!City.CityWorld.IsCity(SceneManager.GetActiveScene().name)||GameManager.Instance.HasEnded)return false;
+            if(!City.CityWorld.IsCity(SceneManager.GetActiveScene().name)||SceneManager.GetActiveScene().name=="CityEncounter3D")return false;
+            return BeginSpecialEncounter(id,"CityEncounter3D",true);
+        }
+        public static bool BeginSpecialEncounter(string id,string destination,bool sanityCost)
+        {
+            if(instance==null||IsActive||SceneManager.GetActiveScene().name==destination||GameManager.Instance.HasEnded||!Application.CanStreamedLevelBeLoaded(destination))return false;
             var actor=GameObject.FindWithTag("Player");if(actor==null)return false;
             var state=GameManager.Instance.State;
-            state.encounterReturnScene=SceneManager.GetActiveScene().name;state.encounterId=id;
+            state.encounterReturnScene=SceneManager.GetActiveScene().name;state.encounterId=id;state.encounterDestination=destination;
             state.encounterReturnX=actor.transform.position.x;state.encounterReturnY=actor.transform.position.y;
             var body=actor.GetComponent<Rigidbody2D>();if(body!=null)body.linearVelocity=Vector2.zero;
-            instance.Begin(true);GameManager.Instance.LoseSanity(2);ProgressionSave.Write(state);return true;
+            instance.Begin(true);if(sanityCost)GameManager.Instance.LoseSanity(2);ProgressionSave.Write(state);return true;
+        }
+        public static bool ReturnFromSpecial()
+        {
+            if(instance==null||IsActive||GameManager.Instance.HasEnded||SceneManager.GetActiveScene().name!=GameManager.Instance.State.encounterDestination)return false;
+            instance.Begin(false);ProgressionSave.Write(GameManager.Instance.State);return true;
         }
         public static bool Escape()
         {
             if(instance==null||IsActive||SceneManager.GetActiveScene().name!="CityEncounter3D"||GameManager.Instance.HasEnded)return false;
             var state=GameManager.Instance.State;
             if(!state.cityActions.Contains("escaped-"+state.encounterId))state.cityActions.Add("escaped-"+state.encounterId);
-            instance.Begin(false);ProgressionSave.Write(state);return true;
+            return ReturnFromSpecial();
         }
         void Begin(bool to3D)
         {
@@ -73,7 +83,7 @@ namespace DeathBySeventhsDawn.Progression
             if(!loaded&&elapsed>=duration*.5f)
             {
                 loaded=true;
-                string destination=entering?"CityEncounter3D":GameManager.Instance.State.encounterReturnScene;
+                string destination=entering?GameManager.Instance.State.encounterDestination:GameManager.Instance.State.encounterReturnScene;
                 if(!Application.CanStreamedLevelBeLoaded(destination)){Debug.LogError("Encounter destination missing: "+destination);active=false;return;}
                 SceneManager.LoadScene(destination);
             }

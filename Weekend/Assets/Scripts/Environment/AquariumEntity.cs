@@ -37,7 +37,7 @@ namespace DeathBySeventhsDawn.Interaction
             Physics2D.SyncTransforms();
         }
         public Vector2 CompanionSeatPosition => tank == null ? Vector2.zero : tankHome;
-        public bool MorningWelcomePending => !StoryDebugActions.Enabled && GameManager.Instance != null && CompanionPresent && TimeManager.Instance != null && TimeManager.Instance.Days >= 4 && !DeathBySeventhsDawn.City.CityWorld.IsCity(SceneManager.GetActiveScene().name) && GameManager.Instance.State.fishMorningLoop != GameManager.Instance.LoopCount;
+        public bool MorningWelcomePending => !StoryDebugActions.Enabled && GameManager.Instance != null && CompanionPresent && TimeManager.Instance != null && TimeManager.Instance.Days >= 4 && !DeathBySeventhsDawn.City.CityWorld.IsCity(SceneManager.GetActiveScene().name) && !NeighborSlice.IsOffsiteScene(SceneManager.GetActiveScene().name) && GameManager.Instance.State.fishMorningLoop != GameManager.Instance.LoopCount;
         // MorningRoutine owns the timeline; this owner alone creates/moves the fish and borrowed furniture.
         public void ShowMorningVisitor(Vector2 position)
         {

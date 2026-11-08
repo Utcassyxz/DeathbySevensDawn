@@ -1,0 +1,119 @@
+{
+  "nodes": [
+    {
+      "id": "intro",
+      "line": "intro",
+      "choices": [
+        {
+          "line": "calm-choice",
+          "to": "ask"
+        },
+        {
+          "line": "threat-choice",
+          "to": "hostile"
+        },
+        {
+          "line": "memory-choice",
+          "to": "recruit",
+          "condition": "known-order"
+        }
+      ]
+    },
+    {
+      "id": "ask",
+      "line": "ask",
+      "choices": [
+        {
+          "line": "promise-choice",
+          "to": "recruit"
+        },
+        {
+          "line": "threat-choice",
+          "to": "hostile"
+        },
+        {
+          "line": "leave-choice",
+          "to": "end"
+        }
+      ]
+    },
+    {
+      "id": "recruit",
+      "line": "recruit",
+      "effect": "trust",
+      "evidence": "neighbor-order",
+      "choices": [
+        {
+          "line": "join-choice",
+          "to": "joined"
+        },
+        {
+          "line": "refuse-choice",
+          "to": "refused"
+        },
+        {
+          "line": "deceive-choice",
+          "to": "deceived",
+          "condition": "known-group"
+        },
+        {
+          "line": "investigate-choice",
+          "to": "end"
+        }
+      ]
+    },
+    {
+      "id": "joined",
+      "line": "joined",
+      "effect": "join",
+      "choices": [
+        {
+          "line": "end-choice",
+          "to": "end"
+        }
+      ]
+    },
+    {
+      "id": "refused",
+      "line": "refused",
+      "effect": "refuse",
+      "choices": [
+        {
+          "line": "end-choice",
+          "to": "end"
+        }
+      ]
+    },
+    {
+      "id": "deceived",
+      "line": "deceived",
+      "effect": "deceive",
+      "choices": [
+        {
+          "line": "end-choice",
+          "to": "end"
+        }
+      ]
+    },
+    {
+      "id": "hostile",
+      "line": "hostile",
+      "effect": "hostile"
+    },
+    {
+      "id": "end",
+      "line": "end-choice",
+      "choices": []
+    },
+    {
+      "id": "aftermath",
+      "line": "aftermath",
+      "choices": [
+        {
+          "line": "end-choice",
+          "to": "end"
+        }
+      ]
+    }
+  ]
+}

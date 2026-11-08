@@ -20,7 +20,7 @@ namespace DeathBySeventhsDawn.Progression
         {
             string id = kind == CrisisKind.Building ? "deduction-building-plan" : kind == CrisisKind.City ? "deduction-city-orders" : "deduction-observatory";
             int deadline = kind == CrisisKind.Building ? BuildingDay : kind == CrisisKind.City ? CityDay : CosmicDay;
-            return kind != CrisisKind.None && day <= deadline && state.journal.Exists(e => e != null && e.id == id);
+            return kind != CrisisKind.None && day <= deadline && state.journal.Exists(e => e != null && e.id == id) && (kind!=CrisisKind.Building || state.journal.Exists(e=>e!=null&&e.id=="deduction-source-location"));
         }
     }
 }

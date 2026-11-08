@@ -115,6 +115,30 @@
     {
       "id": "city-lens",
       "image": ""
+    },
+    {
+      "id": "prep-oil",
+      "image": ""
+    },
+    {
+      "id": "prep-medium",
+      "image": ""
+    },
+    {
+      "id": "prep-manual",
+      "image": ""
+    },
+    {
+      "id": "pipe-pulse",
+      "image": ""
+    },
+    {
+      "id": "neighbor-order",
+      "image": ""
+    },
+    {
+      "id": "neighbor-death-memory",
+      "image": ""
     }
   ],
   "deductions": [
@@ -154,11 +178,6 @@
       "right": "001-name"
     },
     {
-      "id": "deduction-building-plan",
-      "left": "city-maintenance",
-      "right": "city-fuse"
-    },
-    {
       "id": "deduction-city-orders",
       "left": "city-orders",
       "right": "city-routing"
@@ -167,6 +186,31 @@
       "id": "deduction-observatory",
       "left": "city-spectrum",
       "right": "city-lens"
+    },
+    {
+      "id": "deduction-sealed-materials",
+      "left": "prep-oil",
+      "right": "prep-medium"
+    },
+    {
+      "id": "deduction-sealed-tool",
+      "left": "deduction-sealed-materials",
+      "right": "prep-manual"
+    },
+    {
+      "id": "deduction-group-assignment",
+      "left": "neighbor-order",
+      "right": "skt079-broadcast"
+    },
+    {
+      "id": "deduction-source-location",
+      "left": "deduction-group-assignment",
+      "right": "pipe-pulse"
+    },
+    {
+      "id": "deduction-building-plan",
+      "left": "deduction-source-location",
+      "right": "city-fuse"
     }
   ]
 }

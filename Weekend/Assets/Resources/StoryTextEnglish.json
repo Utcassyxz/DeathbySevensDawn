@@ -314,6 +314,42 @@
         "title": "Array maintenance manual",
         "body": "The manual contains an emergency shutdown. Identify the synchronized route against the daily observations before shutting it down, rather than blindly destroying the telescope.",
         "source": "Recorded on site in the city"
+      },
+      {
+        "id": "prep-oil",
+        "title": "Cooking oil",
+        "body": "An ordinary kitchen preparation item.",
+        "source": "Actively recorded during the Day 2 investigation"
+      },
+      {
+        "id": "prep-medium",
+        "title": "Sealed repair core",
+        "body": "A fictional factory-sealed core, kept closed.",
+        "source": "Actively recorded during the Day 2 investigation"
+      },
+      {
+        "id": "prep-manual",
+        "title": "Heat-mark leaflet",
+        "body": "A fictional maintenance mark links the sealed core to an abstract inventory preparation. No recipe is provided.",
+        "source": "Actively recorded during the Day 2 investigation"
+      },
+      {
+        "id": "pipe-pulse",
+        "title": "Pipe pulse and shaft stamp",
+        "body": "Three dull pulses travel up the shared service shaft. A fresh maintenance stamp reads: basement service room, assigned circuit 401. R records the location and sound.",
+        "source": "Actively recorded during the Day 2 investigation"
+      },
+      {
+        "id": "neighbor-order",
+        "title": "Triangle building assignment",
+        "body": "The Triangle warning on television named the same organization. The third-night order assigns this building to the tenant. Its source is not inside his body: the basement service core supplies the apparatus in 401.",
+        "source": "Actively recorded during the Day 2 investigation"
+      },
+      {
+        "id": "neighbor-death-memory",
+        "title": "The tenant’s attack",
+        "body": "An arm contraction precedes each lunge. This memory can inform an unnatural ability after an earned return.",
+        "source": "Actively recorded during the Day 2 investigation"
       }
     ],
     "deductions": [
@@ -360,12 +396,6 @@
         "body": "The water marks lead back to the displaced tank. She also remembers what Hugo said through the glass. The person calling him when he woke did not come in through the door."
       },
       {
-        "id": "deduction-building-plan",
-        "relation": "Cross-check",
-        "title": "401 supply can be isolated",
-        "body": "The handover matches the wiring. Isolate 401 before the third night while retaining residential and aquarium power."
-      },
-      {
         "id": "deduction-city-orders",
         "relation": "Cross-check",
         "title": "City search dispatch source",
@@ -376,6 +406,36 @@
         "relation": "Cross-check",
         "title": "Synchronized observation route",
         "body": "The log and manual identify the same route. Emergency shutdown is possible."
+      },
+      {
+        "id": "deduction-sealed-materials",
+        "relation": "Cross-check",
+        "title": "Sealed preparation pair",
+        "body": "The two inventory items match the fictional repair system; the leaflet is still needed."
+      },
+      {
+        "id": "deduction-sealed-tool",
+        "relation": "Cross-check",
+        "title": "A single-use prepared tool",
+        "body": "Inventory preparation is now available. It consumes the two items without a sanity cost or real construction instructions."
+      },
+      {
+        "id": "deduction-group-assignment",
+        "relation": "Cross-check",
+        "title": "The warning and the assigned building",
+        "body": "The bulletin’s Triangle group is the organization on the third-night order."
+      },
+      {
+        "id": "deduction-source-location",
+        "relation": "Cross-check",
+        "title": "Source below the entrance",
+        "body": "The assignment and shared-shaft pulse locate the source in the basement service room. The tenant’s defeat will not switch it off."
+      },
+      {
+        "id": "deduction-building-plan",
+        "relation": "Cross-check",
+        "title": "Protect residents, isolate the source",
+        "body": "First isolate the assigned circuit, then lock the source controller. Both field actions must occur by Day 3."
       }
     ]
   },
@@ -1089,6 +1149,315 @@
       "On the fifth night, districts across the city are sealed.",
       "The same search list travels through the broadcast route. Hugo’s address is on it.",
       "Dispatch was not stopped. Hugo does not survive the search."
+    ]
+  },
+  "neighborSlice": {
+    "entries": [
+      {
+        "id": "crowbar",
+        "title": "Crowbar · kitchen cabinet",
+        "body": "A steel crowbar lies under a folded maintenance leaflet. The leaflet describes a sealed fictional heat core; there is no mixing procedure. E takes the crowbar. R records the leaflet."
+      },
+      {
+        "id": "cooking-oil",
+        "title": "Cooking oil",
+        "body": "An ordinary bottle beside the kitchen cabinet. It is still useful as a preparation item. Take it if you want; finding it does not automatically write a deduction."
+      },
+      {
+        "id": "sealed-maintenance-medium",
+        "title": "Sealed maintenance medium",
+        "body": "A proprietary sealed repair core stored in the bathroom. Its heat mark matches the cabinet leaflet. Hugo leaves the contents sealed."
+      },
+      {
+        "id": "sealed-ember-tool",
+        "title": "Sealed ember tool",
+        "body": "A single-use, fictional inventory tool assembled through a validated inference. G uses it against the neighbor. No real manufacturing steps are shown."
+      },
+      {
+        "id": "invitation",
+        "title": "Triangle invitation",
+        "body": "The same group named in the local bulletin. Accepting this invitation opens a route; it does not end the game."
+      },
+      {
+        "id": "pipe-pulse",
+        "title": "Bathroom pipe pulse",
+        "body": "Three dull pulses travel up the shared service shaft. A fresh maintenance stamp reads: basement service room, assigned circuit 401. R records the location and sound."
+      },
+      {
+        "id": "force-door",
+        "title": "401: crowbar or a knock",
+        "body": "The crowbar fits under the door edge. Forcing entry will frighten the tenant. You can still knock instead."
+      },
+      {
+        "id": "force-choice",
+        "title": "Force entry",
+        "body": "Use the crowbar and enter."
+      },
+      {
+        "id": "knock-choice",
+        "title": "Knock",
+        "body": "Knock normally; keep the old door conversation."
+      },
+      {
+        "id": "service-entry",
+        "title": "Basement service door",
+        "body": "A compact service room below the entrance landing."
+      },
+      {
+        "id": "return-service",
+        "title": "Return to entrance landing",
+        "body": "Leave the service room."
+      },
+      {
+        "id": "return-corridor",
+        "title": "Return to hallway",
+        "body": "Leave apartment 401."
+      },
+      {
+        "id": "neighbor-talk",
+        "title": "Speak to the neighbor",
+        "body": "He is still a human being."
+      },
+      {
+        "id": "neighbor-desk",
+        "title": "Inspect the assignment on the table",
+        "body": "Inspect the papers."
+      },
+      {
+        "id": "desk-locked",
+        "title": "The tenant blocks the desk",
+        "body": "Earn his trust or survive the confrontation before recovering the assignment."
+      },
+      {
+        "id": "intro",
+        "title": "The tenant of 401",
+        "body": "Neighbor: What the hell?! How did you get in here?\nHugo: I heard something coming from your apartment. What happened to you?\nHis upper skull is partly absent. A wet fold moves above an otherwise familiar face."
+      },
+      {
+        "id": "calm-choice",
+        "title": "Calm",
+        "body": "I am not here to hurt you. Tell me what happened."
+      },
+      {
+        "id": "threat-choice",
+        "title": "Threaten",
+        "body": "You are a monster. Stay down."
+      },
+      {
+        "id": "memory-choice",
+        "title": "Prior-loop knowledge",
+        "body": "The order assigns this building to you. I have seen it before."
+      },
+      {
+        "id": "ask",
+        "title": "Fear and promise",
+        "body": "He covers the missing part of his skull. The other hand contracts against the table.\nNeighbor: They said it was the next stage. I thought the pain meant it was working."
+      },
+      {
+        "id": "promise-choice",
+        "title": "Listen",
+        "body": "What did they promise you?"
+      },
+      {
+        "id": "leave-choice",
+        "title": "Leave",
+        "body": "I will step back."
+      },
+      {
+        "id": "recruit",
+        "title": "The same triangle",
+        "body": "Neighbor: We are not dying. We are becoming something else.\nThe Triangle group calls the assignment purification. His building is scheduled for the third night. A powered source in the basement service room feeds the device in 401. Defeating him will not stop it. R records the order before choosing a response."
+      },
+      {
+        "id": "join-choice",
+        "title": "Accept",
+        "body": "Accept the invitation, without ending the investigation."
+      },
+      {
+        "id": "refuse-choice",
+        "title": "Refuse",
+        "body": "I will not join. I will not hurt you either."
+      },
+      {
+        "id": "deceive-choice",
+        "title": "Deceive",
+        "body": "Pretend to join; use the known assignment number as proof."
+      },
+      {
+        "id": "investigate-choice",
+        "title": "Keep investigating",
+        "body": "Let me read the assignment myself."
+      },
+      {
+        "id": "joined",
+        "title": "Invitation accepted",
+        "body": "He hands Hugo a triangular invitation. This is a route commitment for this life, not an ending. The assignment remains on the table."
+      },
+      {
+        "id": "refused",
+        "title": "A careful refusal",
+        "body": "He is hurt, but does not attack. Hugo can inspect the assignment and leave."
+      },
+      {
+        "id": "deceived",
+        "title": "A borrowed conviction",
+        "body": "He accepts the remembered assignment number. Hugo pretends to agree. The lie opens the same desk, with a different relationship flag."
+      },
+      {
+        "id": "hostile",
+        "title": "Reality breaks",
+        "body": "His fear becomes an attack. The flat room opens around the same furniture."
+      },
+      {
+        "id": "end-choice",
+        "title": "Back",
+        "body": "Return to exploration."
+      },
+      {
+        "id": "neighbor-order",
+        "title": "Building assignment: 401",
+        "body": "The Triangle warning on television named the same organization. The third-night order assigns this building to the tenant. Its source is not inside his body: the basement service core supplies the apparatus in 401."
+      },
+      {
+        "id": "routing",
+        "title": "Protected routing switch",
+        "body": "Use the confirmed source-location and prevention deductions. Isolate the assigned group circuit while keeping residential supply and the aquarium pump alive. This is the first field action, not the final shutdown."
+      },
+      {
+        "id": "source-core",
+        "title": "Basement source lockout",
+        "body": "The source continues after the tenant falls. Only the confirmed deduction and a protected routing isolation permit locking it out before the third night."
+      },
+      {
+        "id": "isolate-choice",
+        "title": "Isolate assigned circuit",
+        "body": "Isolate only the assigned circuit; preserve residential supply."
+      },
+      {
+        "id": "lock-choice",
+        "title": "Lock out source",
+        "body": "Lock out the verified source."
+      },
+      {
+        "id": "isolated",
+        "title": "First action complete",
+        "body": "The assigned route is isolated. Now secure the source controller on the other side of the room."
+      },
+      {
+        "id": "need-deduction",
+        "title": "Investigation required",
+        "body": "Record the order, pipe anomaly and wiring diagram, then confirm every link on B."
+      },
+      {
+        "id": "need-isolation",
+        "title": "Source still powered",
+        "body": "The protected route is not isolated, the deduction is incomplete, or Day 3 has passed. Defeating the tenant alone does not save the building."
+      },
+      {
+        "id": "use-service-core",
+        "title": "Use the basement source",
+        "body": "This old city switch cannot resolve the building crisis. Follow the confirmed source location to the basement service room."
+      },
+      {
+        "id": "building-saved",
+        "title": "The building survives",
+        "body": "The third-night source is locked out. Residential power remains. Fish and the other residents have another morning. This outcome does not end the journey."
+      },
+      {
+        "id": "building-destroyed",
+        "title": "The assigned building",
+        "body": "The third-night order was carried out. The floor rose, the walls broke, and the building fell. Only an earned return can carry memory onward."
+      },
+      {
+        "id": "neighbor-killed",
+        "title": "Behind the opened door",
+        "body": "Hugo opened the door, but could not leave it alive. The exposed brain kept moving. What he learned survives only through an earned return."
+      },
+      {
+        "id": "combat-controls",
+        "title": "Neighbor encounter",
+        "body": "WASD move · RMB camera · Shift evade · Q crowbar during recovery · G prepared tool · V shoulder eye"
+      },
+      {
+        "id": "attack-warning",
+        "title": "Attack windup",
+        "body": "His arm locks. Move away, then counter during the recovery."
+      },
+      {
+        "id": "collected",
+        "title": "Collected",
+        "body": "Item placed in the existing inventory."
+      },
+      {
+        "id": "recorded",
+        "title": "Recorded",
+        "body": "The fact is on the existing evidence board."
+      },
+      {
+        "id": "already-recorded",
+        "title": "Already recorded",
+        "body": "No new evidence was added."
+      },
+      {
+        "id": "prepared",
+        "title": "Prepared",
+        "body": "One sealed fictional combat tool is ready. No sanity was spent."
+      },
+      {
+        "id": "take",
+        "title": "Take",
+        "body": "E / 1 Take the item"
+      },
+      {
+        "id": "controls",
+        "title": "Controls",
+        "body": "R record · 1–4 choose · E take · Enter/Esc close · use inventory preparation from I"
+      },
+      {
+        "id": "craft-choice",
+        "title": "Validate preparation",
+        "body": "Prepare the sealed tool after confirming the deduction."
+      },
+      {
+        "id": "city-fuse",
+        "title": "Service wiring diagram",
+        "body": "The device in 401 draws from a shared circuit. This diagram shows how to isolate that branch while keeping residential lights and the aquarium pump running. Compare it with the handover."
+      },
+      {
+        "id": "aftermath",
+        "title": "Aftermath",
+        "body": "Neighbor: The pulse stopped. Was that you?\nHugo: The building is still here.\nHe folds the invitation and no longer calls the order inevitable."
+      },
+      {
+        "id": "aftermath-defeated",
+        "title": "Aftermath",
+        "body": "A dragged breath comes from inside. The tenant no longer repeats the assignment. The basement source still needs its own lockout."
+      },
+      {
+        "id": "eye-ready",
+        "title": "Aftermath",
+        "body": "V: shoulder eye · {0:0.#} seconds · {1:0.#}-second cooldown · SAN cost {2:0.#}. Useful power; a lasting cost."
+      },
+      {
+        "id": "eye-cooldown",
+        "title": "Aftermath",
+        "body": "The shoulder eye is resting. {0:0.0} seconds remain."
+      },
+      {
+        "id": "need-preparation",
+        "title": "Preparation incomplete",
+        "body": "Confirm the sealed-tool deduction and carry both cooking oil and the sealed medium. An existing prepared tool cannot be duplicated."
+      },
+      {
+        "id": "already-taken",
+        "title": "Taken in this life",
+        "body": "This item was already taken in this life. Using it does not refill the same container."
+      },
+      {
+        "id": "eye-active",
+        "title": "Shoulder eye open",
+        "body": "The shoulder eye is open. {0:0.0} seconds remain. The sanity cost has been paid."
+      }
     ]
   }
 }
