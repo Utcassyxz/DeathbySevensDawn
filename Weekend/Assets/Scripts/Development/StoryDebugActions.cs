@@ -24,6 +24,8 @@ namespace DeathBySeventhsDawn.Progression
         }
         public static void SkipForcedStory()
         {
+            CognitiveRupture.DebugSkip();
+            NeighborSlice.Instance?.Close();
             StoryTransition.Clear();
             ApartmentAudio.Instance?.StopDreamImpacts();
             MainMenuUI.Instance?.DebugSkip();

@@ -211,6 +211,7 @@ namespace DeathBySeventhsDawn.Core
             State.loopCount++;
             if(State.neighborDeathLearned && State.mutation>=20)State.shoulderEyeUnlocked=true;
             State.neighborDeathPending=State.neighborIntroduced=State.neighborDoorForced=State.neighborTrusted=State.neighborHostile=State.neighborDefeated=State.serviceRouteIsolated=false;
+            State.neighborGuidanceSeen=State.neighborHatRevealed=false;
             State.neighborTakenItems.Clear();State.neighborMembership="";State.neighborHealth=-1;State.lastDeathCause="";State.encounterDestination="CityEncounter3D";
             State.ancientObservationDay = 0;
             State.ancientObservationLoop = -1;

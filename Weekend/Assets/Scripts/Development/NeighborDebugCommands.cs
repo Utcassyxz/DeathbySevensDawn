@@ -11,7 +11,7 @@ namespace DeathBySeventhsDawn.Progression
     // Commands live in the existing PIN console. A cloned state and separate disk paths isolate tests.
     public static class NeighborDebugCommands
     {
-        public static readonly string[] Scenes={"SampleScene","Bedroom","LivingRoom","Bathroom","Balcony","Corridor","Stairwell","Rooftop","CityStreet","CityService","CityBroadcast","CityObservatory","CityEncounter3D","NeighborRoom2D","NeighborArena3D","BuildingService2D"};
+        public static readonly string[] Scenes={"SampleScene","Bedroom","LivingRoom","Bathroom","Balcony","Corridor","Stairwell","Rooftop","CityStreet","CityService","CityBroadcast","CityObservatory","CityEncounter3D","NeighborRoom2D","NeighborArena3D","BuildingService2D","SushiInterior3D","CircusInterior3D"};
         public static bool Isolated=>snapshot!=null;
         public static float SanityOverride=-1;
         static ProgressionState snapshot;static string scene;static Vector3 position;static int day,period;static float vitality;
@@ -46,6 +46,7 @@ namespace DeathBySeventhsDawn.Progression
             {
                 if(command=="session begin")return "Isolated session active. session end restores the normal journey.";
                 if(a.Length==3&&a[0]=="scene"&&a[1]=="goto"&&Array.IndexOf(Scenes,a[2])>=0){if(a[2]=="NeighborArena3D"){state.encounterDestination="NeighborArena3D";state.encounterReturnScene="NeighborRoom2D";state.encounterId="neighbor";}
+                    if(VenueRoom.IsVenue(a[2])){state.encounterDestination=a[2];state.encounterReturnScene="CityStreet";state.encounterReturnX=0;state.encounterReturnY=-1;}
                     StoryDebugActions.Jump(a[2],TimeManager.Instance.Days,(int)TimeManager.Instance.Period);return "Scene: "+a[2];}
                 if(a.Length==3&&a[0]=="day"&&a[1]=="set"){TimeManager.Instance.DebugSetTime(int.Parse(a[2]),TimeManager.Instance.Period);return "Day set.";}
                 if(a.Length==3&&a[0]=="time"&&a[1]=="set"){TimeManager.Instance.DebugSetTime(TimeManager.Instance.Days,(TimePeriod)Mathf.Clamp(int.Parse(a[2]),0,3));return "Period set: 0 morning, 1 afternoon, 2 evening, 3 night.";}
@@ -54,12 +55,14 @@ namespace DeathBySeventhsDawn.Progression
                 if(a.Length==3&&a[0]=="item"&&a[1]=="give")
                 {if(Story.StoryText.Current.neighborSlice.Find(a[2])==null)return "Unknown item.";if(!state.inventory.Contains(a[2]))state.inventory.Add(a[2]);return "Item added.";}
                 if(a.Length==3&&a[0]=="evidence"&&a[1]=="unlock"){state.journalUnlocked=state.investigationUnlocked=true;return Investigation.Collect(a[2])?"Evidence recorded.":"Unknown or already recorded.";}
-                if(command=="flags reset"){state.neighborIntroduced=state.neighborDoorForced=state.neighborTrusted=state.neighborHostile=state.neighborDefeated=state.serviceRouteIsolated=state.buildingCrisisResolved=false;state.neighborTakenItems.Clear();state.neighborMembership="";state.neighborHealth=-1;state.eyeReadyUtcTicks=0;NeighborSlice.Instance.CancelForDebug();return "Temporary neighbor flags reset in isolated session.";}
+                if(command=="flags reset"){state.neighborIntroduced=state.neighborDoorForced=state.neighborTrusted=state.neighborHostile=state.neighborDefeated=state.serviceRouteIsolated=state.buildingCrisisResolved=false;state.neighborGuidanceSeen=state.neighborHatRevealed=false;state.neighborTakenItems.Clear();state.neighborMembership="";state.neighborHealth=-1;state.eyeReadyUtcTicks=0;NeighborSlice.Instance.CancelForDebug();return "Temporary neighbor flags reset in isolated session.";}
                 if(a.Length==3&&a[0]=="event"&&a[1]=="trigger")
                 {
                     NeighborSlice.Instance.Close();UnityEngine.Object.FindAnyObjectByType<ProgressionHUD>()?.CloseForEvent();
                     switch(a[2])
                     {
+                        case "sushi_normal":case "sushi_corrupt":case "circus_normal":case "circus_corrupt":
+                            GameManager.Instance.DebugSetSanity(a[2].EndsWith("normal")?100:15);string venue=a[2].StartsWith("sushi")?"SushiInterior3D":"CircusInterior3D";state.encounterDestination=venue;state.encounterReturnScene="CityStreet";state.encounterReturnX=0;state.encounterReturnY=-1;StoryDebugActions.Jump(venue,2,0);return "Venue perception ready.";
                         case "neighbor_encounter":state.neighborIntroduced=false;state.neighborDefeated=false;state.neighborHealth=-1;state.neighborDoorForced=state.neighborHostile=true;StoryDebugActions.Jump("NeighborRoom2D",2,0);return "At the opened room. E near the tenant starts combat; close console and disable free debug only to test fatal crises.";
                         case "neighbor_peace":state.neighborHealth=-1;state.neighborIntroduced=false;state.neighborDoorForced=true;state.neighborTrusted=state.neighborHostile=state.neighborDefeated=false;StoryDebugActions.Jump("NeighborRoom2D",2,0);return "Peaceful conversation start.";
                         case "neighbor_known":

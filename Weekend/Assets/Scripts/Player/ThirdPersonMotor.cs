@@ -10,17 +10,29 @@ namespace DeathBySeventhsDawn.Player
     public sealed class ThirdPersonMotor : MonoBehaviour
     {
         public Camera view;
+        public bool FirstPerson=true;
         public float Stamina { get; private set; } = 100;
         public bool Crouching { get; private set; }
         public float Noise { get; private set; }
         public bool Moving { get; private set; }
-        float yaw, pitch = 23, fall, hitAt = -10;
+        float yaw, pitch, fall, hitAt = -10;
+        Transform hands;float handPulse;readonly System.Collections.Generic.List<Material> handMaterials=new System.Collections.Generic.List<Material>();
+        float boundUntil;
+        public bool MovementLocked=>Time.unscaledTime<boundUntil;
+        public float BoundSeconds=>Mathf.Max(0,boundUntil-Time.unscaledTime);
+        public void Bind(float seconds){boundUntil=Time.unscaledTime+Mathf.Clamp(seconds,0,5);}
+        public void ReleaseBind(){boundUntil=0;}
         CharacterController controller;
         void Awake() { controller=GetComponent<CharacterController>(); controller.height=1.8f; controller.center=Vector3.up*.9f; controller.radius=.32f; controller.minMoveDistance=0; controller.skinWidth=.035f; }
         public static bool Blocked => StoryJournal.WorldBlocked || CognitiveRupture.IsActive || City.CityWorld.Reading || GameManager.Instance.HasEnded || Time.timeScale==0;
         void Update()
         {
-            if(Blocked) { Noise=0;Moving=false;return; }
+            bool focused=Application.isFocused;
+            if(FirstPerson){Cursor.lockState=!Blocked&&focused?CursorLockMode.Locked:CursorLockMode.None;Cursor.visible=Blocked||!focused;}
+            var mouse=Mouse.current;
+            if(!Blocked&&mouse!=null&&(FirstPerson||mouse.rightButton.isPressed))
+            {var delta=mouse.delta.ReadValue();yaw+=delta.x*.12f;pitch=Mathf.Clamp(pitch-delta.y*.12f,FirstPerson?-75:8,75);}
+            if(Blocked||MovementLocked) { Noise=0;Moving=false;return; }
             var k=Keyboard.current;if(k==null)return;
             bool crouch=k.leftCtrlKey.isPressed;
             if(crouch!=Crouching)
@@ -31,15 +43,27 @@ namespace DeathBySeventhsDawn.Player
             Stamina=Mathf.Clamp(Stamina+(sprint?-24:16)*Time.deltaTime,0,100);
             float speed=Crouching?1.65f:sprint?6.2f:3.7f;
             var direction=Quaternion.Euler(0,yaw,0)*new Vector3(input.x,0,input.y);
-            if(Moving)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(direction),12*Time.deltaTime);
+            if(FirstPerson)transform.rotation=Quaternion.Euler(0,yaw,0);else if(Moving)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(direction),12*Time.deltaTime);
             fall=controller.isGrounded?-2:Mathf.Max(-35,fall-22*Time.deltaTime);
             controller.Move((direction*speed+Vector3.up*fall)*Time.deltaTime);
             Noise=Moving?(sprint?10:Crouching?1:4):0;
-            var mouse=Mouse.current;
-            if(mouse!=null&&mouse.rightButton.isPressed){var delta=mouse.delta.ReadValue();yaw+=delta.x*.15f;pitch=Mathf.Clamp(pitch-delta.y*.12f,8,65);}
             if(k.qKey.wasPressedThisFrame) Defend();
         }
         public void SetViewYaw(float value){yaw=value;transform.rotation=Quaternion.Euler(0,value,0);}
+        public void PulseHands(){handPulse=Time.unscaledTime;}
+        void HandPart(string name,Vector3 position,Vector3 scale,Color color)
+        {
+            var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());
+            go.transform.SetParent(hands,false);go.transform.localPosition=position;go.transform.localScale=scale;var m=new Material(Resources.Load<Material>("CityGreybox"));m.color=color;handMaterials.Add(m);go.GetComponent<Renderer>().sharedMaterial=m;
+        }
+        void BuildHands()
+        {
+            hands=new GameObject("Hugo first-person hands").transform;hands.SetParent(view.transform,false);
+            HandPart("Left sleeve",new Vector3(-.27f,-.30f,.5f),new Vector3(.15f,.15f,.34f),new Color(.22f,.28f,.26f));HandPart("Left hand",new Vector3(-.27f,-.27f,.69f),new Vector3(.13f,.12f,.16f),new Color(.56f,.43f,.34f));
+            HandPart("Right sleeve",new Vector3(.27f,-.30f,.5f),new Vector3(.15f,.15f,.34f),new Color(.22f,.28f,.26f));HandPart("Right hand",new Vector3(.27f,-.27f,.69f),new Vector3(.13f,.12f,.16f),new Color(.56f,.43f,.34f));
+            if(GameManager.Instance.State.inventory.Contains(NeighborSlice.Crowbar))
+            {HandPart("First-person rusty crowbar",new Vector3(.29f,-.08f,.78f),new Vector3(.045f,.53f,.045f),new Color(.37f,.28f,.22f));HandPart("Crowbar hooked end",new Vector3(.25f,.18f,.78f),new Vector3(.13f,.045f,.045f),new Color(.43f,.34f,.25f));}
+        }
         public bool Defend()
         {
             if(Blocked||Time.time-hitAt<1||Stamina<25||GameManager.Instance.State.defenseCharges<=0)return false;
@@ -56,11 +80,21 @@ namespace DeathBySeventhsDawn.Player
         void LateUpdate()
         {
             if(view==null)return;
+            if(FirstPerson)
+            {
+                view.nearClipPlane=.045f;view.transform.position=transform.position+Vector3.up*(Crouching ? .98f : 1.62f);view.transform.rotation=Quaternion.Euler(pitch,yaw,0);
+                view.fieldOfView=Mathf.Lerp(view.fieldOfView,Noise>=10?80:74,Time.unscaledDeltaTime*8);
+                if(hands==null)BuildHands();float swing=Mathf.Clamp01(1-(Time.unscaledTime-handPulse)/.32f);
+                hands.localPosition=new Vector3(Mathf.Sin(Time.time*7)*.004f*(Moving?1:0),Mathf.Sin(Time.time*14)*.004f*(Moving?1:0),swing*.13f);hands.localRotation=Quaternion.Euler(-swing*14,swing*-7,0);return;
+            }
             var target=transform.position+Vector3.up*1.35f;
             var offset=Quaternion.Euler(pitch,yaw,0)*new Vector3(0,0,-4.7f);
             float length=offset.magnitude;
             if(Physics.SphereCast(target,.18f,offset.normalized,out var hit,length,~(1<<8),QueryTriggerInteraction.Ignore))length=Mathf.Max(.3f,hit.distance-.15f);
             view.transform.position=target+offset.normalized*length;view.transform.LookAt(target);
         }
+        void OnDisable(){Cursor.lockState=CursorLockMode.None;Cursor.visible=true;ReleaseBind();}
+        void OnGUI(){if(!FirstPerson||Blocked)return;var color=GUI.color;GUI.color=new Color(.78f,.76f,.65f,.6f);GUI.DrawTexture(new Rect(Screen.width*.5f-1,Screen.height*.5f-1,2,2),Texture2D.whiteTexture);GUI.color=color;}
+        void OnDestroy(){foreach(var m in handMaterials)Destroy(m);}
     }
 }

@@ -24,13 +24,14 @@ public static class NeighborSliceAcceptance
         if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null)return;
         var camera=Camera.main;var originalPosition=camera.transform.position;var originalRotation=camera.transform.rotation;
         if(closeup){var tenant=GameObject.Find("Recognizably human neighbor");if(tenant!=null){camera.transform.position=tenant.transform.position+new Vector3(-2.3f,1.9f,-2.3f);camera.transform.LookAt(tenant.transform.position+Vector3.up*1.3f);}}
-        System.IO.Directory.CreateDirectory("Documentation/Validation/Day2-3");
+        System.IO.Directory.CreateDirectory("Documentation/Validation/Nov08");
         var rt=new RenderTexture(1280,800,24);var previous=camera.targetTexture;var active=RenderTexture.active;camera.targetTexture=rt;camera.Render();RenderTexture.active=rt;
-        var image=new Texture2D(1280,800,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1280,800),0,0);image.Apply();System.IO.File.WriteAllBytes("Documentation/Validation/Day2-3/"+name+".png",image.EncodeToPNG());
+        var image=new Texture2D(1280,800,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1280,800),0,0);image.Apply();System.IO.File.WriteAllBytes("Documentation/Validation/Nov08/"+name+".png",image.EncodeToPNG());
         camera.targetTexture=previous;RenderTexture.active=active;camera.transform.SetPositionAndRotation(originalPosition,originalRotation);Object.Destroy(rt);Object.Destroy(image);
     }
     public static IEnumerator RunAll()
     {
+        var presentation=Nov08Acceptance.Run();while(presentation.MoveNext())yield return presentation.Current;
         var current=Run();while(current.MoveNext())yield return current.Current;
         GameManager.Instance.StartNewJourney();yield return .7f;
         var death=DeathCycleAcceptance.Run();while(death.MoveNext())yield return death.Current;
@@ -49,6 +50,7 @@ public static class NeighborSliceAcceptance
         Check(Investigation.Collect("skt079-broadcast"),"Recorded Day 1 bulletin fixture");
         float startSanity=game.Sanity;
         SceneManager.LoadScene("LivingRoom");yield return .6f;
+        Check(S.neighborGuidanceSeen&&Slice.IsOpen,"Day 2 naturally introduces the crowbar, oil and fire before exploration");Slice.Close();
         Place(-4.5f,1.05f);Check(Slice.Use(NeighborSlice.Crowbar)&&Slice.TakeItem()&&S.inventory.Contains(NeighborSlice.Crowbar),"Kitchen cabinet gives an inventory crowbar");
         Check(Slice.Record(),"Actively record fictional maintenance leaflet");Slice.Close();
         var keyboard=Keyboard.current;InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.I));yield return .15f;InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return .1f;
@@ -69,15 +71,17 @@ public static class NeighborSliceAcceptance
         Check(Slice.Use("force-door")&&Slice.ForceEntry(),"Crowbar opens a real neighbor room through the hallway");yield return .6f;
         Check(SceneManager.GetActiveScene().name=="NeighborRoom2D"&&Camera.main.orthographic&&Slice.CurrentNode=="intro","Forced entry begins shocked intelligent 2D conversation");
         Capture("neighbor-room-2d");
-        Check(Slice.Choose(1),"Aggression branches into neighbor hostility");yield return 3.7f;
+        Check(!S.neighborHatRevealed&&GameObject.Find("Neighbor removable hat").activeSelf,"Peaceful 2D neighbor conceals his brain beneath a hat");
+        Check(Slice.Choose(1),"Aggression branches into neighbor hostility");yield return 1.3f;
+        Check(SceneManager.GetActiveScene().name=="NeighborRoom2D"&&NeighborRoom.HatRevealActive&&S.neighborHatRevealed,"Hat comes off in 2D before the filter tears");yield return 4.3f;
         Check(SceneManager.GetActiveScene().name=="NeighborArena3D"&&!Camera.main.orthographic,"Reality tear enters playable 3D neighbor arena");
         Check(GameObject.Find("Exposed upper brain")!=null&&GameObject.Find("Lower face and jaw")!=null,"Early mutation has exposed brain and recognizable human face");
         var combat=Object.FindAnyObjectByType<NeighborCombat>();Check(combat!=null&&combat.actor.GetComponent<CharacterController>()!=null,"Neighbor encounter has navigable third-person controller");
         var startPosition=combat.actor.transform.position;float walkUntil=Time.time+.3f;int walkGuard=0;while(Time.time<walkUntil&&walkGuard++<100){InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.W));yield return .03f;}InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return .1f;
         Check(combat.actor.transform.position.x>startPosition.x+.3f,"Arena starts facing the apartment interior and responds to W");Capture("neighbor-early-mutation-3d",true);
-        Check(combat.UsePreparedTool(),"Prepared first-loop tool defeats neighbor");
+        float afterExposure=game.Sanity;Check(combat.UsePreparedTool(),"Prepared first-loop tool defeats neighbor");
         Check(!S.inventory.Contains(NeighborSlice.Tool)&&S.neighborDefeated&&!S.buildingCrisisResolved,"Single-use victory does not save building automatically");
-        Check(Mathf.Abs(startSanity-game.Sanity)<.01f,"Preparation-based combat and transition have no sanity cost");yield return 1.8f;
+        Check(Mathf.Abs(startSanity-afterExposure-20)<.01f&&Mathf.Abs(afterExposure-game.Sanity)<.01f,"First hat exposure costs exactly 20 sanity; preparation tool has no additional sanity cost");yield return 1.8f;
         Check(SceneManager.GetActiveScene().name=="NeighborRoom2D"&&Camera.main.orthographic,"Combat victory returns to matching 2D room");
         Place(0,.5f);var room=Object.FindAnyObjectByType<NeighborRoom>();Check(room.UseNearest()&&Slice.Record()&&Investigation.Has("neighbor-order"),"Recover critical assignment after victory from physical desk");Slice.Close();
         Check(!CrisisRules.CanResolve(CrisisKind.Building,2,S),"Neighbor information alone cannot resolve explosion");
@@ -133,7 +137,7 @@ public static class NeighborSliceAcceptance
         Check(Slice.CurrentNode=="intro","Peace debug event starts dialogue graph");Slice.Close();
         Check(NeighborDebugCommands.Execute("event trigger neighbor_known").StartsWith("Known"),"Prior-knowledge debug event");yield return .5f;
         Check(Slice.Choose(2)&&Slice.CurrentNode=="recruit"&&Slice.Choose(2)&&S.neighborMembership=="deceive","Known-order and deception branch reproducible from console");Slice.Close();
-        Check(NeighborDebugCommands.Execute("event trigger neighbor_encounter").StartsWith("At"),"Hostility debug event");yield return 3.8f;
+        Check(NeighborDebugCommands.Execute("event trigger neighbor_encounter").StartsWith("At"),"Hostility debug event");yield return 5.9f;
         Check(SceneManager.GetActiveScene().name=="NeighborArena3D","Hostility debug event reaches 3D encounter");
         Check(NeighborDebugCommands.Execute("event trigger building_saved").StartsWith("Use"),"Source prevention debug event");yield return .5f;
         Check(SceneManager.GetActiveScene().name=="BuildingService2D"&&Investigation.Has("deduction-building-plan")&&!S.buildingCrisisResolved,"Source event sets a valid unsolved field scenario");
@@ -149,7 +153,7 @@ public static class NeighborSliceAcceptance
         if(!StoryText.English)StoryText.ToggleLanguage();Check(StoryText.English&&NeighborSlice.ItemName("crowbar")=="Crowbar","English localization selected and persisted");
         StoryText.ToggleLanguage();Check(!StoryText.English&&UnityEngine.PlayerPrefs.GetInt("Story.Language",1)==0&&NeighborSlice.ItemName("crowbar")=="撬棍","Simplified Chinese language setting persists");
         game.StartNewJourney();yield return .7f;Ready();S.encounterDestination="NeighborArena3D";S.encounterReturnScene="NeighborRoom2D";SceneManager.LoadScene("NeighborArena3D");yield return .5f;
-        game.Damage(game.Vitality-5);Place(1,0,-1);yield return 5f;
+        game.Damage(game.Vitality-5);Place(1,0,-1);float deathDeadline=Time.unscaledTime+12;while(!game.HasEnded&&Time.unscaledTime<deathDeadline)yield return .1f;
         Check(game.HasEnded&&S.lastDeathCause=="neighbor"&&EndingCollection.Has("neighbor-killed")&&!game.HasLoopAbility,"Actual lethal neighbor attack has its distinct no-gift ending without unearned return");
         game.StartNewJourney();yield return .7f;Ready(3);StoryDebugActions.SetEnabled(true);clock.DebugSetTime(3,TimePeriod.Night);StoryDebugActions.SetEnabled(false);clock.AdvanceTime();
         Check(WorldEndSequence.IsPresenting&&EndingCollection.Has("building-destroyed"),"Ignoring crisis produces mandatory audiovisual Day 3 destruction and record");yield return WorldEndSequence.Duration+.5f;

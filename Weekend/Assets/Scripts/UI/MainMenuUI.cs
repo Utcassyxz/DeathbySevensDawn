@@ -317,6 +317,7 @@ namespace DeathBySeventhsDawn.Progression
 
                 GUI.Label(new Rect(0, h * .10f, w, 90), StoryText.Current.mainMenu?.title ?? "七日", title);
                 GUI.Label(new Rect(0, h * .10f + 86, w, 32), StoryText.Current.mainMenu?.subtitle ?? "SEVEN DAY", subtitle);
+                GUI.Label(new Rect(0,h*.10f+128,w,30),StoryText.Local("音乐 · Harry Sun","Music · Harry Sun"),small);
                 float bw = Mathf.Min(300, w - 80);
                 if (PlateButton(new Rect((w - bw) / 2, h * .61f, bw, 58), StoryText.Current.mainMenu?.start ?? "开 始 新 游 戏"))
                     StartGame();

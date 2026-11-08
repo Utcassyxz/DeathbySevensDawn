@@ -39,6 +39,7 @@ public static class DeathCycleAcceptance
         for(int n=0;n<4;n++)clock.AdvanceTime();yield return .1f;
         Check(clock.Days==2&&clock.Period==TimePeriod.Morning,"Waiting crosses midnight without forcing sleep");
         Check(SceneManager.GetActiveScene().name=="LivingRoom"&&Vector2.Distance(at,GameObject.FindWithTag("Player").transform.position)<.08f,"Waiting preserves scene and position: "+SceneManager.GetActiveScene().name+" "+at+" -> "+GameObject.FindWithTag("Player").transform.position);
+        Check(S.neighborGuidanceSeen&&NeighborSlice.Instance.IsOpen,"Waiting into Day 2 offers the new preparation story beat");NeighborSlice.Instance.Close();
         float sanity=game.Sanity;
         for(int n=0;n<4;n++)clock.AdvanceTime();
         Check(Mathf.Abs(game.Sanity-sanity)<.01f,"Two sleepless days do not charge SAN early");

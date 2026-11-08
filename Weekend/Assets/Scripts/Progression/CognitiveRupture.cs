@@ -9,7 +9,7 @@ namespace DeathBySeventhsDawn.Progression
     {
         static CognitiveRupture instance;
         public static bool IsActive => instance!=null&&instance.active;
-        bool active, entering, loaded;
+        bool active, entering, loaded,tear=true,inPlace;
         float elapsed;
         Texture2D membrane;
         void Awake()
@@ -36,12 +36,13 @@ namespace DeathBySeventhsDawn.Progression
             if(TimeSystem.LoopManager.Instance!=null)TimeSystem.LoopManager.Instance.LoopRestarted-=Cancel;
         }
         void Cancel(){active=false;}
+        public static void DebugSkip(){if(StoryDebugActions.Enabled&&instance!=null)instance.Cancel();}
         public static bool BeginEncounter(string id)
         {
             if(!City.CityWorld.IsCity(SceneManager.GetActiveScene().name)||SceneManager.GetActiveScene().name=="CityEncounter3D")return false;
             return BeginSpecialEncounter(id,"CityEncounter3D",true);
         }
-        public static bool BeginSpecialEncounter(string id,string destination,bool sanityCost)
+        public static bool BeginSpecialEncounter(string id,string destination,bool sanityCost,bool tear=true)
         {
             if(instance==null||IsActive||SceneManager.GetActiveScene().name==destination||GameManager.Instance.HasEnded||!Application.CanStreamedLevelBeLoaded(destination))return false;
             var actor=GameObject.FindWithTag("Player");if(actor==null)return false;
@@ -49,12 +50,12 @@ namespace DeathBySeventhsDawn.Progression
             state.encounterReturnScene=SceneManager.GetActiveScene().name;state.encounterId=id;state.encounterDestination=destination;
             state.encounterReturnX=actor.transform.position.x;state.encounterReturnY=actor.transform.position.y;
             var body=actor.GetComponent<Rigidbody2D>();if(body!=null)body.linearVelocity=Vector2.zero;
-            instance.Begin(true);if(sanityCost)GameManager.Instance.LoseSanity(2);ProgressionSave.Write(state);return true;
+            instance.inPlace=false;instance.Begin(true,tear);if(sanityCost)GameManager.Instance.LoseSanity(2);ProgressionSave.Write(state);return true;
         }
         public static bool ReturnFromSpecial()
         {
             if(instance==null||IsActive||GameManager.Instance.HasEnded||SceneManager.GetActiveScene().name!=GameManager.Instance.State.encounterDestination)return false;
-            instance.Begin(false);ProgressionSave.Write(GameManager.Instance.State);return true;
+            instance.inPlace=false;instance.Begin(false,instance.tear);ProgressionSave.Write(GameManager.Instance.State);return true;
         }
         public static bool Escape()
         {
@@ -63,10 +64,12 @@ namespace DeathBySeventhsDawn.Progression
             if(!state.cityActions.Contains("escaped-"+state.encounterId))state.cityActions.Add("escaped-"+state.encounterId);
             return ReturnFromSpecial();
         }
-        void Begin(bool to3D)
+        public static bool RevealInPlace()
+        {if(instance==null||IsActive)return false;instance.inPlace=true;instance.Begin(true,true);return true;}
+        void Begin(bool to3D,bool flesh=true)
         {
-            entering=to3D;active=true;loaded=false;elapsed=0;
-            if(to3D)ApartmentAudio.Instance?.PlayEndingScream();
+            entering=to3D;tear=flesh;active=true;loaded=false;elapsed=0;
+            if(to3D&&tear)ApartmentAudio.Instance?.PlayEndingScream();
         }
         public static void RestoreExploration(GameObject actor)
         {
@@ -83,6 +86,7 @@ namespace DeathBySeventhsDawn.Progression
             if(!loaded&&elapsed>=duration*.5f)
             {
                 loaded=true;
+                if(inPlace)return;
                 string destination=entering?GameManager.Instance.State.encounterDestination:GameManager.Instance.State.encounterReturnScene;
                 if(!Application.CanStreamedLevelBeLoaded(destination)){Debug.LogError("Encounter destination missing: "+destination);active=false;return;}
                 SceneManager.LoadScene(destination);
@@ -94,6 +98,7 @@ namespace DeathBySeventhsDawn.Progression
             if(!active)return;
             var old=GUI.color;int depth=GUI.depth;GUI.depth=-180;
             float progress=Mathf.Clamp01(elapsed/(entering?3.2f:1.4f)),w=Screen.width,h=Screen.height;
+            if(!tear){GUI.color=new Color(.01f,.015f,.02f,Mathf.Sin(progress*Mathf.PI));GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=old;GUI.depth=depth;return;}
             // Wet, asymmetric membranes split open. No strobing or alternating white frames.
             float opening=entering?Mathf.SmoothStep(0,1,Mathf.Clamp01((progress-.45f)/.55f)):1-Mathf.SmoothStep(0,1,progress);
             for(int strip=0;strip<48;strip++)

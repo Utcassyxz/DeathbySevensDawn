@@ -13,6 +13,7 @@ namespace DeathBySeventhsDawn.Progression
         public bool neighborDeathPending,neighborIntroduced,neighborDoorForced,neighborTrusted,neighborHostile,neighborDefeated,neighborDeathLearned,shoulderEyeUnlocked,serviceRouteIsolated;
         public List<string> neighborTakenItems=new List<string>();
         public float neighborHealth=-1;
+        public bool neighborGuidanceSeen,neighborHatRevealed;
         public long eyeReadyUtcTicks;
         public string lastDeathCause="";
         public string neighborMembership="",encounterDestination="CityEncounter3D";

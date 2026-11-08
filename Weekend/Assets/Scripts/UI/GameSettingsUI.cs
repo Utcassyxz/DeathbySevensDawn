@@ -143,6 +143,7 @@ namespace DeathBySeventhsDawn.Progression
                 GUILayout.EndHorizontal();
                 button.font = GameTypography.Current;
                 GUILayout.Space(38);
+                GUILayout.Label(StoryText.Local("全部音乐 · Harry Sun","All music · Harry Sun"),label);GUILayout.Space(18);
                 if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(StoryText.Local("返回  ·  Esc", "Back  ·  Esc"), button, GUILayout.MinHeight(50)))
                     Hide();
                 GUILayout.EndArea();

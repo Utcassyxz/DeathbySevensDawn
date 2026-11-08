@@ -22,7 +22,7 @@ public static class CityAcceptance
     {
         var actor=CityWorld.Instance.PlayerObject;var cc=actor.GetComponent<CharacterController>();if(cc!=null)cc.enabled=false;actor.transform.position=p;var rb=actor.GetComponent<Rigidbody2D>();if(rb!=null){rb.position=p;rb.linearVelocity=Vector2.zero;}if(cc!=null)cc.enabled=true;Physics.SyncTransforms();Physics2D.SyncTransforms();
     }
-    static bool Open(float x,float z){CityWorld.Instance.CloseReading();Place(CityWorld.Instance.InEncounter?new Vector3(x,0,z-1.8f):new Vector3(x,z-1.8f,0));return CityWorld.Instance.TryInteract();}
+    static bool Open(string id){CityWorld.Instance.CloseReading();var p=CityWorld.Instance.SitePosition(id);Place(p+(CityWorld.Instance.InEncounter?Vector3.back*1.8f:Vector3.down*.8f));return CityWorld.Instance.TryInteract();}
     static void Ready()
     {
         MainMenuUI.Instance.DebugSkip();StoryDebugActions.SkipForcedStory();StoryDebugActions.SetEnabled(false);
@@ -37,11 +37,11 @@ public static class CityAcceptance
     static void Capture(string name)
     {
         if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null)return;
-        Directory.CreateDirectory("Documentation/Validation/Day2-3/City");
+        Directory.CreateDirectory("Documentation/Validation/Nov08/City");
         var camera=Camera.main;var texture=new RenderTexture(1280,800,24);var previous=camera.targetTexture;var active=RenderTexture.active;
         camera.targetTexture=texture;camera.Render();RenderTexture.active=texture;
         var image=new Texture2D(1280,800,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1280,800),0,0);image.Apply();
-        File.WriteAllBytes("Documentation/Validation/Day2-3/City/"+name+".png",image.EncodeToPNG());
+        File.WriteAllBytes("Documentation/Validation/Nov08/City/"+name+".png",image.EncodeToPNG());
         camera.targetTexture=previous;RenderTexture.active=active;Object.Destroy(texture);Object.Destroy(image);
     }
     public static IEnumerator Run()
@@ -53,6 +53,7 @@ public static class CityAcceptance
         var original=StoryText.Current.dayOneBroadcast.pages;
         SceneManager.LoadScene("CityStreet");yield return 1f;Ready();Set(2);yield return .2f;
         Check(CityWorld.Instance.Actor==null&&CityWorld.Instance.PlayerObject.GetComponent<Rigidbody2D>()!=null&&Camera.main.orthographic,"Ordinary city exploration stays 2D");
+        Check(Camera.main.orthographicSize<7&&GameObject.Find("Hand-drawn pocket scenery")!=null,"City uses an illustrated single-screen pocket instead of a giant map");
         Check(StoryText.Current.city.Find("circus").body==original[0]&&StoryText.Current.city.Find("sushi").body==original[1],"Original circus and sushi bulletins preserved verbatim");
         var keyboard=Keyboard.current;
         CityWorld.Travel("Stairwell");yield return .8f;
@@ -60,16 +61,16 @@ public static class CityAcceptance
         Check(RooftopAccess.Instance.UseStairs(),"First-floor door opens the city through normal travel");yield return .8f;
         Capture("city-street");
         Check(!Investigation.Has("city-maintenance"),"Entering city does not collect evidence automatically");
-        Check(Open(11,0),"Handover opens at physical interaction distance");
+        Check(Open("city-maintenance"),"Handover opens at physical interaction distance");
         var frozen=CityWorld.Instance.PlayerObject.transform.position;InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.W));yield return .2f;
         Check(Vector3.Distance(frozen,CityWorld.Instance.PlayerObject.transform.position)<.05f,"Reading evidence blocks movement");
         InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.R));yield return .1f;InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return .1f;
         Check(Investigation.Has("city-maintenance"),"R actively records handover before Day 3");CityWorld.Instance.CloseReading();
         SceneManager.LoadScene("CityService");yield return .7f;
-        Check(Open(9,16)&&!CityWorld.Instance.ActSelected(),"Physical terminal refuses intervention without confirmed deduction");CityWorld.Instance.CloseReading();
-        Check(Open(-11,5)&&CityWorld.Instance.RecordSelected(),"Service wiring can be actively recorded before Day 3");CityWorld.Instance.CloseReading();
+        Check(Open("building-terminal")&&!CityWorld.Instance.ActSelected(),"Physical terminal refuses intervention without confirmed deduction");CityWorld.Instance.CloseReading();
+        Check(Open("city-fuse")&&CityWorld.Instance.RecordSelected(),"Service wiring can be actively recorded before Day 3");CityWorld.Instance.CloseReading();
         Check(RecordNeighborPrerequisites()&&Investigation.Has("deduction-building-plan"),"Existing reasoning graph confirms building intervention");
-        Check(Open(9,16)&&!CityWorld.Instance.ActSelected()&&!S.buildingCrisisResolved,"Retired city switch cannot bypass new neighbor-source investigation");CityWorld.Instance.CloseReading();
+        Check(Open("building-terminal")&&!CityWorld.Instance.ActSelected()&&!S.buildingCrisisResolved,"Retired city switch cannot bypass new neighbor-source investigation");CityWorld.Instance.CloseReading();
         SceneManager.LoadScene("BuildingService2D");yield return .7f;
         var sourceRoom=Object.FindAnyObjectByType<NeighborRoom>();var sourceActor=GameObject.FindWithTag("Player");sourceActor.transform.position=new Vector3(-2,-.3f,0);sourceActor.GetComponent<Rigidbody2D>().position=sourceActor.transform.position;Physics2D.SyncTransforms();
         Check(sourceRoom.UseNearest()&&NeighborSlice.Instance.Choose(0),"Protected routing field action");NeighborSlice.Instance.Close();
@@ -87,23 +88,23 @@ public static class CityAcceptance
         Check(AquariumEntity.Instance.CompanionPresent,"Human Fish remains after her morning scene");
         SceneManager.LoadScene("CityBroadcast");yield return .7f;
         Check(Object.FindObjectsByType<CityEnemy>(FindObjectsSortMode.None).Length==0&&Camera.main.orthographic,"Day 4 investigation remains 2D until an actual encounter");
-        Check(Open(-11,5)&&CityWorld.Instance.RecordSelected(),"Record city search orders");CityWorld.Instance.CloseReading();
-        Check(Open(11,5)&&CityWorld.Instance.RecordSelected(),"Record broadcast routing");CityWorld.Instance.CloseReading();
+        Check(Open("city-orders")&&CityWorld.Instance.RecordSelected(),"Record city search orders");CityWorld.Instance.CloseReading();
+        Check(Open("city-routing")&&CityWorld.Instance.RecordSelected(),"Record broadcast routing");CityWorld.Instance.CloseReading();
         Check(Investigation.Connect("city-orders","city-routing",true),"City crisis has independent deduction");
-        Check(Open(0,18)&&CityWorld.Instance.ActSelected()&&S.cityCrisisResolved,"Broadcast intervention resolves fifth-day city crisis");CityWorld.Instance.CloseReading();yield return .2f;
+        Check(Open("city-terminal")&&CityWorld.Instance.ActSelected()&&S.cityCrisisResolved,"Broadcast intervention resolves fifth-day city crisis");CityWorld.Instance.CloseReading();yield return .2f;
         Set(5,TimePeriod.Night);clock.AdvanceTime();yield return .3f;
         Check(clock.Days==6&&!WorldEndSequence.IsPresenting,"Resolved city crisis reaches Day 6");
         SceneManager.LoadScene("CityObservatory");yield return .7f;
-        Check(Open(-11,5)&&CityWorld.Instance.RecordSelected(),"Record sixth-day observations");CityWorld.Instance.CloseReading();
-        Check(Open(11,5)&&CityWorld.Instance.RecordSelected(),"Record array manual");CityWorld.Instance.CloseReading();
+        Check(Open("city-spectrum")&&CityWorld.Instance.RecordSelected(),"Record sixth-day observations");CityWorld.Instance.CloseReading();
+        Check(Open("city-lens")&&CityWorld.Instance.RecordSelected(),"Record array manual");CityWorld.Instance.CloseReading();
         Check(Investigation.Connect("city-spectrum","city-lens",true),"Observatory reasoning conclusion");
-        Check(Open(0,18)&&CityWorld.Instance.ActSelected()&&S.daySevenCrisisResolved,"Cosmic route can be shut down through normal action");CityWorld.Instance.CloseReading();
+        Check(Open("cosmic-terminal")&&CityWorld.Instance.ActSelected()&&S.daySevenCrisisResolved,"Cosmic route can be shut down through normal action");CityWorld.Instance.CloseReading();
         Set(7,TimePeriod.Night);clock.AdvanceTime();yield return .3f;
         Check(clock.Days==8&&!game.HasEnded&&!WorldEndSequence.IsPresenting,"Seven-day route reaches Day 8 without forced return");
-        Place(new Vector3(3,-8,0));game.Damage(9);ProgressionSave.Write(S);var saved=ProgressionSave.Load();
+        Place(new Vector3(3,-3,0));game.Damage(9);ProgressionSave.Write(S);var saved=ProgressionSave.Load();
         Check(saved.version==7&&saved.savedDay==8&&saved.savedScene=="CityObservatory"&&Mathf.Abs(saved.savedX-3)<.1f&&Mathf.Abs(saved.savedVitality-game.Vitality)<.01f,"v7 checkpoint stores date, scene, position and vitality");
         Check(JourneyCheckpoint.Resume(),"Continue accepts valid saved scene");yield return .8f;
-        Check(Vector3.Distance(CityWorld.Instance.PlayerObject.transform.position,new Vector3(3,-8,0))<.2f,"Continue restores 2D exploration position");
+        Check(Vector3.Distance(CityWorld.Instance.PlayerObject.transform.position,new Vector3(3,-3,0))<.2f,"Continue restores 2D exploration position");
         foreach(int version in new[]{1,2,3,4,5})
         {
             ProgressionSave.Write(new ProgressionState{version=version,loopCount=1,yogDreamSeen=true,knowledge=5,mutation=8});var migrated=ProgressionSave.Load();
@@ -113,7 +114,7 @@ public static class CityAcceptance
         Set(4);S.cityCrisisResolved=false;SceneManager.LoadScene("CityStreet");yield return .8f;
         Check(CognitiveRupture.BeginEncounter("CityStreet"),"A real hostile encounter starts perceptual rupture");
         Check(CognitiveRupture.IsActive&&SceneManager.GetActiveScene().name=="CityStreet","Tear presentation precedes scene transition");yield return 2.2f;
-        if(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null)ScreenCapture.CaptureScreenshot("Documentation/Validation/Day2-3/City/filter-tear.png");
+        if(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null)ScreenCapture.CaptureScreenshot("Documentation/Validation/Nov08/City/filter-tear.png");
         yield return 1.4f;
         Check(SceneManager.GetActiveScene().name=="CityEncounter3D"&&!Camera.main.orthographic&&CityWorld.Instance.Actor!=null,"Only chase scene uses third-person 3D");
         var motor=CityWorld.Instance.Actor;var beforeMove=motor.transform.position;float walkUntil=Time.time+.4f;int inputGuard=0;
@@ -137,7 +138,7 @@ public static class CityAcceptance
         int charges=S.defenseCharges;Check(actor.Defend()&&S.defenseCharges==charges-1&&ai.Mode==EnemyMode.Stunned,"Limited defense consumes one charge and stuns nearby threat");
         Check(!actor.Defend()&&S.defenseCharges==charges-1,"Defense cooldown prevents repeated charge use in same instant");
         S.defenseCharges=0;Check(!actor.Defend(),"Empty defense supply cannot attack");
-        Check(Open(0,19),"Escape requires reaching the actual 3D exit");
+        Check(Open("escape"),"Escape requires reaching the actual 3D exit");
         Check(CognitiveRupture.IsActive,"Escape starts closure transition");yield return 1.8f;
         Check(SceneManager.GetActiveScene().name=="CityStreet"&&Camera.main.orthographic&&CityWorld.Instance.Actor==null,"Escaping restores 2D exploration");
         Check(S.cityActions.Contains("escaped-CityStreet")&&!S.cityCrisisResolved,"Escaping does not automatically solve city crisis");

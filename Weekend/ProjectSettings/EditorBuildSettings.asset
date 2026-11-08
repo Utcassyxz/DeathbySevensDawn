@@ -53,5 +53,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Apartment/BuildingService2D.unity
     guid: 202fc4ef2bfa0eb4d810c742e07ee988
+  - enabled: 1
+    path: Assets/Apartment/SushiInterior3D.unity
+    guid: 5aab3c8440de6e14db3a9d805e9ebd99
+  - enabled: 1
+    path: Assets/Apartment/CircusInterior3D.unity
+    guid: c76564e519430ce4e80280c4d26449e1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

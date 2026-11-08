@@ -998,140 +998,140 @@
         "id": "circus",
         "title": "Will Circus",
         "body": "The Will Circus arrives Friday. Organizers confirm that all animals have been accounted for.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "sushi",
         "title": "Miyazaki Sushi",
         "body": "Miyazaki Sushi opens its 101st branch tomorrow. The first hundred customers receive a commemorative lunch box.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "city-maintenance",
-        "title": "Maintenance handover",
-        "body": "Before the third night, 401 has diverted a shared pipe into his room. The handover identifies an isolation switch in the service area, separate from the aquarium supply.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "title": "Handover ledger",
+        "body": "Third night. Service shaft supply. 401.\nSomeone has written NOTIFIED beside it. Whether that counts as saving a life depends on who fills in the form.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "city-fuse",
-        "title": "Service wiring diagram",
-        "body": "The device in 401 draws from a shared circuit. This diagram shows how to isolate that branch while keeping residential lights and the aquarium pump running. Compare it with the handover.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "title": "Wiring diagram",
+        "body": "Several lines bypass the residential breaker.\nTurning out the lights is not the same as cutting the power. Or reaching morning.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "city-orders",
         "title": "Search orders",
-        "body": "From Day 4, search parties work through addresses across the city. The lists share a dispatch number. The broadcast command terminal is still accepting updates. This is a new city crisis, separate from the bombing.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "body": "Addresses, no charges.\nThe broadcast will explain for them.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "city-routing",
-        "title": "Operator routing log",
-        "body": "The operator left a note: stopping dispatch requires validating the search-list number, then severing the broadcast route at the command terminal. Switching off one radio will not stop it.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "title": "Broadcast routing",
+        "body": "The same words are routed to every street.\nEnough voices in unison can sound like agreement.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "city-spectrum",
-        "title": "Day 6 observation log",
-        "body": "The Day 6 log shows the occultation synchronizing with the local observation array. It does not explain the ancient entity, but records when the array begins synchronizing.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "title": "Observation log",
+        "body": "Every curve bends at the same second. The instruments are working.\nBad news tends to be punctual.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "city-lens",
-        "title": "Array maintenance manual",
-        "body": "The manual contains an emergency shutdown. Identify the synchronized route against the daily observations before shutting it down, rather than blindly destroying the telescope.",
-        "success": "Recorded. Press B to connect the relevant evidence and confirm a conclusion.",
+        "title": "Array manual",
+        "body": "Calibrate. Align. Lock.\nThey gave every step a reassuring name.",
+        "success": "Recorded.",
         "locked": "No new record is available. Some documents appear on Day 4 or Day 6."
       },
       {
         "id": "return",
         "title": "Return",
         "body": "Return to the apartment or street.",
-        "success": "Maintenance handover recorded.",
+        "success": "Recorded.",
         "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
       },
       {
         "id": "service",
         "title": "Service area",
         "body": "Investigate the circuit supplying the third-night device.",
-        "success": "Maintenance handover recorded.",
+        "success": "Recorded.",
         "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
       },
       {
         "id": "broadcast",
         "title": "Broadcast center",
         "body": "Investigate the city search dispatch.",
-        "success": "Maintenance handover recorded.",
+        "success": "Recorded.",
         "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
       },
       {
         "id": "observatory",
         "title": "Observatory",
         "body": "Look for the observation logs from Day 6.",
-        "success": "Maintenance handover recorded.",
+        "success": "Recorded.",
         "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
       },
       {
         "id": "rest",
         "title": "Bench: wait one period",
         "body": "Wait voluntarily. This does not count as sleep.",
-        "success": "Maintenance handover recorded.",
+        "success": "Recorded.",
         "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
       },
       {
         "id": "caretaker",
-        "title": "Caretaker / Fish testimony",
-        "body": "The caretaker shares the handover with a recognizable resident. If mutation is too advanced, earn Fish’s understanding and record her testimony, or find the duplicate handover across the street.",
-        "success": "Maintenance handover recorded.",
+        "title": "Caretaker",
+        "body": "He grips the keys.\nConvince him you are asking directions, not choosing the next room.",
+        "success": "Recorded.",
         "locked": "Requires low mutation, or Fish as a current companion with recorded testimony. A paper handover is also available."
       },
       {
         "id": "building-terminal",
         "title": "Isolate the 401 circuit",
         "body": "Before the third night, connect the handover and wiring diagram, then isolate the 401 circuit. The aquarium keeps power. Day 4 testimony is not required.",
-        "success": "Intervention complete. This crisis is resolved for this life.",
+        "success": "Recorded.",
         "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
       },
       {
         "id": "city-terminal",
         "title": "Stop city search dispatch",
         "body": "Connect the search orders and routing log, then stop dispatch at its source.",
-        "success": "Intervention complete. This crisis is resolved for this life.",
+        "success": "Recorded.",
         "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
       },
       {
         "id": "cosmic-terminal",
         "title": "Shut the synchronized observation route",
         "body": "Connect the Day 6 log with the maintenance manual, identify the route, then perform the emergency shutdown.",
-        "success": "Intervention complete. This crisis is resolved for this life.",
+        "success": "Recorded.",
         "locked": "The required deduction is missing, or the deadline has passed. Record both clues with R, close this panel, then connect and confirm them with B."
       },
       {
         "id": "escape",
         "title": "Escape the exposed space",
         "body": "Reach the far exit and evade the pursuers.",
-        "success": "",
+        "success": "Recorded.",
         "locked": ""
       },
       {
         "id": "filter-tear",
         "title": "Perceptual filter torn",
         "body": "The flat world is ripped apart.\nIt is wet underneath. Something is running toward you.",
-        "success": "",
+        "success": "Recorded.",
         "locked": ""
       },
       {
         "id": "filter-return",
         "title": "The filter closes",
         "body": "The split closes. The street is flat again.\nYou still remember what was underneath.",
-        "success": "",
+        "success": "Recorded.",
         "locked": ""
       }
     ],
@@ -1155,38 +1155,38 @@
     "entries": [
       {
         "id": "crowbar",
-        "title": "Crowbar · kitchen cabinet",
-        "body": "A steel crowbar lies under a folded maintenance leaflet. The leaflet describes a sealed fictional heat core; there is no mixing procedure. E takes the crowbar. R records the leaflet."
+        "title": "Crowbar",
+        "body": "A crowbar, thick with rust.\nFor opening stubborn doors. And the occasional closed mind."
       },
       {
         "id": "cooking-oil",
         "title": "Cooking oil",
-        "body": "An ordinary bottle beside the kitchen cabinet. It is still useful as a preparation item. Take it if you want; finding it does not automatically write a deduction."
+        "body": "A little oil clings to the bottle.\nNot enough for supper. Plenty for a bad idea."
       },
       {
         "id": "sealed-maintenance-medium",
-        "title": "Sealed maintenance medium",
-        "body": "A proprietary sealed repair core stored in the bathroom. Its heat mark matches the cabinet leaflet. Hugo leaves the contents sealed."
+        "title": "Sealed repair core",
+        "body": "An old repair core from the bathroom cabinet. A faded flame marks its casing.\nThe leaflet calls it a safety device. Leaflets rarely take responsibility."
       },
       {
         "id": "sealed-ember-tool",
-        "title": "Sealed ember tool",
-        "body": "A single-use, fictional inventory tool assembled through a validated inference. G uses it against the neighbor. No real manufacturing steps are shown."
+        "title": "Ember case",
+        "body": "A sealed little case that remembers being fire.\nOne use. Hopefully enough."
       },
       {
         "id": "invitation",
-        "title": "Triangle invitation",
-        "body": "The same group named in the local bulletin. Accepting this invitation opens a route; it does not end the game."
+        "title": "Invitation",
+        "body": "A triangle pressed into one corner. No date.\nThey must assume it is only a matter of time."
       },
       {
         "id": "pipe-pulse",
-        "title": "Bathroom pipe pulse",
-        "body": "Three dull pulses travel up the shared service shaft. A fresh maintenance stamp reads: basement service room, assigned circuit 401. R records the location and sound."
+        "title": "Knocking in the wall",
+        "body": "A tap every few seconds. Upstairs and downstairs answer in turn.\nNot a leak. More like a roll call."
       },
       {
         "id": "force-door",
-        "title": "401: crowbar or a knock",
-        "body": "The crowbar fits under the door edge. Forcing entry will frighten the tenant. You can still knock instead."
+        "title": "401 · The lock",
+        "body": "Dust fills the keyhole. Someone is holding their breath inside.\nThe crowbar is heavy. “Wrong door” would be impolite at this point."
       },
       {
         "id": "force-choice",
@@ -1230,8 +1230,8 @@
       },
       {
         "id": "intro",
-        "title": "The tenant of 401",
-        "body": "Neighbor: What the hell?! How did you get in here?\nHugo: I heard something coming from your apartment. What happened to you?\nHis upper skull is partly absent. A wet fold moves above an otherwise familiar face."
+        "title": "401 · The neighbor",
+        "body": "The old hat is still on. His smile arrives half a second late.\n“I heard the door. I suppose you heard my… work?”"
       },
       {
         "id": "calm-choice",
@@ -1250,8 +1250,8 @@
       },
       {
         "id": "ask",
-        "title": "Fear and promise",
-        "body": "He covers the missing part of his skull. The other hand contracts against the table.\nNeighbor: They said it was the next stage. I thought the pain meant it was working."
+        "title": "401 · The neighbor",
+        "body": "“They call it the next stage. Someone has to get things ready.”\nHis hand touches the brim, then falls.\n“You came to help. Didn’t you?”"
       },
       {
         "id": "promise-choice",
@@ -1315,8 +1315,8 @@
       },
       {
         "id": "neighbor-order",
-        "title": "Building assignment: 401",
-        "body": "The Triangle warning on television named the same organization. The third-night order assigns this building to the tenant. Its source is not inside his body: the basement service core supplies the apparatus in 401."
+        "title": "Purification assignment",
+        "body": "401. Service shaft. Third night. All on the same line.\nThe neighbor is only carrying out an order. Someone has scheduled the whole building."
       },
       {
         "id": "routing",
@@ -1375,23 +1375,23 @@
       },
       {
         "id": "combat-controls",
-        "title": "Neighbor encounter",
-        "body": "WASD move · RMB camera · Shift evade · Q crowbar during recovery · G prepared tool · V shoulder eye"
+        "title": "",
+        "body": "WASD Move · Mouse Look · Shift Sprint\nQ Crowbar · G Ember case · V Shoulder eye"
       },
       {
         "id": "attack-warning",
-        "title": "Attack windup",
-        "body": "His arm locks. Move away, then counter during the recovery."
+        "title": "Punch",
+        "body": "He draws back a fist. Negotiations have narrowed."
       },
       {
         "id": "collected",
-        "title": "Collected",
-        "body": "Item placed in the existing inventory."
+        "title": "Put away",
+        "body": "In the bag."
       },
       {
         "id": "recorded",
         "title": "Recorded",
-        "body": "The fact is on the existing evidence board."
+        "body": "Paper, at least, will not pretend it saw nothing."
       },
       {
         "id": "already-recorded",
@@ -1400,8 +1400,8 @@
       },
       {
         "id": "prepared",
-        "title": "Prepared",
-        "body": "One sealed fictional combat tool is ready. No sanity was spent."
+        "title": "Sealed",
+        "body": "The ember settles. The bad idea has a respectable case."
       },
       {
         "id": "take",
@@ -1410,8 +1410,8 @@
       },
       {
         "id": "controls",
-        "title": "Controls",
-        "body": "R record · 1–4 choose · E take · Enter/Esc close · use inventory preparation from I"
+        "title": "",
+        "body": "R Record a clue    E Use    Enter / Esc Close"
       },
       {
         "id": "craft-choice",
@@ -1457,6 +1457,61 @@
         "id": "eye-active",
         "title": "Shoulder eye open",
         "body": "The shoulder eye is open. {0:0.0} seconds remain. The sanity cost has been paid."
+      },
+      {
+        "id": "foreshadow",
+        "title": "Hugo · Day two",
+        "body": "Another thud behind 401. Furniture being moved. Or moving someone.\n\nDad left a crowbar in the low kitchen cupboard. There is oil by the stove; a repair core in the bathroom cabinet has a flame on its label.\n\nI should bring something useful. It would be rude to arrive as the only course."
+      },
+      {
+        "id": "hat-reveal",
+        "title": "He takes off his hat",
+        "body": "“Warm in here.”\nUnder the hat, half the head has stopped being a head."
+      },
+      {
+        "id": "contamination",
+        "title": "Cognitive contamination · Sanity −20",
+        "body": "Hugo understands, suddenly, whose eyes the hat was covering.\n\nThe perceptual filter tears. Reality shows its wet underside."
+      },
+      {
+        "id": "contamination-known",
+        "title": "The filter tears again",
+        "body": "The hat leaves his head. The old wound leaves memory."
+      },
+      {
+        "id": "brain-warning",
+        "title": "Brain cast",
+        "body": "His hand reaches behind his head. Move away from where he is looking."
+      },
+      {
+        "id": "brain-bound",
+        "title": "Entangled",
+        "body": "Warm neural tissue tightens. {0:0.0} seconds until you can pull yourself out of this thought."
+      },
+      {
+        "id": "kick-warning",
+        "title": "Kick",
+        "body": "He puts his weight on one leg. The other has plans."
+      },
+      {
+        "id": "prep-manual",
+        "title": "Repair leaflet",
+        "body": "Oil, repair core, sealed case. In small print: FOR EMERGENCIES ONLY.\nHugo thinks of 401. A generous definition of emergency."
+      },
+      {
+        "id": "venue-exit",
+        "title": "Exit",
+        "body": "E Leave for the street"
+      },
+      {
+        "id": "sushi-venue",
+        "title": "Miyazaki Sushi · Inside",
+        "body": "The tables are neatly set. Every mouth seems to be waiting.\nWASD Move · Mouse Look · E Leave at the door"
+      },
+      {
+        "id": "circus-venue",
+        "title": "Will Circus · Inside",
+        "body": "The curtain is closed. The sounds inside the cages have taken their seats.\nWASD Move · Mouse Look · E Leave at the door"
       }
     ]
   }

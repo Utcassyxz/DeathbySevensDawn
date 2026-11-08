@@ -22,3 +22,7 @@ MonoBehaviour:
   neighborHealth: 100
   neighborDamage: 18
   attackWindup: 0.85
+  brainWindup: 1.2
+  brainFlight: 0.65
+  brainBindDuration: 3
+  brainCooldown: 7

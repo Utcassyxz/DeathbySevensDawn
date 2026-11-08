@@ -15,8 +15,8 @@ namespace DeathBySeventhsDawn.Interaction
     {
         public const string Crowbar="crowbar",Oil="cooking-oil",Medium="sealed-maintenance-medium",Tool="sealed-ember-tool";
         public static NeighborSlice Instance {get;private set;}
-        public static bool WorldBlocked=>Instance!=null&&(Instance.open||Instance.deathTimer>0);
-        public static bool IsOffsiteScene(string scene)=>scene=="NeighborRoom2D"||scene=="NeighborArena3D"||scene=="BuildingService2D";
+        public static bool WorldBlocked=>NeighborRoom.HatRevealActive||Instance!=null&&(Instance.open||Instance.deathTimer>0);
+        public static bool IsOffsiteScene(string scene)=>scene=="NeighborRoom2D"||scene=="NeighborArena3D"||scene=="BuildingService2D"||VenueRoom.IsVenue(scene);
         public static bool OwnsDoor=>TimeManager.Instance!=null&&TimeManager.Instance.Days>=2&&GameManager.Instance.State.inventory.Contains(Crowbar);
         public string CurrentNode=>node?.id;
         public bool IsOpen=>open;
@@ -124,7 +124,15 @@ namespace DeathBySeventhsDawn.Interaction
         }
         public bool StartFight()
         {
-            Close();return CognitiveRupture.BeginSpecialEncounter("neighbor", "NeighborArena3D",false);
+            if(CognitiveRupture.IsActive||NeighborRoom.HatRevealActive)return false;
+            var room=Object.FindAnyObjectByType<NeighborRoom>();if(room==null||room.Arena||room.Service)return false;
+            Close();return room.BeginHatReveal();
+        }
+        public bool TryOfferGuidance()
+        {
+            string scene=SceneManager.GetActiveScene().name;
+            if(StoryDebugActions.Enabled||S.neighborGuidanceSeen||TimeManager.Instance.Days<2||TimeManager.Instance.Days>3||!S.tutorialComplete||open||GameManager.Instance.HasEnded||scene!="LivingRoom"&&scene!="Corridor")return false;
+            S.neighborGuidanceSeen=true;Show("foreshadow");ProgressionSave.Write(S);return true;
         }
         public void Victory()
         {
@@ -154,6 +162,7 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             }
             if(StoryJournal.WorldBlocked||CognitiveRupture.IsActive)return;
+            if(TryOfferGuidance())return;
             string scene=SceneManager.GetActiveScene().name,id=null;
             if(scene=="LivingRoom")id=Near(new Vector2(-4.5f,1.05f))?Crowbar:Near(new Vector2(-2,1.1f))?Oil:null;
             if(scene=="Bathroom")id=Near(new Vector2(-1,1))?Medium:Near(new Vector2(1,1))?"pipe-pulse":null;
@@ -166,24 +175,18 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             if(ProgressionHUD.DebugConsoleOpen||!open&&deathTimer<=0)return;
-            var matrix=GUI.matrix;int depth=GUI.depth;var color=GUI.color;
-            float scale=Mathf.Min(Screen.width/1200f,Screen.height/800f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);GUI.depth=-120;float w=Screen.width/scale,h=Screen.height/scale;
-            var area=new Rect(w*.12f,h*.22f,w*.76f,h*.70f);var text=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=21,wordWrap=true};
-            try
+            var choices=new List<string>();var indices=new List<int>();
+            if(deathTimer<=0)
             {
-                GUI.Box(area,"");var line=Text(deathTimer>0?"neighbor-killed":panel);
-                GUI.Label(new Rect(area.x+24,area.y+18,area.width-48,area.height*.49f),line.title+"\n\n"+line.body+"\n"+Notice,text);
-                if(deathTimer>0)return;
-                float y=area.y+area.height*.53f;
-                if(node!=null&&node.choices!=null)
-                {for(int i=0;i<node.choices.Length;i++){var c=node.choices[i];if(!Allowed(c.condition))continue;if(PrototypeButtons.Button(new Rect(area.x+24,y,area.width-48,42),(i+1)+". "+Text(c.line).body,text))Choose(i);y+=47;}}
+                if(node!=null&&node.choices!=null){for(int i=0;i<node.choices.Length;i++)if(Allowed(node.choices[i].condition)){choices.Add((i+1)+". "+Text(node.choices[i].line).body);indices.Add(i);}}
                 else if(panel=="force-door"||panel=="routing"||panel=="source-core")
-                {string a=panel=="force-door"?"force-choice":panel=="routing"?"isolate-choice":"lock-choice";if(GUI.Button(new Rect(area.x+24,y,area.width-48,44),"1. "+Text(a).body,text))Choose(0);if(panel=="force-door"&&GUI.Button(new Rect(area.x+24,y+50,area.width-48,44),"2. "+Text("knock-choice").body,text))Choose(1);}
-                else if(panel==Tool){if(GUI.Button(new Rect(area.x+24,y,area.width-48,44),Text("craft-choice").body,text))Prepare();}
-                else if(panel==Crowbar||panel==Oil||panel==Medium){if(GUI.Button(new Rect(area.x+24,y,area.width-48,44),Text("take").body,text))TakeItem();}
-                GUI.Label(new Rect(area.x+24,area.yMax-52,area.width-48,40),Text("controls").body,text);
+                {choices.Add("1. "+Text(panel=="force-door"?"force-choice":panel=="routing"?"isolate-choice":"lock-choice").body);indices.Add(0);if(panel=="force-door"){choices.Add("2. "+Text("knock-choice").body);indices.Add(1);}}
+                else if(panel==Tool){choices.Add(Text("craft-choice").body);indices.Add(0);}
+                else if(panel==Crowbar||panel==Oil||panel==Medium){choices.Add(Text("take").body);indices.Add(0);}
             }
-            finally{GUI.matrix=matrix;GUI.depth=depth;GUI.color=color;}
+            var line=Text(deathTimer>0?"neighbor-killed":panel);
+            int pick=NarrativeCard.Draw(line.title,line.body,Notice,choices.ToArray(),deathTimer>0?"":Text("controls").body);
+            if(pick>=0)Choose(indices[pick]);
         }
     }
 }

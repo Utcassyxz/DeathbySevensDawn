@@ -21,6 +21,8 @@ namespace DeathBySeventhsDawn.City
         public GameObject PlayerObject { get; private set; }
         public bool InEncounter => SceneManager.GetActiveScene().name=="CityEncounter3D";
         Sprite pixelSprite; Texture2D pixelTexture;
+        Interaction.PocketSceneArt art;
+        public Vector3 SitePosition(string id)=>sites.Find(s=>s.id==id)?.position??new Vector3(float.NaN,0,0);
         readonly List<Site> sites=new List<Site>();
         readonly List<Material> materials=new List<Material>();
         sealed class Site {public string id,destination;public Vector3 position;public CrisisKind crisis;}
@@ -54,7 +56,7 @@ namespace DeathBySeventhsDawn.City
             }
             var player=new GameObject();player.name="Hugo 3D";player.tag="Player";player.layer=8;
             player.transform.position=V(0,-17);
-            var visual=GameObject.CreatePrimitive(PrimitiveType.Capsule);visual.name="Hugo silhouette";visual.transform.SetParent(player.transform,false);visual.transform.localPosition=Vector3.up*.9f;visual.transform.localScale=new Vector3(.65f,.9f,.65f);visual.layer=8;Destroy(visual.GetComponent<Collider>());visual.GetComponent<Renderer>().sharedMaterial=Material(new Color(.55f,.68f,.70f));
+            var visual=GameObject.CreatePrimitive(PrimitiveType.Capsule);visual.name="Hugo silhouette";visual.transform.SetParent(player.transform,false);visual.transform.localPosition=Vector3.up*.9f;visual.transform.localScale=new Vector3(.65f,.9f,.65f);visual.layer=8;Destroy(visual.GetComponent<Collider>());visual.GetComponent<Renderer>().sharedMaterial=Material(new Color(.55f,.68f,.70f));visual.GetComponent<Renderer>().enabled=false;
             PlayerObject=player;Actor=player.AddComponent<ThirdPersonMotor>();
             var cameraObject=new GameObject("City third-person camera");cameraObject.tag="MainCamera";var camera=cameraObject.AddComponent<Camera>();camera.fieldOfView=58;camera.nearClipPlane=.1f;camera.farClipPlane=100;cameraObject.AddComponent<AudioListener>();Actor.view=camera;
             Add("escape",V(0,19));
@@ -80,25 +82,28 @@ namespace DeathBySeventhsDawn.City
             State.cityRegion=region;
             pixelTexture=new Texture2D(1,1);pixelTexture.SetPixel(0,0,Color.white);pixelTexture.Apply();pixelTexture.filterMode=FilterMode.Point;
             pixelSprite=Sprite.Create(pixelTexture,new Rect(0,0,1,1),Vector2.one*.5f,1);
-            Flat("City map",Vector3.zero,new Vector2(36,46),new Color(.11f,.16f,.18f),-5);
-            Flat("West wall",new Vector3(-18,0,0),new Vector2(1,46),Color.black,0,true);Flat("East wall",new Vector3(18,0,0),new Vector2(1,46),Color.black,0,true);
-            Flat("North wall",new Vector3(0,23,0),new Vector2(36,1),Color.black,0,true);Flat("South wall",new Vector3(0,-23,0),new Vector2(36,1),Color.black,0,true);
-            for(int i=0;i<5;i++)Flat("City buildings",new Vector3(i%2==0?-5:6,-11+i*6,0),new Vector2(3,2),new Color(.23f,.28f,.29f),0,true);
-            PlayerObject=new GameObject("Hugo 2D");PlayerObject.tag="Player";PlayerObject.transform.position=new Vector3(0,-17,0);
+            art=gameObject.AddComponent<Interaction.PocketSceneArt>();art.Backdrop(region);
+            Flat("West wall",new Vector3(-9,0,0),new Vector2(.3f,12),Color.black,0,true);Flat("East wall",new Vector3(9,0,0),new Vector2(.3f,12),Color.black,0,true);
+            Flat("North wall",new Vector3(0,6,0),new Vector2(18,.3f),Color.black,0,true);Flat("South wall",new Vector3(0,-6,0),new Vector2(18,.3f),Color.black,0,true);
+            Flat("Facade collision",new Vector3(0,4.8f,0),new Vector2(18,2),new Color(0,0,0,0),-3,true);
+            PlayerObject=new GameObject("Hugo 2D");PlayerObject.tag="Player";PlayerObject.transform.position=new Vector3(0,-3,0);
             var sr=PlayerObject.AddComponent<SpriteRenderer>();sr.sprite=pixelSprite;sr.color=new Color(.65f,.76f,.74f);sr.sortingOrder=5;PlayerObject.transform.localScale=new Vector3(.7f,1,1);
-            var body=PlayerObject.AddComponent<Rigidbody2D>();body.gravityScale=0;body.freezeRotation=true;PlayerObject.AddComponent<BoxCollider2D>();PlayerObject.AddComponent<PlayerController2D>();
-            var cameraObject=new GameObject("City 2D camera");cameraObject.tag="MainCamera";cameraObject.transform.position=new Vector3(0,0,-10);var camera=cameraObject.AddComponent<Camera>();camera.orthographic=true;camera.orthographicSize=25;cameraObject.AddComponent<AudioListener>();
-            Add("return",V(0,-20),region=="CityStreet"?"Stairwell":"CityStreet");
+            sr.sprite=art.Person();sr.color=Color.white;PlayerObject.transform.localScale=Vector3.one;
+            var body=PlayerObject.AddComponent<Rigidbody2D>();body.gravityScale=0;body.freezeRotation=true;var feet=PlayerObject.AddComponent<BoxCollider2D>();feet.size=new Vector2(.5f,.6f);feet.offset=new Vector2(0,-.5f);PlayerObject.AddComponent<PlayerController2D>();
+            var cameraObject=new GameObject("City 2D camera");cameraObject.tag="MainCamera";cameraObject.transform.position=new Vector3(0,0,-10);var camera=cameraObject.AddComponent<Camera>();camera.orthographic=true;camera.orthographicSize=6.6f;cameraObject.AddComponent<AudioListener>();
+            Add("return",V(0,-4.5f),region=="CityStreet"?"Stairwell":"CityStreet");
             if(region=="CityStreet")
             {
-                Add("circus",V(-11,-9));Add("sushi",V(11,-9));Add("caretaker",V(-11,0));Add("city-maintenance",V(11,0));
-                Add("service",V(-11,15),"CityService");Add("broadcast",V(0,18),"CityBroadcast");Add("observatory",V(11,15),"CityObservatory");Add("rest",V(0,-12));
+                Add("circus",V(-6,-1.4f));Add("sushi",V(6,-1.4f));Add("caretaker",V(-3,-.8f));Add("city-maintenance",V(3,-.8f));
+                Add("service",V(-6,2),"CityService");Add("broadcast",V(0,2),"CityBroadcast");Add("observatory",V(6,2),"CityObservatory");Add("rest",V(0,-2.2f));
             }
-            else if(region=="CityService"){Add("city-fuse",V(-11,5));Add("building-terminal",V(9,16),null,CrisisKind.Building);}
-            else if(region=="CityBroadcast"){Add("city-orders",V(-11,5));Add("city-routing",V(11,5));Add("city-terminal",V(0,18),null,CrisisKind.City);}
-            else {Add("city-spectrum",V(-11,5));Add("city-lens",V(11,5));Add("cosmic-terminal",V(0,18),null,CrisisKind.Cosmic);}
+            else if(region=="CityService"){Add("city-fuse",V(-4,1));Add("building-terminal",V(4,1),null,CrisisKind.Building);}
+            else if(region=="CityBroadcast"){Add("city-orders",V(-4,1));Add("city-routing",V(4,1));Add("city-terminal",V(0,3),null,CrisisKind.City);}
+            else {Add("city-spectrum",V(-4,1));Add("city-lens",V(4,1));Add("cosmic-terminal",V(0,3),null,CrisisKind.Cosmic);}
             CognitiveRupture.RestoreExploration(PlayerObject);
-            JourneyCheckpoint.RestoreActor(PlayerObject);ProgressionSave.Write(State);
+            JourneyCheckpoint.RestoreActor(PlayerObject);
+            var p=PlayerObject.transform.position;p.x=Mathf.Clamp(p.x,-8,8);p.y=Mathf.Clamp(p.y,-4,3);p.z=0;PlayerObject.transform.position=p;body.position=p;
+            ProgressionSave.Write(State);
         }
         Material Material(Color tint)
         {
@@ -114,7 +119,7 @@ namespace DeathBySeventhsDawn.City
             sites.Add(new Site{id=id,position=p,destination=destination,crisis=crisis});
             var tint=destination!=null?new Color(.2f,.48f,.55f):crisis!=CrisisKind.None?new Color(.62f,.42f,.15f):new Color(.3f,.46f,.32f);
             if(InEncounter)Box(id,p+Vector3.up*.65f,new Vector3(1.2f,1.3f,1.2f),tint);
-            else Flat(id,p,new Vector2(1.2f,1.2f),tint,1,true);
+            else {art.Marker(id,p,destination!=null);Flat(id+" interaction collider",p,new Vector2(.55f,.5f),new Color(0,0,0,0),-3,true);}
         }
         CityLine Text(string id)=>StoryText.Current.city.Find(id);
         void Update()
@@ -144,7 +149,7 @@ namespace DeathBySeventhsDawn.City
         }
         void FindNearest()
         {
-            selected=null;float closest=2.5f;
+            selected=null;float closest=InEncounter?2.5f:1.35f;
             foreach(var site in sites){float d=Vector3.Distance(PlayerObject.transform.position,site.position);if(d<closest){closest=d;selected=site;}}
         }
         public void CloseReading(){reading=false;selected=null;}
@@ -163,6 +168,11 @@ namespace DeathBySeventhsDawn.City
         }
         public bool ActSelected()
         {
+            if(selected!=null&&(selected.id=="sushi"||selected.id=="circus"))
+            {
+                string id=selected.id;reading=false;selected=null;
+                return CognitiveRupture.BeginSpecialEncounter(id,id=="sushi"?"SushiInterior3D":"CircusInterior3D",false,Interaction.NeighborRoom.Settings.Tier(GameManager.Instance.Sanity)>0);
+            }
             if(selected==null||selected.crisis==CrisisKind.None)return false;
             if(!CrisisRules.CanResolve(selected.crisis,TimeManager.Instance.Days,State)){result=Text(selected.id).locked;return false;}
             if(selected.crisis==CrisisKind.Building){result=DeathBySeventhsDawn.Interaction.NeighborSlice.Text("use-service-core").body;return false;}
@@ -192,16 +202,16 @@ namespace DeathBySeventhsDawn.City
                 GUI.depth=-30;var style=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=20,wordWrap=true};
                 if(reading&&selected!=null)
                 {
-                    var area=new Rect(w*.12f,h*.24f,w*.76f,h*.64f);GUI.Box(area,"");var text=Text(selected.id);
-                    GUI.Label(new Rect(area.x+24,area.y+20,area.width-48,area.height-70),text.title+"\n\n"+text.body+"\n\n"+result,style);
-                    GUI.Label(new Rect(area.x+24,area.yMax-50,area.width-48,40),StoryText.Local("R 主动记录 · E 执行干预 · Enter / Esc 返回","R Record · E Intervene · Enter / Esc Back"),style);
+                    GUI.matrix=old;var text=Text(selected.id);
+                    NarrativeCard.Draw(text.title,text.body,result,null,StoryText.Local("R 主动记录 · E 执行 · Enter / Esc 返回","R Record · E Act · Enter / Esc Back"));
                 }
                 else
                 {
                     int day=Mathf.Clamp(TimeManager.Instance.Days-1,0,StoryText.Current.city.days.Length-1);
-                    GUI.Label(new Rect(w*.18f,18,w*.64f,90),StoryText.Current.city.days[day],style);
-                    GUI.Label(new Rect(24,h-90,w-48,35),InEncounter?StoryText.Local("WASD 移动 · 右键转镜头 · Shift 冲刺 · Ctrl 潜行 · Q 有限防身","WASD Move · Hold RMB Camera · Shift Sprint · Ctrl Sneak · Q Defend"):StoryText.Local("WASD 二维探索 · E 交互 · R 记录 · B 推理","WASD 2D exploration · E Interact · R Record · B Reason"),style);
-                    GUI.Label(new Rect(24,h-50,w-48,35),(InEncounter?StoryText.Local("体力 ","Stamina ")+Mathf.RoundToInt(Actor.Stamina)+StoryText.Local("  防身次数 ","  Defense charges ")+State.defenseCharges:StoryText.Local("二维城市探索","2D city exploration"))+(selected!=null?"   E "+Text(selected.id).title:""),style);
+                    style.fontSize=16;style.normal.textColor=new Color(.75f,.74f,.66f);GUI.Label(new Rect(w*.12f,18,w*.76f,50),StoryText.Current.city.days[day],style);
+                    GUI.Label(new Rect(24,h-90,w-48,35),InEncounter?StoryText.Local("WASD 移动 · 鼠标观察 · Shift 冲刺 · Ctrl 潜行 · Q 防身","WASD Move · Mouse Look · Shift Sprint · Ctrl Sneak · Q Defend"):StoryText.Local("WASD 移动 · E 查看 · R 记录 · B 推理","WASD Move · E Inspect · R Record · B Reason"),style);
+                    string location=SceneManager.GetActiveScene().name;
+                    GUI.Label(new Rect(24,h-50,w-48,35),(InEncounter?StoryText.Local("体力 ","Stamina ")+Mathf.RoundToInt(Actor.Stamina)+StoryText.Local("  防身次数 ","  Defense charges ")+State.defenseCharges:location=="CityStreet"?StoryText.Local("公寓街口","Apartment block"):location=="CityService"?StoryText.Local("维修站","Maintenance station"):location=="CityBroadcast"?StoryText.Local("广播室","Broadcast room"):StoryText.Local("观测站","Observatory"))+(selected!=null?"   E "+Text(selected.id).title:""),style);
                 }
             }
             finally{GUI.matrix=old;GUI.color=color;GUI.depth=depth;}
