@@ -1,0 +1,1 @@
+PASS: 243 checks; Day 2-3 neighbor vertical slice: preparation, peace, combat, causal deductions, field prevention, death, mutation, perception, migration and isolated console. Also includes existing death-cycle and city regressions.
