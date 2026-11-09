@@ -209,6 +209,7 @@ namespace DeathBySeventhsDawn.Core
             if (HasEnded)
                 return;
             State.loopCount++;
+            DeathBySeventhsDawn.Interaction.NeighborDeterioration.Reset(State);
             State.neighborNightBeat=State.neighborNightCaughtCount=State.stageReturnDay=0;
             State.neighborNightRuptureSeen=State.neighborNightResolved=State.neighborNightLocked=State.neighborEyeTwitchSeen=State.neighborNightControlsSeen=State.nightSleepRequested=false;
             State.day7BombDefused=State.stageOneComplete=State.neighborBombArmed=false;State.stageEvents.Clear();
@@ -248,7 +249,8 @@ namespace DeathBySeventhsDawn.Core
             State.neighborNightBeat=0;State.neighborNightLocked=false;State.neighborHostile=false;
             State.neighborHealth=-1;State.encounterDestination="CityEncounter3D";
             State.stageEvents.RemoveAll(id=>id.StartsWith(day+":"));
-            if(day==2){State.neighborNightRuptureSeen=State.neighborNightResolved=State.neighborHatRevealed=State.neighborEyeTwitchSeen=false;State.neighborNightCaughtCount=0;}
+            State.inventory.Remove(DeathBySeventhsDawn.Interaction.NeighborSlice.Controller);
+            if(day==2){DeathBySeventhsDawn.Interaction.NeighborDeterioration.Reset(State);State.neighborNightRuptureSeen=State.neighborNightResolved=State.neighborHatRevealed=State.neighborEyeTwitchSeen=false;State.neighborNightCaughtCount=0;}
             State.savedDay=day;State.savedPeriod=0;State.savedMinute=420;State.savedScene="LivingRoom";State.savedX=0;State.savedY=-1.6f;State.savedZ=0;
             Vitality=MaxVitality;Changed?.Invoke();
         }

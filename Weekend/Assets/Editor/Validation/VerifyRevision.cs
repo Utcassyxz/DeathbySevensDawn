@@ -59,6 +59,8 @@ public static class VerifyRevision
                 if(SessionState.GetBool(Key+"StageOne",false))steps=SessionState.GetBool(Key+"StageOneAll",false)?StageOneAcceptance.RunAll():StageOneAcceptance.Run();
                 if(SessionState.GetBool(Key+"StageOneRoute",false))steps=StageOneContinuity.Run();
                 if(SessionState.GetBool(Key+"Console",false))steps=SessionState.GetBool(Key+"ConsoleAll",false)?ConsoleAcceptance.RunAll():ConsoleAcceptance.Run();
+                if(SessionState.GetBool(Key+"NeighborRevision",false))steps=SessionState.GetBool(Key+"RevisionContinuity",false)?NeighborRevisionAcceptance.RunWithContinuity():NeighborRevisionAcceptance.Run();
+                if(SessionState.GetBool(Key+"NeighborReset",false))steps=NeighborRevisionAcceptance.RunResetSafety();
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
@@ -103,6 +105,9 @@ public static class VerifyRevision
     [MenuItem("Prototype/Validate command console")]
     public static void RunConsoleAll(){SessionState.SetBool(Key+"ConsoleAll",true);RunConsole();}
     public static void RunConsole(){SessionState.SetBool(Key+"Console",true);RunNeighbor();}
+    public static void RunNeighborReset(){SessionState.SetBool(Key+"NeighborReset",true);RunNeighbor();}
+    public static void RunNeighborRevisionContinuity(){SessionState.SetBool(Key+"RevisionContinuity",true);RunNeighborRevision();}
+    public static void RunNeighborRevision(){SessionState.SetBool(Key+"NeighborRevision",true);RunNeighbor();}
     public static void RunRework(){SessionState.SetBool(Key+"Rework",true);RunNeighbor();}
     public static void RunNeighborAll(){RunRework();}
     [MenuItem("Prototype/Legacy contracts/Validate pre-remake neighbor")]
@@ -531,6 +536,9 @@ public static class VerifyRevision
         if(SessionState.GetBool(Key+"StageOneRoute",false))scope="Chinese and English continuous route from title, original tutorial, Day2 escape, continuous Day3-7 and formal unawakened purification ending. Navigation and waiting accelerated; no story-state injection/debug skips; not manual timing or collision-path validation.";
         if(SessionState.GetBool(Key+"Console",false))scope="Command console parser, help registry, completion, history, UI submission, bounds, invalid-input safety, debug isolation and journey restoration. API fixtures; not physical keyboard acceptance.";
         if(SessionState.GetBool(Key+"ConsoleAll",false))scope+=" Includes all historical and current first-stage regression checks.";
+        if(SessionState.GetBool(Key+"NeighborRevision",false))scope="All eleven one-shot dialogue routes, save/scene resumption, time deterioration, finite boss damage/victory, archive-only basement and earned controller resolution. API fixtures; fixture healing used for deterministic boss damage-path checks; not manual play.";
+        if(SessionState.GetBool(Key+"RevisionContinuity",false))scope+=" Includes Chinese/English continuous opening-to-Day7 route; navigation and waiting accelerated, not manual timing.";
+        if(SessionState.GetBool(Key+"NeighborReset",false))scope="Actual Day7 fatal purification and short-loop controller reset; knowledge/ordinary inventory inheritance preserved.";
         File.WriteAllText(SessionState.GetBool(Key+"OnlyNeighbor",false)?"neighbor-validation.txt":SessionState.GetBool(Key+"OnlyCity",false)?"../city-validation.txt":"../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
@@ -547,6 +555,9 @@ public static class VerifyRevision
             return;
         CrisisRules.LegacyValidation=false;
         TimeManager.AutoTimeSuppressed=false;
+        SessionState.SetBool(Key+"NeighborReset",false);
+        SessionState.SetBool(Key+"RevisionContinuity",false);
+        SessionState.SetBool(Key+"NeighborRevision",false);
         SessionState.SetBool(Key+"Console",false);SessionState.SetBool(Key+"ConsoleAll",false);
         SessionState.SetBool(Key+"StageOne",false);SessionState.SetBool(Key+"StageOneAll",false);SessionState.SetBool(Key+"StageOneRoute",false);
         SessionState.SetBool(Key, false);

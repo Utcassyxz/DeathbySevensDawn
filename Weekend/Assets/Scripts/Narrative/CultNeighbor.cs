@@ -34,6 +34,7 @@ namespace DeathBySeventhsDawn.Interaction
         bool dayOneStarted;
         int bagSelection;
         public string SelectedInventoryItem=>State.inventory.Count==0?null:State.inventory[Mathf.Clamp(bagSelection,0,State.inventory.Count-1)];
+        public bool UseControllerFromInventory(){if(!BagOpen||SelectedInventoryItem!=NeighborSlice.Controller||!ApartmentEventDirector.Instance.CanReviewDevice)return false;Close();return ApartmentEventDirector.Instance.OpenDevice();}
         public bool PrepareFromInventory(){if(!BagOpen||!Investigation.Has("deduction-sealed-tool"))return false;Close();NeighborSlice.Instance.ShowPreparation();return true;}
         public bool SelectInventoryItem(int index){if(!BagOpen||index<0||index>=State.inventory.Count)return false;bagSelection=index;return true;}
         int line, frame, blockedFrame = -1;
@@ -253,6 +254,7 @@ namespace DeathBySeventhsDawn.Interaction
                     return;
                 }
 
+                if(view==View.Bag&&k!=null&&k.eKey.wasPressedThisFrame&&SelectedInventoryItem==NeighborSlice.Controller){UseControllerFromInventory();return;}
                 if(view==View.Bag&&k!=null&&k.rKey.wasPressedThisFrame){string id=SelectedInventoryItem;Investigation.Collect(id==NeighborSlice.Crowbar?"prep-manual":id==NeighborSlice.Oil?"prep-oil":id==NeighborSlice.Medium?"prep-medium":id);}
                 if (view == View.Bag && k != null && k.iKey.wasPressedThisFrame)
                 {
@@ -473,7 +475,8 @@ namespace DeathBySeventhsDawn.Interaction
 
                     float detailX = panel.x + 24 + columns * (slot + gap);
                     float detailW = pw - 48 - columns * (slot + gap);
-                    if (Investigation.Has("deduction-sealed-tool") && PrototypeButtons.Button(new Rect(panel.x,panel.yMax-70,pw,42),NeighborSlice.Text("craft-choice").body,button)){PrepareFromInventory();}
+                    if(SelectedInventoryItem==NeighborSlice.Controller&&ApartmentEventDirector.Instance.CanReviewDevice){if(PrototypeButtons.Button(new Rect(panel.x,panel.yMax-70,pw,42),NeighborSlice.Text("controller-open").body,button))UseControllerFromInventory();}
+                    else if (Investigation.Has("deduction-sealed-tool") && PrototypeButtons.Button(new Rect(panel.x,panel.yMax-70,pw,42),NeighborSlice.Text("craft-choice").body,button)){PrepareFromInventory();}
                     if (SelectedInventoryItem==Token)
                     {
                         GUI.Label(new Rect(detailX, panel.y + 92, detailW, 50), StoryText.Current.cult.itemTitle, heading);

@@ -12,11 +12,17 @@ namespace DeathBySeventhsDawn.Progression
             if(state.stageReturnDay!=0&&state.stageReturnDay!=2&&state.stageReturnDay!=7)errors.Add("return-day");
             if(state.stageOneComplete&&!state.day7BombDefused)errors.Add("completion-with-armed-device");
             if(float.IsNaN(state.savedMinute)||float.IsInfinity(state.savedMinute))errors.Add("invalid-minute");
+            if(float.IsNaN(state.neighborDecline)||float.IsInfinity(state.neighborDecline)||state.neighborDecline<0||state.neighborDecline>1)errors.Add("neighbor-decline-range");
+            if(float.IsNaN(state.neighborDialoguePressure)||float.IsInfinity(state.neighborDialoguePressure)||state.neighborDialoguePressure<0||state.neighborDialoguePressure>1)errors.Add("neighbor-pressure-range");
             return errors;
         }
         public static void NormalizeStage(ProgressionState state)
         {
             state.stageEvents=state.stageEvents??new List<string>();
+            state.neighborDialogueChoices=state.neighborDialogueChoices??new List<string>();
+            state.neighborDialogueNode=state.neighborDialogueNode??"";
+            state.neighborDecline=float.IsNaN(state.neighborDecline)||float.IsInfinity(state.neighborDecline)?0:UnityEngine.Mathf.Clamp01(state.neighborDecline);
+            state.neighborDialoguePressure=float.IsNaN(state.neighborDialoguePressure)||float.IsInfinity(state.neighborDialoguePressure)?0:UnityEngine.Mathf.Clamp01(state.neighborDialoguePressure);
             if(state.neighborNightBeat<0||state.neighborNightBeat>7)state.neighborNightBeat=0;
             state.neighborNightCaughtCount=System.Math.Max(0,state.neighborNightCaughtCount);state.day7LoopCount=System.Math.Max(0,state.day7LoopCount);
             if(state.stageReturnDay!=0&&state.stageReturnDay!=2&&state.stageReturnDay!=7)state.stageReturnDay=0;

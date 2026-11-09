@@ -1,3 +1,5 @@
+2026-11-09 邻居修订：NeighborDeterioration 只消费唯一时钟并记录本轮衰退；NeighborSlice 独占一次性核心对话、节点持久化与合流战斗；NeighborRoom 负责摘帽和控制器世界物件；ApartmentEventDirector 独占夜戏及第七日最终遭遇/控制器处置；CultNeighbor 继续负责背包，控制器仅通过其既有入口使用。地下 routing/source-core 的可执行动作只在显式 LegacyValidation 测试内保留。正式流程不应重新引入机关直接完成阶段。详见 NEIGHBOR_REVISION_2026-11-09.md。
+
 2026-11-09 控制台：ProgressionHUD 只负责窗口、焦点与输入；GameCommandConsole 独占指令注册表、参数校验、帮助及补全；ConsoleBuffer 保存有界的会话输出与历史；NeighborDebugCommands 保留隔离存档、原旅程恢复与旧事件预设。按 ~ 直接打开，session end 恢复原旅程，收起窗口不会退出临时会话。指令手册由 Weekend/Tools/generate_console_handbook.py 生成到 docs/CONSOLE_COMMANDS.md。验收 VerifyRevision.RunConsoleAll；不修改剧情日期及正式存档版本。
 
 > 2026-11-08：下文为历史系统边界/剧情快照。正式第一阶段规则见 PHASE_ONE_SPEC_2026-11-08.md 与当前源码；第三夜爆楼、第四天自动人形等条目已经被新规格覆盖。

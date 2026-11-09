@@ -17,10 +17,12 @@ namespace DeathBySeventhsDawn.Interaction
         public bool Service=>SceneManager.GetActiveScene().name=="BuildingService2D";
         public GameObject Actor {get;private set;}
         public int PerceptionTier {get;private set;}=-1;
+        GameObject controllerProp;
         GameObject altered;AudioSource perceptionSound,radio;GameObject nightChair;int presentedBeat;SpriteRenderer roomScenery;
         PocketSceneArt art;GameObject hat;Sprite concealed,revealed;float revealStarted=-1;bool newExposure,exposureApplied;
         public static bool HatRevealActive {get;private set;}
         public float RevealProgress=>revealStarted<0?0:Mathf.Clamp01((Time.unscaledTime-revealStarted)/2.2f);
+        public string RevealTextId=>RevealProgress<.5f?(newExposure?"hat-reveal":"relapse"):newExposure?"contamination":"contamination-known";
         public bool BeginHatReveal()
         {
             if(Arena||Service||HatRevealActive||tenant2D==null)return false;
@@ -39,12 +41,15 @@ namespace DeathBySeventhsDawn.Interaction
             if(!Arena&&!Service){radio=gameObject.AddComponent<AudioSource>();radio.playOnAwake=false;radio.loop=true;radio.clip=Resources.Load<AudioClip>("Audio/NeighborRadio");radio.volume=.10f;radio.outputAudioMixerGroup=perceptionSound.outputAudioMixerGroup;}
             CognitiveRupture.RestoreExploration(Actor);JourneyCheckpoint.RestoreActor(Actor);
             ProgressionSave.Write(GameManager.Instance.State);
-            if(!ApartmentEventDirector.NightInProgress&&!Arena&&!Service&&!GameManager.Instance.State.neighborIntroduced&&!GameManager.Instance.State.neighborDefeated){GameManager.Instance.State.neighborIntroduced=true;NeighborSlice.Instance.BeginDialogue();}
+            if(!CrisisRules.LegacyValidation&&!Arena&&!Service&&TimeSystem.TimeManager.Instance.Days==7){if(!StoryDebugActions.Enabled)ApartmentEventDirector.Instance.BeginFinalConfrontation();}
+            else if(!CrisisRules.LegacyValidation&&!Arena&&!Service&&TimeSystem.TimeManager.Instance.Days<7&&(GameManager.Instance.State.neighborDialogueActive||GameManager.Instance.State.neighborDialogueResolved&&!GameManager.Instance.State.neighborDefeated))NeighborSlice.Instance.BeginDialogue();
+            else if(!ApartmentEventDirector.NightInProgress&&!Arena&&!Service&&!GameManager.Instance.State.neighborIntroduced&&!GameManager.Instance.State.neighborDefeated){GameManager.Instance.State.neighborIntroduced=true;NeighborSlice.Instance.BeginDialogue();}
         }
-        void Flat(string name,Vector2 p,Vector2 size,Color tint,bool solid=false,int order=1)
+        GameObject Flat(string name,Vector2 p,Vector2 size,Color tint,bool solid=false,int order=1)
         {
             var go=new GameObject(name);go.transform.position=p;go.transform.localScale=new Vector3(size.x,size.y,1);var r=go.AddComponent<SpriteRenderer>();r.sprite=sprite;r.color=tint;r.sortingOrder=order;if(solid)go.AddComponent<BoxCollider2D>();
             if(name=="Table"||name=="Sofa"||name=="Wiring desk"||name=="Valve bank"||name=="Entrance")r.enabled=false;
+            return go;
         }
         public GameObject Solid(string name,Vector3 p,Vector3 scale,Color tint,PrimitiveType type=PrimitiveType.Cube,bool collision=true)
         {
@@ -64,12 +69,16 @@ namespace DeathBySeventhsDawn.Interaction
             Flat("Entrance",Door,new Vector2(.6f,1.5f),new Color(.25f,.45f,.48f));
             Flat(Service?"Wiring desk":"Table",Table,new Vector2(2,1),Service?new Color(.25f,.30f,.33f):new Color(.32f,.23f,.16f),true);Flat(Service?"Valve bank":"Sofa",Sofa,new Vector2(2,1),Service?new Color(.22f,.35f,.36f):new Color(.23f,.30f,.24f),true);
             if(!Service)BuildTenant2D();
-            else {Flat("Protected routing switch",new Vector2(-2,1),Vector2.one,new Color(.2f,.5f,.5f),true);Flat("Group source controller",new Vector2(2,1),Vector2.one,new Color(.5f,.25f,.2f),true);}
+            else if(CrisisRules.LegacyValidation){Flat("Protected routing switch",new Vector2(-2,1),Vector2.one,new Color(.2f,.5f,.5f),true);Flat("Group source controller",new Vector2(2,1),Vector2.one,new Color(.5f,.25f,.2f),true);}
+            else {Flat("Maintenance carbon copies",new Vector2(-2,1),new Vector2(.8f,.6f),new Color(.63f,.59f,.43f));Flat("Sealed live equipment",new Vector2(2,1),new Vector2(1,1.2f),new Color(.18f,.20f,.18f),true);}
+            if(!Service&&!Arena&&NeighborDeterioration.DeviceAvailable(GameManager.Instance.State)&&!GameManager.Instance.State.stageEvents.Contains("7:controller-secured"))
+            {controllerProp=Flat("Dropped initiation controller",new Vector2(1,-.7f),new Vector2(.35f,.5f),new Color(.21f,.23f,.18f),false,7);var indicator=Flat("Controller warning indicator",new Vector2(1,-.58f),new Vector2(.12f,.08f),new Color(.7f,.17f,.12f),false,8);indicator.transform.SetParent(controllerProp.transform,true);}
             Actor=new GameObject("Hugo");Actor.tag="Player";Actor.transform.position=!Service&&ApartmentEventDirector.NightInProgress?new Vector3(NightPlayerPoint.x,NightPlayerPoint.y,0):new Vector3(-4,0,0);var renderer=Actor.AddComponent<SpriteRenderer>();renderer.sprite=sprite;renderer.color=new Color(.6f,.7f,.65f);renderer.sortingOrder=4;Actor.transform.localScale=new Vector3(.5f,.8f,1);
             renderer.sprite=art.Person();renderer.color=Color.white;Actor.transform.localScale=Vector3.one;
             var body=Actor.AddComponent<Rigidbody2D>();body.gravityScale=0;body.freezeRotation=true;var box=Actor.AddComponent<BoxCollider2D>();box.size=new Vector2(.5f,.6f);box.offset=new Vector2(0,-.5f);Actor.AddComponent<PlayerController2D>();
             var camera=new GameObject("Room camera");camera.tag="MainCamera";camera.transform.position=new Vector3(0,0,-10);var view=camera.AddComponent<Camera>();view.orthographic=true;view.orthographicSize=Service?4.8f:6.8f;camera.AddComponent<AudioListener>();
         }
+        public void TakeControllerVisual(){if(controllerProp!=null){controllerProp.SetActive(false);Destroy(controllerProp);controllerProp=null;}}
         void BuildTenant2D()
         {
             concealed=art.Person();revealed=art.Person(false,true);
@@ -143,9 +152,11 @@ namespace DeathBySeventhsDawn.Interaction
         string InteractionId()
         {
             if(Actor==null||Arena)return null;Vector2 p=Actor.transform.position;
+            if(!CrisisRules.LegacyValidation&&GameManager.Instance.State.neighborDialogueActive)return null;
+            if(!Service&&!CrisisRules.LegacyValidation&&NeighborDeterioration.DeviceAvailable(GameManager.Instance.State)&&!GameManager.Instance.State.stageEvents.Contains("7:controller-secured")&&Vector2.Distance(p,new Vector2(1,-.7f))<1.3f)return "day7-device";
             if(Vector2.Distance(p,Door)<1.2f)return Service?"return-service":"return-corridor";
             if(Service){if(Vector2.Distance(p,new Vector2(-2,1))<1.4f)return "routing";if(Vector2.Distance(p,new Vector2(2,1))<1.4f)return "source-core";if(Vector2.Distance(p,Table)<1.7f)return "city-fuse";}
-            else {if(Vector2.Distance(p,Tenant)<1.5f&&!GameManager.Instance.State.neighborDefeated)return "neighbor-talk";if(Vector2.Distance(p,Table)<1.7f)return "neighbor-desk";}
+            else {if(Vector2.Distance(p,Tenant)<1.5f&&!GameManager.Instance.State.neighborDefeated&&(CrisisRules.LegacyValidation||TimeSystem.TimeManager.Instance.Days==7||!GameManager.Instance.State.neighborDialogueResolved||!GameManager.Instance.State.neighborNightResolved))return "neighbor-talk";if(Vector2.Distance(p,Table)<1.7f)return "neighbor-desk";}
             return null;
         }
         public bool UseNearest()
@@ -156,7 +167,9 @@ namespace DeathBySeventhsDawn.Interaction
             if(id=="return-corridor"){DeathBySeventhsDawn.World.RoomDoor2D.TravelTo("Corridor",new Vector2(-4.7f,-.55f));return true;}
             if(id=="neighbor-talk"){if(!CrisisRules.LegacyValidation&&TimeSystem.TimeManager.Instance.Days==7)return ApartmentEventDirector.Instance.BeginFinalConfrontation();return NeighborSlice.Instance.BeginDialogue();}
             if(id=="neighbor-desk"){bool access=!CrisisRules.LegacyValidation||GameManager.Instance.State.neighborTrusted||GameManager.Instance.State.neighborDefeated;NeighborSlice.Instance.Show(access?"neighbor-order":"desk-locked",access?"neighbor-order":null);return true;}
-            NeighborSlice.Instance.Show(id,id=="city-fuse"?id:null);return true;
+            if(id=="day7-device")return ApartmentEventDirector.Instance.TakeDevice();
+            string evidence=id=="city-fuse"?id:!CrisisRules.LegacyValidation&&id=="routing"?"city-maintenance":null;
+            NeighborSlice.Instance.Show(id,evidence);return true;
         }
         void Update()
         {
@@ -175,7 +188,7 @@ namespace DeathBySeventhsDawn.Interaction
                 }
                 return;
             }
-            if(tenant2D!=null&&!GameManager.Instance.State.neighborDefeated){int beat=GameManager.Instance.State.neighborNightBeat;if(!CrisisRules.LegacyValidation&&beat>=2&&beat<=4)PresentNightTwitch(beat);else tenant2D.transform.rotation=Quaternion.Euler(0,0,Mathf.Sin(Time.unscaledTime*17)*(1+PerceptionTier));}
+            if(tenant2D!=null&&!GameManager.Instance.State.neighborDefeated){int beat=GameManager.Instance.State.neighborNightBeat;if(!CrisisRules.LegacyValidation&&(beat>=2&&beat<=4||NeighborDeterioration.Progress(GameManager.Instance.State)>=.72f))PresentNightTwitch(beat>=2&&beat<=4?beat:2);else tenant2D.transform.rotation=Quaternion.Euler(0,0,Mathf.Sin(Time.unscaledTime*17)*(1+PerceptionTier));}
             if(Arena||Actor==null||StoryJournal.WorldBlocked||CognitiveRupture.IsActive)return;
             string id=InteractionId();if(id==null)return;
             WorldPromptUI.Offer("slice-room","E "+NeighborSlice.Text(id).title,90);
@@ -184,7 +197,7 @@ namespace DeathBySeventhsDawn.Interaction
         void OnGUI()
         {
             if(!HatRevealActive||revealStarted<0)return;
-            var line=NeighborSlice.Text(RevealProgress<.5f?"hat-reveal":newExposure?"contamination":"contamination-known");
+            var line=NeighborSlice.Text(RevealTextId);
             NarrativeCard.Caption(line.title,line.body);
         }
         void OnDestroy(){if(Arena)RenderSettings.fog=false;HatRevealActive=false;if(GameManager.Instance!=null)GameManager.Instance.Changed-=PresentPerception;foreach(var m in materials)Destroy(m);if(sprite!=null)Destroy(sprite);if(pixel!=null)Destroy(pixel);if(tenantSprite!=null)Destroy(tenantSprite);if(tenantTexture!=null)Destroy(tenantTexture); }

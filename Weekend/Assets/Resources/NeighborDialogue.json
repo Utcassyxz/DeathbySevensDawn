@@ -114,6 +114,21 @@
           "to": "end"
         }
       ]
+    },
+    {
+      "id": "rupture",
+      "line": "dialogue-rupture",
+      "choices": [
+        {
+          "line": "rupture-continue",
+          "to": "fight"
+        }
+      ]
+    },
+    {
+      "id": "fight",
+      "line": "hostile",
+      "effect": "hostile"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # 《七日》控制台指令手册
 
-适用：0.3.2。由实际命令注册表、线索目录及中英文文案生成。
+适用：0.3.3。由实际命令注册表、线索目录及中英文文案生成。
 
 ## 打开与输入
 
@@ -102,6 +102,7 @@ CircusInterior3D
 | `sealed-ember-tool` | 单次准备工具 |
 | `foil-triangle` | 锡纸三角 |
 | `invitation` | 邀请函 |
+| `initiation-controller` | 启动控制器 |
 
 `item give` 直接加入临时背包，不重复生成已有物品，也不替代打开壁橱、拾取演出或工具合成的正式流程。
 
@@ -114,14 +115,14 @@ CircusInterior3D
 | `circus_normal` | 马戏团，理智 100 的正常外观。 |
 | `circus_corrupt` | 马戏团，理智 15 的污染外观。 |
 | `neighbor_encounter` | 第二天邻居家 2D 敌对入口；靠近住户按 E 开始遭遇。 |
-| `neighbor_peace` | 第二天邻居家和平沟通入口。 |
+| `neighbor_peace` | 第二天邻居家沟通入口；所有正式分支最终进入战斗。 |
 | `neighbor_known` | 授予分配令及新闻证据，进入已知命令的对话分支。 |
 | `neighbor_prepared` | 授予准备推论与单次工具，进入邻居 3D 战斗；G 使用工具。 |
 | `neighbor_eye` | 授予肩眼与撬棍，进入邻居 3D 战斗；V 肩眼、Q 闪避、鼠标左键攻击。 |
 | `neighbor_death` | 播放邻居致死演出。 |
 | `neighbor_victory` | 在 NeighborArena3D 中触发胜利及返回。 |
 | `apartment_explosion` | 爆破演出预览；自由调试开启时不发生正式死亡。 |
-| `building_saved` | 正式规则下第七天检修间干预预设，授予四段前置推理，仍需操作现场设施。 |
+| `building_saved` | 正式规则下第七天检修间干预预设，授予四段前置推理，设备间只供调查；需完成邻居遭遇并取得控制器。 |
 
 预设会改写临时剧情条件，常会收起控制台；可按 ~ 再打开。它们用于复现单独场景，不保证任意混用后的剧情连续性。
 

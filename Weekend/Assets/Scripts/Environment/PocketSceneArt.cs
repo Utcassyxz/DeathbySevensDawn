@@ -44,7 +44,8 @@ namespace DeathBySeventhsDawn.Interaction
                 Frame(100,105,40,20,new Color(.39f,.30f,.20f));Rect(101,105,38,3,Ink);Rect(106,119,11,5,Paper*.8f);Rect(127,112,5,8,Paper*.4f);
                 Frame(160,110,40,20,new Color(.22f,.31f,.29f));Frame(163,116,16,11,new Color(.28f,.36f,.31f));Frame(180,116,16,11,new Color(.28f,.36f,.31f));
                 Frame(42,7,39,18,new Color(.27f,.28f,.25f));Rect(45,11,32,4,Ink);Rect(47,18,9,3,Paper*.6f);
-                if(service){for(int x=18;x<230;x+=36){Rect(x,126,4,32,Rust);Rect(x-3,138,10,5,Ink);}Frame(72,94,16,20,new Color(.18f,.41f,.39f));Frame(152,94,16,20,Rust);}
+                if(service){for(int x=18;x<230;x+=36){Rect(x,126,4,32,Rust);Rect(x-3,138,10,5,Ink);}if(DeathBySeventhsDawn.Progression.CrisisRules.LegacyValidation){Frame(72,94,16,20,new Color(.18f,.41f,.39f));Frame(152,94,16,20,Rust);}
+                    else {Frame(72,94,23,18,Paper*.7f);Rect(75,107,16,1,Ink);Rect(75,103,12,1,Ink);Rect(75,99,17,1,Ink);Frame(152,94,23,18,Paper*.5f);Rect(155,107,16,1,Ink);Rect(155,103,12,1,Ink);}}
                 else {Frame(12,113,30,19,new Color(.31f,.26f,.18f));Rect(16,118,22,2,Ink);Rect(19,122,7,5,Paper*.6f);Rect(213,33,12,43,new Color(.29f,.31f,.22f));for(int y=35;y<77;y+=6)Rect(211,y,16,2,Ink);}
             }
             else

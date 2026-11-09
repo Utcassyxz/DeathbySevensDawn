@@ -101,11 +101,12 @@ public static class StageOneAcceptance
         setup=Setup(7,TimePeriod.Night);while(setup.MoveNext())yield return setup.Current;Clock.SetNarrativeTime(7,TimePeriod.Night,1440);yield return 6.3f;
         Check(GameManager.Instance.HasEnded&&!GameManager.Instance.HasLoopAbility,"unawakened purification fails permanently");
         setup=Setup(7,TimePeriod.Morning,"BuildingService2D");while(setup.MoveNext())yield return setup.Current;
-        Check(Plan(),"full plan can be confirmed on Day7");Place(new Vector3(-2,-.3f,0));var room=Object.FindAnyObjectByType<NeighborRoom>();Check(room.UseNearest()&&NeighborSlice.Instance.Choose(0)&&S.serviceRouteIsolated,"protected branch isolation remains a physical action");NeighborSlice.Instance.Close();Place(new Vector3(2,-.3f,0));
-        Check(room.UseNearest()&&NeighborSlice.Instance.Choose(0)&&S.stageOneComplete&&S.day7BombDefused,"physical lockout ends the first stage successfully");
-        Check(D.CurrentCard=="stage-complete","successful first stage has its own settlement rather than a bad ending");
-        setup=Setup(7);while(setup.MoveNext())yield return setup.Current;Plan();S.neighborTrusted=true;D.BeginFinalConfrontation();D.Choose(1);Check(S.stageOneComplete,"persuasion uses trust and the confirmed plan");
-        setup=Setup(7);while(setup.MoveNext())yield return setup.Current;Plan();S.serviceRouteIsolated=true;D.BeginFinalConfrontation();D.Choose(2);Check(S.stageOneComplete,"evacuation can finish with prior source isolation");
+        Check(Plan(),"full plan can be confirmed on Day7");Place(new Vector3(-2,-.3f,0));var room=Object.FindAnyObjectByType<NeighborRoom>();
+        Check(room.UseNearest()&&!NeighborSlice.Instance.Choose(0)&&!S.serviceRouteIsolated,"handover archive supplies evidence rather than a rescue valve");NeighborSlice.Instance.Close();
+        var final=NeighborRevisionAcceptance.FinalResolution(0);while(final.MoveNext())yield return final.Current;
+        Check(D.CurrentCard=="stage-complete","earned controller resolution has its own stage settlement");
+        setup=Setup(7);while(setup.MoveNext())yield return setup.Current;Plan();final=NeighborRevisionAcceptance.FinalResolution(1);while(final.MoveNext())yield return final.Current;
+        setup=Setup(7);while(setup.MoveNext())yield return setup.Current;Plan();final=NeighborRevisionAcceptance.FinalResolution(2);while(final.MoveNext())yield return final.Current;
         setup=Setup(7,TimePeriod.Night,"LivingRoom");while(setup.MoveNext())yield return setup.Current;var sofaBounds=GameObject.Find("Old sofa").GetComponent<SpriteRenderer>().bounds;Place(new Vector3(sofaBounds.center.x,sofaBounds.min.y-.3f,0));yield return .2f;TimeManager.AutoTimeSuppressed=false;float restedAt=Clock.GameMinute;
         Check(Object.FindAnyObjectByType<FurnitureInteraction>().RestOnePeriod()&&Clock.GameMinute>=restedAt+44&&Clock.GameMinute<restedAt+47&&!WorldEndSequence.IsPresenting,"ordinary rest spends 45 minutes and cannot detonate Day7 at 21:00");TimeManager.AutoTimeSuppressed=true;
         setup=Setup(2,TimePeriod.Morning,"Corridor");while(setup.MoveNext())yield return setup.Current;S.neighborPlotHeard=true;S.neighborFlyersSeen=false;Place(new Vector3(-3.65f,.65f,0));yield return .3f;

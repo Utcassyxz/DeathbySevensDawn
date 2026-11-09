@@ -25,7 +25,7 @@ namespace DeathBySeventhsDawn.Progression
             "crisis <building|city|cosmic> <on|off>", "event list|<id>", "replay news",
             "ending <1..3>", "skip", "board", "reset confirm"
         };
-        public static readonly string[] Items = { NeighborSlice.Crowbar, NeighborSlice.Oil, NeighborSlice.Medium, NeighborSlice.Tool, CultNeighbor.Token, "invitation" };
+        public static readonly string[] Items = { NeighborSlice.Crowbar, NeighborSlice.Oil, NeighborSlice.Medium, NeighborSlice.Tool, CultNeighbor.Token, "invitation", NeighborSlice.Controller };
         public static readonly string[] Events = { "sushi_normal", "sushi_corrupt", "circus_normal", "circus_corrupt", "neighbor_encounter", "neighbor_peace", "neighbor_known", "neighbor_prepared", "neighbor_eye", "neighbor_death", "neighbor_victory", "apartment_explosion", "building_saved" };
         public static string Description(string verb) => StoryText.UI("console.cmd." + verb);
         static string Message(string id) => StoryText.UI("console." + id);

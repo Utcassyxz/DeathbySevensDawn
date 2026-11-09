@@ -279,14 +279,14 @@
       },
       {
         "id": "city-maintenance",
-        "title": "Maintenance handover",
-        "body": "Two starts are recorded: a test on the third night, full operation on the seventh. The assignment number points to 401 and the basement equipment room.",
+        "title": "Maintenance handover receipt",
+        "body": "One assignment number: a third-night test and seventh-night initiation. Signed by 401. A revocation number is printed at the bottom.",
         "source": "Recorded on site in the city"
       },
       {
         "id": "city-fuse",
-        "title": "Service wiring diagram",
-        "body": "401 has a separate feed through the shaft; homes use another line. Someone circled the two in different colours.",
+        "title": "Service-room wiring diagram",
+        "body": "401 draws power from the shaft on a separate circuit. Initiation uses a callback line. A note reads: loss of power is not a revocation.",
         "source": "Recorded on site in the city"
       },
       {
@@ -432,14 +432,14 @@
       {
         "id": "deduction-building-plan",
         "relation": "Cross-check",
-        "title": "Purification Device Location",
-        "body": "Isolate the assigned branch while keeping the flats supplied. The location is known; the handover must still confirm the activation date before the final device can be disarmed."
+        "title": "Power and initiation",
+        "body": "The diagram separates household power from the initiation callback. Switching off the basement cabinet will not revoke a scheduled request. The controller remains with 401."
       },
       {
         "id": "deduction-day7-plan",
         "relation": "Cross-check",
-        "title": "Day Seven Demolition Plan",
-        "body": "The device location matches the date and branch number in the handover sheet. Testing is over. Activation is scheduled for Day Seven."
+        "title": "The seventh-night revocation number",
+        "body": "The test and initiation share an assignment number. The handover gives the revocation code; the wiring diagram identifies the callback route. The controller must be recovered from 401 before the seventh night."
       }
     ]
   },
@@ -2210,15 +2210,15 @@
       },
       {
         "id": "city-maintenance",
-        "title": "Handover ledger",
-        "body": "Third night. Service shaft supply. 401.\nSomeone has written NOTIFIED beside it. Whether that counts as saving a life depends on who fills in the form.",
+        "title": "Handover register",
+        "body": "Third-night test. Seventh-night initiation. Both lines share a number.\nThe revocation field is empty. The attendant has signed very carefully.",
         "success": "Recorded.",
         "locked": "Nothing new to record."
       },
       {
         "id": "city-fuse",
         "title": "Wiring diagram",
-        "body": "Several lines bypass the residential breaker.\nTurning out the lights is not the same as cutting the power. Or reaching morning.",
+        "body": "A thin callback line runs beside the power circuits.\nHugo traces it to 401. The mains switch does not reach it.",
         "success": "Recorded.",
         "locked": "Nothing new to record."
       },
@@ -2259,8 +2259,8 @@
       },
       {
         "id": "service",
-        "title": "West · Maintenance",
-        "body": "Investigate the circuit supplying the third-night test device.",
+        "title": "West · Maintenance office",
+        "body": "Check the test receipt left by 401.",
         "success": "Recorded.",
         "locked": "Nothing new to record."
       },
@@ -2367,6 +2367,20 @@
   },
   "neighborSlice": {
     "entries": [
+      {"id": "relapse", "title": "Again", "body": "There is no hat left to remove.\nHis fingers search the edge of his forehead for a zip that is already torn away."},
+      {"id": "initiation-controller", "title": "Initiation controller", "body": "An old controller. The button is polished smooth. Nobody ever labelled a cancel button."},
+      {"id": "controller-open", "title": "", "body": "Inspect controller · E"},
+      {"id": "stage-witness", "title": "Seven Days · First Stage Complete", "body": "The neighbor reads his own name from the original order.\nThis time, he says revoke.\n\nThe light goes out. Hugo keeps holding his wrist until it stops crawling toward the button."},
+      {"id": "stage-evacuate", "title": "Seven Days · First Stage Complete", "body": "The broadcast reads the revocation number, then every floor.\nDoors open one by one.\n\nHugo has never heard so many people in this building.\nPerhaps that was what the list found objectionable."},
+      {"id": "dialogue-rupture", "title": "The unfinished sentence", "body": "“I heard you,” the neighbor says.\n\nHugo has not spoken.\n\nHis jaw slips sideways. One hand chases the other to hold the hat down. Something beneath the brim starts knocking."},
+      {"id": "rupture-continue", "title": "", "body": "Take one step back."},
+      {"id": "committed-controls", "title": "", "body": "1–4 choose · R record"},
+      {"id": "day7-loss-control", "title": "He does not let go", "body": "“Don’t move.”\n\nHugo cannot tell who he means.\n\nThe wrist bends the wrong way. He releases his forehead. Not the controller."},
+      {"id": "day7-device", "title": "Still waiting", "body": "The light is still on.\nSomeone has to answer the last line on the handover receipt."},
+      {"id": "device-revoke", "title": "", "body": "Use the confirmed receipt number to revoke the seventh-night request."},
+      {"id": "device-witness", "title": "", "body": "Make him read the revocation from the original order."},
+      {"id": "device-evacuate", "title": "", "body": "Revoke the request through the confirmed broadcast route, then warn the residents to leave."},
+      {"id": "device-keep", "title": "", "body": "Keep the controller and check the records."},
       {
         "id": "crowbar",
         "title": "Crowbar",
@@ -2464,8 +2478,8 @@
       },
       {
         "id": "ask",
-        "title": "401 · The neighbor",
-        "body": "“They call it the next stage. Someone has to get things ready.”\nHis hand touches the brim, then falls.\n“You came to help. Didn’t you?”"
+        "title": "The tenant of 401",
+        "body": "“A test tomorrow. The clearing on the seventh.”\n\nHugo: Clearing what?\n\n“Things that change.”\n\nHis forefinger curls into his palm. His other hand takes a while to straighten it."
       },
       {
         "id": "promise-choice",
@@ -2504,18 +2518,18 @@
       },
       {
         "id": "joined",
-        "title": "Invitation accepted",
-        "body": "He takes an invitation from the drawer and smooths its corner.\n“You will thank me.”"
+        "title": "A signature",
+        "body": "He offers the invitation. His fingers clamp down as Hugo touches it.\n\n“Don’t be afraid. Once you sign, we’re on the same side.”\n\nUnder the table, his other hand slowly closes into a fist."
       },
       {
         "id": "refused",
-        "title": "A careful refusal",
-        "body": "“Then stop standing there looking at me.”\nHe turns away. The paper stays on the table."
+        "title": "No signature needed",
+        "body": "“You don’t have to sign.”\n\nHe nods twice. The third time, he cannot stop.\n\n“Don’t look at me. Not yet.”"
       },
       {
         "id": "deceived",
-        "title": "A borrowed conviction",
-        "body": "Hugo recites the assignment number.\nThe hand releases the page. “So you are one of us.”"
+        "title": "The same side",
+        "body": "Hugo recites the assignment number.\n\n“So you are one of us.”\n\nThe neighbor laughs. The sound stops several seconds before his mouth does."
       },
       {
         "id": "hostile",
@@ -2524,8 +2538,8 @@
       },
       {
         "id": "end-choice",
-        "title": "Back",
-        "body": "Return to exploration."
+        "title": "",
+        "body": "Finish the sentence."
       },
       {
         "id": "neighbor-order",
@@ -2534,13 +2548,13 @@
       },
       {
         "id": "routing",
-        "title": "Branch switch",
-        "body": "An old label reads: 401. A separate line supplies the occupied flats.\n\nFind out where each one goes first."
+        "title": "Handover archive",
+        "body": "Two receipts share a number.\nThe third-night copy says TEST. The seventh-night copy is signed only: 401.\n\nHugo: The equipment is downstairs. The decision is upstairs."
       },
       {
         "id": "source-core",
-        "title": "Basement source lockout",
-        "body": "A low pulse comes from the housing. The locking bar is held in place; a branch indicator glows beside it."
+        "title": "The working cabinet",
+        "body": "The seals are intact. The noise inside does not stop because Hugo stands in front of it.\n\nThe maintenance plate reads: LOCAL POWER LOSS DOES NOT CANCEL A SCHEDULED REQUEST.\nHugo: Thorough after-sales service."
       },
       {
         "id": "isolate-choice",
@@ -2829,13 +2843,13 @@
       },
       {
         "id": "night-controls",
-        "title": "Get out first",
-        "body": "Left mouse strike · Shift sprint · Ctrl crouch · Q dodge\nE: escape at the doorway; speaking nearby can buy a moment. Esc pauses.\n\nHugo: Get to the door. Questions can wait."
+        "title": "Not over yet",
+        "body": "Left mouse attack · Shift sprint · Ctrl crouch · Q dodge\nG uses a prepared tool; E escapes at the door.\n\nHugo: Make him stop. Or let me leave."
       },
       {
         "id": "night-escape-hint",
         "title": "",
-        "body": "The cool doorway light is still on."
+        "body": "He can be hurt. The cold light at the door is still on."
       },
       {
         "id": "night-caught",
@@ -2865,32 +2879,32 @@
       {
         "id": "day7-confrontation",
         "title": "401 · Day Seven",
-        "body": "Hugo: The whole building smells of gas.\nNeighbor: Yes.\nHugo: You are going to blow it up?\nNeighbor: Not blow it up. Clean it out.\n\nHugo: And after that?\nNeighbor: It will stop changing.\nHugo: You are inside too.\nNeighbor: I will clean myself first.\n\nHe does not look at the assignment."
+        "body": "The neighbor holds an old controller, still wearing its third-night test label.\n\nHugo: Put it down.\nNeighbor: I’ve been trying.\n\nHis thumb stays on the button. His wrist slowly turns toward Hugo."
       },
       {
         "id": "day7-defuse",
         "title": "",
-        "body": "Disarm using the confirmed device plan."
+        "body": "Keep your eyes on the controller."
       },
       {
         "id": "day7-persuade",
         "title": "",
-        "body": "It says remove living things. Not save them."
+        "body": "“You’re one of the things they want cleared.”"
       },
       {
         "id": "day7-rescue",
         "title": "",
-        "body": "Get the residents away from the supply branch."
+        "body": "“People are still here. Let them leave.”"
       },
       {
         "id": "day7-leave",
         "title": "",
-        "body": "Return to the corridor and investigate."
+        "body": "Back toward the door."
       },
       {
         "id": "day7-need-plan",
-        "title": "The locking bar",
-        "body": "Hugo stops. He has not checked the handover sheet and the isolated branch.\n\nHe does not want to gamble with somebody else’s lights."
+        "title": "The blank field",
+        "body": "Hugo turns the controller over.\nThe receipt is still unconfirmed. One button does not necessarily mean one service."
       },
       {
         "id": "day7-no-persuasion",
@@ -2904,8 +2918,8 @@
       },
       {
         "id": "stage-complete",
-        "title": "Seven Days · First stage complete",
-        "body": "The pulse stops. Someone upstairs turns on a tap.\n\nHugo sits against the wall.\n“Is it too late to ask if you ate?”\n\nNobody laughs. This time he does not change the subject.\n\nThe building stands."
+        "title": "Seven Days · First Stage Complete",
+        "body": "The controller’s light goes out.\n\nSomeone in the hall asks whether the power is out.\nHugo sits against the wall.\n“More of a cancelled service.”\n\nThis time, he waits for the answer."
       },
       {
         "id": "stage-title",

@@ -13,6 +13,7 @@ namespace DeathBySeventhsDawn.Interaction
     [DefaultExecutionOrder(-100)]
     public sealed class NeighborSlice : MonoBehaviour
     {
+        public const string Controller="initiation-controller";
         public const string Crowbar="crowbar",Oil="cooking-oil",Medium="sealed-maintenance-medium",Tool="sealed-ember-tool";
         public static NeighborSlice Instance {get;private set;}
         public static bool WorldBlocked=>NeighborRoom.HatRevealActive||Instance!=null&&(Instance.open||Instance.deathTimer>0);
@@ -21,6 +22,7 @@ namespace DeathBySeventhsDawn.Interaction
         public string CurrentNode=>node?.id;
         public bool IsOpen=>open;
         public bool CanAskFoil=>TimeManager.Instance.Days==2&&GameManager.Instance.LoopCount==0&&S.cultDayOneTalked&&Investigation.Has("cult-door-note")&&!S.inventory.Contains(CultNeighbor.Token)&&!S.aquariumSealed;
+        public void ShowPickupNotice(string id){toast=string.Format(Text("collected").body,ItemName(id));toastUntil=Time.unscaledTime+2;Close();}
         public void ShowPreparation(){Show("sealed-ember-tool");}
         public string Notice {get;private set;}="";
         SliceNode node;string panel,evidence;
@@ -46,7 +48,7 @@ namespace DeathBySeventhsDawn.Interaction
         GameObject Prop(string name,Vector2 position,Vector2 size,Color color)
         {var go=new GameObject(name);go.transform.position=position;go.transform.localScale=new Vector3(size.x,size.y,1);var renderer=go.AddComponent<SpriteRenderer>();renderer.sprite=pickupSprite;renderer.color=color;renderer.sortingOrder=8;return go;}
         public void CancelForDebug(){if(StoryDebugActions.Enabled){S.neighborDeathPending=false;Reset();}}
-        public void Close(){bool wasOpen=open;open=false;node=null;panel=evidence=null;frame=Time.frameCount;if(wasOpen&&!CrisisRules.LegacyValidation&&!StoryDebugActions.Enabled)TimeManager.Instance.QueueInvestigationCost();}
+        public void Close(){if(!CrisisRules.LegacyValidation&&!StoryDebugActions.Enabled&&S.neighborDialogueActive)return;bool wasOpen=open;open=false;node=null;panel=evidence=null;frame=Time.frameCount;if(wasOpen&&!CrisisRules.LegacyValidation&&!StoryDebugActions.Enabled)TimeManager.Instance.QueueInvestigationCost();}
         public bool Near(Vector2 p,float range=1.15f){var actor=GameObject.FindWithTag("Player");return actor!=null&&Vector2.Distance(actor.transform.position,p)<range;}
         public bool Use(string id)
         {
@@ -91,17 +93,31 @@ namespace DeathBySeventhsDawn.Interaction
         public bool BeginDialogue()
         {
             if(SceneManager.GetActiveScene().name!="NeighborRoom2D"||S.neighborDefeated)return false;
+            if(!CrisisRules.LegacyValidation)
+            {
+                if(S.neighborDialogueResolved)return !S.neighborNightResolved&&StartFight();
+                if(S.neighborDialogueActive)
+                {if(open)return false;Go(string.IsNullOrEmpty(S.neighborDialogueNode)?"intro":S.neighborDialogueNode,true);return true;}
+                S.neighborDialogueActive=true;
+                NeighborDeterioration.Observe(S,TimeManager.Instance.Days,TimeManager.Instance.GameMinute);
+            }
             if(S.neighborHostile)return StartFight();
             Go(S.buildingCrisisResolved?"aftermath":S.neighborTrusted?"recruit":"intro");return true;
         }
-        void Go(string id)
+        void Go(string id,bool resume=false)
         {
-            node=System.Array.Find(graph.nodes,n=>n.id==id);if(node==null){Close();return;}
+            if(!CrisisRules.LegacyValidation && (id=="end"||id=="hostile"))id="rupture";
+            node=System.Array.Find(graph.nodes,n=>n.id==id);if(node==null){S.neighborDialogueActive=false;Close();return;}
             if(id=="end"){Close();return;}
+            if(!CrisisRules.LegacyValidation)S.neighborDialogueNode=id;
             panel=node.line;evidence=node.evidence;open=true;frame=Time.frameCount;Notice="";
-            if(node.effect=="hostile"){if(!CrisisRules.LegacyValidation){S.neighborHostile=false;S.neighborTrusted=false;Show("early-threat");}else{S.neighborHostile=true;Close();StartFight();}}
-            else if(node.effect=="trust")S.neighborTrusted=true;
-            else if(node.effect=="join"||node.effect=="refuse"||node.effect=="deceive"){S.neighborMembership=node.effect;if(node.effect=="join"&&!S.inventory.Contains("invitation"))S.inventory.Add("invitation");}
+            if(node.effect=="hostile"){S.neighborHostile=true;StartFight();}
+            else if(!resume)
+            {
+                if(node.effect=="trust")S.neighborTrusted=true;
+                else if(node.effect=="join"||node.effect=="refuse"||node.effect=="deceive")
+                {S.neighborMembership=node.effect;if(node.effect=="join"&&!S.inventory.Contains("invitation"))S.inventory.Add("invitation");}
+            }
             ProgressionSave.Write(S);
         }
         bool Allowed(string condition)=>string.IsNullOrEmpty(condition)||condition=="known-order"&&Investigation.Has("neighbor-order")||condition=="known-group"&&Investigation.Has("deduction-group-assignment");
@@ -109,25 +125,42 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if(!open)return false;
             if(node!=null)
-            {if(index<0||node.choices==null||index>=node.choices.Length||!Allowed(node.choices[index].condition))return false;Go(node.choices[index].to);return true;}
+            {if(index<0||node.choices==null||index>=node.choices.Length||!Allowed(node.choices[index].condition))return false;
+                if(!CrisisRules.LegacyValidation){S.neighborDialogueChoices.Add(node.id+":"+index);NeighborDeterioration.Press(S);}
+                Go(node.choices[index].to);return true;}
             if(panel=="night-locked"&&index==0){Close();return ApartmentEventDirector.Instance.RetryNight();}
             if(panel=="cabinet"&&index==0){S.neighborCabinetOpened=true;ProgressionSave.Write(S);Show(Crowbar,"prep-manual");return true;}
             if(panel=="door-conversation"){if(index==0){S.neighborDoorForced=true;Close();ProgressionSave.Write(S);SceneManager.LoadScene("NeighborRoom2D");return true;}Close();return true;}
             if(panel=="force-door"){if(index==0){Close();Show("door-conversation");return true;}if(index==1)return ForceEntry();if(index==2&&CanAskFoil){Close();return CultNeighbor.Instance.KnockDoor();}Close();return true;}
-            if(panel=="routing"){if(index==0&&Investigation.Has("deduction-building-plan")&&Investigation.Has("deduction-source-location")&&TimeManager.Instance.Days<=(CrisisRules.LegacyValidation?3:7)){S.serviceRouteIsolated=true;ProgressionSave.Write(S);Notice=Text("isolated").body;return true;}Notice=Text("need-deduction").body;return false;}
-            if(panel=="source-core")
-            {
-                if(!CrisisRules.LegacyValidation&&index==0&&TimeManager.Instance.Days<7&&S.serviceRouteIsolated&&Investigation.Has("deduction-building-plan")){S.stageEvents.Add("3:test-disrupted");ProgressionSave.Write(S);Notice=Text("test-disrupted").body;return true;}if(index==0&&S.serviceRouteIsolated&&CrisisRules.CanResolve(CrisisKind.Building,TimeManager.Instance.Days,S)){S.buildingCrisisResolved=true;
-                if(!CrisisRules.LegacyValidation){S.day7BombDefused=true;ApartmentEventDirector.Instance.CompleteStage();}
-                EndingCollection.Unlock("building-saved");ProgressionSave.Write(S);Notice=Text("building-saved").body;return true;}Notice=Text("need-isolation").body;return false;}
+            if(panel=="routing"||panel=="source-core")return CrisisRules.LegacyValidation&&ChooseLegacySource(index);
             if(panel==Tool&&index==0)return Prepare();
             if(index==0&&TakeItem())return true;
             Close();return true;
+        }
+        // Retained only for explicitly isolated pre-Nov9 regression fixtures.
+        bool ChooseLegacySource(int index)
+        {
+            if(panel=="routing")
+            {
+                if(index==0&&Investigation.Has("deduction-building-plan")&&Investigation.Has("deduction-source-location")&&TimeManager.Instance.Days<=3)
+                {S.serviceRouteIsolated=true;ProgressionSave.Write(S);Notice=Text("isolated").body;return true;}
+                Notice=Text("need-deduction").body;return false;
+            }
+            if(index==0&&S.serviceRouteIsolated&&CrisisRules.CanResolve(CrisisKind.Building,TimeManager.Instance.Days,S))
+            {S.buildingCrisisResolved=true;EndingCollection.Unlock("building-saved");ProgressionSave.Write(S);Notice=Text("building-saved").body;return true;}
+            Notice=Text("need-isolation").body;return false;
         }
         public bool StartFight()
         {
             if(CognitiveRupture.IsActive||NeighborRoom.HatRevealActive)return false;
             var room=Object.FindAnyObjectByType<NeighborRoom>();if(room==null||room.Arena||room.Service)return false;
+            if(!CrisisRules.LegacyValidation)
+            {
+                S.neighborDialogueActive=false;S.neighborDialogueResolved=true;S.neighborDialogueNode="fight";
+                S.neighborHostile=true;S.neighborDialoguePressure=1;
+                if(TimeManager.Instance.Days==2&&!S.neighborNightResolved){S.neighborNightBeat=6;S.neighborNightRuptureSeen=true;}
+                ProgressionSave.Write(S);
+            }
             Close();return room.BeginHatReveal();
         }
         public bool TryHearPlot()
@@ -143,7 +176,14 @@ namespace DeathBySeventhsDawn.Interaction
         }
         public void Victory()
         {
-            S.neighborDefeated=true;S.neighborHostile=false;ProgressionSave.Write(S);
+            S.neighborDefeated=true;S.neighborHostile=false;
+            if(!CrisisRules.LegacyValidation)
+            {
+                S.neighborDialogueActive=false;S.neighborDialogueResolved=true;
+                if(TimeManager.Instance.Days==2){S.neighborNightResolved=true;S.neighborNightBeat=7;}
+                if(TimeManager.Instance.Days==7&&NeighborDeterioration.FinalFight(S)&&!NeighborDeterioration.DeviceAvailable(S))S.stageEvents.Add("7:controller-dropped");
+            }
+            ProgressionSave.Write(S);
             CognitiveRupture.ReturnFromSpecial();
         }
         public void BeginNeighborDeath()
@@ -154,6 +194,8 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void Update()
         {
+            if(!CrisisRules.LegacyValidation&&!StoryDebugActions.Enabled&&!MainMenuUI.WorldBlocked&&!GameManager.Instance.HasEnded)
+                NeighborDeterioration.Observe(S,TimeManager.Instance.Days,TimeManager.Instance.GameMinute);
             if(serviceMarker!=null)serviceMarker.SetActive(RooftopAccess.Instance.CurrentFloor==1);
             if(S.neighborDeathPending&&deathTimer<=0&&!GameManager.Instance.HasEnded&&!MainMenuUI.WorldBlocked)BeginNeighborDeath();
             if(deathTimer>0){deathTimer-=Time.unscaledDeltaTime;if(deathTimer<=0){S.neighborDeathPending=false;GameManager.Instance.Damage(GameManager.Instance.MaxVitality);}return;}
@@ -190,13 +232,13 @@ namespace DeathBySeventhsDawn.Interaction
                 if(node!=null&&node.choices!=null){for(int i=0;i<node.choices.Length;i++)if(Allowed(node.choices[i].condition)){choices.Add((i+1)+". "+Text(node.choices[i].line).body);indices.Add(i);}}
                 else if(panel=="night-locked"&&S.neighborNightCaughtCount==1){choices.Add(Text("night-retry").body);indices.Add(0);}
                 else if(panel=="cabinet"||panel=="door-conversation"){choices.Add(Text(panel=="cabinet"?"open-cabinet":"enter-choice").body);indices.Add(0);}
-                else if(panel=="force-door"||panel=="routing"||panel=="source-core")
+                else if(panel=="force-door"||CrisisRules.LegacyValidation&&(panel=="routing"||panel=="source-core"))
                 {choices.Add("1. "+Text(panel=="force-door"?"knock-choice":panel=="routing"?"isolate-choice":"lock-choice").body);indices.Add(0);if(panel=="force-door"&&S.inventory.Contains(Crowbar)){choices.Add("2. "+Text("force-choice").body);indices.Add(1);}if(panel=="force-door"&&CanAskFoil){choices.Add("3. "+Text("foil-choice").body);indices.Add(2);}}
                 else if(panel==Tool){choices.Add(Text("craft-choice").body);indices.Add(0);}
                 else if(panel==Crowbar||panel==Oil||panel==Medium){choices.Add(Text("take").body);indices.Add(0);}
             }
             var line=Text(deathTimer>0?"neighbor-killed":panel);
-            int pick=NarrativeCard.Draw(line.title,line.body,Notice,choices.ToArray(),deathTimer>0?"":Text(string.IsNullOrEmpty(evidence)?"close-controls":"controls").body);
+            int pick=NarrativeCard.Draw(line.title,line.body,Notice,choices.ToArray(),deathTimer>0?"":S.neighborDialogueActive&&!CrisisRules.LegacyValidation?Text("committed-controls").body:Text(string.IsNullOrEmpty(evidence)?"close-controls":"controls").body);
             if(pick>=0)Choose(indices[pick]);
         }
     }

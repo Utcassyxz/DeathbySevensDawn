@@ -59,9 +59,9 @@ namespace DeathBySeventhsDawn.Player
         }
         public void SetViewYaw(float value){yaw=value;transform.rotation=Quaternion.Euler(0,value,0);}
         public void PulseHands(){handPulse=Time.unscaledTime;}
-        void HandPart(string name,Vector3 position,Vector3 scale,Color color)
+        void HandPart(string name,Vector3 position,Vector3 scale,Color color,PrimitiveType? shape=null)
         {
-            var go=GameObject.CreatePrimitive(name.Contains("shaft")?PrimitiveType.Cylinder:PrimitiveType.Cube);go.name=name;go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());
+            var go=GameObject.CreatePrimitive(shape??(name.Contains("shaft")?PrimitiveType.Cylinder:PrimitiveType.Cube));go.name=name;go.GetComponent<Collider>().enabled=false;Destroy(go.GetComponent<Collider>());
             go.transform.SetParent(hands,false);go.transform.localPosition=position;go.transform.localScale=scale;var m=new Material(Resources.Load<Material>("VenueSurface"));m.color=color;handMaterials.Add(m);go.GetComponent<Renderer>().sharedMaterial=m;
         }
         void BuildHands()
@@ -69,6 +69,7 @@ namespace DeathBySeventhsDawn.Player
             hands=new GameObject("Hugo first-person weapon").transform;hands.SetParent(view.transform,false);
             if(GameManager.Instance.State.inventory.Contains(NeighborSlice.Crowbar))
             {HandPart("Crowbar shaft",new Vector3(.30f,-.30f,.72f),new Vector3(.021f,.20f,.021f),new Color(.22f,.20f,.18f));HandPart("Crowbar bent tip",new Vector3(.275f,-.10f,.72f),new Vector3(.065f,.018f,.022f),new Color(.27f,.23f,.20f));HandPart("Crowbar claw",new Vector3(.245f,-.12f,.72f),new Vector3(.018f,.05f,.022f),new Color(.18f,.18f,.17f));}
+            else {HandPart("Single defensive forearm",new Vector3(.30f,-.38f,.55f),new Vector3(.07f,.12f,.07f),new Color(.22f,.25f,.22f),PrimitiveType.Capsule);HandPart("Single defensive fist",new Vector3(.30f,-.24f,.55f),new Vector3(.095f,.11f,.09f),new Color(.54f,.45f,.36f),PrimitiveType.Sphere);}
         }
         public bool Defend()
         {

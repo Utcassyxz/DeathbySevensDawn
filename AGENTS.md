@@ -1,3 +1,7 @@
+# 2026-11-09 用户邻居剧情修订
+
+最新规则见 docs/NEIGHBOR_REVISION_2026-11-09.md。正式邻居核心对话为一次性、单向提交；保存当前节点与已选选项，读档继续，不得返回开头刷另一分支。所有有效分支最终进入身体失控、摘帽与第一人称战斗。邻居衰退消耗唯一 TimeManager 时钟，不另计时间。Boss 血量可真正耗尽；首次捕获保护与逃生仍保留。地下设备间只调查交接记录，不提供救楼阀门；第七日必须经过最终遭遇并取得控制器，按证据解锁后续处置。取走控制器后世界物件消失，以背包再打开。广告原稿、推理ID、Save v7兼容保留。验收 VerifyRevision.RunNeighborRevision + RunStageOneAll + RunConsole。
+
 # 2026-11-08 第一阶段覆盖规则
 
 用户完整规格：docs/PHASE_ONE_SPEC_2026-11-08.md。正式玩法是第三天测试、第五天压力、第七天净化爆破；Day2夜戏逃生，首次抓捕不死；Day7致死回Day7早晨，Day2夜戏致死回Day2早晨；恩赐仍须真实完成泡泡会面。鱼阶段Day3人脸/4说话/5肢体/6模仿/7替身，两次理解成为同伴。普通探索2D，追逐第一人称。自动时钟由TimeManager独占；ApartmentEventDirector只编排事件，不另建日期/存档。新验收VerifyRevision.RunStageOneAll；LegacyValidation只供明确隔离的历史回归，不是产品开关。新UI文案只放两份StoryText JSON。用户未知工作保留。

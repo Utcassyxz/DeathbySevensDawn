@@ -63,10 +63,12 @@ namespace DeathBySeventhsDawn.Progression
                 if(a.Length==3&&a[0]=="item"&&a[1]=="give")
                 {if(Array.IndexOf(GameCommandConsole.Items,a[2])<0)return "Unknown item.";if(!state.inventory.Contains(a[2]))state.inventory.Add(a[2]);return "Item added.";}
                 if(a.Length==3&&a[0]=="evidence"&&a[1]=="unlock"){state.journalUnlocked=state.investigationUnlocked=true;return Investigation.Collect(a[2])?"Evidence recorded.":"Unknown or already recorded.";}
-                if(command=="flags reset"){state.neighborIntroduced=state.neighborDoorForced=state.neighborTrusted=state.neighborHostile=state.neighborDefeated=state.serviceRouteIsolated=state.buildingCrisisResolved=false;state.neighborGuidanceSeen=state.neighborHatRevealed=false;state.neighborTakenItems.Clear();state.neighborMembership="";state.neighborHealth=-1;state.eyeReadyUtcTicks=0;NeighborSlice.Instance.CancelForDebug();return "Temporary neighbor flags reset in isolated session.";}
+                if(command=="flags reset"){NeighborDeterioration.Reset(state);state.neighborIntroduced=state.neighborDoorForced=state.neighborTrusted=state.neighborHostile=state.neighborDefeated=state.serviceRouteIsolated=state.buildingCrisisResolved=false;state.neighborGuidanceSeen=state.neighborHatRevealed=false;state.neighborTakenItems.Clear();state.neighborMembership="";state.neighborHealth=-1;state.eyeReadyUtcTicks=0;NeighborSlice.Instance.CancelForDebug();return "Temporary neighbor flags reset in isolated session.";}
                 if(a.Length==3&&a[0]=="event"&&a[1]=="trigger")
                 {
                     NeighborSlice.Instance.Close();UnityEngine.Object.FindAnyObjectByType<ProgressionHUD>()?.CloseForEvent();
+                    if(a[2]=="neighbor_encounter"||a[2]=="neighbor_peace"||a[2]=="neighbor_known"||a[2]=="neighbor_prepared"||a[2]=="neighbor_eye")
+                    {NeighborDeterioration.Reset(state);state.neighborNightBeat=0;state.neighborNightResolved=state.neighborNightLocked=false;}
                     switch(a[2])
                     {
                         case "sushi_normal":case "sushi_corrupt":case "circus_normal":case "circus_corrupt":
@@ -90,7 +92,7 @@ namespace DeathBySeventhsDawn.Progression
                             foreach(var id in new[]{"neighbor-order","skt079-broadcast","pipe-pulse","city-fuse"})Investigation.Collect(id);
                             Investigation.Connect("neighbor-order","skt079-broadcast",true);Investigation.Connect("deduction-group-assignment","pipe-pulse",true);Investigation.Connect("deduction-source-location","city-fuse",true);
                             if(!CrisisRules.LegacyValidation){Investigation.Collect("city-maintenance");Investigation.Connect("deduction-building-plan","city-maintenance",true);}
-                            state.serviceRouteIsolated=state.buildingCrisisResolved=state.day7BombDefused=false;StoryDebugActions.Jump("BuildingService2D",CrisisRules.LegacyValidation?3:7,0);return "Use real deductions and the two field controls.";
+                            state.serviceRouteIsolated=state.buildingCrisisResolved=state.day7BombDefused=false;StoryDebugActions.Jump("BuildingService2D",CrisisRules.LegacyValidation?3:7,0);return CrisisRules.LegacyValidation?"Use real deductions and the two field controls.":"Use the handover archive as evidence; the final controller follows the neighbor encounter.";
                     }
                 }
                 return "Unknown command.";

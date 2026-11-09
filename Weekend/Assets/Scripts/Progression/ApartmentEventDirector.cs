@@ -32,10 +32,16 @@ namespace DeathBySeventhsDawn.Progression
             if(clock.Days==7&&!S.day7BombDefused){clock.SetNarrativeTime(7,TimePeriod.Night,1380);Instance.Open("day7-call");return true;}
             return false;
         }
-        public bool RetryNight(){if(S.neighborNightCaughtCount!=1)return false;S.neighborNightResolved=false;S.neighborNightLocked=false;S.neighborNightBeat=0;return RequestNight();}
+        public bool RetryNight()
+        {
+            if(S.neighborNightCaughtCount!=1)return false;
+            S.neighborNightResolved=false;S.neighborNightLocked=false;S.neighborNightBeat=5;
+            S.neighborDialogueActive=false;S.neighborDialogueResolved=true;S.neighborDefeated=false;S.neighborHealth=-1;
+            ProgressionSave.Write(S);SceneManager.LoadScene("NeighborRoom2D");return true;
+        }
         public bool RequestNight()
         {
-            if(S.neighborNightResolved||S.neighborNightBeat>0)return false;
+            if(S.neighborNightResolved||S.neighborNightBeat>0||S.neighborDialogueActive)return false;
             S.neighborNightRuptureSeen=true;S.neighborDefeated=false;S.neighborHealth=-1;S.neighborNightBeat=1;Open("night-call");return true;
         }
         public void Open(string id){card=id;opened=Time.frameCount;freeSeconds=0;ProgressionSave.Write(S);}
@@ -47,6 +53,12 @@ namespace DeathBySeventhsDawn.Progression
                 case "night-intro":return new[]{"night-eye","night-calm","night-logic","night-observe"};
                 case "night-twitch":return new[]{"night-ask","night-back","night-observe","night-calm"};
                 case "day7-confrontation":return new[]{"day7-defuse","day7-persuade","day7-rescue","day7-leave"};
+                case "day7-device":
+                    var options=new List<string>();
+                    if(Investigation.Has("deduction-day7-plan"))options.Add("device-revoke");
+                    if(S.neighborTrusted&&Investigation.Has("neighbor-order")&&Investigation.Has("deduction-day7-plan"))options.Add("device-witness");
+                    if(Investigation.Has("deduction-city-orders")&&Investigation.Has("deduction-day7-plan"))options.Add("device-evacuate");
+                    options.Add("device-keep");return options.ToArray();
                 case "stage-complete":return new[]{"stage-title"};
                 default:return new[]{"stage-continue"};
             }
@@ -54,7 +66,7 @@ namespace DeathBySeventhsDawn.Progression
         public bool Choose(int index)
         {
             if(card==null||index<0||index>=Choices().Length)return false;
-            string previous=card;card=null;opened=Time.frameCount;
+            string selected=Choices()[index];string previous=card;card=null;opened=Time.frameCount;
             if(previous=="day7-call"){nextFinalCall=Time.unscaledTime+70;if(index==0){if(!S.stageEvents.Contains("7:confrontation-call"))S.stageEvents.Add("7:confrontation-call");S.neighborIntroduced=true;SceneManager.LoadScene("NeighborRoom2D");}ProgressionSave.Write(S);return true;}
             if(previous=="night-call")
             {
@@ -71,29 +83,52 @@ namespace DeathBySeventhsDawn.Progression
             if(previous=="night-controls"){S.neighborNightControlsSeen=true;ProgressionSave.Write(S);return true;}
             if(previous=="day7-confrontation")
             {
-                if(index==0){if(S.serviceRouteIsolated&&Investigation.Has("deduction-day7-plan"))CompleteStage();else Open("day7-need-plan");}
-                else if(index==1){if(S.neighborTrusted&&Investigation.Has("neighbor-order")&&Investigation.Has("deduction-day7-plan"))CompleteStage();else Open("day7-no-persuasion");}
-                else if(index==2){S.stageEvents.Add("7:evacuated");if(S.serviceRouteIsolated&&Investigation.Has("deduction-day7-plan"))CompleteStage();else Open("day7-rescue-result");}
-                else {if(SceneManager.GetActiveScene().name=="NeighborRoom2D")DeathBySeventhsDawn.World.RoomDoor2D.TravelTo("Corridor",new Vector2(-4.7f,-.55f));}
+                S.neighborDefeated=false;S.neighborHealth=-1;S.neighborDialogueActive=false;S.neighborDialogueResolved=true;
+                if(!S.stageEvents.Contains("7:final-fight"))S.stageEvents.Add("7:final-fight");
+                S.stageEvents.Add("7:approach-"+index);Open("day7-loss-control");
+            }
+            if(previous=="day7-loss-control")StartFinalFight();
+            if(previous=="day7-device")
+            {
+                if(selected!="device-keep")
+                {S.stageEvents.Add("7:resolution-"+selected);CompleteStage();}
             }
             if(previous=="stage-complete")MainMenuUI.ReturnToMainMenu();
             ProgressionSave.Write(S);return true;
         }
         public bool BeginFinalConfrontation()
         {
-            if(TimeManager.Instance.Days!=7||S.stageOneComplete||S.day7BombDefused)return false;
-            S.neighborBombArmed=true;S.stageEvents.Add("7:confronted");Open("day7-confrontation");return true;
+            if(TimeManager.Instance.Days!=7||S.stageOneComplete||S.day7BombDefused||card!=null||NeighborDeterioration.DeviceAvailable(S))return false;
+            if(NeighborDeterioration.FinalFight(S))return StartFinalFight();
+            S.neighborBombArmed=true;if(!S.stageEvents.Contains("7:confronted"))S.stageEvents.Add("7:confronted");Open("day7-confrontation");return true;
         }
+        bool StartFinalFight()
+        {
+            var room=Object.FindAnyObjectByType<NeighborRoom>();
+            if(room==null||room.Arena||room.Service)
+            {SceneManager.LoadScene("NeighborRoom2D");return true;}
+            S.neighborNightBeat=7;S.neighborDialogueActive=false;S.neighborHostile=true;S.neighborDialoguePressure=1;
+            NeighborSlice.Instance.Close();ProgressionSave.Write(S);return room.BeginHatReveal();
+        }
+        public bool CanReviewDevice=>TimeManager.Instance.Days==7&&S.inventory.Contains(NeighborSlice.Controller)&&S.stageEvents.Contains("7:controller-secured")&&!S.stageOneComplete;
+        public bool TakeDevice()
+        {
+            if(TimeManager.Instance.Days!=7||!NeighborDeterioration.DeviceAvailable(S)||!S.neighborDefeated||S.stageEvents.Contains("7:controller-secured")||S.stageOneComplete)return false;
+            S.stageEvents.Add("7:controller-secured");if(!S.inventory.Contains(NeighborSlice.Controller))S.inventory.Add(NeighborSlice.Controller);
+            Object.FindAnyObjectByType<NeighborRoom>()?.TakeControllerVisual();NeighborSlice.Instance.ShowPickupNotice(NeighborSlice.Controller);ProgressionSave.Write(S);return true;
+        }
+        public bool OpenDevice(){if(!CanReviewDevice)return false;Open("day7-device");return true;}
+        public string SettlementText=>S.stageEvents.Contains("7:resolution-device-witness")?"stage-witness":S.stageEvents.Contains("7:resolution-device-evacuate")?"stage-evacuate":"stage-complete";
         public void CompleteStage()
         {
-            if(TimeManager.Instance.Days!=7||S.stageOneComplete)return;
+            if(TimeManager.Instance.Days!=7||S.stageOneComplete||!CrisisRules.LegacyValidation&&!S.stageEvents.Contains("7:controller-secured"))return;
             S.day7BombDefused=S.buildingCrisisResolved=S.stageOneComplete=true;
             EndingCollection.Unlock("building-saved");Open("stage-complete");
         }
         public bool EscapeNight()
         {
             if(!ChaseActive)return false;
-            S.neighborNightResolved=true;S.neighborNightBeat=7;S.neighborHostile=false;GameManager.Instance.LoseSanity(5);
+            S.neighborNightResolved=true;S.neighborNightBeat=7;S.neighborHostile=false;S.neighborDialogueResolved=true;S.neighborDialogueActive=false;GameManager.Instance.LoseSanity(5);
             Investigation.Collect("neighbor-death-memory");CognitiveRupture.ReturnFromSpecial();ProgressionSave.Write(S);return true;
         }
         public bool CatchNight()
@@ -102,7 +137,7 @@ namespace DeathBySeventhsDawn.Progression
             S.neighborNightCaughtCount++;
             if(S.neighborNightCaughtCount==1)
             {
-                S.neighborNightResolved=true;S.neighborNightBeat=7;S.neighborNightLocked=true;S.neighborHostile=false;
+                S.neighborNightResolved=true;S.neighborNightBeat=7;S.neighborNightLocked=true;S.neighborHostile=false;S.neighborDialogueResolved=true;S.neighborDialogueActive=false;
                 GameManager.Instance.LoseSanity(10);GameManager.Instance.Heal(GameManager.Instance.MaxVitality);
                 S.encounterDestination="CityEncounter3D";DeathBySeventhsDawn.World.RoomDoor2D.TravelTo("Corridor",new Vector2(-4.7f,-.55f));Open("night-caught");
             }
@@ -131,6 +166,7 @@ namespace DeathBySeventhsDawn.Progression
             if(S.neighborNightBeat==5&&scene=="NeighborArena3D"&&!CognitiveRupture.IsActive){S.neighborNightBeat=6;
                 var combat=Object.FindAnyObjectByType<NeighborCombat>();if(combat!=null){var cc=combat.actor.GetComponent<CharacterController>();cc.enabled=false;combat.actor.transform.position=new Vector3(NeighborRoom.NightPlayerPoint.x,0,NeighborRoom.NightPlayerPoint.y);combat.actor.SetViewYaw(-90);cc.enabled=true;Physics.SyncTransforms();}
                 if(!S.neighborNightControlsSeen)Open("night-controls");return;}
+            if(S.neighborNightBeat==6&&scene=="NeighborArena3D"&&!CognitiveRupture.IsActive&&!S.neighborNightControlsSeen){Open("night-controls");return;}
             if(S.neighborNightBeat==7&&scene!="NeighborArena3D"&&!CognitiveRupture.IsActive&&S.nightSleepRequested&&!Interaction.StoryJournal.WorldBlocked){S.nightSleepRequested=false;clock.SleepUntilNextMorning();return;}
             if(Interaction.StoryJournal.WorldBlocked||Interaction.FurnitureInteraction.IsBusy||CognitiveRupture.IsActive)return;
             if(clock.Days==2&&clock.GameMinute>=1390&&Time.unscaledTime>=nextNightCall&&!S.neighborNightResolved&&S.neighborNightBeat==0){RequestNight();return;}
@@ -155,7 +191,7 @@ namespace DeathBySeventhsDawn.Progression
         void OnGUI()
         {
             if(card==null||MainMenuUI.WorldBlocked||PauseMenuUI.WorldBlocked||ProgressionHUD.DebugConsoleOpen||StoryDebugActions.Enabled||CrisisRules.LegacyValidation)return;
-            var line=NeighborSlice.Text(card);var ids=Choices();var options=new string[ids.Length];
+            var line=NeighborSlice.Text(card=="stage-complete"?SettlementText:card);var ids=Choices();var options=new string[ids.Length];
             for(int i=0;i<ids.Length;i++)options[i]=(i+1)+". "+NeighborSlice.Text(ids[i]).body;
             int choice=NarrativeCard.Draw(line.title,line.body,"",options,NeighborSlice.Text("stage-choice-controls").body);if(choice>=0)Choose(choice);
         }

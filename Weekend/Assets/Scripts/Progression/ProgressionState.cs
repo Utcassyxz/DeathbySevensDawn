@@ -16,6 +16,10 @@ namespace DeathBySeventhsDawn.Progression
         public bool neighborEyeTwitchSeen,neighborBombArmed,day7BombDefused,stageOneComplete;
         public int stageReturnDay,stageReturnNoticeDay;
         public float savedMinute=-1;
+        public float neighborDecline,neighborDialoguePressure;
+        public bool neighborDialogueActive,neighborDialogueResolved;
+        public string neighborDialogueNode="";
+        public List<string> neighborDialogueChoices=new List<string>();
         public bool neighborDeathPending,neighborIntroduced,neighborDoorForced,neighborTrusted,neighborHostile,neighborDefeated,neighborDeathLearned,shoulderEyeUnlocked,serviceRouteIsolated;
         public List<string> neighborTakenItems=new List<string>();
         public float neighborHealth=-1;
