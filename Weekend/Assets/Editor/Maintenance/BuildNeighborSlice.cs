@@ -13,21 +13,21 @@ public static class BuildNeighborSlice
     public static void BuildStageOne()
     {
         int width=PlayerSettings.defaultScreenWidth,height=PlayerSettings.defaultScreenHeight;var mode=PlayerSettings.fullScreenMode;string version=PlayerSettings.bundleVersion;
-        try{PlayerSettings.defaultScreenWidth=1920;PlayerSettings.defaultScreenHeight=1080;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;PlayerSettings.bundleVersion="0.3.0";BuildReview("Death by Sevens Dawn First Stage","../../outputs/DeathbySevensDawn-StageOne/SevenDay.exe");}
+        try{PlayerSettings.defaultScreenWidth=1920;PlayerSettings.defaultScreenHeight=1080;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;PlayerSettings.bundleVersion="0.3.0";BuildReview("Death by Sevens Dawn First Stage","../../outputs/DeathbySevensDawn-StageOne/SevenDay.exe",BuildOptions.None);}
         finally{PlayerSettings.defaultScreenWidth=width;PlayerSettings.defaultScreenHeight=height;PlayerSettings.fullScreenMode=mode;PlayerSettings.bundleVersion=version;AssetDatabase.SaveAssets();}
     }
     public static void BuildRework()
     {BuildReview("DeathbySevensDawn Interaction Rework","../../outputs/DeathbySevensDawn-Rework/SevenDay.exe");}
     public static void BuildNov08()
     {BuildReview("DeathbySevensDawn Nov08 Review","../../outputs/DeathbySevensDawn-Nov08/SevenDay.exe");}
-    static void BuildReview(string product,string destination)
+    static void BuildReview(string product,string destination,BuildOptions options=BuildOptions.Development)
     {
         string original=PlayerSettings.productName;
         try
         {
             PlayerSettings.productName=product;
             var report=BuildPipeline.BuildPlayer(EditorBuildSettings.scenes.Where(s=>s.enabled).Select(s=>s.path).ToArray(),
-                destination,BuildTarget.StandaloneWindows64,BuildOptions.Development);
+                destination,BuildTarget.StandaloneWindows64,options);
             if(report.summary.result!=UnityEditor.Build.Reporting.BuildResult.Succeeded)throw new System.Exception("Day 2-3 build failed: "+report.summary.result);
         }
         finally{PlayerSettings.productName=original;AssetDatabase.SaveAssets();}
