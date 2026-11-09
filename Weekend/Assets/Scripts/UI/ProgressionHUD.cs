@@ -10,19 +10,22 @@ using UnityEngine.InputSystem;
 #endif
 namespace DeathBySeventhsDawn.Progression
 {
-    // Scene-independent HUD. Debug access: backquote/tilde, then 1997.
+    // Scene-independent ending UI and command console. Backquote opens directly.
     public class ProgressionHUD : MonoBehaviour
     {
         public static bool DebugConsoleOpen { get; private set; }
 
-        // 本次游戏只验证一次口令。此对象跨场景/轮回保留；关闭面板不会清除解锁状态。
-        // 不写入存档，重新启动游戏后仍需首次输入 1997。
+        // Compatibility fields for historical editor fixtures; no PIN is required by the player UI.
         bool unlockedThisSession;
         bool enteringCode, debugOpen, confirmNewJourney;
-        string code = "";
-        string command="",commandResult="";
+        string command="";
+        readonly ConsoleBuffer console = new ConsoleBuffer();
+        bool focusInput;
+        string completionSeed;
+        string[] completions;
+        int completionIndex;
+        GUIStyle consoleText, inputStyle;
         Vector2 scroll;
-        int targetDay=1, targetPeriod;
         GUIStyle labelStyle, titleStyle, buttonStyle, boxStyle;
         void Update()
         {
@@ -35,19 +38,9 @@ namespace DeathBySeventhsDawn.Progression
             if(keyboard==null) return;
             if(keyboard.backquoteKey.wasPressedThisFrame) { ToggleConsole(); return; }
             if(keyboard.escapeKey.wasPressedThisFrame) { Close(); return; }
-            if(!enteringCode) return;
-            if(keyboard.backspaceKey.wasPressedThisFrame && code.Length>0) code=code.Substring(0,code.Length-1);
-            var top=new[] { keyboard.digit0Key,keyboard.digit1Key,keyboard.digit2Key,keyboard.digit3Key,keyboard.digit4Key,keyboard.digit5Key,keyboard.digit6Key,keyboard.digit7Key,keyboard.digit8Key,keyboard.digit9Key };
-            var pad=new[] { keyboard.numpad0Key,keyboard.numpad1Key,keyboard.numpad2Key,keyboard.numpad3Key,keyboard.numpad4Key,keyboard.numpad5Key,keyboard.numpad6Key,keyboard.numpad7Key,keyboard.numpad8Key,keyboard.numpad9Key };
-            for(int i=0;i<10;i++) if(top[i].wasPressedThisFrame || pad[i].wasPressedThisFrame) EnterDigit((char)('0'+i));
 #elif ENABLE_LEGACY_INPUT_MANAGER
             if(Input.GetKeyDown(KeyCode.BackQuote)) { ToggleConsole(); return; }
             if(Input.GetKeyDown(KeyCode.Escape)) { Close(); return; }
-            if(!enteringCode) return;
-            foreach(char c in Input.inputString) {
-                if(c=='\b' && code.Length>0) code=code.Substring(0,code.Length-1);
-                else if(c>='0' && c<='9') EnterDigit(c);
-            }
 #endif
         }
 
@@ -59,21 +52,17 @@ namespace DeathBySeventhsDawn.Progression
                 return;
             }
 
-            DebugConsoleOpen = true;
-            targetDay=TimeManager.Instance.Days;
-            targetPeriod=(int)TimeManager.Instance.Period;
-            if (unlockedThisSession)
-            {
-                NeighborDebugCommands.BeginSession();
-                debugOpen = true;
-                enteringCode = false;
-                scroll = Vector2.zero;
-            }
-            else
-            {
-                enteringCode = true;
-                code = "";
-            }
+            if (GameManager.Instance == null || TimeManager.Instance == null) return;
+            // Snapshot before enabling debug: enabling also skips the opening story.
+            bool freshSession = !NeighborDebugCommands.Isolated;
+            NeighborDebugCommands.BeginSession();
+            if (freshSession) StoryDebugActions.SetEnabled(true);
+            unlockedThisSession = true;
+            DebugConsoleOpen = debugOpen = true;
+            enteringCode = false;
+            command = ""; focusInput = true;
+            if (console.Lines.Count == 0) console.Add(StoryText.UI("console.welcome"));
+            scroll.y = float.MaxValue;
         }
 
         void OnEnable()
@@ -97,7 +86,6 @@ namespace DeathBySeventhsDawn.Progression
             debugOpen = false;
             confirmNewJourney = false;
             EndingCollectionUI.ClosePreview();
-            code = "";
         }
 
         void RestoreInitialState()
@@ -106,24 +94,8 @@ namespace DeathBySeventhsDawn.Progression
             GameManager.Instance.StartNewJourney();
         }
 
-        void EnterDigit(char digit)
-        {
-            if (!enteringCode)
-                return;
-            code += digit;
-            if (code == "1997")
-            {
-                unlockedThisSession = true;
-                NeighborDebugCommands.BeginSession();
-                StoryDebugActions.SetEnabled(true);
-                enteringCode = false;
-                debugOpen = true;
-                code = "";
-                scroll = Vector2.zero;
-            }
-            else if (code.Length >= 4)
-                code = "";
-        }
+        // Kept for historical fixtures that invoked the removed PIN entry by reflection.
+        void EnterDigit(char digit) { }
 
         void OnDestroy()
         {
@@ -162,51 +134,72 @@ namespace DeathBySeventhsDawn.Progression
             };
         }
 
-        void DrawStatus(GameManager game, TimeManager clock)
+        void SubmitCommand()
         {
-            GUILayout.Label(StoryText.Local($"第 {clock.Days} 天  {PeriodName(clock.Period)}   |   轮回次数 {game.LoopCount}", $"Day {clock.Days}  {PeriodName(clock.Period)}   |   Loops {game.LoopCount}"), labelStyle);
-            GUILayout.Label(StoryText.Local($"体力 {game.Vitality:0.#} / 上限 {game.MaxVitality:0.#}", $"Vitality {game.Vitality:0.#} / Maximum {game.MaxVitality:0.#}"), labelStyle);
-            GUILayout.Label(StoryText.Local($"知识 {game.Knowledge:0.#}   |   等级 {game.KnowledgeLevel}", $"Knowledge {game.Knowledge:0.#}   |   Level {game.KnowledgeLevel}"), labelStyle);
-            GUILayout.Label(StoryText.Local($"变异 {game.Mutation:0.#}   |   理智 {game.Sanity:0.#}（{LayerName(game.Layer)}）", $"Mutation {game.Mutation:0.#}   |   Sanity {game.Sanity:0.#} ({LayerName(game.Layer)})"), labelStyle);
+            var text = command.Trim();
+            if (text.Length == 0) return;
+            command = ""; completionSeed = null; focusInput = true;
+            console.Record(text);
+            if (text.Equals("clear", System.StringComparison.OrdinalIgnoreCase)) console.Lines.Clear();
+            else
+            {
+                console.Add("> " + text);
+                if (text.Equals("history", System.StringComparison.OrdinalIgnoreCase)) console.Add(string.Join("\n", console.History));
+                else console.Add(GameCommandConsole.Execute(text));
+            }
+            if (text.Equals("close", System.StringComparison.OrdinalIgnoreCase)) Close();
+            scroll.y = float.MaxValue;
         }
 
-        static string PeriodName(TimePeriod period) => new[]
+        public static Rect ConsoleRect(float width, float height) => new Rect(12, 12, Mathf.Max(1, width - 24), Mathf.Max(1, Mathf.Min(height - 24, 600)));
+        void DrawConsole(float width, float height)
         {
-            DeathBySeventhsDawn.Story.StoryText.UI("早晨"),
-            DeathBySeventhsDawn.Story.StoryText.UI("下午"),
-            DeathBySeventhsDawn.Story.StoryText.UI("傍晚"),
-            DeathBySeventhsDawn.Story.StoryText.UI("深夜")
-        }[(int)period];
-        static string LayerName(SanityLayer layer) => new[]
-        {
-            DeathBySeventhsDawn.Story.StoryText.UI("清醒"),
-            DeathBySeventhsDawn.Story.StoryText.UI("动摇"),
-            DeathBySeventhsDawn.Story.StoryText.UI("破碎"),
-            DeathBySeventhsDawn.Story.StoryText.UI("启示")
-        }[(int)layer];
-        static string TierName(KnowledgeTier tier) => new[]
-        {
-            DeathBySeventhsDawn.Story.StoryText.UI("普通"),
-            DeathBySeventhsDawn.Story.StoryText.UI("禁忌"),
-            DeathBySeventhsDawn.Story.StoryText.UI("宇宙")
-        }[(int)tier];
-        static string AbilityName(string id)
-        {
-            switch (id)
+            if (consoleText == null)
             {
-                case "NightVision":
-                    return DeathBySeventhsDawn.Story.StoryText.UI("夜视");
-                case "AberrantHearing":
-                    return DeathBySeventhsDawn.Story.StoryText.UI("异化听觉");
-                case "Regeneration":
-                    return DeathBySeventhsDawn.Story.StoryText.UI("血肉再生");
-                case "SpatialPerception":
-                    return DeathBySeventhsDawn.Story.StoryText.UI("空间感知");
-                case "NonHumanForm":
-                    return DeathBySeventhsDawn.Story.StoryText.UI("非人形态");
-                default:
-                    return id;
+                consoleText = new GUIStyle(labelStyle) { fontSize = 19, richText = false, padding = new RectOffset(4,4,2,2) };
+                consoleText.normal.textColor = new Color(.78f,.86f,.77f);
+                inputStyle = new GUIStyle(GUI.skin.textField) { font = GameTypography.Current, fontSize = 21, padding = new RectOffset(8,8,7,7), richText = false };
             }
+            GameTypography.Use(consoleText, inputStyle);
+            var panel = ConsoleRect(width, height);
+            GUI.color = new Color(.025f,.035f,.03f,.97f);
+            GUI.DrawTexture(panel, Texture2D.whiteTexture); GUI.color = Color.white;
+            GUILayout.BeginArea(new Rect(panel.x+12,panel.y+10,panel.width-24,panel.height-20));
+            GUILayout.Label(StoryText.UI("console.title") + "  /  " + StoryText.UI("console.isolated") + "  /  debug " + (StoryDebugActions.Enabled ? "on" : "off"), consoleText);
+            GUILayout.Label(StoryText.UI("console.keys"), consoleText);
+            scroll = GUILayout.BeginScrollView(scroll, GUILayout.ExpandHeight(true));
+            GUILayout.Label(string.Join("\n", console.Lines), consoleText);
+            GUILayout.EndScrollView();
+            var e = Event.current;
+            if (e.type == EventType.KeyDown && GUI.GetNameOfFocusedControl() == "neighbor-console-command")
+            {
+                if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter) { SubmitCommand(); e.Use(); }
+                else if (e.keyCode == KeyCode.UpArrow || e.keyCode == KeyCode.DownArrow)
+                { command = console.Navigate(e.keyCode == KeyCode.UpArrow ? -1 : 1, command); completionSeed = null; focusInput = true; e.Use(); }
+                else if (e.keyCode == KeyCode.Tab)
+                {
+                    if (completionSeed == null) { completionSeed = command; completions = GameCommandConsole.Complete(command); completionIndex = -1; }
+                    if (completions.Length > 0) { completionIndex = (completionIndex + 1) % completions.Length; command = completions[completionIndex]; focusInput = true; }
+                    e.Use();
+                }
+                else if (e.keyCode == KeyCode.BackQuote) { e.Use(); }
+                else if (e.keyCode == KeyCode.Escape) { Close(); e.Use(); }
+                else completionSeed = null;
+            }
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(">", consoleText, GUILayout.Width(22));
+            GUI.SetNextControlName("neighbor-console-command");
+            command = GUILayout.TextField(command, 256, inputStyle, GUILayout.Height(42));
+            if (GUILayout.Button(StoryText.UI("console.run"), buttonStyle, GUILayout.Width(90), GUILayout.Height(42))) SubmitCommand();
+            GUILayout.EndHorizontal();
+            if (focusInput && Event.current.type == EventType.Repaint)
+            {
+                GUI.FocusControl("neighbor-console-command");
+                var editor = (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
+                editor.cursorIndex = editor.selectIndex = command.Length;
+                focusInput = false;
+            }
+            GUILayout.EndArea();
         }
 
         void OnGUI()
@@ -241,116 +234,16 @@ namespace DeathBySeventhsDawn.Progression
 
                 if (WorldEndSequence.IsPresenting && !debugOpen && !enteringCode)
                     return;
-                if(game.State.stageOneComplete)return;
+                if(game.State.stageOneComplete && !debugOpen)return;
                 if (game.HasEnded && !debugOpen && !enteringCode)
                 {
                     EndingCollectionUI.DrawResult(game, width, height);
                 }
                 else if (debugOpen)
                 {
-                    GUI.color = new Color(0, 0, 0, .88f);
-                    GUI.DrawTexture(new Rect(0, 0, width, height), Texture2D.whiteTexture);
-                    GUI.color = previousColor;
-                    float panelWidth = Mathf.Min(820, width - 24);
-                    GUILayout.BeginArea(new Rect((width - panelWidth) / 2, 12, panelWidth, height - 24), boxStyle);
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("调试面板"), titleStyle);
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("本次游戏已解锁全部测试功能 · 按 ~ 或 Esc 关闭"), labelStyle);
-                    scroll = GUILayout.BeginScrollView(scroll);
-                    DrawStatus(game, clock);
-                    if(PrototypeButtons.LayoutButton(StoryDebugActions.Enabled
-                        ? StoryText.UI("copy.ProgressionHUD.263")
-                        : StoryText.UI("copy.ProgressionHUD.264"),buttonStyle))
-                        StoryDebugActions.SetEnabled(!StoryDebugActions.Enabled);
-                    GUILayout.BeginHorizontal();
-                    if(PrototypeButtons.LayoutButton("−",buttonStyle))targetDay=Mathf.Max(1,targetDay-1);
-                    GUILayout.Label("Days "+targetDay,labelStyle);
-                    if(PrototypeButtons.LayoutButton("+",buttonStyle))targetDay++;
-                    if(PrototypeButtons.LayoutButton(PeriodName((TimePeriod)targetPeriod),buttonStyle))targetPeriod=(targetPeriod+1)%4;
-                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.265"),buttonStyle)) { StoryDebugActions.SetEnabled(true);clock.DebugSetTime(targetDay,(TimePeriod)targetPeriod); }
-                    GUILayout.EndHorizontal();
-                    GUILayout.Label(StoryText.UI("copy.ProgressionHUD.266"),labelStyle);
-                    GUI.SetNextControlName("neighbor-console-command");command=GUILayout.TextField(command);
-                    if(GUILayout.Button(StoryText.UI("copy.ProgressionHUD.267"))||(Event.current.type==EventType.KeyDown&&Event.current.keyCode==KeyCode.Return&&GUI.GetNameOfFocusedControl()=="neighbor-console-command")){commandResult=NeighborDebugCommands.Execute(command);if(Event.current.type==EventType.KeyDown)Event.current.Use();}
-                    GUILayout.Label(commandResult,labelStyle);
-                    var rooms=new[]{"Bedroom","LivingRoom","Bathroom","Balcony","Corridor","Stairwell","Rooftop"};
-                    var roomNames=new[]{"卧室","客厅","卫生间","阳台","楼道","楼梯间","天台"};
-                    for(int i=0;i<rooms.Length;i++)
-                    {
-                        if(i%2==0)GUILayout.BeginHorizontal();
-                        if(PrototypeButtons.LayoutButton(StoryText.Local(roomNames[i],rooms[i]),buttonStyle)) StoryDebugActions.Jump(rooms[i],targetDay,targetPeriod);
-                        if(i%2==1||i==rooms.Length-1)GUILayout.EndHorizontal();
-                    }
-                    bool resolved=game.State.buildingCrisisResolved,seven=game.State.daySevenCrisisResolved;
-                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.268")+StoryText.Local(resolved?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.339"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.340"),resolved?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.341"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.342")),buttonStyle))resolved=!resolved;
-                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.269")+StoryText.Local(seven?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.343"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.344"),seven?DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.345"):DeathBySeventhsDawn.Story.StoryText.UI("fragment.ProgressionHUD.346")),buttonStyle))seven=!seven;
-                    if(resolved!=game.State.buildingCrisisResolved||seven!=game.State.daySevenCrisisResolved)
-                    {game.State.buildingCrisisResolved=resolved;game.State.daySevenCrisisResolved=seven;ProgressionSave.Write(game.State);}
-                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.270"),buttonStyle))
-                    {int day=clock.Days;for(int i=0;i<4&&clock.Days==day;i++)clock.AdvanceTime();}
-                    if(PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.271"),buttonStyle)) WorldEndSequence.BeginFatalCrisis(true);
-
-                    if (PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.272"), buttonStyle))
-                        StoryDebugActions.SkipForcedStory();
-                    GUILayout.BeginHorizontal();
-                    for (int ending = 1; ending <= 3; ending++)
-                        if (PrototypeButtons.LayoutButton(StoryText.UI("copy.ProgressionHUD.273") + ending, buttonStyle))
-                            StoryDebugActions.PreviewEnding(ending);
-                    GUILayout.EndHorizontal();
-                    foreach (var ability in game.Settings.abilities)
-                        if (ability != null && game.HasAbility(ability.id))
-                            GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("已解锁能力：") + AbilityName(ability.id), labelStyle);
-                    GUILayout.Space(12);
-                    if (!confirmNewJourney)
-                    {
-                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("回到初始状态"), buttonStyle))
-                            confirmNewJourney = true;
-                    }
-                    else
-                    {
-                        GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("清空这次旅程的日记、知识、变异、轮回和剧情记录，从第 1 天的开场梦境重新开始。"), labelStyle);
-                        GUILayout.BeginHorizontal();
-                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("确认重置"), buttonStyle))
-                            RestoreInitialState();
-                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("取消"), buttonStyle))
-                            confirmNewJourney = false;
-                        GUILayout.EndHorizontal();
-                    }
-
-                    GUILayout.Space(16);
-                    GUI.enabled = !confirmNewJourney;
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("推进时段（每天四个时段）"), buttonStyle))
-                        clock.AdvanceTime();
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("重播第一天广播"), buttonStyle))
-                        DeathBySeventhsDawn.Interaction.DayOneSupernovaEvent.Replay();
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("线索开发者面板"), buttonStyle))
-                        DeathBySeventhsDawn.Interaction.InvestigationDevTools.Open();
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("上床睡觉（跳到次日早晨）"), buttonStyle))
-                        clock.SleepUntilNextMorning();
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("恢复全部体力"), buttonStyle))
-                        game.Heal(game.MaxVitality);
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("损失 25 体力（归零后轮回）"), buttonStyle))
-                        game.Damage(25);
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("死亡并开始下一轮"), buttonStyle))
-                        game.Damage(game.MaxVitality);
-                    foreach (KnowledgeTier tier in System.Enum.GetValues(typeof(KnowledgeTier)))
-                        if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("获得") + TierName(tier) + DeathBySeventhsDawn.Story.StoryText.UI("知识"), buttonStyle))
-                            KnowledgeManager.Instance.Unlock("prototype-" + tier + "-" + System.Guid.NewGuid().ToString("N"), tier);
-                    GUI.enabled = true;
-                    GUILayout.EndScrollView();
-                    if (DeathBySeventhsDawn.Progression.PrototypeButtons.LayoutButton(DeathBySeventhsDawn.Story.StoryText.UI("关闭"), buttonStyle))
-                        Close();
-                    GUILayout.EndArea();
+                    DrawConsole(width, height);
                 }
-                else if (enteringCode)
-                {
-                    // 默认不显示测试状态、提示或按钮；按 ~ 后才显示口令框。
-                    float promptWidth = Mathf.Min(610, width - 24);
-                    GUILayout.BeginArea(new Rect((width - promptWidth) / 2, Mathf.Max(12, (height - 180) / 2), promptWidth, 180), boxStyle);
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("调试面板"), titleStyle);
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("输入口令：") + new string ('*', code.Length) + "_", labelStyle);
-                    GUILayout.Label(DeathBySeventhsDawn.Story.StoryText.UI("输入正确后自动打开 · Esc 取消"), labelStyle);
-                    GUILayout.EndArea();
-                }
+
             }
             finally
             {

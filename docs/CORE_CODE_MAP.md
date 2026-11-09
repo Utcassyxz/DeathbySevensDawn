@@ -1,3 +1,5 @@
+2026-11-09 控制台：ProgressionHUD 只负责窗口、焦点与输入；GameCommandConsole 独占指令注册表、参数校验、帮助及补全；ConsoleBuffer 保存有界的会话输出与历史；NeighborDebugCommands 保留隔离存档、原旅程恢复与旧事件预设。按 ~ 直接打开，session end 恢复原旅程，收起窗口不会退出临时会话。指令手册由 Weekend/Tools/generate_console_handbook.py 生成到 docs/CONSOLE_COMMANDS.md。验收 VerifyRevision.RunConsoleAll；不修改剧情日期及正式存档版本。
+
 > 2026-11-08：下文为历史系统边界/剧情快照。正式第一阶段规则见 PHASE_ONE_SPEC_2026-11-08.md 与当前源码；第三夜爆楼、第四天自动人形等条目已经被新规格覆盖。
 
 2026-11-09外观补查：PlayerController2D.Awake仅将原Square占位换为PocketSceneArt.Person像素人物，保持原根变换、碰撞体和脚底坐标。只初始化一次；不得在Update/LateUpdate反复换图，起床、坐姿和鱼晨间演出仍由MorningRoutine管理。已有城市/邻居人物贴图不经过该替换。
