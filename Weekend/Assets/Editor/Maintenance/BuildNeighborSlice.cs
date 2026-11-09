@@ -13,7 +13,7 @@ public static class BuildNeighborSlice
     public static void BuildStageOne()
     {
         int width=PlayerSettings.defaultScreenWidth,height=PlayerSettings.defaultScreenHeight;var mode=PlayerSettings.fullScreenMode;string version=PlayerSettings.bundleVersion;
-        try{PlayerSettings.defaultScreenWidth=1920;PlayerSettings.defaultScreenHeight=1080;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;PlayerSettings.bundleVersion="0.3.0";BuildReview("Death by Sevens Dawn First Stage","../../outputs/DeathbySevensDawn-StageOne/SevenDay.exe",BuildOptions.None);}
+        try{PlayerSettings.defaultScreenWidth=1920;PlayerSettings.defaultScreenHeight=1080;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;PlayerSettings.bundleVersion="0.3.1";BuildReview("Death by Sevens Dawn First Stage","../../outputs/DeathbySevensDawn-StageOne-0.3.1/SevenDay.exe",BuildOptions.None);}
         finally{PlayerSettings.defaultScreenWidth=width;PlayerSettings.defaultScreenHeight=height;PlayerSettings.fullScreenMode=mode;PlayerSettings.bundleVersion=version;AssetDatabase.SaveAssets();}
     }
     public static void BuildRework()

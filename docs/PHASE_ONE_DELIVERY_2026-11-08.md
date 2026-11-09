@@ -1,12 +1,12 @@
 # 第一阶段交付记录 · 2026-11-08
 
-以用户完整规格为基线实施，版本0.3.0。主要功能代码已提交并推送，原GitHub/Unity工程已同步，Windows非开发运行包已生成并校验。自动化场景验收不代替完整人工游玩，尚未签收的内容见下文。
+以用户完整规格为基线实施，最新运行包版本0.3.1（2026-11-09实机补查）。主要功能代码已提交并推送，原GitHub/Unity工程已同步，Windows非开发运行包已生成并校验。自动化场景验收不代替完整人工游玩，尚未签收的内容见下文。
 
 ## 修改范围
 
 核心：TimeManager、GameManager、LoopManager、CrisisRules、WorldEndSequence、NightDreamSequence、ProgressionState/Save、SaveValidation、ApartmentEventDirector。
 
-交互：NeighborSlice/Room/Combat、ThirdPersonMotor、AquariumEntity、CultNeighbor、MorningRoutine、DayOneSupernovaEvent、StoryJournal、Investigation/Board、HUD/EndingCollection/WorldPrompt、CityWorld/PocketSceneArt/StreetDepth。
+交互：NeighborSlice/Room/Combat、ThirdPersonMotor、PlayerController2D、AquariumEntity、CultNeighbor、MorningRoutine、DayOneSupernovaEvent、StoryJournal、Investigation/Board、HUD/EndingCollection/WorldPrompt、CityWorld/PocketSceneArt/StreetDepth。
 
 数据：Investigation.json、StoryText.json、StoryTextEnglish.json；新增4个原创音效/收音机片段。所有Assets文件配meta并保留既有GUID。编辑器验收和Windows构建入口同步。
 
@@ -34,7 +34,11 @@
 
 用户已亲自关闭Windows防火墙权限窗口，原生UI检查恢复。独立运行包实际确认：英文标题及设置、中文切换、音乐署名、Esc返回、鼠标点击正常开始新游戏，以及开场中文字幕显示。该窗口尺寸下未见这些页面缺字或明显裁切。截图保存为outputs/StageOne-2026-11-08/native-settings-zh.jpg、native-title-zh.jpg、native-opening-zh.jpg，不提交临时图片。
 
-输入核验尚未完成：自动化发送的Enter未观察到开场字幕推进，鼠标菜单及设置的IMGUI Esc返回有效。尚不能区分实体键盘故障和自动化注入兼容问题，已请用户在游戏画布内用实体键盘按Enter确认。不得把这一项写成通过，也不得仅凭自动化输入结果判定实体键盘失效。最终运行包不启用开发调试连接；本次预览使用独立产品存档，原Unity旅程未被覆盖。
+2026-11-09：用户确认实体键盘Enter能推进字幕；随后实机画面已到走廊邻居对话，完成了从开场到该处的正常输入核验。自动化发送Enter未推进的结果不代表实体键盘故障，因此没有更改游戏键位或添加输入旁路。最终运行包不启用开发调试连接；本次预览使用独立产品存档，原Unity旅程未被覆盖。
+
+这次实机补查还发现公寓主角仍使用青色方块占位图。0.3.1补丁复用已有像素人物，只在PlayerController2D.Awake替换名为Square的占位贴图；保持原变换/碰撞体，按原碰撞脚底定位，不在后续帧覆盖起床、坐下和鱼晨间演出的贴图。修正透明边缘后保持已有走廊人物宽度约束，并将人物画在墙面前，修复靠墙时上半身被墙纸遮住的问题。日常邻居对白也明确标出雨果的回应，避免分页后误认说话者。该补丁的最终测试和构建结果另行记录，不影响用户当前运行中的0.3.0程序。
+
+此补丁新增核对主角不再为方块、人物脚底与原碰撞脚底对齐、走廊原缩放与碰撞体不变以及墙面遮挡关系。254项联合回归通过；绘制层级收尾后的101项正式专项再次通过，退出码0。0.3.1非开发Windows构建成功、退出码0，ZIP的244项CRC全部通过。相关相机截图为apartment-hugo-bedroom.png和apartment-hugo-corridor.png，保存于outputs/StageOne-0.3.1/Visuals，与0.3.0原生UI截图分开记录。未启动第二个同产品实例覆盖用户正在运行的旅程；0.3.1完整原生流程仍未签收。
 
 Player日志没有记录游戏脚本异常；存在URP景深/Panini后处理着色器被剥离或不支持的警告，及D3D12信息队列查询失败。不能把这些警告描述为已经消除，也不能因此宣称完整原生画面验收通过。场景相机画面与自动规则验收已分别通过。
 
@@ -44,11 +48,11 @@ Player日志没有记录游戏脚本异常；存在URP景深/Panini后处理着�
 
 ## 构建与版本
 
-Windows x64，产品Death by Sevens Dawn First Stage，0.3.0，独立产品存档目录；不打包临时视觉桥、调试存档或Library。
+Windows x64，产品Death by Sevens Dawn First Stage，0.3.1，独立产品存档目录；不打包临时视觉桥、调试存档或Library。0.3.1保持与0.3.0相同产品名及v7存档格式，补丁外观在新包或原工程重新Play后生效。
 
 - 实现提交：3a88346，已推送origin/feature/seven-day-city。
 - 原Unity工程：C:/Users/Owner/Documents/GitHub/DeathbySevensDawn/Weekend，已快进同步实现提交；未知文件保留，未更改玩家原旅程。
-- 包：仓库外../outputs/DeathbySevensDawn-StageOne-playable.zip，解压后运行SevenDay.exe，保持同目录Data等文件完整。
-- SHA256：80AF594806273C29AA7C4C9859179212BDB10036BFA9EA8013A07049467385B0。
-- 文案、验证摘要、三分辨率截图：../outputs/StageOne-2026-11-08/。
+- 最新包：仓库外../outputs/DeathbySevensDawn-StageOne-0.3.1-playable.zip，解压后运行SevenDay.exe，保持同目录Data等文件完整。244项、展开161112346字节，全部CRC有效。
+- 最新包SHA256：2BBDDE2A13B00FD1B16B4854647D4E7579BA25BF7E8281ED18856C800665284D。
+- 最新文案、验证摘要、相机截图：../outputs/StageOne-0.3.1/；前版原生UI截图和历史记录保留于../outputs/StageOne-2026-11-08/。
 - 最终非开发构建脚本与本交付记录另作交付确认提交；GitHub源码以该分支最新提交为准。

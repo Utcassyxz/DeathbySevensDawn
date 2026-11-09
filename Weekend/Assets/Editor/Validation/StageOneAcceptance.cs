@@ -58,6 +58,10 @@ public static class StageOneAcceptance
         var opening=Object.FindAnyObjectByType<StoryJournal>();for(int i=0;i<7;i++){opening.AdvanceOpeningDream();yield return .4f;}yield return 1.1f;
         for(int i=0;i<15;i++){InputSystem.QueueStateEvent(Keyboard.current,new KeyboardState(Key.Enter));yield return .15f;InputSystem.QueueStateEvent(Keyboard.current,new KeyboardState());yield return .25f;}
         Check(S.dreamSeen&&S.morningStage>=2,"opening inputs reach the actual waking and neighbor handoff");
+        var apartmentActor=GameObject.FindWithTag("Player");var apartmentRenderer=apartmentActor.GetComponent<SpriteRenderer>();var apartmentCollider=apartmentActor.GetComponent<BoxCollider2D>();
+        Check(apartmentRenderer.sprite.name=="Apartment Hugo"&&apartmentRenderer.sprite.rect.height>apartmentRenderer.sprite.rect.width,"apartment protagonist uses the existing pixel character rather than a teal square");
+        Check(Mathf.Abs(apartmentRenderer.bounds.min.y-apartmentCollider.bounds.min.y)<.02f,"pixel actor stays anchored to the original collision feet");
+        Capture("apartment-hugo-bedroom");
         var setup=Setup();while(setup.MoveNext())yield return setup.Current;
         Check(CrisisRules.Due(3,S)==CrisisKind.None&&CrisisRules.Due(5,S)==CrisisKind.None,"Day3 installation and Day5 pressure are not mandatory deaths");
         Check(CrisisRules.Due(7,S)==CrisisKind.Building,"Day7 purification is the only scheduled fatal crisis");
@@ -106,6 +110,7 @@ public static class StageOneAcceptance
         Check(Object.FindAnyObjectByType<FurnitureInteraction>().RestOnePeriod()&&Clock.GameMinute>=restedAt+44&&Clock.GameMinute<restedAt+47&&!WorldEndSequence.IsPresenting,"ordinary rest spends 45 minutes and cannot detonate Day7 at 21:00");TimeManager.AutoTimeSuppressed=true;
         setup=Setup(2,TimePeriod.Morning,"Corridor");while(setup.MoveNext())yield return setup.Current;S.neighborPlotHeard=true;S.neighborFlyersSeen=false;Place(new Vector3(-3.65f,.65f,0));yield return .3f;
         Check(EvidenceInspection.Instance.TryOpen("401-flyers")&&S.neighborFlyersSeen&&!Investigation.Has("401-flyers"),"reading the real original flyer, rather than hammering, unlocks its prerequisite");EvidenceInspection.Instance.Close();
+        var corridorActor=GameObject.FindWithTag("Player");var corridorCollider=corridorActor.GetComponent<BoxCollider2D>();var corridorRenderer=corridorActor.GetComponent<SpriteRenderer>();Check(corridorRenderer.sprite.name=="Apartment Hugo"&&corridorCollider.size==Vector2.one&&Mathf.Abs(corridorActor.transform.localScale.x-.455f)<.001f&&corridorRenderer.sortingOrder>GameObject.Find("north wallpaper face").GetComponent<SpriteRenderer>().sortingOrder,"corridor character preserves collision and draws in front of the wall face");Capture("apartment-hugo-corridor");
         setup=Setup(3,TimePeriod.Morning,"LivingRoom");while(setup.MoveNext())yield return setup.Current;
         foreach(int day in new[]{3,4,5,6,7})
         {

@@ -513,10 +513,10 @@
   "cult": {
     "sound": "Three more blows next door.\nHugo turns over. 401 has apparently not scheduled a day off.",
     "dayOne": [
-      "The neighbor stops mid-swing. He looks at Hugo’s slippers, then his face.\n“Not been out today?”\n“How is that your business?”\n“It is.”",
-      "He moves the hammer to his left hand. Two water bottles stand by the door. One is unopened.\n“I need to know who goes out in this building.”\n“Are you my mother?”\nHe does not smile.",
-      "“Is your television on?”\n“No.”\n“You looked at the stairs when you said that.”\nHugo pauses.\n“I will look at you next time.”",
-      "His hand trembles. A nail drops. He does not bend down.\n“Look at the stars last night?”\n“Why?”\n“If not, do not. Go home. Close the window. Leave the television off.”"
+      "The neighbor stops mid-swing. He looks at Hugo’s slippers, then his face.\n“Not been out today?”\nHugo: “How is that your business?”\n“It is.”",
+      "He moves the hammer to his left hand. Two water bottles stand by the door. One is unopened.\n“I need to know who goes out in this building.”\nHugo: “Are you my mother?”\nHe does not smile.",
+      "“Is your television on?”\nHugo: “No.”\n“You looked at the stairs when you said that.”\nHugo pauses.\nHugo: “I will look at you next time.”",
+      "His hand trembles. A nail drops. He does not bend down.\n“Look at the stars last night?”\nHugo: “Why?”\n“If not, do not. Go home. Close the window. Leave the television off.”"
     ],
     "note": "Knock twice if you need something.\nCome alone.\n\nThe note is taped low. Hugo bends to read it. His knees complain first.",
     "door": [

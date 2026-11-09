@@ -1,15 +1,17 @@
-Final room/current-rule suite:
-PASS: 98 checks; Current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up. Scenario fixtures and camera renders; not a timed manual playthrough.
+0.3.1 current-rule suite after final visual layering:
+PASS: 101 checks; Current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up. Scenario fixtures and camera renders; not a timed manual playthrough.
 
-Combined historical/current rules:
-PASS: 249 checks; 153 explicit historical-rule regressions followed by current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up.
+Combined regression after actor and dialogue change:
+PASS: 254 checks; 153 explicit historical-rule regressions followed by current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up.
 
-Bilingual continuous route:
+Previous bilingual continuity route (navigation/waiting accelerated; not a manual timed playthrough):
 PASS: 50 checks; Chinese and English continuous route from title, original tutorial, Day2 escape, continuous Day3-7 and formal unawakened purification ending. Navigation and waiting accelerated; no story-state injection/debug skips; not manual timing or collision-path validation.
 
-Final room checks (not a manual walkthrough):
+Current checks:
 NIGHT_ARC_CHECK STAGE1 fresh title starts the real bedroom opening without free debug
 NIGHT_ARC_CHECK STAGE1 opening inputs reach the actual waking and neighbor handoff
+NIGHT_ARC_CHECK STAGE1 apartment protagonist uses the existing pixel character rather than a teal square
+NIGHT_ARC_CHECK STAGE1 pixel actor stays anchored to the original collision feet
 NIGHT_ARC_CHECK STAGE1 Day3 installation and Day5 pressure are not mandatory deaths
 NIGHT_ARC_CHECK STAGE1 Day7 purification is the only scheduled fatal crisis
 NIGHT_ARC_CHECK STAGE1 unrecorded matching evidence is not NoRelation
@@ -66,6 +68,7 @@ NIGHT_ARC_CHECK STAGE1 persuasion uses trust and the confirmed plan
 NIGHT_ARC_CHECK STAGE1 evacuation can finish with prior source isolation
 NIGHT_ARC_CHECK STAGE1 ordinary rest spends 45 minutes and cannot detonate Day7 at 21:00
 NIGHT_ARC_CHECK STAGE1 reading the real original flyer, rather than hammering, unlocks its prerequisite
+NIGHT_ARC_CHECK STAGE1 corridor character preserves collision and draws in front of the wall face
 NIGHT_ARC_CHECK STAGE1 distinct fish phase Day3
 NIGHT_ARC_CHECK STAGE1 ununderstood fish is not automatically a companion on Day3
 NIGHT_ARC_CHECK STAGE1 distinct fish phase Day4

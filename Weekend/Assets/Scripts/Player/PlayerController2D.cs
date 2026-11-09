@@ -12,11 +12,27 @@ namespace DeathBySeventhsDawn.Player
         [SerializeField] private float moveSpeed = 5.5f;
         private Rigidbody2D rb;
         private Vector2 moveInput;
+        private Sprite apartmentVisual;
         private readonly ContactPoint2D[] contacts = new ContactPoint2D[12];
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
+            InstallApartmentVisual();
         }
+        void InstallApartmentVisual()
+        {
+            var renderer=GetComponent<SpriteRenderer>();
+            // Replace only the authored prototype square. City/neighbor sprites and cutscene poses have their own owners.
+            if(renderer==null||renderer.sprite==null||renderer.sprite.texture.name!="Square")return;
+            var art=gameObject.AddComponent<DeathBySeventhsDawn.Interaction.PocketSceneArt>();
+            var source=art.Person();float scale=Mathf.Max(.01f,Mathf.Abs(transform.lossyScale.y));
+            float localHeight=1.25f/scale;var box=GetComponent<BoxCollider2D>();
+            float bottom=box!=null?box.offset.y-box.size.y*.5f:-.5f;
+            var frame=new Rect(source.rect.x+1,source.rect.y,source.rect.width-2,source.rect.height);
+            apartmentVisual=Sprite.Create(source.texture,frame,new Vector2(.5f,Mathf.Clamp01(-bottom/localHeight)),source.rect.height/localHeight,0,SpriteMeshType.FullRect);
+            apartmentVisual.name="Apartment Hugo";renderer.sprite=apartmentVisual;renderer.color=Color.white;renderer.sortingOrder=Mathf.Max(renderer.sortingOrder,20);
+        }
+        private void OnDestroy(){if(apartmentVisual!=null)Destroy(apartmentVisual);}
         private void Update()
         {
 #if ENABLE_INPUT_SYSTEM
