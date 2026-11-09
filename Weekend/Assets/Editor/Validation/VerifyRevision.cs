@@ -54,11 +54,14 @@ public static class VerifyRevision
                     inputSettings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
                     Application.runInBackground=true;
                 }
+                CrisisRules.LegacyValidation=true;
                 TimeManager.AutoTimeSuppressed=true;
+                if(SessionState.GetBool(Key+"StageOne",false))steps=SessionState.GetBool(Key+"StageOneAll",false)?StageOneAcceptance.RunAll():StageOneAcceptance.Run();
+                if(SessionState.GetBool(Key+"StageOneRoute",false))steps=StageOneContinuity.Run();
                 checks = 0;
                 error = null;
                 next = EditorApplication.timeSinceStartup + 2;
-                deadline = next + 300;
+                deadline = next + 600;
             }
 
             if (s == PlayModeStateChange.EnteredEditMode)
@@ -91,9 +94,14 @@ public static class VerifyRevision
     [MenuItem("Prototype/Validate seven-day city")]
     public static void RunCity(){ SessionState.SetBool(Key+"OnlyCity",true); Run(); }
 
+    [MenuItem("Prototype/Validate first-stage remake")]
+    public static void RunStageOne(){SessionState.SetBool(Key+"StageOne",true);RunNeighbor();}
+    public static void RunStageOneAll(){SessionState.SetBool(Key+"StageOneAll",true);RunStageOne();}
+    [MenuItem("Prototype/Validate bilingual first-stage continuity")]
+    public static void RunStageOneRoute(){SessionState.SetBool(Key+"StageOneRoute",true);RunNeighbor();}
     public static void RunRework(){SessionState.SetBool(Key+"Rework",true);RunNeighbor();}
     public static void RunNeighborAll(){RunRework();}
-    [MenuItem("Prototype/Validate Day 2-3 neighbor slice")]
+    [MenuItem("Prototype/Legacy contracts/Validate pre-remake neighbor")]
     public static void RunNeighbor(){SessionState.SetBool(Key+"Rework",true);SessionState.SetBool("NeighborSliceValidationStorage",true);SessionState.SetBool(Key+"OnlyNeighbor",true);Run();}
 
     [MenuItem("Prototype/Validate current prototype")]
@@ -514,7 +522,9 @@ public static class VerifyRevision
         if(SessionState.GetBool(Key+"OnlyCity",false)) scope="seven-day city integration: evidence, deductions, interventions, fish reachability, AI, defense, checkpoint and legacy migration; journey/album/settings restored.";
         if(SessionState.GetBool(Key+"OnlyNeighbor",false))scope="Day 2-3 neighbor vertical slice: preparation, peace, combat, causal deductions, field prevention, death, mutation, perception, migration and isolated console.";
         if(SessionState.GetBool(Key+"Rework",false))scope="Revised eavesdropping, exhausted pickups, 401 return, first-person mouse combat and hit reactions; existing death-cycle and city regressions. Isolated saves restored.";
+        if(SessionState.GetBool(Key+"StageOne",false))scope=SessionState.GetBool(Key+"StageOneAll",false)?"153 explicit historical-rule regressions followed by current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up.":"Current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up. Scenario fixtures and camera renders; not a timed manual playthrough.";
         if(SessionState.GetBool(Key+"AllNeighbor",false))scope+=" Also includes existing death-cycle and city regressions.";
+        if(SessionState.GetBool(Key+"StageOneRoute",false))scope="Chinese and English continuous route from title, original tutorial, Day2 escape, continuous Day3-7 and formal unawakened purification ending. Navigation and waiting accelerated; no story-state injection/debug skips; not manual timing or collision-path validation.";
         File.WriteAllText(SessionState.GetBool(Key+"OnlyNeighbor",false)?"neighbor-validation.txt":SessionState.GetBool(Key+"OnlyCity",false)?"../city-validation.txt":"../revision-validation.txt", failure == null ? "PASS: " + checks + " checks; " + scope : "FAIL: " + failure);
         EditorApplication.isPlaying = false;
         if (Application.isBatchMode)
@@ -529,7 +539,9 @@ public static class VerifyRevision
         NeighborDebugCommands.EndSession(false);
         if (!SessionState.GetBool(Key, false))
             return;
+        CrisisRules.LegacyValidation=false;
         TimeManager.AutoTimeSuppressed=false;
+        SessionState.SetBool(Key+"StageOne",false);SessionState.SetBool(Key+"StageOneAll",false);SessionState.SetBool(Key+"StageOneRoute",false);
         SessionState.SetBool(Key, false);
         SessionState.SetBool(Key + "OnlyCompanions", false);
         SessionState.SetBool(Key+"OnlySpatial",false);

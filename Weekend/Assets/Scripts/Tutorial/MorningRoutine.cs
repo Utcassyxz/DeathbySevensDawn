@@ -347,7 +347,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             if (!CanOpenFridge || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy)
                 return false;
-            firstFridge = !State.fridgeOpened && !State.dayOneNewsStarted && !State.dayOneSupernovaSeen && TimeManager.Instance.Days == 1;
+            firstFridge = !State.fridgeOpened && !State.dayOneNewsStarted && !State.dayOneSupernovaSeen && (TimeManager.Instance.Days == 1||!CrisisRules.LegacyValidation);
             State.fridgeOpened = true;
             if (firstFridge)
                 State.morningStage = 4;
@@ -619,7 +619,7 @@ namespace DeathBySeventhsDawn.Interaction
 
             if (Stage == 4 && !State.dayOneSupernovaSeen && SceneManager.GetActiveScene().name == "LivingRoom" && !DayOneSupernovaEvent.Instance.IsPresenting)
             {
-                if (TimeManager.Instance.Days != 1)
+                if (TimeManager.Instance.Days != 1&&CrisisRules.LegacyValidation)
                 {
                     NewsFinished();
                     return;

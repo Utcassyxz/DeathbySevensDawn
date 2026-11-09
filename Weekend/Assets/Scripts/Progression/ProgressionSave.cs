@@ -30,6 +30,9 @@ namespace DeathBySeventhsDawn.Progression
                 var state = JsonUtility.FromJson<ProgressionState>(File.ReadAllText(PathName));
                 if (state == null || (state.version < 1 || state.version > 7) || state.loopCount < 0 || !Valid(state.knowledge) || !Valid(state.mutation) || !Valid(state.sanityBurden))
                     throw new InvalidDataException("Unsupported or invalid progression save.");
+                SaveValidation.NormalizeStage(state);
+                state.stageEvents=state.stageEvents??new System.Collections.Generic.List<string>();
+                if(float.IsNaN(state.savedMinute)||float.IsInfinity(state.savedMinute))state.savedMinute=-1;
                 state.bubblePurchases = state.bubblePurchases ?? new System.Collections.Generic.List<string>();
                 state.knowledgeIds = state.knowledgeIds ?? new System.Collections.Generic.List<string>();
                 Knowledge.Investigation.Normalize(state);

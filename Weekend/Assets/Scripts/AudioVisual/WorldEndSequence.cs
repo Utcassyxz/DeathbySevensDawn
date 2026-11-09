@@ -28,7 +28,7 @@ namespace DeathBySeventhsDawn.Progression
             if(Instance==null||game==null||clock==null) return false;
             if(IsPresenting) return true;
             if(game.HasEnded || clock.Days!=7 || clock.Period!=TimePeriod.Night || game.State.daySevenCrisisResolved) return false;
-            return BeginFatalCrisis(false);
+            return BeginFatalCrisis(CrisisRules.LegacyValidation?CrisisKind.Cosmic:CrisisKind.Building);
         }
         public static bool BeginFatalCrisis(bool buildingExplosion) => BeginFatalCrisis(buildingExplosion ? CrisisKind.Building : CrisisKind.Cosmic);
         public static bool BeginFatalCrisis(CrisisKind kind)
@@ -41,6 +41,7 @@ namespace DeathBySeventhsDawn.Progression
             {
                 state.firstApocalypsePending=true;
                 state.deathWasBuilding=buildingExplosion;
+                if(!CrisisRules.LegacyValidation&&kind==CrisisKind.Building&&TimeManager.Instance.Days==7)state.stageReturnDay=7;
                 state.deathCrisis=(int)kind;state.lastDeathCause=kind==CrisisKind.Building?"building":kind==CrisisKind.City?"city":"cosmic";
                 if(kind==CrisisKind.Building)EndingCollection.Unlock("building-destroyed");
                 ProgressionSave.Write(state);
@@ -72,13 +73,14 @@ namespace DeathBySeventhsDawn.Progression
             var body=GameObject.FindWithTag("Player")?.GetComponent<Rigidbody2D>();
             if(body!=null)body.linearVelocity=Vector2.zero;
         }
+        string[] ReunionPages=>!CrisisRules.LegacyValidation&&GameManager.Instance.State.stageReturnDay==7?new[]{NeighborSlice.Text("day7-return").body}:StoryText.Current.expansion.apocalypseReunion;
         public void AdvanceReunion()
         {
             if(!InReunion || Time.unscaledTime-lastAdvance<.16f)return;
             lastAdvance=Time.unscaledTime;
             if(reunionText.Next())return;
             reunionText.Reset();reunionPage++;
-            if(reunionPage >= StoryText.Current.expansion.apocalypseReunion.Length) CompleteReunion();
+            if(reunionPage >= ReunionPages.Length) CompleteReunion();
         }
         void CompleteReunion()
         {
@@ -331,7 +333,7 @@ namespace DeathBySeventhsDawn.Progression
             if(portrait!=null)GUI.DrawTexture(new Rect(art.x+8,art.y+8,art.width-16,art.height-16),portrait,ScaleMode.ScaleToFit);
             var text=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=23,wordWrap=true};text.normal.textColor=NarrativeUI.Ink;
             var box=new Rect(w*.06f,h*.76f,w*.64f,h*.225f);
-            var lines=StoryText.Current.expansion.apocalypseReunion;
+            var lines=ReunionPages;
             reunionText.Set(lines[Mathf.Clamp(reunionPage,0,lines.Length-1)],text,box.width-50,box.height-86);
             NarrativeUI.Dialogue(box,StoryText.Current.expansion.apocalypseSpeakers[Mathf.Clamp(reunionPage,0,lines.Length-1)],reunionText.Current,reunionText.Counter+StoryText.UI("copy.WorldEndSequence.70"),text);
         }

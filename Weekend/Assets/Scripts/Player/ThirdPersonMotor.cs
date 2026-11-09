@@ -17,6 +17,9 @@ namespace DeathBySeventhsDawn.Player
         public bool Moving { get; private set; }
         float yaw, pitch, fall, hitAt = -10;
         Transform hands;float handPulse;readonly System.Collections.Generic.List<Material> handMaterials=new System.Collections.Generic.List<Material>();
+        float dodgeUntil,dodgeReady;
+        public bool Dodging=>Time.unscaledTime<dodgeUntil;
+        public bool TryDodge(){if(Blocked||MovementLocked||Staggered||Stamina<25||Time.unscaledTime<dodgeReady)return false;Stamina-=25;dodgeUntil=Time.unscaledTime+.22f;dodgeReady=Time.unscaledTime+1.2f;return true;}
         float boundUntil,staggerUntil,impactAt=-10; Vector3 recoil;
         public bool Staggered=>Time.unscaledTime<staggerUntil;
         public void ReceiveImpact(Vector3 direction,float strength){direction.y=0;recoil=direction.normalized*strength;staggerUntil=Time.unscaledTime+.35f;impactAt=Time.unscaledTime;}
@@ -37,6 +40,7 @@ namespace DeathBySeventhsDawn.Player
             if(!Blocked&&recoil.sqrMagnitude>.01f){controller.Move(recoil*Time.deltaTime);recoil=Vector3.MoveTowards(recoil,Vector3.zero,18*Time.deltaTime);}
             if(Blocked||MovementLocked||Staggered) { Noise=0;Moving=false;return; }
             var k=Keyboard.current;if(k==null)return;
+            if(k.qKey.wasPressedThisFrame)TryDodge();
             bool crouch=k.leftCtrlKey.isPressed;
             if(crouch!=Crouching)
             { Crouching=crouch; controller.height=Crouching?1.1f:1.8f; controller.center=Vector3.up*controller.height*.5f; }
@@ -48,6 +52,7 @@ namespace DeathBySeventhsDawn.Player
             var direction=Quaternion.Euler(0,yaw,0)*new Vector3(input.x,0,input.y);
             if(FirstPerson)transform.rotation=Quaternion.Euler(0,yaw,0);else if(Moving)transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.LookRotation(direction),12*Time.deltaTime);
             fall=controller.isGrounded?-2:Mathf.Max(-35,fall-22*Time.deltaTime);
+            if(Dodging){if(direction.sqrMagnitude<.01f)direction=-transform.forward;speed=9;}
             controller.Move((direction*speed+Vector3.up*fall)*Time.deltaTime);
             Noise=Moving?(sprint?10:Crouching?1:4):0;
             if(mouse!=null&&mouse.leftButton.wasPressedThisFrame) Defend();
@@ -95,7 +100,7 @@ namespace DeathBySeventhsDawn.Player
             view.transform.position=target+offset.normalized*length;view.transform.LookAt(target);
         }
         void OnDisable(){Cursor.lockState=CursorLockMode.None;Cursor.visible=true;ReleaseBind();}
-        void OnGUI(){if(!FirstPerson||Blocked)return;var color=GUI.color;GUI.color=new Color(.78f,.76f,.65f,.6f);GUI.DrawTexture(new Rect(Screen.width*.5f-1,Screen.height*.5f-1,2,2),Texture2D.whiteTexture);GUI.color=color;}
+        void OnGUI(){if(!FirstPerson||Blocked)return;float flash=Mathf.Max(0,1-(Time.unscaledTime-impactAt)/.45f);if(flash>0){var old=GUI.color;GUI.color=new Color(.5f,.035f,.05f,flash*.4f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height*.035f),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(0,Screen.height*.94f,Screen.width,Screen.height*.06f),Texture2D.whiteTexture);GUI.color=old;}var color=GUI.color;GUI.color=new Color(.78f,.76f,.65f,.6f);GUI.DrawTexture(new Rect(Screen.width*.5f-1,Screen.height*.5f-1,2,2),Texture2D.whiteTexture);GUI.color=color;}
         void OnDestroy(){foreach(var m in handMaterials)Destroy(m);}
     }
 }

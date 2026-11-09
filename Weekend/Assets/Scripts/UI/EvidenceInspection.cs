@@ -61,6 +61,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (GameManager.Instance == null || TutorialGate.IsBlocked("evidence") || !GameManager.Instance.State.investigationUnlocked || id != target || StoryJournal.WorldBlocked || FurnitureInteraction.IsBusy || ProgressionHUD.DebugConsoleOpen || (GameManager.Instance == null || GameManager.Instance.HasEnded))
                 return false;
             opened = id;
+            if(id=="401-flyers"){GameManager.Instance.State.neighborFlyersSeen=true;ProgressionSave.Write(GameManager.Instance.State);}
             openedFrame = Time.frameCount;
             scroll = Vector2.zero;
             return true;
@@ -105,7 +106,9 @@ namespace DeathBySeventhsDawn.Interaction
                 target = "my-observation-notes";
             if (scene == "Corridor" && GameManager.Instance.LoopCount == 0)
             {
-                if (TimeManager.Instance.Days == 2 && !Investigation.Has("cult-door-note") && Vector2.Distance(pos, new Vector2(-4.35f, .65f)) < .8f)
+                if(!CrisisRules.LegacyValidation&&TimeManager.Instance.Days>=2&&Vector2.Distance(pos,new Vector2(-3.65f,.65f))<.6f)
+                    target="401-flyers";
+                else if (TimeManager.Instance.Days == 2 && !Investigation.Has("cult-door-note") && Vector2.Distance(pos, new Vector2(-4.35f, .65f)) < .8f)
                     target = "cult-door-note";
                 else if (Vector2.Distance(pos, new Vector2(-4.35f, .35f)) < .65f && TimeManager.Instance.Days >= 2)
                     target = "401-barricade";

@@ -135,9 +135,10 @@ namespace DeathBySeventhsDawn.Progression
                 if (!StoryJournal.WorldBlocked && !FurnitureInteraction.IsBusy)
                 {
                     var clock = TimeManager.Instance;
-                    var r = new Rect(w - 225, 16, 200, 46);
+                    var r = new Rect(w - 265, 16, 240, 46);
                     NarrativeUI.Panel(r);
                     GUI.Label(new Rect(r.x + 12, r.y + 9, r.width - 24, 32), StoryText.Local($"第 {clock.Days} 天 · ", $"DAY {clock.Days} · ") + GameplayFeedback.PeriodName(clock.Period)+"  "+clock.ClockText, label);
+                    var clockColor=GUI.color;GUI.color=new Color(.57f,.66f,.59f,.8f);GUI.DrawTexture(new Rect(r.x+12,r.yMax-4,(r.width-24)*clock.PeriodProgress,2),Texture2D.whiteTexture);GUI.color=clockColor;
                     if (game.State.journalUnlocked)
                     {
                         label.fontSize = 14;

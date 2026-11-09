@@ -6,15 +6,16 @@ const rows=[
 ['deduction-sealing','401-warning','401-barricade','封门'],
 ['deduction-not-looking','401-barricade','filter-401-underprint','挡住视线'],
 ['deduction-optical','balcony-telescope-day2-ancient-outline','first-night-silhouette','同一道弧线'],
-['deduction-group-assignment','neighbor-order','skt079-broadcast','警讯与被分配的大楼'],
-['deduction-source-location','deduction-group-assignment','pipe-pulse','入口下方的供能源'],
-['deduction-building-plan','deduction-source-location','city-fuse','保护住户并隔离源头'],
+['deduction-group-assignment','neighbor-order','skt079-broadcast','三角教与被分配的大楼'],
+['deduction-source-location','deduction-group-assignment','pipe-pulse','地下供能源'],
+['deduction-building-plan','deduction-source-location','city-fuse','净化装置位置'],
 ['deduction-tank-resident','tank-label','tank-eye','多了一张嘴'],
 ['deduction-waterline','tank-overflow','001-name','从鱼缸到屋里'],
 ['deduction-sealed-materials','prep-oil','prep-medium','封装准备组合'],
 ['deduction-sealed-tool','deduction-sealed-materials','prep-manual','单次准备工具'],
 ['deduction-city-orders','city-orders','city-routing','城市搜捕的指令源'],
-['deduction-observatory','city-spectrum','city-lens','同步观测通路']];
+['deduction-observatory','city-spectrum','city-lens','同步观测通路'],
+['deduction-day7-plan','deduction-building-plan','city-maintenance','第七天爆破计划']];
 assert.equal(graph.deductions.length,rows.length);
 const ids=new Set([...graph.evidence,...graph.deductions].map(x=>x.id));assert.equal(ids.size,graph.evidence.length+graph.deductions.length);
 for(const locale of ['StoryText','StoryTextEnglish']){
@@ -23,4 +24,4 @@ for(const locale of ['StoryText','StoryTextEnglish']){
 }
 const code=fs.readFileSync('Weekend/Assets/Scripts/Knowledge/Investigation.cs','utf8');assert.equal((code.match(/d\.id != "deduction-warning" \|\| State\.neighborFlyersSeen/g)||[]).length,2,'Both Match overloads retain flyer prerequisite');
 const seen=new Set(),active=new Set();function visit(id){if(seen.has(id))return;assert(!active.has(id),'cycle '+id);active.add(id);const d=graph.deductions.find(x=>x.id===id);if(d){visit(d.left);visit(d.right);}active.delete(id);seen.add(id);}for(const row of rows)visit(row[0]);
-console.log('PASS: 14 exact recipes; bilingual conclusion titles; no missing nodes/cycles; flyer prerequisite in both Match overloads. Static verification only.');
+console.log('PASS: 15 exact recipes; bilingual conclusion titles; no missing nodes/cycles; flyer prerequisite in both Match overloads. Static verification only.');

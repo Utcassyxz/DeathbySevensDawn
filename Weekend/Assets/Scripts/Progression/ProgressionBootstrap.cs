@@ -28,6 +28,7 @@ namespace DeathBySeventhsDawn.Progression
                 hud.AddComponent<WorldEndSequence>();
                 hud.AddComponent<JourneyCheckpoint>();
                 hud.AddComponent<CognitiveRupture>();
+                hud.AddComponent<ApartmentEventDirector>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.NeighborSlice>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.RooftopAccess>();
                 hud.AddComponent<DeathBySeventhsDawn.Interaction.FurnitureInteraction>();

@@ -13,6 +13,7 @@ namespace DeathBySeventhsDawn.Interaction
         public bool EyeActive=>eyeUntil>Time.unscaledTime;
         GameObject tenant,eye;Transform brain,arm,kickLeg;
         float windup,nextAttack,recovery,nextStrike,eyeUntil,eyeReady,pendingStrike=-1,enemyStagger,meleeImpact;
+        float talkReady;AudioSource heartbeat,breathing;
         float defaultFixed=.02f;AudioSource pulse;
         public NeighborAttack AttackKind {get;private set;}
         public bool BrainInFlight=>projectile!=null&&!brainHit;
@@ -25,7 +26,7 @@ namespace DeathBySeventhsDawn.Interaction
             S.neighborCombatTuning=1;
             Health=S.neighborDefeated?0:S.neighborHealth>=0?S.neighborHealth:NeighborRoom.Settings.neighborHealth;
             S.neighborHealth=Health;eyeReady=Time.unscaledTime+Mathf.Max(0,(float)System.TimeSpan.FromTicks(System.Math.Max(0,S.eyeReadyUtcTicks-System.DateTime.UtcNow.Ticks)).TotalSeconds);
-            tenant=new GameObject("Recognizably human neighbor");tenant.transform.position=new Vector3(1,0,0);
+            tenant=new GameObject("Recognizably human neighbor");tenant.transform.position=ApartmentEventDirector.NightInProgress?new Vector3(NeighborRoom.NightStandPoint.x,0,NeighborRoom.NightStandPoint.y):new Vector3(1,0,0);
             Part("Clothed torso",new Vector3(0,1,0),new Vector3(.57f,.82f,.34f),new Color(.16f,.19f,.17f),PrimitiveType.Cube);
             Part("Left leg",new Vector3(-.17f,.35f,0),new Vector3(.2f,.7f,.23f),Color.gray);kickLeg=Part("Right leg",new Vector3(.17f,.35f,0),new Vector3(.2f,.7f,.23f),Color.gray).transform;
             Part("Lower face and jaw",new Vector3(0,1.63f,0),new Vector3(.31f,.38f,.28f),new Color(.62f,.46f,.38f),PrimitiveType.Sphere);
@@ -38,13 +39,15 @@ namespace DeathBySeventhsDawn.Interaction
             Part("Shirt collar left",new Vector3(-.10f,1.39f,-.18f),new Vector3(.13f,.09f,.055f),new Color(.39f,.40f,.32f));
             Part("Shirt collar right",new Vector3(.10f,1.39f,-.18f),new Vector3(.13f,.09f,.055f),new Color(.39f,.40f,.32f));
             for(int button=0;button<3;button++)Part("Coat button",new Vector3(0,1.22f-button*.16f,-.205f),new Vector3(.035f,.035f,.02f),new Color(.58f,.51f,.35f),PrimitiveType.Sphere);
-            Part("Eye left",new Vector3(-.1f,1.66f,-.16f),new Vector3(.055f,.018f,.018f),Color.black,PrimitiveType.Sphere);Part("Eye right",new Vector3(.1f,1.66f,-.16f),new Vector3(.055f,.018f,.018f),Color.black,PrimitiveType.Sphere);
+            Part("Eye left",new Vector3(-.1f,1.66f,-.16f),new Vector3(.055f,.018f,.018f),new Color(.55f,.48f,.35f),PrimitiveType.Sphere);Part("Eye right",new Vector3(.1f,1.66f,-.16f),new Vector3(.055f,.018f,.018f),Color.black,PrimitiveType.Sphere);
             Part("Nose",new Vector3(0,1.63f,-.17f),new Vector3(.07f,.10f,.08f),new Color(.48f,.35f,.28f),PrimitiveType.Capsule);
             Part("Mouth",new Vector3(0,1.55f,-.17f),new Vector3(.12f,.025f,.025f),new Color(.25f,.08f,.06f));
             arm=Part("Contracting arm",new Vector3(-.45f,1,0),new Vector3(.17f,.35f,.18f),new Color(.6f,.44f,.36f),PrimitiveType.Capsule).transform;
             Part("Human right arm",new Vector3(.45f,1,0),new Vector3(.17f,.35f,.18f),new Color(.6f,.44f,.36f),PrimitiveType.Capsule);
-            pulse=gameObject.AddComponent<AudioSource>();pulse.playOnAwake=false;pulse.volume=.25f;
+            pulse=gameObject.AddComponent<AudioSource>();pulse.playOnAwake=false;pulse.volume=.25f;pulse.spatialBlend=1;pulse.minDistance=1;pulse.maxDistance=14;
             var mixer=Resources.Load<UnityEngine.Audio.AudioMixer>("ApartmentMix");if(mixer!=null){var groups=mixer.FindMatchingGroups("Master");if(groups.Length>0)pulse.outputAudioMixerGroup=groups[0];}
+            breathing=tenant.AddComponent<AudioSource>();breathing.playOnAwake=false;breathing.loop=true;breathing.clip=Resources.Load<AudioClip>("Audio/NeighborBreath");breathing.volume=.36f;breathing.spatialBlend=1;breathing.minDistance=1;breathing.maxDistance=10;breathing.outputAudioMixerGroup=pulse.outputAudioMixerGroup;breathing.Play();
+            heartbeat=gameObject.AddComponent<AudioSource>();heartbeat.playOnAwake=false;heartbeat.loop=true;heartbeat.clip=Resources.Load<AudioClip>("Audio/NightHeartbeat");heartbeat.volume=0;heartbeat.outputAudioMixerGroup=pulse.outputAudioMixerGroup;heartbeat.Play();
             if(GameManager.Instance.HasAbility("shoulder_eye"))BuildEye();
         }
         GameObject Part(string name,Vector3 p,Vector3 size,Color tint,PrimitiveType primitive=PrimitiveType.Cube)
@@ -84,18 +87,22 @@ namespace DeathBySeventhsDawn.Interaction
             var flash=room.Solid("Contained fictional ember burst",tenant.transform.position+Vector3.up,new Vector3(1.2f,2,1.2f),new Color(.9f,.25f,.05f),PrimitiveType.Capsule,false);Destroy(flash,1.2f);
             pulse.pitch=1.1f;pulse.PlayOneShot(Resources.Load<AudioClip>("Audio/DreamCrack"),.65f);Health=Mathf.Max(0,Health-110);S.neighborHealth=Health;recovery=3;windup=0;ProgressionSave.Write(S);if(Health<=0)Win();return true;
         }
-        void Win(){RestoreTime();S.neighborDefeated=true;S.neighborHostile=false;ProgressionSave.Write(S);NeighborSlice.Instance.Victory();}
+        void Win(){if(ApartmentEventDirector.Instance!=null&&ApartmentEventDirector.Instance.ChaseActive){Health=NeighborRoom.Settings.neighborHealth;recovery=4;windup=0;S.neighborHealth=Health;return;}RestoreTime();S.neighborDefeated=true;S.neighborHostile=false;ProgressionSave.Write(S);NeighborSlice.Instance.Victory();}
         void RestoreTime(){Time.timeScale=1;Time.fixedDeltaTime=defaultFixed;actor?.ReleaseBind();if(projectile!=null)Destroy(projectile);}
         public bool BeginAttack(NeighborAttack kind)
         {
             if(Health<=0||windup>0||recovery>0||projectile!=null&&!brainHit||Player.ThirdPersonMotor.Blocked)return false;
             float distance=Vector3.Distance(actor.transform.position,tenant.transform.position);
             if(distance>(kind==NeighborAttack.BrainCast?6:2.6f)||Physics.Linecast(tenant.transform.position+Vector3.up,actor.transform.position+Vector3.up,~(1<<8)))return false;
+            pulse.PlayOneShot(Resources.Load<AudioClip>("Audio/DreamMudStep"),.25f);
             AttackKind=kind;windup=kind==NeighborAttack.BrainCast?NeighborRoom.Settings.brainWindup:NeighborRoom.Settings.attackWindup;
             brainTarget=actor.transform.position+Vector3.up*.9f;return true;
         }
         void Hit(float damage)
         {
+            if(actor.Dodging)return;
+            if(ApartmentEventDirector.Instance!=null&&ApartmentEventDirector.Instance.ChaseActive&&GameManager.Instance.Vitality<=damage){ApartmentEventDirector.Instance.CatchNight();return;}
+            pulse.PlayOneShot(Resources.Load<AudioClip>("Audio/DreamCrack"),.3f);
             actor.ReceiveImpact(actor.transform.position-tenant.transform.position,AttackKind==NeighborAttack.Kick?5:3);
             if(GameManager.Instance.Vitality<=damage)NeighborSlice.Instance.BeginNeighborDeath();
             else {GameManager.Instance.Damage(damage);ProgressionSave.Write(S);}
@@ -119,7 +126,7 @@ namespace DeathBySeventhsDawn.Interaction
                 if(flight>=1)
                 {
                     bool clear=!Physics.Linecast(brainOrigin,actor.transform.position+Vector3.up*.9f,~(1<<8));
-                    if(clear&&Vector3.Distance(projectile.transform.position,actor.transform.position+Vector3.up*.9f)<1.05f)
+                    if(clear&&!actor.Dodging&&Vector3.Distance(projectile.transform.position,actor.transform.position+Vector3.up*.9f)<1.05f)
                     {brainHit=true;actor.Bind(NeighborRoom.Settings.brainBindDuration);Hit(8);recovery=0;nextAttack=Time.time;}
                     else {RetractBrain();return;}
                 }
@@ -144,7 +151,13 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void Update()
         {
+            if(heartbeat!=null){heartbeat.volume=Mathf.MoveTowards(heartbeat.volume,Player.ThirdPersonMotor.Blocked?0:.13f,Time.unscaledDeltaTime*.2f);heartbeat.pitch=Mathf.Lerp(1,1.3f,1-GameManager.Instance.Vitality/GameManager.Instance.MaxVitality);}
             if(eyeUntil>0&&Time.unscaledTime>=eyeUntil){eyeUntil=0;RestoreTime();}
+            if(ApartmentEventDirector.Instance!=null&&ApartmentEventDirector.Instance.ChaseActive&&Keyboard.current!=null&&Keyboard.current.eKey.wasPressedThisFrame)
+            {
+                if(actor.transform.position.x<-4.5f&&Mathf.Abs(actor.transform.position.z)<1.4f){ApartmentEventDirector.Instance.EscapeNight();return;}
+                if(Time.unscaledTime>talkReady){talkReady=Time.unscaledTime+8;recovery=Mathf.Max(recovery,1.3f);pulse.PlayOneShot(Resources.Load<AudioClip>("Audio/DoorKnock"),.25f);}
+            }
             if(Health<=0||Player.ThirdPersonMotor.Blocked)return;
             var k=Keyboard.current;if(k!=null){if(k.vKey.wasPressedThisFrame)ActivateEye();if(k.gKey.wasPressedThisFrame)UsePreparedTool();}
             if(Mouse.current!=null&&Mouse.current.leftButton.wasPressedThisFrame)Strike();
@@ -152,6 +165,7 @@ namespace DeathBySeventhsDawn.Interaction
             if(Health<=0)return;
             if(projectile!=null){UpdateBrain();if(!brainHit&&projectile!=null)return;}
             if(enemyStagger>0){enemyStagger-=Time.deltaTime;return;}
+            pulse.transform.position=tenant.transform.position;
             float distance=Vector3.Distance(tenant.transform.position,actor.transform.position);
             var toward=actor.transform.position-tenant.transform.position;toward.y=0;if(toward.sqrMagnitude>.01f)tenant.transform.rotation=Quaternion.Slerp(tenant.transform.rotation,Quaternion.LookRotation(-toward),Time.deltaTime*6);
             meleeImpact=Mathf.Max(0,meleeImpact-Time.deltaTime);
@@ -176,7 +190,8 @@ namespace DeathBySeventhsDawn.Interaction
                 float best=float.PositiveInfinity;Vector3 step=Vector3.zero;
                 foreach(float angle in new[]{0f,45f,-45f,90f,-90f})
                 {
-                    var direction=Quaternion.Euler(0,angle,0)*toward.normalized;var delta=direction*(Health<NeighborRoom.Settings.neighborHealth*.5f?3.2f:2.6f)*Time.deltaTime;
+                    float gait=ApartmentEventDirector.Instance!=null&&ApartmentEventDirector.Instance.ChaseActive?(Time.time%1.15f<.32f?.12f:1.4f):1;
+                    var direction=Quaternion.Euler(0,angle,0)*toward.normalized;var delta=direction*(Health<NeighborRoom.Settings.neighborHealth*.5f?3.2f:2.6f)*gait*Time.deltaTime;
                     if(Physics.SphereCast(tenant.transform.position+Vector3.up,.35f,direction,out _,delta.magnitude+.2f,~(1<<8)))continue;
                     float score=(tenant.transform.position+delta-actor.transform.position).sqrMagnitude;
                     if(score<best){best=score;step=delta;}
@@ -186,15 +201,16 @@ namespace DeathBySeventhsDawn.Interaction
         }
         void OnGUI()
         {
-            if(CognitiveRupture.IsActive||Health<=0)return;
+            if(CognitiveRupture.IsActive||Health<=0||ApartmentEventDirector.WorldBlocked||PauseMenuUI.WorldBlocked)return;
+            bool chase=ApartmentEventDirector.Instance!=null&&ApartmentEventDirector.Instance.ChaseActive;
             var matrix=GUI.matrix;var color=GUI.color;float scale=Mathf.Min(Screen.width/1200f,Screen.height/800f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float w=Screen.width/scale,h=Screen.height/scale;
             try
             {
                 var text=new GUIStyle(GUI.skin.label){font=GameTypography.Current,fontSize=20,wordWrap=true};text.normal.textColor=new Color(.87f,.84f,.74f);
                 if(GameManager.Instance.HasAbility("shoulder_eye"))GUI.Label(new Rect(w*.08f,h-100,w*.84f,80),string.Format(NeighborSlice.Text(EyeActive?"eye-active":Time.unscaledTime<eyeReady?"eye-cooldown":"eye-ready").body,EyeActive?Mathf.Max(0,eyeUntil-Time.unscaledTime):Time.unscaledTime<eyeReady?Mathf.Max(0,eyeReady-Time.unscaledTime):NeighborRoom.Settings.eyeDuration,NeighborRoom.Settings.eyeCooldown,NeighborRoom.Settings.eyeSanityCost),text);
-                string cue=IsSnared?"brain-bound":WindingUp?(AttackKind==NeighborAttack.BrainCast?"brain-warning":AttackKind==NeighborAttack.Kick?"kick-warning":"attack-warning"):"combat-controls";
+                string cue=chase&&!IsSnared&&!WindingUp?"night-escape-hint":IsSnared?"brain-bound":WindingUp?(AttackKind==NeighborAttack.BrainCast?"brain-warning":AttackKind==NeighborAttack.Kick?"kick-warning":"attack-warning"):"combat-controls";
                 GUI.color=new Color(.025f,.04f,.045f,.76f);GUI.DrawTexture(new Rect(w*.075f,14,w*.67f,100),Texture2D.whiteTexture);GUI.color=color;
-                GUI.Label(new Rect(w*.08f,20,w*.66f,90),string.Format(NeighborSlice.Text(cue=="combat-controls"&&!S.inventory.Contains(NeighborSlice.Tool)?"combat-basic":cue).body,actor.BoundSeconds)+"\n"+Mathf.CeilToInt(Health)+" / "+NeighborRoom.Settings.neighborHealth,text);
+                GUI.Label(new Rect(w*.08f,20,w*.66f,90),string.Format(NeighborSlice.Text(cue=="combat-controls"&&!S.inventory.Contains(NeighborSlice.Tool)?"combat-basic":cue).body,actor.BoundSeconds)+(chase?"":"\n"+Mathf.CeilToInt(Health)+" / "+NeighborRoom.Settings.neighborHealth),text);
             }
             finally{GUI.matrix=matrix;GUI.color=color;}
         }

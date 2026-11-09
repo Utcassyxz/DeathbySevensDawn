@@ -1,3 +1,35 @@
+# Death by Seven’s Dawn / 七日
+
+Unity 6000.6.7f1。唯一工程：`Weekend/`；运行场景：`Weekend/Assets/Apartment/`；开发分支：`feature/seven-day-city`。
+
+当前目标是第一阶段垂直切片，完整设计基线为 [第一阶段规格](docs/PHASE_ONE_SPEC_2026-11-08.md)。它不是完整游戏。
+
+## 当前正式规则
+
+- 普通探索2D，真实追逐/冲突才短暂进入第一人称3D。
+- 自由探索自动走时；对话、日记、线索板、背包、暂停、加载和夜戏暂停。07:00/12:00/17:00/21:00分段，02:00熬夜跨日。
+- 第三天是净化装置的安装/测试，第五天是城市压力，第七天午夜是唯一预定的致死净化爆破。
+- Day2深夜邻居来电、眼部抽搐、身体失控、逃生；首次被抓醒来，重试再次被抓才致死。实际获得恩赐后，此死亡回到第二天早晨。
+- 第七天爆破死亡有恩赐则回第七天07:00；保留记忆、装置知识和现有物品，重置最终启动；身体继续老化。未获得恩赐则正式结束。
+- 交接单参与最后一级“第七天爆破计划”；解除装置、说服和救人均有实际前置。第三天停掉一次测试不等于最终保楼。
+- 未封缸：Day3人脸、Day4说话、Day5肢体、Day6模仿、Day7替身。第七天前两次理解成为同伴。前两天锡纸需二次确认；晚投消耗但不逆转。
+- 马戏团/寿司完整章节冻结，正式路线入口显示停业；已归档广告保留。调试预览场景保留供开发检查。
+
+## 运行与验证
+
+在Unity打开`Weekend`，从标题开始新旅程。键位：WASD移动，E互动，Enter推进，R主动记录，J日记，B推理，I背包；3D左键挥击、Shift冲刺、Ctrl蹲下、Q闪避、E门口逃生/争取时间、Esc暂停。
+
+中文/英文唯一文案源：`Weekend/Assets/Resources/StoryText.json` / `StoryTextEnglish.json`。存档仍为v7，保留v1–v7加载与旧文件名，新增状态为可缺省字段。
+
+专项命令：`Unity.exe -batchmode -projectPath Weekend -executeMethod VerifyRevision.RunStageOne`。
+完整组合：`VerifyRevision.RunStageOneAll`。其中前153项是明确隔离的历史规则回归，后续专项才是新规范证据；不能把历史第三夜致死断言当作正式玩法。
+
+当前报告见`docs/PHASE_ONE_DELIVERY_2026-11-08.md`，验收记录见`Weekend/Documentation/StageOne/Acceptance.txt`。本机交付截图和可玩包保存在仓库外的`../outputs/`，不提交临时截图或视觉测试桥。相机渲染、UI检查、自动路径与手动通关分别记录，不互相替代。
+
+## 历史文档
+
+以下为重做前的项目说明快照，仅供溯源，规则冲突时以第一阶段规格和当前源码为准。
+
 # DeathbySevensDawn — 七日 · SEVEN DAY
 
 **A Unity narrative horror prototype where everyday apartment life unfolds into a seven-day encounter with the unknown.**

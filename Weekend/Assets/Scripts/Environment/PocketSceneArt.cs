@@ -26,7 +26,7 @@ namespace DeathBySeventhsDawn.Interaction
                 for(int x=8;x<360;x+=14){Rect(x,193,1,43,Paper*.2f);Rect(x+3,211,3,5,Paper*.12f);}
                 Window(36,195,false);Window(288,195,false);
                 Frame(68,101,24,40,new Color(.25f,.23f,.18f));Rect(87,115,2,3,Paper); // Door at world (-5,0), visually recessed.
-                Frame(158,145,44,23,new Color(.34f,.25f,.17f));Rect(162,150,14,9,Paper*.8f);Rect(183,157,8,4,Ink);
+                Frame(158,145,44,23,new Color(.34f,.25f,.17f));Rect(166,159,4,5,Paper*.8f);Rect(190,159,5,4,Paper*.65f);Rect(162,150,14,9,Paper*.8f);Rect(183,157,8,4,Ink);
                 Frame(218,153,44,24,new Color(.22f,.28f,.24f));Frame(222,163,16,11,new Color(.29f,.34f,.28f));Frame(240,163,17,11,new Color(.29f,.34f,.28f));
                 Frame(132,79,98,50,new Color(.27f,.16f,.16f));for(int y=83;y<128;y+=5)Rect(136,y,90,1,Paper*.18f);
                 Frame(12,202,17,27,new Color(.21f,.21f,.17f));for(int y=205;y<228;y+=5)Rect(14,y,13,1,Paper*.4f);
@@ -95,7 +95,7 @@ namespace DeathBySeventhsDawn.Interaction
         {StartCanvas(22,9,Color.clear);Rect(0,0,22,2,Ink);Frame(4,2,14,7,new Color(.24f,.25f,.20f));Rect(5,3,12,2,new Color(.37f,.31f,.21f));return Finish(20);}
         public void Marker(string id,Vector3 p,bool portal)
         {
-            bool person=id=="caretaker";StartCanvas(22,28,Color.clear);
+            bool person=id=="caretaker"||id=="night-clerk"||id=="cat-feeder";StartCanvas(22,28,Color.clear);
             if(person){var sprite=Person(true);var npc=new GameObject("Caretaker silhouette");npc.transform.position=p;npc.AddComponent<SpriteRenderer>().sprite=sprite;npc.GetComponent<SpriteRenderer>().sortingOrder=3;return;}
             if(portal){Rect(10,0,3,23,Ink);Frame(0,16,22,10,new Color(.32f,.37f,.31f));Rect(4,20,14,2,Paper);Rect(id=="service"?3:16,18,3,6,Paper);}
             else {Frame(0,1,22,15,new Color(.33f,.27f,.19f));Rect(3,11,16,7,Paper*.8f);Rect(5,13,11,1,Ink);Rect(5,16,7,1,Ink);}

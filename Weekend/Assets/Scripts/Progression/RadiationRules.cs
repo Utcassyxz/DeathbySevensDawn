@@ -19,7 +19,8 @@ namespace DeathBySeventhsDawn.Progression
         {
             if (protectedTank || day < 3)
                 return FishStage.Ordinary;
-            return day == 3 ? FishStage.Speaking : FishStage.Human;
+            if(CrisisRules.LegacyValidation)return day == 3 ? FishStage.Speaking : FishStage.Human;
+            return day==3?FishStage.HumanFace:day==4?FishStage.Speaking:day==5?FishStage.GrowingLimbs:day==6?FishStage.Imitating:FishStage.Replacement;
         }
     }
 }

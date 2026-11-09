@@ -241,6 +241,7 @@ namespace DeathBySeventhsDawn.Progression
 
                 if (WorldEndSequence.IsPresenting && !debugOpen && !enteringCode)
                     return;
+                if(game.State.stageOneComplete)return;
                 if (game.HasEnded && !debugOpen && !enteringCode)
                 {
                     EndingCollectionUI.DrawResult(game, width, height);

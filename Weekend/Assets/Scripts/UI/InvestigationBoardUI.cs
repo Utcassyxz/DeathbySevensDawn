@@ -13,7 +13,7 @@ namespace DeathBySeventhsDawn.Interaction
     {
         public Action CloseRequested;
         string first, second, message;
-        int focus, filter;
+        int focus, filter,failedAttempts;
         bool previousEnglish, showLinks;
         Vector2 boardScroll, detailScroll;
         GUIStyle title, body, small, cardTitle, rowTitle, rowMeta, tag, button, filterButton, linkRow, headerTitle, headerSmall;
@@ -156,7 +156,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (!changed)
                 message = alreadyWritten ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.200") : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.201");
             else
-                message = rule != null ? DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.202") : DeathBySeventhsDawn.Story.StoryText.UI("copy.InvestigationBoardUI.203");
+                {failedAttempts++;message=DeathBySeventhsDawn.Story.StoryText.UI("reason."+Investigation.ExplainFailure(first,second))+(failedAttempts>=2?DeathBySeventhsDawn.Story.StoryText.UI("reason.soft-hint"):"");}
             detailScroll = Vector2.zero;
         }
 

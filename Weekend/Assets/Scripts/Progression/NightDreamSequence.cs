@@ -106,12 +106,19 @@ namespace DeathBySeventhsDawn.Progression
             subtitles.Reset();
         }
 
+        public static bool BeginReplacement()
+        {
+            if(Instance==null||GameManager.Instance.HasEnded||GameManager.Instance.State.fishAlly||GameManager.Instance.AquariumSealed||TimeManager.Instance.Days!=7)return false;
+            Instance.kind=Kind.Replacement;Instance.pages=StoryText.Current.nightDream.replacement;Instance.active=true;Instance.page=0;
+            Instance.entered=Instance.lastAdvance=Time.unscaledTime;Instance.openedFrame=Time.frameCount;Instance.subtitles.Reset();return true;
+        }
         public static bool BeginSleep()
         {
             var game = GameManager.Instance;
             var clock = TimeManager.Instance;
             if (Instance == null || game == null || clock == null || game.HasEnded || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked)
                 return false;
+            if(ApartmentEventDirector.InterceptSleep())return true;
             return Instance.Open(clock, game);
         }
 

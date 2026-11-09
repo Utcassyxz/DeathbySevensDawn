@@ -1,3 +1,9 @@
+# 2026-11-08 第一阶段覆盖规则
+
+用户完整规格：docs/PHASE_ONE_SPEC_2026-11-08.md。正式玩法是第三天测试、第五天压力、第七天净化爆破；Day2夜戏逃生，首次抓捕不死；Day7致死回Day7早晨，Day2夜戏致死回Day2早晨；恩赐仍须真实完成泡泡会面。鱼阶段Day3人脸/4说话/5肢体/6模仿/7替身，两次理解成为同伴。普通探索2D，追逐第一人称。自动时钟由TimeManager独占；ApartmentEventDirector只编排事件，不另建日期/存档。新验收VerifyRevision.RunStageOneAll；LegacyValidation只供明确隔离的历史回归，不是产品开关。新UI文案只放两份StoryText JSON。用户未知工作保留。
+
+以下历史规则若与上文冲突，不再适用于正式玩法。
+
 # 七日：工作边界
 
 2026-11-07最新工程规则以docs/HYBRID_CITY_2026-11-07.md为准：普通探索始终2D，仅实际追逐/战斗经认知滤网撕裂进入独立3D遭遇；第三日爆楼、第五日城市搜捕、第七日天体危机。广告原稿与历史证据见docs/ADVERTISEMENT_PROVENANCE.json，未知原伏笔不得补成既定事实。新增存档v6、城市验收与既有死亡回归需一起维护。

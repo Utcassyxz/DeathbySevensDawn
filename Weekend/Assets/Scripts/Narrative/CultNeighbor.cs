@@ -142,7 +142,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         public bool TalkDayOne()
         {
-            if (view != View.None || TimeManager.Instance.Days != 1 || GameManager.Instance.LoopCount != 0 || State.cultDayOneTalked || State.cultDayOneStarted)
+            if (view != View.None || (TimeManager.Instance.Days != 1 && (CrisisRules.LegacyValidation||State.tutorialComplete)) || GameManager.Instance.LoopCount != 0 || State.cultDayOneTalked || State.cultDayOneStarted)
                 return false;
             // Mark the encounter as soon as it opens; closing early must not allow a second first-meeting.
             State.cultDayOneStarted = true;
@@ -301,7 +301,7 @@ namespace DeathBySeventhsDawn.Interaction
             var player = GameObject.FindWithTag("Player");
             if (!CanReachDoor)
                 return;
-            if (day == 1 && GameManager.Instance.LoopCount == 0 && !State.cultDayOneTalked && !State.cultDayOneStarted)
+            if ((day == 1||!CrisisRules.LegacyValidation&&!State.tutorialComplete) && GameManager.Instance.LoopCount == 0 && !State.cultDayOneTalked && !State.cultDayOneStarted)
             {
                 prompt = StoryText.UI("copy.CultNeighbor.111");
                 if (k != null && k.eKey.wasPressedThisFrame && WorldPromptUI.CanActivate("neighbor"))

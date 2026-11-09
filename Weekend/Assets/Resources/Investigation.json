@@ -2,143 +2,178 @@
   "evidence": [
     {
       "id": "my-observation-notes",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "apartment-telescope",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "401-flyers",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "401-barricade",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "skt079-broadcast",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "balcony-telescope-day2-ancient-outline",
-      "image": "Story/AncientOutlineSketch"
+      "image": "Story/AncientOutlineSketch",
+      "flavor": false
     },
     {
       "id": "bedroom-window-day2-observation",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "filter-bedroom-margins",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "filter-401-underprint",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "filter-railing-tally",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "tank-label",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "tank-eye",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "tank-overflow",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "001-name",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "notes-gap",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "403-silence",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "cult-door-note",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "401-warning",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "first-night-silhouette",
-      "image": "Story/TelescopePixelPair"
+      "image": "Story/TelescopePixelPair",
+      "flavor": false
     },
     {
       "id": "first-night-recheck",
-      "image": "Story/TelescopePixelPair"
+      "image": "Story/TelescopePixelPair",
+      "flavor": false
     },
     {
       "id": "fish-help-promise",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "circus",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "sushi",
-      "image": ""
+      "image": "",
+      "flavor": true
     },
     {
       "id": "city-maintenance",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "city-fuse",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "city-orders",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "city-routing",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "city-spectrum",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "city-lens",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "prep-oil",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "prep-medium",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "prep-manual",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "pipe-pulse",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "neighbor-order",
-      "image": ""
+      "image": "",
+      "flavor": false
     },
     {
       "id": "neighbor-death-memory",
-      "image": ""
+      "image": "",
+      "flavor": true
     }
   ],
   "deductions": [
@@ -211,6 +246,12 @@
       "id": "deduction-building-plan",
       "left": "deduction-source-location",
       "right": "city-fuse"
+    },
+    {
+      "id": "deduction-day7-plan",
+      "left": "deduction-building-plan",
+      "right": "city-maintenance",
+      "minDay": 3
     }
   ]
 }

@@ -237,7 +237,7 @@ namespace DeathBySeventhsDawn.Interaction
             }
             else
             {
-                if (TimeManager.Instance.Days == 1)
+                if (TimeManager.Instance.Days == 1 && CrisisRules.LegacyValidation)
                     state.neighborFlyersSeen = true;
                 state.neighborBarricadeSeen = true;
                 if (boards[3] != null)
@@ -326,6 +326,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         void BuildFlyers()
         {
+            if(!CrisisRules.LegacyValidation){Part("401 flyer",-3.65f,1.48f,.30f,.36f,new Color(.67f,.64f,.48f),10,scenery.transform);for(int i=0;i<4;i++)Part("Flyer writing",-3.65f,1.58f-i*.05f,.20f,.015f,new Color(.25f,.23f,.19f),11,scenery.transform);}
             Part("401 door note", -4.48f, 1.48f, .26f, .28f, new Color(.84f, .81f, .63f), 10, scenery.transform);
             for (int i = 0; i < 3; i++)
                 Part("Door note writing", -4.48f, 1.55f - i * .06f, .17f, .014f, new Color(.35f, .24f, .17f), 11, scenery.transform);

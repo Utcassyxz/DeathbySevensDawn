@@ -146,7 +146,7 @@ namespace DeathBySeventhsDawn.Progression
         public static void DrawResult(GameManager game, float w, float h)
         {
             Background(w, h);
-            bool neighbor=game.State.lastDeathCause=="neighbor";
+            bool neighbor=game.State.lastDeathCause=="neighbor";bool purification=!CrisisRules.LegacyValidation&&game.State.stageReturnDay==7;
             string id = neighbor?"neighbor-killed":game.FishReplacementEnding ? "fish-replacement" : game.WorldEndEnding ? "world-end" : "bad-ending-1";
             if(!neighbor)EndingIllustration.Draw(new Rect(0, 0, w, h), game.FishReplacementEnding);
             GUI.color = new Color(.015f, .018f, .027f, .65f);
@@ -168,8 +168,8 @@ namespace DeathBySeventhsDawn.Progression
             float left = w * .10f, width = w * .80f;
             string body = data.lines != null && data.lines.Length > 0 ? string.Join("\n", data.lines) : (game.WorldEndEnding ? StoryText.UI("copy.EndingCollectionUI.160") : StoryText.UI("copy.EndingCollectionUI.161"));
             GUI.Label(new Rect(left, h * .09f, width, 36), StoryText.UI("copy.EndingCollectionUI.162") + (neighbor?"04":game.FishReplacementEnding ? "03" : game.WorldEndEnding ? "01" : "02"), Text(20, new Color(.68f, .50f, .37f)));
-            if(neighbor)body=StoryText.Current.neighborSlice.Find("neighbor-killed").body;
-            GUI.Label(new Rect(left, h * .24f, width, 110), neighbor?StoryText.Current.neighborSlice.Find("neighbor-killed").title:data.title, Text(44, NarrativeUI.Ink));
+            if(neighbor||purification)body=StoryText.Current.neighborSlice.Find(neighbor?"neighbor-killed":"building-destroyed").body;
+            GUI.Label(new Rect(left, h * .24f, width, 110), neighbor||purification?StoryText.Current.neighborSlice.Find(neighbor?"neighbor-killed":"building-destroyed").title:data.title, Text(44, NarrativeUI.Ink));
             GUI.Label(new Rect(left, h * .40f, width * .56f, h * .20f), body, Text(21, new Color(.76f, .73f, .67f)));
             GUI.color = new Color(.46f, .31f, .25f, .7f + pulse * .2f);
             GUI.DrawTexture(new Rect(left, h * .62f - 8, width, 1), Texture2D.whiteTexture);

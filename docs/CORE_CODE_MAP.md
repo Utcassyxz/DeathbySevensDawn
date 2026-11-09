@@ -1,3 +1,5 @@
+> 2026-11-08：下文为历史系统边界/剧情快照。正式第一阶段规则见 PHASE_ONE_SPEC_2026-11-08.md 与当前源码；第三夜爆楼、第四天自动人形等条目已经被新规格覆盖。
+
 # 核心代码边界
 
 2026-11-07最新增量见HYBRID_CITY_2026-11-07.md：普通公寓/城市探索为2D，CognitiveRupture独占认知滤网撕裂、进入/退出3D遭遇及返回原位置；CityWorld独占新增城市灰盒与现场交互，ThirdPersonMotor/CityEnemy仅在CityEncounter3D运行。CrisisRules集中第三/第五/第七日危机日期，TimeManager与NightDreamSequence共同调用；v6存档兼容v1–v5。新增验收Validate seven-day city与原死亡回归都需运行。

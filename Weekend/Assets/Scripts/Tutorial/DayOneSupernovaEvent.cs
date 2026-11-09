@@ -66,7 +66,7 @@ namespace DeathBySeventhsDawn.Interaction
         public bool PlayFromFridge()
         {
             var state = GameManager.Instance.State;
-            if (presenting || GameManager.Instance.HasEnded || BulletinConsumed || state.dayOneNewsStarted || TimeManager.Instance.Days != 1 || SceneManager.GetActiveScene().name != "LivingRoom")
+            if (presenting || GameManager.Instance.HasEnded || BulletinConsumed || state.dayOneNewsStarted || (TimeManager.Instance.Days != 1&&CrisisRules.LegacyValidation) || SceneManager.GetActiveScene().name != "LivingRoom")
                 return false;
             state.dayOneNewsStarted = true;
             state.newsPage = 0;
@@ -78,7 +78,7 @@ namespace DeathBySeventhsDawn.Interaction
         public bool Resume()
         {
             var state = GameManager.Instance.State;
-            if (presenting || GameManager.Instance.HasEnded || BulletinConsumed || !state.dayOneNewsStarted || TimeManager.Instance.Days != 1 || state.morningStage != 4 || SceneManager.GetActiveScene().name != "LivingRoom")
+            if (presenting || GameManager.Instance.HasEnded || BulletinConsumed || !state.dayOneNewsStarted || (TimeManager.Instance.Days != 1&&CrisisRules.LegacyValidation) || state.morningStage != 4 || SceneManager.GetActiveScene().name != "LivingRoom")
                 return false;
             StartPresentation(true, false, false);
             return true;

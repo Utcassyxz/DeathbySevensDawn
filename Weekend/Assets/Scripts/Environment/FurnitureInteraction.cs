@@ -152,7 +152,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (GameManager.Instance == null || GameManager.Instance.HasEnded || !GameManager.Instance.State.tutorialComplete || StoryJournal.WorldBlocked || Distance(sofa) > interactionDistance)
                 return false;
             CloseMenu();
-            TimeManager.Instance.AdvanceTime();
+            if(CrisisRules.LegacyValidation)TimeManager.Instance.AdvanceTime();else TimeManager.Instance.SpendGameMinutes(45);
             return true;
         }
 

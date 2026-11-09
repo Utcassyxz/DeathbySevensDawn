@@ -22,13 +22,11 @@
     "day2": [],
     "day3": [],
     "yog": [
-      "The bed slips away. Fingers, arms, then the rest of him come apart.\nNothing hurts. Something is fitting the pieces back together.",
-      "Hello, human.\nYou may call me Bubble. A rather endearing name.",
-      "Was I… dead just then?",
-      "No. The scattered parts have been returned.\nTheir order may be slightly different.",
-      "That thing in the sky. What was it?",
-      "A part of something passing by.\nYou may return. You will remember; the others will not.",
-      "When all things reach their end, you and I shall meet again."
+      "Hello, human. You may call me Bubble.",
+      "Hugo: ...Hello.\nBubble: You look like a sheet of paper left out in the rain.\nHugo: Thank you.\nBubble: You are welcome.",
+      "Hugo watches his scattered fingers.\n“Was I... dead just now?”\n“No. The loose pieces have been put back. The order may be a little different.”",
+      "“What is that thing in the sky?”\n“Only a part of it passing by.”\nBubble pauses.\n“You may go back. You will remember. The others will not.”",
+      "“Will going back help?”\n“I do not know.”\nBubble smiles.\n“When everything ends, we will meet again.”"
     ],
     "yogSpeakers": [
       "Hugo",
@@ -210,13 +208,13 @@
       {
         "id": "tank-eye",
         "title": "A Face Under the Scales",
-        "body": "On Day 3, a human face appeared on the fish’s flank. She called to Hugo and understood the work complaints he used to tell her.",
+        "body": "On the third day, scales stretch apart around a human face. The mouth moves without a sound.",
         "source": "Living room · Day 3 tank"
       },
       {
         "id": "tank-overflow",
         "title": "Where the Tank Used to Be",
-        "body": "The tank has been pushed against the wall. A dining stool occupies its old place, with her sitting on it. Water marks remain on the floor.",
+        "body": "The moved tank exposes an old ring of dust. A wet trace stops beside the dining stool.",
         "source": "Living room · Beside the tank"
       },
       {
@@ -282,13 +280,13 @@
       {
         "id": "city-maintenance",
         "title": "Maintenance handover",
-        "body": "Before the third night, 401 has diverted a shared pipe into his room. The handover identifies an isolation switch in the service area, separate from the aquarium supply.",
+        "body": "Two starts are recorded: a test on the third night, full operation on the seventh. The assignment number points to 401 and the basement equipment room.",
         "source": "Recorded on site in the city"
       },
       {
         "id": "city-fuse",
         "title": "Service wiring diagram",
-        "body": "The device in 401 draws from a shared circuit. This diagram shows how to isolate that branch while keeping residential lights and the aquarium pump running. Compare it with the handover.",
+        "body": "401 has a separate feed through the shaft; homes use another line. Someone circled the two in different colours.",
         "source": "Recorded on site in the city"
       },
       {
@@ -336,13 +334,13 @@
       {
         "id": "pipe-pulse",
         "title": "Pipe Pulse",
-        "body": "Three dull pulses travel up the shared service shaft. A fresh maintenance stamp reads: basement service room, assigned circuit 401. R records the location and sound.",
+        "body": "Three low taps run through the shared shaft. A fresh service mark points below the entrance.",
         "source": "Actively recorded during the Day 2 investigation"
       },
       {
         "id": "neighbor-order",
         "title": "Purification Assignment",
-        "body": "The Triangle warning on television named the same organization. The third-night order assigns this building to the tenant. Its source is not inside his body: the basement service core supplies the apparatus in 401.",
+        "body": "Remove living things. Area: this building. Deadline: seventh day. Signed: resident of 401. The folded edge has turned white.",
         "source": "Actively recorded during the Day 2 investigation"
       },
       {
@@ -422,20 +420,26 @@
       {
         "id": "deduction-group-assignment",
         "relation": "Cross-check",
-        "title": "The warning and the assigned building",
+        "title": "The Triangle and the Assigned Building",
         "body": "The bulletin’s Triangle group is the organization on the third-night order."
       },
       {
         "id": "deduction-source-location",
         "relation": "Cross-check",
-        "title": "Source below the entrance",
+        "title": "Underground Power Source",
         "body": "The assignment and shared-shaft pulse locate the source in the basement service room. The tenant’s defeat will not switch it off."
       },
       {
         "id": "deduction-building-plan",
         "relation": "Cross-check",
-        "title": "Protect residents, isolate the source",
-        "body": "First isolate the assigned circuit, then lock the source controller. Both field actions must occur by Day 3."
+        "title": "Purification Device Location",
+        "body": "Isolate the assigned branch while keeping the flats supplied. The location is known; the handover must still confirm the activation date before the final device can be disarmed."
+      },
+      {
+        "id": "deduction-day7-plan",
+        "relation": "Cross-check",
+        "title": "Day Seven Demolition Plan",
+        "body": "The device location matches the date and branch number in the handover sheet. Testing is over. Activation is scheduled for Day Seven."
       }
     ]
   },
@@ -449,27 +453,19 @@
     "speakerDay6": "Fish",
     "speakerDay7": "Fish",
     "day3Pages": [
-      "The fish stays still.\nThe scales on her flank stretch apart around an eye. Hugo pulls his hand back.",
-      "Hugo: Don’t move…\nThe mouth opens a little.\nFish: You don’t move. You’re splashing water in."
+      "Scales stretch around an eye on the flank.\n\nHugo holds the food.\n“Stay still.”\n\nThe fish stays still. The mouth makes no sound."
     ],
     "day4Pages": [
-      "Hugo: …Who’s there?\nFish: Here.\nHugo looks at the tank. The fish food spills from his hand.\nFish: Inside. Not on the floor.",
-      "Hugo: All the things I said before. You understood?\nFish: Sometimes the pump was too loud.\nHugo: The job stuff, then…\nFish: Yes. Still no reply.",
-      "Fish: Could I go?\nHugo: Where?\nFish: To work. You said you didn’t want to.\nHugo: That was… I was just saying things.\nFish: You say it every day."
+      "“You splashed water in.”\n\nHugo stops.\n“When did you start talking?”\n\n“Just now. You were talking about the interview.”\n\n“I was not.”\n\n“You get quieter when you say that.”"
     ],
     "day7Pages": [
-      "She is still beside the tank, feet tucked under the stool.\nFish: It’s loud outside.",
-      "Hugo: Stay away from the door.\nFish: I haven’t been. Look. The floor’s dry.",
-      "She shifts a little to make room.\nFish: Do you want to sit?\nHugo stays standing, listening to the sounds outside."
+      "“I could answer your calls.”\n\nHer voice is almost Hugo’s.\n\n“You keep saying you do not want to go out.”\n\nHe wants to say something other than thank you or no.\nHe is a little late."
     ],
     "day5Pages": [
-      "Hugo puts a towel on the stool instead of handing it to her.\nHugo: Do your feet hurt?\nFish: I don’t know.\nShe turns a foot over to look.",
-      "Fish: Are you going out today?\nHugo: I need to have a look around.\nFish: Should I wear this?\nHugo: That’s my coat.\nFish: I know.",
-      "Hugo: Why does it have to be mine?\nFish: What if they get the wrong person?\nHugo: …Who are they supposed to think you are?\nFish: You. Then you wouldn’t have to go."
+      "She presses a new hand against the glass.\n\n“If I go out, could you rest?”\n\nHugo remembers saying he did not want another interview. He had not known someone in the tank was keeping track."
     ],
     "day6Pages": [
-      "Fish: He’s dragging things again. Next door.\nHugo: When?\nFish: Just after you left. Hit the wall three times.\nHugo: Three?\nFish: I counted.",
-      "Fish: He keeps saying, clean it all out and it won’t change.\nHugo: What else?\nFish: Too quiet. Then the pipes started.\nHugo goes over and presses his ear to the wall."
+      "She arranges her hair like Hugo’s.\n\n“Would they recognize me?”\n\nHugo: Tell me who you want to recognize you.\n\nShe does not answer."
     ],
     "question": "Hugo: Did you touch the notebook on the desk?",
     "answerGap": "Fish: A page fell out. I picked it up.\nHugo: Where is it?\nShe points to the corner of the desk.",
@@ -517,10 +513,10 @@
   "cult": {
     "sound": "Three more blows next door.\nHugo turns over. 401 has apparently not scheduled a day off.",
     "dayOne": [
-      "The hammer stops.\nThe neighbor glances at Hugo. “Back inside.”",
-      "“What are you boarding it up for?”\nThe neighbor looks toward the stairs and lowers the hammer behind his leg.",
-      "“Go back to your apartment. Stay there today.”\nThe words come out in a rush.\n“Don’t turn the TV on.”",
-      "“Wait—”\n“Keep the windows shut, too.”\nThe door closes. The hammer starts again."
+      "The neighbor stops mid-swing. He looks at Hugo’s slippers, then his face.\n“Not been out today?”\n“How is that your business?”\n“It is.”",
+      "He moves the hammer to his left hand. Two water bottles stand by the door. One is unopened.\n“I need to know who goes out in this building.”\n“Are you my mother?”\nHe does not smile.",
+      "“Is your television on?”\n“No.”\n“You looked at the stairs when you said that.”\nHugo pauses.\n“I will look at you next time.”",
+      "His hand trembles. A nail drops. He does not bend down.\n“Look at the stars last night?”\n“Why?”\n“If not, do not. Go home. Close the window. Leave the television off.”"
     ],
     "note": "Knock twice if you need something.\nCome alone.\n\nThe note is taped low. Hugo bends to read it. His knees complain first.",
     "door": [
@@ -1000,7 +996,7 @@
     },
     {
       "key": "copy.FurnitureInteraction.97",
-      "text": "Rest for one period · E"
+      "text": "Rest a while (45 minutes)"
     },
     {
       "key": "copy.FurnitureInteraction.98",
@@ -2001,6 +1997,38 @@
     {
       "key": "进入序章  ·  Enter",
       "text": "Enter prologue · Enter"
+    },
+    {
+      "key": "reason.NoRelation",
+      "text": "These do not fit together."
+    },
+    {
+      "key": "reason.MissingEvidence",
+      "text": "There is a piece I have not recorded."
+    },
+    {
+      "key": "reason.LockedByDay",
+      "text": "It has not happened. Do not testify for tomorrow."
+    },
+    {
+      "key": "reason.MissingPrerequisite",
+      "text": "I have not seen the premise for myself."
+    },
+    {
+      "key": "reason.None",
+      "text": "Check the connection once more."
+    },
+    {
+      "key": "reason.soft-hint",
+      "text": "\nClose the notebook for a moment. Think about the conversation you left unfinished."
+    },
+    {
+      "key": "stage.venue-closed",
+      "text": "Locked. A notice says closed until further notice."
+    },
+    {
+      "key": "stage.close",
+      "text": "Enter / Esc · Return"
     }
   ],
   "fishEnding": {
@@ -2184,7 +2212,7 @@
       {
         "id": "service",
         "title": "West · Maintenance",
-        "body": "Investigate the circuit supplying the third-night device.",
+        "body": "Investigate the circuit supplying the third-night test device.",
         "success": "Recorded.",
         "locked": "Nothing new to record."
       },
@@ -2204,8 +2232,8 @@
       },
       {
         "id": "rest",
-        "title": "Bench: wait one period",
-        "body": "Wait voluntarily. This does not count as sleep.",
+        "title": "Street bench: rest 45 minutes",
+        "body": "Sit for a while. It does not count as sleep.",
         "success": "Recorded.",
         "locked": "Nothing new to record."
       },
@@ -2257,17 +2285,31 @@
         "body": "The split closes. The street is flat again.\nYou still remember what was underneath.",
         "success": "Recorded.",
         "locked": ""
+      },
+      {
+        "id": "night-clerk",
+        "title": "Night clerk",
+        "body": "“Coffee is cold. Wait for the next pot if you want it hot.”",
+        "success": "Recorded.",
+        "locked": "Nothing new."
+      },
+      {
+        "id": "cat-feeder",
+        "title": "Cat feeder",
+        "body": "“Not eating today. Keeps looking upstairs.”",
+        "success": "Recorded.",
+        "locked": "Nothing new."
       }
     ],
     "days": [
       "Day 1: Complete the apartment introduction. Notice the four original bulletins.",
       "Day 2: Enter the street from floor 1. Record the handover and wiring diagram. Meet Bubble after rooftop observation.",
-      "Day 3: Confirm the circuit deduction with B; isolate 401 in the service area.",
-      "Day 4: Fish becomes human. Build understanding; investigate search orders and routing.",
+      "Day 3: The neighbor tests the device. A face appears beneath the scales.",
+      "Day 4: The fish begins speaking. Listen before deciding what she means.",
       "Day 5: Stop the city dispatch at the broadcast terminal. Avoid patrol sightlines.",
       "Day 6: Compare observation logs with the array manual.",
-      "Day 7: Shut the synchronized route before midnight.",
-      "Day 8 onward: All three crises have been passed in this life. Continue exploring."
+      "Day 7: Stop the purification device before midnight.",
+      "Preserve the building to finish the first stage."
     ],
     "crisis": [
       "On the fifth night, districts across the city are sealed.",
@@ -2390,7 +2432,7 @@
       {
         "id": "recruit",
         "title": "The same triangle",
-        "body": "“They promised us new bodies. This building. Third night.”\n\nHe slides the paper over.\n\n“The thing downstairs is connected already. I could put your name down.”"
+        "body": "“Living things change.”\n\nHe slides the paper over, covering his own name.\n\n“Empty containers do not. This building is mine. Clean by the seventh day.”\n\nHugo: You are alive too.\n\n“That is why I have to hurry.”"
       },
       {
         "id": "join-choice",
@@ -2440,7 +2482,7 @@
       {
         "id": "neighbor-order",
         "title": "Purification assignment",
-        "body": "401. Service shaft. Third night. All on the same line.\nThe neighbor is only carrying out an order. Someone has scheduled the whole building."
+        "body": "401. Service shaft. A test on the third night; activation on the seventh.\nAn entire building lives between those two dates."
       },
       {
         "id": "routing",
@@ -2490,7 +2532,7 @@
       {
         "id": "building-destroyed",
         "title": "The assigned building",
-        "body": "The third-night order was carried out. The floor rose, the walls broke, and the building fell. Only an earned return can carry memory onward."
+        "body": "On the seventh night, the device starts on time.\nThe floor lifts. The walls split. The last closing door cannot keep out the fire."
       },
       {
         "id": "neighbor-killed",
@@ -2640,7 +2682,7 @@
       {
         "id": "overheard",
         "title": "Outside 401",
-        "body": "Hugo stops by the door.\n\n“Third night. The whole building. Leave the main switch alone; follow the handover sheet.”\n\nThe reply is muffled. The tenant lowers his voice. “I know. Nobody left behind.”\n\nA chair scrapes. Hugo steps back. Knock first. Find out what he means."
+        "body": "“Third night, a test first. The whole building... seventh day. Nobody left behind.”\n\nThe voice drops. Hugo cannot hear the rest.\n\nHe takes his hand off the door. Ask first."
       },
       {
         "id": "cabinet",
@@ -2676,6 +2718,471 @@
         "id": "foil-choice",
         "title": "",
         "body": "Ask about the foil triangle by the door."
+      },
+      {
+        "id": "night-call",
+        "title": "The phone lights up",
+        "body": "Neighbor: Come over a moment.\n\nHugo: If you need salt, I am out too.\n\nNeighbor: I think... something is wrong with me."
+      },
+      {
+        "id": "night-go",
+        "title": "",
+        "body": "Go to 401."
+      },
+      {
+        "id": "night-delay",
+        "title": "",
+        "body": "Give me a moment. I will turn the light off."
+      },
+      {
+        "id": "night-intro",
+        "title": "401 · Late night",
+        "body": "Two cups. One upside down. The hammer has been pushed to the corner. The radio keeps singing.\n\nHe sits with his back to Hugo.\n“You came. Is the door shut?”\n\nHis right eye jerks."
+      },
+      {
+        "id": "night-eye",
+        "title": "",
+        "body": "What happened to your eye?"
+      },
+      {
+        "id": "night-calm",
+        "title": "",
+        "body": "Stay seated. I am here."
+      },
+      {
+        "id": "night-logic",
+        "title": "",
+        "body": "You said clean it out. Clean what?"
+      },
+      {
+        "id": "night-observe",
+        "title": "",
+        "body": "Watch him."
+      },
+      {
+        "id": "night-ask",
+        "title": "",
+        "body": "That is not tiredness. How long?"
+      },
+      {
+        "id": "night-back",
+        "title": "",
+        "body": "Back toward the door."
+      },
+      {
+        "id": "night-twitch",
+        "title": "He tries to smile",
+        "body": "“Nothing. A little tired.”\n\nThe eye moves again. Half his face follows.\n\nHugo: That sounded rehearsed.\n\n“Do not... stare at me.”\n\nHis hand covers his eye. His shoulder rises on its own."
+      },
+      {
+        "id": "night-body",
+        "title": "The doorway",
+        "body": "The chair falls. A thin sound comes from the light.\n\n“I do not want this.”\n\nHe stands. His body reaches the door before he does.\n\n“Go.”\n\nHugo: You need to move first.\n\nHe cannot."
+      },
+      {
+        "id": "night-controls",
+        "title": "Get out first",
+        "body": "Left mouse strike · Shift sprint · Ctrl crouch · Q dodge\nE: escape at the doorway; speaking nearby can buy a moment. Esc pauses.\n\nHugo: Get to the door. Questions can wait."
+      },
+      {
+        "id": "night-escape-hint",
+        "title": "",
+        "body": "The cool doorway light is still on."
+      },
+      {
+        "id": "night-caught",
+        "title": "The corridor",
+        "body": "Hugo wakes on cold tiles. The lock of 401 clicks.\n\nHe touches his neck. Still there.\n\n“Do not come back,” someone says inside."
+      },
+      {
+        "id": "night-locked",
+        "title": "401",
+        "body": "Locked. The footsteps inside recede."
+      },
+      {
+        "id": "night-retry",
+        "title": "",
+        "body": "Wait a moment, then knock again."
+      },
+      {
+        "id": "stage-continue",
+        "title": "",
+        "body": "Continue."
+      },
+      {
+        "id": "stage-choice-controls",
+        "title": "",
+        "body": "Choose with number keys or click."
+      },
+      {
+        "id": "day7-confrontation",
+        "title": "401 · Day Seven",
+        "body": "Hugo: The whole building smells of gas.\nNeighbor: Yes.\nHugo: You are going to blow it up?\nNeighbor: Not blow it up. Clean it out.\n\nHugo: And after that?\nNeighbor: It will stop changing.\nHugo: You are inside too.\nNeighbor: I will clean myself first.\n\nHe does not look at the assignment."
+      },
+      {
+        "id": "day7-defuse",
+        "title": "",
+        "body": "Disarm using the confirmed device plan."
+      },
+      {
+        "id": "day7-persuade",
+        "title": "",
+        "body": "It says remove living things. Not save them."
+      },
+      {
+        "id": "day7-rescue",
+        "title": "",
+        "body": "Get the residents away from the supply branch."
+      },
+      {
+        "id": "day7-leave",
+        "title": "",
+        "body": "Return to the corridor and investigate."
+      },
+      {
+        "id": "day7-need-plan",
+        "title": "The locking bar",
+        "body": "Hugo stops. He has not checked the handover sheet and the isolated branch.\n\nHe does not want to gamble with somebody else’s lights."
+      },
+      {
+        "id": "day7-no-persuasion",
+        "title": "Words fail",
+        "body": "“You have not read it.”\n\nHe pins the assignment to the table. Hugo is still missing something that might make him listen."
+      },
+      {
+        "id": "day7-rescue-result",
+        "title": "Footsteps in the corridor",
+        "body": "The residents follow Hugo away from the doorway.\n\nThe building is not safe yet. The device is still humming."
+      },
+      {
+        "id": "stage-complete",
+        "title": "Seven Days · First stage complete",
+        "body": "The pulse stops. Someone upstairs turns on a tap.\n\nHugo sits against the wall.\n“Is it too late to ask if you ate?”\n\nNobody laughs. This time he does not change the subject.\n\nThe building stands."
+      },
+      {
+        "id": "stage-title",
+        "title": "",
+        "body": "Return to the title screen."
+      },
+      {
+        "id": "foil-confirm",
+        "title": "Put the foil in?",
+        "body": "This irreversibly stops the fish’s changes for this journey. She will not speak, become human or become a companion.\n\nHugo holds his hand above the water."
+      },
+      {
+        "id": "foil-confirm-yes",
+        "title": "",
+        "body": "Put it in."
+      },
+      {
+        "id": "foil-confirm-no",
+        "title": "",
+        "body": "Keep it for now."
+      },
+      {
+        "id": "test-disrupted",
+        "title": "The test stops",
+        "body": "One indicator dies. Another lights up.\n\nThis is not the last one. The handover book still has a signature box for Day Seven."
+      },
+      {
+        "id": "beat-1-0",
+        "title": "Missed calls",
+        "body": "A former colleague asks about dinner. The landlord asks about rent. His mother only says: “Call when you wake up.”\n\nHugo puts the phone face down. Socks first."
+      },
+      {
+        "id": "beat-1-1",
+        "title": "Fish food",
+        "body": "Hugo drops in two flakes.\n“Missed the interview again. Saved the bus fare.”\n\nThe fish swims to the glass. He swallows the rest."
+      },
+      {
+        "id": "beat-1-2",
+        "title": "The old telescope",
+        "body": "The focus ring has lost its paint. He used to talk beside it until somebody asked him to keep his voice down.\n\nNobody asks today."
+      },
+      {
+        "id": "beat-1-3",
+        "title": "A light behind the door",
+        "body": "The light in 401 is still on. Two hammer blows, a pause, then two more.\n\nHugo almost calls back, “I heard you.” Instead he walks more quietly."
+      },
+      {
+        "id": "beat-2-0",
+        "title": "Morning outside",
+        "body": "Someone feeds a cat. The night clerk finishes a cold coffee from a paper cup.\n\nHugo checks his phone. Perhaps there is still time to answer somebody today."
+      },
+      {
+        "id": "beat-2-1",
+        "title": "Two cups",
+        "body": "Hugo remembers being asked if he had eaten. He was staring at the hammer.\n\nSome questions take a while to hear."
+      },
+      {
+        "id": "beat-2-2",
+        "title": "Before the call",
+        "body": "The hammer in 401 stops.\n\nThe silence makes Hugo look up."
+      },
+      {
+        "id": "beat-2-3",
+        "title": "The pipe",
+        "body": "A small tap comes from the pipe. It did not come from upstairs.\n\nHugo listens. His phone is still dark."
+      },
+      {
+        "id": "beat-3-0",
+        "title": "A test inside the wall",
+        "body": "A short pulse runs down the shaft. The building does not fall.\n\nSomeone seems to be checking a connection."
+      },
+      {
+        "id": "beat-5-0",
+        "title": "Addresses on the radio",
+        "body": "The radio repeats street names. The last is nearby.\n\nThe caretaker brings his chair inside."
+      },
+      {
+        "id": "beat-6-0",
+        "title": "An unanswered call",
+        "body": "The neighbor’s phone rings until it stops.\n\nHugo does not call again. He watches the patch of screen that was lit."
+      },
+      {
+        "id": "beat-7-0",
+        "title": "Do not come back tonight",
+        "body": "A corner of paper sticks out of 401.\n“Do not come back tonight.”\nThe last letter tore the paper."
+      },
+      {
+        "id": "beat-7-1",
+        "title": "The signature box",
+        "body": "The last box is signed. Today’s date.\n\nHugo suddenly does not want to know whether the hand hesitated."
+      },
+      {
+        "id": "beat-7-2",
+        "title": "The entrance",
+        "body": "Someone pounds on the entrance below. Nobody shouts abuse.\n\nThat makes Hugo want to go down more than shouting would."
+      },
+      {
+        "id": "beat-7-3",
+        "title": "Seven minutes",
+        "body": "The footsteps below gradually stop.\n\nHugo watches the clock. There is still time. Less of it."
+      },
+      {
+        "id": "beat-3-1",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-3-2",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-3-3",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-5-1",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-5-2",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-5-3",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-6-1",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-6-2",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "beat-6-3",
+        "title": "Sounds in the building",
+        "body": "Footsteps stop outside. After a while, they move on.\n\nHugo takes his ear away from the door."
+      },
+      {
+        "id": "echo-1-0",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "echo-1-1",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "echo-1-2",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "echo-1-3",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "echo-2-0",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "echo-2-1",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "echo-2-2",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "echo-2-3",
+        "title": "A moment",
+        "body": "The television flickers. A pipe answers.\n\nHugo looks at the window and forgets what he was about to do."
+      },
+      {
+        "id": "day7-return",
+        "title": "",
+        "body": "Bubble: Hello, human. The same morning again.\nHugo: At least I know which switch to leave alone.\n\nReturn to Day Seven, 07:00. Keep memories, device knowledge and current items. The final ignition resets. Your body ages by one loop."
+      },
+      {
+        "id": "day7-call",
+        "title": "Outside the door",
+        "body": "Someone knocks downstairs. The call to 401 connects.\n\n“You had better come over.”\n\nThis time he does not ask if Hugo ate."
+      },
+      {
+        "id": "day2-return",
+        "title": "Day Two · Morning",
+        "body": "Hugo hears the hammer again.\n\nMemories, recorded deductions and current items remain. The night encounter and capture count reset. Your body ages by one loop.\n\nHe looks at his phone. He still has not returned that call."
+      },
+      {
+        "id": "early-threat",
+        "title": "Resident of 401",
+        "body": "His hand grips the brim. He leaves the hammer alone.\n\n“Put that down. We can still talk.”\n\nHe pushes the paper to the table’s edge.\n“Read it. Then go.”"
+      },
+      {
+        "id": "after-1-0-1",
+        "title": "A moment",
+        "body": "His phone lights up. An old colleague asks about dinner.\nHugo types half a yes, then turns the phone over."
+      },
+      {
+        "id": "after-1-0-2",
+        "title": "A moment",
+        "body": "Two more knocks next door.\n“I am awake,” Hugo tells the wall. It does not sound reassured."
+      },
+      {
+        "id": "after-1-0-3",
+        "title": "A moment",
+        "body": "His mother sends a photograph of dinner.\nHe zooms in for a while. Writes: Looks good."
+      },
+      {
+        "id": "after-1-1-1",
+        "title": "A moment",
+        "body": "A sentence breaks off in the television static.\nHe turns it down. Not because he understood."
+      },
+      {
+        "id": "after-1-1-2",
+        "title": "A moment",
+        "body": "The refrigerator stops humming.\nOnly then does he notice he was listening for something else."
+      },
+      {
+        "id": "after-1-1-3",
+        "title": "A moment",
+        "body": "The interview reminder has expired.\nThe fish rises and touches the glass."
+      },
+      {
+        "id": "after-1-2-1",
+        "title": "A moment",
+        "body": "It is still light outside. The window already looks like a black mirror.\nHe moves aside to stop blocking his own view."
+      },
+      {
+        "id": "after-1-2-2",
+        "title": "A moment",
+        "body": "Someone once asked what he saw through the telescope.\nHe answered at great length. Eventually they stopped asking."
+      },
+      {
+        "id": "after-1-2-3",
+        "title": "A moment",
+        "body": "A line of an old song leaks through the wall.\nThe hammer lands before the chorus."
+      },
+      {
+        "id": "after-1-3-1",
+        "title": "A moment",
+        "body": "A chair scrapes overhead.\nHugo counts the floors again. There is only the roof up there."
+      },
+      {
+        "id": "after-1-3-2",
+        "title": "A moment",
+        "body": "He opens his contacts without thinking.\nThe bright screen feels like an answered call. He has not dialed."
+      },
+      {
+        "id": "after-1-3-3",
+        "title": "A moment",
+        "body": "Light still shows under 401.\nHe softens his footsteps, then feels rude for doing it."
+      },
+      {
+        "id": "after-2-0-1",
+        "title": "A moment",
+        "body": "Someone downstairs bought two breakfasts.\nOne stays in their hand all the way home."
+      },
+      {
+        "id": "after-2-0-2",
+        "title": "A moment",
+        "body": "A cup touches a table inside 401.\nBefore Hugo can speak, someone says, “Wait.”"
+      },
+      {
+        "id": "after-2-0-3",
+        "title": "A moment",
+        "body": "His phone asks how he slept.\nHe deletes fine. There is no shorter answer."
+      },
+      {
+        "id": "after-2-1-1",
+        "title": "A moment",
+        "body": "The neighbor pushes the hammer farther away.\nLess a threat than a precaution against reaching for it."
+      },
+      {
+        "id": "after-2-1-2",
+        "title": "A moment",
+        "body": "Have you eaten? The question stays with him.\nHarder to answer than any slogan."
+      },
+      {
+        "id": "after-2-1-3",
+        "title": "A moment",
+        "body": "A pipe knocks once. Much later, again.\nHe cannot help knocking back."
+      },
+      {
+        "id": "after-2-2-1",
+        "title": "A moment",
+        "body": "401 appears in his recent calls.\nHe saves it as Neighbor. Leaves out Dangerous Person."
+      },
+      {
+        "id": "after-2-2-2",
+        "title": "A moment",
+        "body": "Someone stands in the corridor holding a bowl.\nWhen Hugo looks up, they have gone inside."
+      },
+      {
+        "id": "after-2-2-3",
+        "title": "A moment",
+        "body": "His phone brightens, then dims.\nHe practices “Do you need help?” It sounds like a sales call."
+      },
+      {
+        "id": "after-2-3-1",
+        "title": "A moment",
+        "body": "The old song cuts off.\nHe waits for the next line and realizes he knows it."
+      },
+      {
+        "id": "after-2-3-2",
+        "title": "A moment",
+        "body": "Something brushes the floor inside 401.\nNot a hammer. Hammers do not hesitate."
+      },
+      {
+        "id": "after-2-3-3",
+        "title": "A moment",
+        "body": "He arranges his questions in order.\nThe first is always too long. He never writes the last."
       }
     ]
   }

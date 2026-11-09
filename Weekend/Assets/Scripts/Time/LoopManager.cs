@@ -46,8 +46,9 @@ namespace DeathBySeventhsDawn.TimeSystem
             if (!GameManager.Instance.HasLoopAbility)
                 return;
             restarting = true;
-            GameManager.Instance.RegisterNewLoop();
-            TimeManager.Instance.ResetToDayOne();
+            int returnDay=!Progression.CrisisRules.LegacyValidation?GameManager.Instance.State.stageReturnDay:0;
+            if(returnDay==2||returnDay==7){GameManager.Instance.RestoreStageLoop(returnDay);TimeManager.Instance.SetNarrativeTime(returnDay,TimePeriod.Morning,420);Progression.ProgressionSave.Write(GameManager.Instance.State,false);}
+            else {GameManager.Instance.RegisterNewLoop();TimeManager.Instance.ResetToDayOne();}
             LoopRestarted?.Invoke();
             if (Application.CanStreamedLevelBeLoaded(dayOneSceneName))
                 SceneManager.LoadScene(dayOneSceneName);

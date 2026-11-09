@@ -1,0 +1,108 @@
+Final room/current-rule suite:
+PASS: 98 checks; Current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up. Scenario fixtures and camera renders; not a timed manual playthrough.
+
+Combined historical/current rules:
+PASS: 249 checks; 153 explicit historical-rule regressions followed by current first-stage rules: opening, night escape/captures, Day7 short loop and interventions, fish stages, foil, reasoning, save compatibility and tutorial catch-up.
+
+Bilingual continuous route:
+PASS: 50 checks; Chinese and English continuous route from title, original tutorial, Day2 escape, continuous Day3-7 and formal unawakened purification ending. Navigation and waiting accelerated; no story-state injection/debug skips; not manual timing or collision-path validation.
+
+Final room checks (not a manual walkthrough):
+NIGHT_ARC_CHECK STAGE1 fresh title starts the real bedroom opening without free debug
+NIGHT_ARC_CHECK STAGE1 opening inputs reach the actual waking and neighbor handoff
+NIGHT_ARC_CHECK STAGE1 Day3 installation and Day5 pressure are not mandatory deaths
+NIGHT_ARC_CHECK STAGE1 Day7 purification is the only scheduled fatal crisis
+NIGHT_ARC_CHECK STAGE1 unrecorded matching evidence is not NoRelation
+NIGHT_ARC_CHECK STAGE1 unrelated facts have distinct feedback
+NIGHT_ARC_CHECK STAGE1 flyer visit is still a real prerequisite
+NIGHT_ARC_CHECK STAGE1 final plan waits for the installation stage
+NIGHT_ARC_CHECK STAGE1 handover is necessary in the final fourth inference
+NIGHT_ARC_CHECK STAGE1 handover is no longer a dead flavor clue
+NIGHT_ARC_CHECK STAGE1 normal 23:10 update catches the player offsite
+NIGHT_ARC_CHECK STAGE1 night chase uses first person
+NIGHT_ARC_CHECK STAGE1 Q dodge has an actual invulnerability window
+NIGHT_ARC_CHECK STAGE1 first actual capture is handled by the chase owner
+NIGHT_ARC_CHECK STAGE1 first capture wakes alive outside locked 401
+NIGHT_ARC_CHECK STAGE1 second attempt remains physically reachable after the warning
+NIGHT_ARC_CHECK STAGE1 second capture becomes actual lethal damage
+NIGHT_ARC_CHECK STAGE1 unawakened second capture gives a formal ending
+NIGHT_ARC_CHECK STAGE1 late-night call opens through the director
+NIGHT_ARC_CHECK STAGE1 call pauses the world
+NIGHT_ARC_CHECK STAGE1 accept call through normal choice
+NIGHT_ARC_CHECK STAGE1 2D neighbor visit starts before mutation
+NIGHT_ARC_CHECK STAGE1 2D and first-person scenes share Hugo's position across the rupture
+NIGHT_ARC_CHECK STAGE1 eye movement precedes body loss of control
+NIGHT_ARC_CHECK STAGE1 eye twitch is visible geometry
+NIGHT_ARC_CHECK STAGE1 body escalation follows the second choice
+NIGHT_ARC_CHECK STAGE1 body loss of control requests the owned rupture
+NIGHT_ARC_CHECK STAGE1 tear enters first-person escape encounter
+NIGHT_ARC_CHECK STAGE1 one-time controls card committed
+NIGHT_ARC_CHECK STAGE1 awakened second-capture fixture uses the same lethal path
+NIGHT_ARC_CHECK STAGE1 night death returns to Day2 morning through LoopManager
+NIGHT_ARC_CHECK STAGE1 Day2 return restores the human disguise and sleep state without losing knowledge
+NIGHT_ARC_CHECK STAGE1 late-night call opens through the director
+NIGHT_ARC_CHECK STAGE1 call pauses the world
+NIGHT_ARC_CHECK STAGE1 accept call through normal choice
+NIGHT_ARC_CHECK STAGE1 2D neighbor visit starts before mutation
+NIGHT_ARC_CHECK STAGE1 2D and first-person scenes share Hugo's position across the rupture
+NIGHT_ARC_CHECK STAGE1 eye movement precedes body loss of control
+NIGHT_ARC_CHECK STAGE1 eye twitch is visible geometry
+NIGHT_ARC_CHECK STAGE1 body escalation follows the second choice
+NIGHT_ARC_CHECK STAGE1 body loss of control requests the owned rupture
+NIGHT_ARC_CHECK STAGE1 tear enters first-person escape encounter
+NIGHT_ARC_CHECK STAGE1 one-time controls card committed
+NIGHT_ARC_CHECK STAGE1 actual E input escapes to the matching 2D room without killing
+NIGHT_ARC_CHECK STAGE1 escape room still has a usable corridor door
+NIGHT_ARC_CHECK STAGE1 escape returns through 401 rather than Hugo's home door
+NIGHT_ARC_CHECK STAGE1 midnight starts the purification explosion
+NIGHT_ARC_CHECK STAGE1 purification death returns to Day7 morning
+NIGHT_ARC_CHECK STAGE1 short loop preserves device knowledge and resets ignition
+NIGHT_ARC_CHECK STAGE1 unawakened purification fails permanently
+NIGHT_ARC_CHECK STAGE1 full plan can be confirmed on Day7
+NIGHT_ARC_CHECK STAGE1 protected branch isolation remains a physical action
+NIGHT_ARC_CHECK STAGE1 physical lockout ends the first stage successfully
+NIGHT_ARC_CHECK STAGE1 successful first stage has its own settlement rather than a bad ending
+NIGHT_ARC_CHECK STAGE1 persuasion uses trust and the confirmed plan
+NIGHT_ARC_CHECK STAGE1 evacuation can finish with prior source isolation
+NIGHT_ARC_CHECK STAGE1 ordinary rest spends 45 minutes and cannot detonate Day7 at 21:00
+NIGHT_ARC_CHECK STAGE1 reading the real original flyer, rather than hammering, unlocks its prerequisite
+NIGHT_ARC_CHECK STAGE1 distinct fish phase Day3
+NIGHT_ARC_CHECK STAGE1 ununderstood fish is not automatically a companion on Day3
+NIGHT_ARC_CHECK STAGE1 distinct fish phase Day4
+NIGHT_ARC_CHECK STAGE1 ununderstood fish is not automatically a companion on Day4
+NIGHT_ARC_CHECK STAGE1 distinct fish phase Day5
+NIGHT_ARC_CHECK STAGE1 ununderstood fish is not automatically a companion on Day5
+NIGHT_ARC_CHECK STAGE1 distinct fish phase Day6
+NIGHT_ARC_CHECK STAGE1 ununderstood fish is not automatically a companion on Day6
+NIGHT_ARC_CHECK STAGE1 distinct fish phase Day7
+NIGHT_ARC_CHECK STAGE1 ununderstood fish is not automatically a companion on Day7
+NIGHT_ARC_CHECK STAGE1 first foil input does not silently close the fish route
+NIGHT_ARC_CHECK STAGE1 foil cancellation preserves the item and route
+NIGHT_ARC_CHECK STAGE1 explicit second action seals irreversibly
+NIGHT_ARC_CHECK STAGE1 sealed fish remains ordinary Day3
+NIGHT_ARC_CHECK STAGE1 sealed fish remains ordinary Day4
+NIGHT_ARC_CHECK STAGE1 sealed fish remains ordinary Day5
+NIGHT_ARC_CHECK STAGE1 sealed fish remains ordinary Day6
+NIGHT_ARC_CHECK STAGE1 sealed fish remains ordinary Day7
+NIGHT_ARC_CHECK STAGE1 Day4 first speech is reachable
+NIGHT_ARC_CHECK STAGE1 one understanding choice is not full companionship
+NIGHT_ARC_CHECK STAGE1 Day5 limb dialogue is reachable
+NIGHT_ARC_CHECK STAGE1 two choices before Day7 establish understanding
+NIGHT_ARC_CHECK STAGE1 understanding prevents the replacement sequence
+NIGHT_ARC_CHECK STAGE1 late tutorial warning is reachable instead of being replaced by the conspiracy
+NIGHT_ARC_CHECK STAGE1 late first meeting advances the original tutorial owner
+NIGHT_ARC_CHECK STAGE1 late fridge encounter is still a usable real interaction
+NIGHT_ARC_CHECK STAGE1 missed Day1 news catches up rather than locking stage three
+NIGHT_ARC_CHECK STAGE1 late first-night telescope lesson remains reachable
+NIGHT_ARC_CHECK STAGE1 late real observation and recheck can still record the original pair
+NIGHT_ARC_CHECK STAGE1 save validation detects impossible stage combinations
+NIGHT_ARC_CHECK STAGE1 corrupt new-stage fields normalize without discarding the journey
+NIGHT_ARC_CHECK STAGE1 old v1 migration retains safe stage defaults
+NIGHT_ARC_CHECK STAGE1 old v2 migration retains safe stage defaults
+NIGHT_ARC_CHECK STAGE1 old v3 migration retains safe stage defaults
+NIGHT_ARC_CHECK STAGE1 old v4 migration retains safe stage defaults
+NIGHT_ARC_CHECK STAGE1 old v5 migration retains safe stage defaults
+NIGHT_ARC_CHECK STAGE1 old v6 migration retains safe stage defaults
+NIGHT_ARC_CHECK STAGE1 old v7 migration retains safe stage defaults
+NIGHT_ARC_CHECK STAGE1 night narrative resolves in English
+NIGHT_ARC_CHECK STAGE1 night narrative resolves in Chinese

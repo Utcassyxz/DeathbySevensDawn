@@ -19,7 +19,7 @@ namespace DeathBySeventhsDawn.Interaction
         static bool modalOpen;
         static int blockedThroughFrame = -1;
         // 关闭弹窗的这一帧仍占用输入，避免同一个 E 又打开床、窗户或望远镜。
-        public static bool WorldBlocked => WorldEndSequence.IsPresenting || ProgressionHUD.DebugConsoleOpen || NeighborSlice.WorldBlocked || CognitiveRupture.IsActive || DeathBySeventhsDawn.City.CityWorld.Reading || modalOpen || StoryTransition.IsActive || EndingCollectionUI.PreviewOpen || RooftopAccess.WorldBlocked || GameSettingsUI.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || Time.frameCount <= blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked || NightDreamSequence.WorldBlocked;
+        public static bool WorldBlocked => ApartmentEventDirector.WorldBlocked || WorldEndSequence.IsPresenting || ProgressionHUD.DebugConsoleOpen || NeighborSlice.WorldBlocked || CognitiveRupture.IsActive || DeathBySeventhsDawn.City.CityWorld.Reading || modalOpen || StoryTransition.IsActive || EndingCollectionUI.PreviewOpen || RooftopAccess.WorldBlocked || GameSettingsUI.WorldBlocked || MorningRoutine.WorldBlocked || CultNeighbor.WorldBlocked || Time.frameCount <= blockedThroughFrame || FirstLoopPrologue.WorldBlocked || PerceptionClues.IsReading || EvidenceInspection.BlocksWorld || DayOneSupernovaEvent.WorldBlocked || AquariumEntity.WorldBlocked || MainMenuUI.WorldBlocked || PauseMenuUI.WorldBlocked || InvestigationDevTools.WorldBlocked || NightDreamSequence.WorldBlocked;
 
         enum Page
         {
@@ -268,6 +268,7 @@ namespace DeathBySeventhsDawn.Interaction
                     watchAge += Time.unscaledDeltaTime;
                     if (watchAge > 2.4f)
                     {
+                        TimeManager.Instance.QueueObservationHour();
                         watch = Watch.Recheck;
                         telescopeMessage = StoryText.Current.telescope.recheck;
                         telescopeCaption.Reset();
@@ -314,7 +315,7 @@ namespace DeathBySeventhsDawn.Interaction
 
             if (player == null)
                 player = GameObject.FindWithTag("Player");
-            nearby = TimeManager.Instance.Days == 1 && !TutorialGate.IsBlocked("telescope") && game.State.journalUnlocked && telescope != null && player != null && PropReach.Gap(telescope, player) <= content.telescopeRange;
+            nearby = (TimeManager.Instance.Days == 1||!CrisisRules.LegacyValidation&&!game.State.tutorialComplete) && !TutorialGate.IsBlocked("telescope") && game.State.journalUnlocked && telescope != null && player != null && PropReach.Gap(telescope, player) <= content.telescopeRange;
             if (nearby && interact && WorldPromptUI.CanActivate("telescope"))
                 OpenTelescope();
         }
@@ -415,7 +416,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         public bool OpenTelescopeFromWorld()
         {
-            if (TimeManager.Instance.Days >= 2 || page != Page.None || nearby == false || telescope == null || TutorialGate.IsBlocked("telescope"))
+            if ((TimeManager.Instance.Days >= 2&&(CrisisRules.LegacyValidation||GameManager.Instance.State.tutorialComplete)) || page != Page.None || nearby == false || telescope == null || TutorialGate.IsBlocked("telescope"))
                 return false;
             OpenTelescope();
             return true;
@@ -423,13 +424,13 @@ namespace DeathBySeventhsDawn.Interaction
 
         void OpenTelescope()
         {
-            if (TutorialGate.IsBlocked("telescope") || TimeManager.Instance.Days >= 2)
+            if (TutorialGate.IsBlocked("telescope") || TimeManager.Instance.Days >= 2&&(CrisisRules.LegacyValidation||GameManager.Instance.State.tutorialComplete))
                 return;
             revelation = false;
             firstObjectView = false;
             telescopeMessage = firstObjectView ? (watch == Watch.FirstLook ? StoryText.Current.telescope.firstNight : watch == Watch.Recheck ? StoryText.Current.telescope.recheck : StoryText.Current.telescope.sleepThought) : Investigation.Evidence("apartment-telescope").body;
             watch = Watch.None;
-            if (TimeManager.Instance.Days == 1 && NightWatchComplete)
+            if ((TimeManager.Instance.Days == 1||!CrisisRules.LegacyValidation&&!GameManager.Instance.State.tutorialComplete) && NightWatchComplete)
             {
                 firstObjectView = true;
                 watch = Watch.Complete;
@@ -444,7 +445,7 @@ namespace DeathBySeventhsDawn.Interaction
             if (page != Page.Telescope)
                 return false;
             bool result = false;
-            if (TimeManager.Instance.Days == 1 && GameManager.Instance.State.firstNightWatchComplete)
+            if ((TimeManager.Instance.Days == 1||!CrisisRules.LegacyValidation&&!GameManager.Instance.State.tutorialComplete) && GameManager.Instance.State.firstNightWatchComplete)
             {
                 result |= Investigation.Collect("apartment-telescope");
                 result |= Investigation.Collect("first-night-silhouette");
@@ -472,7 +473,7 @@ namespace DeathBySeventhsDawn.Interaction
             watch = Watch.None;
             if (!IsNight(clock.Period))
                 telescopeMessage = text.nightOnly;
-            else if (clock.Days == 1)
+            else if (clock.Days == 1||!CrisisRules.LegacyValidation&&!GameManager.Instance.State.firstNightWatchComplete)
             {
                 firstObjectView = true;
                 GameManager.Instance.State.firstNightObjectSeen = true;

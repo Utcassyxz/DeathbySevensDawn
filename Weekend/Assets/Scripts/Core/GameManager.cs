@@ -29,7 +29,7 @@ namespace DeathBySeventhsDawn.Core
             get; private set;
         }
         public int LoopCount => State.loopCount;
-        public bool HasEnded => State.badEndingOne || State.worldEndEnding || State.fishReplacementEnding;
+        public bool HasEnded => State.stageOneComplete || State.badEndingOne || State.worldEndEnding || State.fishReplacementEnding;
         public bool HasSeenAncientGod => State.ancientGodSeen;
         public bool HasLoopAbility => State.yogDreamSeen;
         public bool FishReplacementEnding => State.fishReplacementEnding;
@@ -209,6 +209,9 @@ namespace DeathBySeventhsDawn.Core
             if (HasEnded)
                 return;
             State.loopCount++;
+            State.neighborNightBeat=State.neighborNightCaughtCount=State.stageReturnDay=0;
+            State.neighborNightRuptureSeen=State.neighborNightResolved=State.neighborNightLocked=State.neighborEyeTwitchSeen=State.neighborNightControlsSeen=State.nightSleepRequested=false;
+            State.day7BombDefused=State.stageOneComplete=State.neighborBombArmed=false;State.stageEvents.Clear();
             if(State.neighborDeathLearned && State.mutation>=20)State.shoulderEyeUnlocked=true;
             State.neighborDeathPending=State.neighborIntroduced=State.neighborDoorForced=State.neighborTrusted=State.neighborHostile=State.neighborDefeated=State.serviceRouteIsolated=false;
             State.neighborGuidanceSeen=State.neighborHatRevealed=State.neighborPlotHeard=State.neighborCabinetOpened=false;
@@ -236,6 +239,19 @@ namespace DeathBySeventhsDawn.Core
             Changed?.Invoke();
         }
 
+        internal void RestoreStageLoop(int day)
+        {
+            State.loopCount++;if(day==7)State.day7LoopCount++;
+            State.stageReturnDay=0;State.stageReturnNoticeDay=day;State.lastDeathCause="";State.neighborDeathPending=false;
+            State.firstApocalypsePending=false;State.stageOneComplete=false;State.day7BombDefused=false;
+            State.sleeplessDays=0;State.neighborBombArmed=false;
+            State.neighborNightBeat=0;State.neighborNightLocked=false;State.neighborHostile=false;
+            State.neighborHealth=-1;State.encounterDestination="CityEncounter3D";
+            State.stageEvents.RemoveAll(id=>id.StartsWith(day+":"));
+            if(day==2){State.neighborNightRuptureSeen=State.neighborNightResolved=State.neighborHatRevealed=State.neighborEyeTwitchSeen=false;State.neighborNightCaughtCount=0;}
+            State.savedDay=day;State.savedPeriod=0;State.savedMinute=420;State.savedScene="LivingRoom";State.savedX=0;State.savedY=-1.6f;State.savedZ=0;
+            Vitality=MaxVitality;Changed?.Invoke();
+        }
         public void Damage(float amount)
         {
             if (HasEnded)
@@ -262,7 +278,7 @@ namespace DeathBySeventhsDawn.Core
             if(HasEnded)return;
             State.worldEndEnding=true;
             ProgressionSave.Write(State);
-            string ending=State.lastDeathCause=="neighbor"?"neighbor-killed":"world-end";
+            string ending=State.lastDeathCause=="neighbor"?"neighbor-killed":!CrisisRules.LegacyValidation&&State.stageReturnDay==7?"building-destroyed":"world-end";
             EndingCollection.Unlock(ending);
             EndingTriggered?.Invoke(ending); Changed?.Invoke();
         }

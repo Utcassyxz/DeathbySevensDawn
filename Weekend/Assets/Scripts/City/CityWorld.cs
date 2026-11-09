@@ -83,6 +83,7 @@ namespace DeathBySeventhsDawn.City
             pixelTexture=new Texture2D(1,1);pixelTexture.SetPixel(0,0,Color.white);pixelTexture.Apply();pixelTexture.filterMode=FilterMode.Point;
             pixelSprite=Sprite.Create(pixelTexture,new Rect(0,0,1,1),Vector2.one*.5f,1);
             art=gameObject.AddComponent<Interaction.PocketSceneArt>();art.Backdrop(region);
+            if(region=="CityStreet")gameObject.AddComponent<Interaction.StreetDepth>();
             Flat("West wall",new Vector3(-9,0,0),new Vector2(.3f,12),Color.black,0,true);Flat("East wall",new Vector3(9,0,0),new Vector2(.3f,12),Color.black,0,true);
             Flat("North wall",new Vector3(0,6,0),new Vector2(18,.3f),Color.black,0,true);Flat("South wall",new Vector3(0,-6,0),new Vector2(18,.3f),Color.black,0,true);
             Flat("Facade collision",new Vector3(0,4.8f,0),new Vector2(18,2),new Color(0,0,0,0),-3,true);
@@ -94,6 +95,7 @@ namespace DeathBySeventhsDawn.City
             Add("return",V(0,-4.5f),region=="CityStreet"?"Stairwell":"CityStreet");
             if(region=="CityStreet")
             {
+                Add("night-clerk",V(-6.2f,-3));Add("cat-feeder",V(3,-3.5f));
                 Add("circus",V(-6,-1.4f));Add("sushi",V(6,-1.4f));Add("caretaker",V(-3,-.8f));Add("city-maintenance",V(3,-.8f));
                 Add("service",V(-7.6f,.1f),"CityService");Add("broadcast",V(7.6f,.1f),"CityBroadcast");Add("observatory",V(6,-4.3f),"CityObservatory");Add("rest",V(0,-2.2f));
             }
@@ -128,7 +130,7 @@ namespace DeathBySeventhsDawn.City
             if(reading)
             {
                 if(Time.frameCount<=openedFrame)return;
-                if(k.escapeKey.wasPressedThisFrame||k.enterKey.wasPressedThisFrame){reading=false;selected=null;return;}
+                if(k.escapeKey.wasPressedThisFrame||k.enterKey.wasPressedThisFrame){CloseReading();return;}
                 if(k.rKey.wasPressedThisFrame)RecordSelected();
                 if(k.eKey.wasPressedThisFrame)ActSelected();
                 return;
@@ -144,7 +146,7 @@ namespace DeathBySeventhsDawn.City
             if(selected==null)return false;
             if(selected.destination!=null){Travel(selected.destination);return true;}
             if(selected.id=="escape"){CognitiveRupture.Escape();return true;}
-            if(selected.id=="rest"){TimeManager.Instance.AdvanceTime();return true;}
+            if(selected.id=="rest"){if(CrisisRules.LegacyValidation)TimeManager.Instance.AdvanceTime();else TimeManager.Instance.SpendGameMinutes(45);return true;}
             reading=true;result="";openedFrame=Time.frameCount;return true;
         }
         void FindNearest()
@@ -152,10 +154,11 @@ namespace DeathBySeventhsDawn.City
             selected=null;float closest=InEncounter?2.5f:1.35f;
             foreach(var site in sites){float d=Vector3.Distance(PlayerObject.transform.position,site.position);if(d<closest){closest=d;selected=site;}}
         }
-        public void CloseReading(){reading=false;selected=null;}
+        public void CloseReading(){bool wasReading=reading;reading=false;selected=null;if(wasReading&&!CrisisRules.LegacyValidation)TimeManager.Instance.QueueInvestigationCost();}
         public bool RecordSelected()
         {
             if(selected==null)return false;
+            if(selected.id!="caretaker"&&Investigation.Evidence(selected.id)==null)return false;
             int day=TimeManager.Instance.Days;
             if((selected.id=="city-orders"||selected.id=="city-routing")&&day<4 || (selected.id=="city-spectrum"||selected.id=="city-lens")&&day<6){result=Text(selected.id).locked;return false;}
             if(selected.id=="caretaker")
@@ -170,6 +173,7 @@ namespace DeathBySeventhsDawn.City
         {
             if(selected!=null&&(selected.id=="sushi"||selected.id=="circus"))
             {
+                if(!CrisisRules.LegacyValidation){result=StoryText.UI("stage.venue-closed");return false;}
                 string id=selected.id;reading=false;selected=null;
                 return CognitiveRupture.BeginSpecialEncounter(id,id=="sushi"?"SushiInterior3D":"CircusInterior3D",false,Interaction.NeighborRoom.Settings.Tier(GameManager.Instance.Sanity)>0);
             }
@@ -203,7 +207,8 @@ namespace DeathBySeventhsDawn.City
                 if(reading&&selected!=null)
                 {
                     GUI.matrix=old;var text=Text(selected.id);
-                    NarrativeCard.Draw(text.title,text.body,result,null,StoryText.UI(selected.crisis!=CrisisKind.None?"site-act":selected.id=="sushi"||selected.id=="circus"?"site-enter":"site-read"));
+                    bool recordable=selected.id=="caretaker"||Investigation.Evidence(selected.id)!=null;
+                    NarrativeCard.Draw(text.title,text.body,result,null,StoryText.UI(selected.crisis!=CrisisKind.None?"site-act":(selected.id=="sushi"||selected.id=="circus")&&CrisisRules.LegacyValidation?"site-enter":recordable?"site-read":"stage.close"));
                 }
                 else
                 {

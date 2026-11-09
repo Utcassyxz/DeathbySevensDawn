@@ -44,29 +44,47 @@ namespace DeathBySeventhsDawn.TimeSystem
         public float periodLengthMinutes=6;
         static readonly float[] Starts={420,720,1020,1260};
         static readonly float[] Ends={720,1020,1260,1560};
-        float gameMinute=420,saveElapsed,loadGrace;
+        float gameMinute=420,saveElapsed,loadGrace,pendingCost;string lastScene;
         public float GameMinute=>gameMinute;
         public float PeriodProgress=>Mathf.InverseLerp(Starts[(int)Period],Ends[(int)Period],gameMinute);
         public string ClockText=>((int)gameMinute/60%24).ToString("00")+":"+((int)gameMinute%60).ToString("00");
-        public bool AutoPaused=>AutoTimeSuppressed||!AutoAdvance||(!Application.isBatchMode&&!Application.isFocused)||Core.GameManager.Instance==null||Core.GameManager.Instance.HasEnded||Progression.StoryDebugActions.Enabled||Interaction.StoryJournal.WorldBlocked||Interaction.FurnitureInteraction.IsBusy||Time.timeScale==0||loadGrace>0;
+        public bool AutoPaused=>AutoTimeSuppressed||!AutoAdvance||(!Application.isBatchMode&&!Application.isFocused)||Core.GameManager.Instance==null||Core.GameManager.Instance.HasEnded||Progression.StoryDebugActions.Enabled||Interaction.StoryJournal.WorldBlocked||Interaction.FurnitureInteraction.IsBusy||Time.timeScale==0||loadGrace>0||(Progression.ApartmentEventDirector.Instance!=null&&Progression.ApartmentEventDirector.Instance.ChaseActive);
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetAutoTime(){AutoTimeSuppressed=false;}
         void OnEnable(){UnityEngine.SceneManagement.SceneManager.sceneLoaded+=Loaded;}
         void OnDisable(){UnityEngine.SceneManagement.SceneManager.sceneLoaded-=Loaded;}
-        void Loaded(UnityEngine.SceneManagement.Scene scene,UnityEngine.SceneManagement.LoadSceneMode mode){loadGrace=1;}
+        void Loaded(UnityEngine.SceneManagement.Scene scene,UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            if(lastScene!=null&&lastScene!=scene.name&&!Progression.CrisisRules.LegacyValidation&&!AutoTimeSuppressed&&!Progression.StoryDebugActions.Enabled&&!Progression.MainMenuUI.WorldBlocked)pendingCost+=10;
+            lastScene=scene.name;loadGrace=1;
+        }
         void Update()
         {
             loadGrace=Mathf.Max(0,loadGrace-Time.unscaledDeltaTime);
-            if(!AutoPaused)AdvanceExplorationSeconds(Time.unscaledDeltaTime);
+            if(!AutoPaused){if(pendingCost>0){float cost=pendingCost;pendingCost=0;SpendGameMinutes(cost);}AdvanceExplorationSeconds(Time.unscaledDeltaTime);}
         }
         public void AdvanceExplorationSeconds(float seconds)
         {
             if(AutoPaused||seconds<=0||float.IsNaN(seconds)||float.IsInfinity(seconds))return;
             float span=Ends[(int)Period]-Starts[(int)Period];
-            gameMinute+=Mathf.Min(seconds,1)*span/(Mathf.Max(1,periodLengthMinutes)*60);
+            gameMinute+=Mathf.Min(seconds,1)*span/(Mathf.Max(1,!Progression.CrisisRules.LegacyValidation&&Days>=3&&Days<=6?periodLengthMinutes*.4f:periodLengthMinutes)*60);
             if(gameMinute>=Ends[(int)Period]){gameMinute=Ends[(int)Period]-.001f;AdvanceTime();}
             Core.GameManager.Instance.State.savedMinute=gameMinute;
             saveElapsed+=seconds;if(saveElapsed>=30){saveElapsed=0;Progression.ProgressionSave.Write(Core.GameManager.Instance.State);}
+        }
+        public void SetNarrativeTime(int day,TimePeriod period,float minute){Days=Mathf.Max(1,day);Period=period;RestoreMinute(minute);Core.GameManager.Instance.State.savedMinute=gameMinute;TimeChanged?.Invoke(Days,Period);}
+        public void QueueInvestigationCost(){if(!AutoTimeSuppressed)pendingCost+=5;}
+        public void QueueObservationHour(){if(!AutoTimeSuppressed&&!Progression.CrisisRules.LegacyValidation)pendingCost+=60;}
+        public void SpendGameMinutes(float minutes)
+        {
+            if(AutoPaused||minutes<=0||float.IsNaN(minutes)||float.IsInfinity(minutes))return;
+            for(int guard=0;minutes>0&&guard<8;guard++)
+            {
+                float remaining=Ends[(int)Period]-gameMinute;
+                if(minutes<remaining){gameMinute+=minutes;minutes=0;}
+                else {minutes-=remaining;int day=Days;var period=Period;AdvanceTime();if(day==Days&&period==Period)break;}
+            }
+            Core.GameManager.Instance.State.savedMinute=gameMinute;
         }
         public void RestoreMinute(float minute){gameMinute=minute>=Starts[(int)Period]&&minute<Ends[(int)Period]?minute:Starts[(int)Period];}
         void SnapMinute(){gameMinute=Starts[(int)Period];if(Core.GameManager.Instance!=null)Core.GameManager.Instance.State.savedMinute=gameMinute;}
@@ -77,6 +95,8 @@ namespace DeathBySeventhsDawn.TimeSystem
                 return;
             if (Period == TimePeriod.Night)
             {
+                if(!Progression.CrisisRules.LegacyValidation&&!Progression.StoryDebugActions.Enabled&&Days==2&&!Core.GameManager.Instance.State.neighborNightResolved)
+                {SetNarrativeTime(2,TimePeriod.Night,1390);Progression.ApartmentEventDirector.Instance?.RequestNight();return;}
                 var game = Core.GameManager.Instance;
                 if (!Progression.StoryDebugActions.Enabled &&
                     Progression.CrisisRules.Due(Days, game.State) != Progression.CrisisKind.None)
@@ -107,6 +127,7 @@ namespace DeathBySeventhsDawn.TimeSystem
         // CORE FLOW: all player sleep passes through the same dream owner.
         public void SleepUntilNextMorning()
         {
+            if(Progression.ApartmentEventDirector.InterceptSleep())return;
             if (Progression.NightDreamSequence.BeginSleep())
                 return;
             CompleteSleep();
@@ -148,6 +169,7 @@ namespace DeathBySeventhsDawn.TimeSystem
         }
         public void ResetToDayOne()
         {
+            pendingCost=0;saveElapsed=0;lastScene=null;
             Days = 1;
             Period = TimePeriod.Morning;
             SnapMinute();

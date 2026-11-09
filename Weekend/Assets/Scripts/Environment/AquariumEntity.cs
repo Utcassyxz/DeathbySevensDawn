@@ -22,7 +22,7 @@ namespace DeathBySeventhsDawn.Interaction
         {
             get; private set;
         }
-        public static bool WorldBlocked => Instance != null && (Instance.talking || Time.frameCount <= Instance.blockedUntilFrame);
+        public static bool WorldBlocked => Instance != null && (Instance.foilConfirmation || Instance.talking || Time.frameCount <= Instance.blockedUntilFrame);
         public bool IsTalking => talking;
 
         GameObject tank, formRoot, player;
@@ -147,7 +147,7 @@ namespace DeathBySeventhsDawn.Interaction
         bool talking, nearby, choosing, choiceFinished;
         public bool ChoicesVisible => talking && choosing;
         public bool CompanionReady => GameManager.Instance.State.fishAlly;
-        public bool CompanionPresent => TimeManager.Instance != null && TimeManager.Instance.Days >= 4 && !GameManager.Instance.AquariumSealed;
+        public bool CompanionPresent => TimeManager.Instance != null && TimeManager.Instance.Days >= (CrisisRules.LegacyValidation?4:5) && (CrisisRules.LegacyValidation||CompanionReady) && !GameManager.Instance.AquariumSealed;
         public bool IsAmbientConversation => talking && ambientConversation;
         public string CurrentConversation => pages == null ? "" : string.Join("\n", pages);
         bool ambientConversation, storyConversation;
@@ -199,7 +199,7 @@ namespace DeathBySeventhsDawn.Interaction
 
         public bool ChooseUnderstanding(bool explainTrueNeed)
         {
-            if (!talking || !choosing || visualDay < 3 || (CurrentTopic == 1 && visualDay < 4))
+            if (!talking || !choosing || visualDay < (CrisisRules.LegacyValidation?3:4) || (!CrisisRules.LegacyValidation&&visualDay>=7) || (CurrentTopic == 1 && visualDay < (CrisisRules.LegacyValidation?4:5)))
                 return false;
             int topic = CurrentTopic;
             var state = GameManager.Instance.State;
@@ -221,6 +221,7 @@ namespace DeathBySeventhsDawn.Interaction
             choosing = false;
             choiceFinished = true;
             subtitles.Reset();
+            if(!CrisisRules.LegacyValidation&&state.fishAlly)RefreshForm();
             return true;
         }
 
@@ -349,7 +350,7 @@ namespace DeathBySeventhsDawn.Interaction
             {
                 var b = tankRenderer.bounds;
                 formRoot.transform.localScale = new Vector3(1 / tank.transform.lossyScale.x, 1 / tank.transform.lossyScale.y, 1);
-                bool human = day >= 7 && !CompanionReady;
+                bool human = day >= (CrisisRules.LegacyValidation?7:6) && !CompanionReady;
                 int index = human ? 3 : day >= 5 ? 2 : day == 4 ? 1 : 0;
                 formRoot.transform.position = human ? new Vector3(b.max.x + .45f, b.min.y - .10f, 0) : new Vector3(b.center.x, b.center.y + b.size.y * .19f, 0);
                 var image = new GameObject(human ? "Hugo double" : "Fish flank human face");
@@ -505,6 +506,10 @@ namespace DeathBySeventhsDawn.Interaction
                 return;
             }
 
+            if(foilConfirmation)
+            {
+                var keys=Keyboard.current;if(keys!=null&&Time.frameCount>openedFrame+1){if(keys.escapeKey.wasPressedThisFrame)ConfirmFoil(false);else if(keys.enterKey.wasPressedThisFrame||keys.fKey.wasPressedThisFrame)ConfirmFoil(true);}return;
+            }
             if (talking)
             {
                 TickDialogue();
@@ -583,7 +588,23 @@ namespace DeathBySeventhsDawn.Interaction
         }
 
         /// <summary>Consume exactly one token only while standing at the tank; the seal survives reloads and loops.</summary>
+        bool foilConfirmation;
+        public bool FoilConfirmation=>foilConfirmation;
+        public bool ConfirmFoil(bool accept)
+        {
+            if(!foilConfirmation)return false;foilConfirmation=false;
+            if(!accept)return true;return ThrowFoilCommitted();
+        }
         public bool ThrowFoil()
+        {
+            if(!CrisisRules.LegacyValidation&&RadiationRules.CanSeal(TimeManager.Instance.Days))
+            {
+                if(!HasFoil||!NearInteraction()||GameManager.Instance.HasEnded)return false;
+                foilConfirmation=true;openedFrame=Time.frameCount;return false;
+            }
+            return ThrowFoilCommitted();
+        }
+        bool ThrowFoilCommitted()
         {
             var game = GameManager.Instance;
             if (game == null || game.HasEnded || game.AquariumSealed || TutorialGate.IsBlocked("aquarium") || !HasFoil || tank == null || player == null || !NearInteraction())
@@ -640,7 +661,7 @@ namespace DeathBySeventhsDawn.Interaction
                 StoryText.UI("copy.AquariumEntity.85")
             }
 
-            : visualDay >= 5 ? aq?.day6Pages : visualDay >= 4 ? aq?.day5Pages : aq?.day4Pages;
+            : CrisisRules.LegacyValidation?(visualDay>=5?aq?.day6Pages:visualDay>=4?aq?.day5Pages:aq?.day4Pages):visualDay>=7?aq?.day7Pages:visualDay==6?aq?.day6Pages:visualDay==5?aq?.day5Pages:visualDay==4?aq?.day4Pages:aq?.day3Pages;
             if (!ambientConversation && CompanionReady && (visualDay >= 5 || CompanionPresent))
             {
                 pages = new[]
@@ -657,7 +678,7 @@ namespace DeathBySeventhsDawn.Interaction
                 choiceFinished = true;
             }
             else if (visualDay >= 3 || CompanionPresent)
-                activeEvidence = CompanionReady && state.fishReportAvailable ? "fish-help-promise" : visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
+                activeEvidence = CompanionReady && state.fishReportAvailable ? "fish-help-promise" : !CrisisRules.LegacyValidation&&visualDay>=4?"001-name":visualDay >= 6 ? "001-name" : visualDay >= 5 ? "tank-overflow" : "tank-eye";
             if (pages == null || pages.Length == 0)
                 return;
             speaker = CompanionReady ? StoryText.UI("copy.AquariumEntity.86") : visualDay >= 7 ? (aq?.speakerDay7 ?? "长得像雨果的东西") : visualDay >= 6 ? (aq?.speakerDay6 ?? NpcCode) : visualDay >= 4 ? (aq?.speakerDay4 ?? "鱼") : (aq?.speakerDay3 ?? "鱼缸里的鱼");
@@ -712,7 +733,8 @@ namespace DeathBySeventhsDawn.Interaction
             page++;
             if (page >= pages.Length)
             {
-                if (storyConversation && !choiceFinished && !CompanionReady && visualDay >= 3 && (CurrentTopic == 0 || visualDay >= 4))
+                if(!CrisisRules.LegacyValidation&&visualDay>=7&&!CompanionReady){CloseDialogue();NightDreamSequence.BeginReplacement();return;}
+                if (storyConversation && !choiceFinished && !CompanionReady && visualDay >= (CrisisRules.LegacyValidation?3:4) && (CurrentTopic == 0 || visualDay >= (CrisisRules.LegacyValidation?4:5)))
                 {
                     page = pages.Length - 1;
                     choosing = true;
@@ -741,6 +763,11 @@ namespace DeathBySeventhsDawn.Interaction
 
         void OnGUI()
         {
+            if(foilConfirmation&&!MainMenuUI.WorldBlocked&&!PauseMenuUI.WorldBlocked)
+            {
+                var line=NeighborSlice.Text("foil-confirm");int chosen=NarrativeCard.Draw(line.title,line.body,"",new[]{NeighborSlice.Text("foil-confirm-yes").body,NeighborSlice.Text("foil-confirm-no").body},"");
+                if(chosen>=0)ConfirmFoil(chosen==0);return;
+            }
             DeathBySeventhsDawn.Progression.GameTypography.Use(text, title, button, small);
             if (GameManager.Instance == null || GameManager.Instance.HasEnded || (!talking && !nearby))
                 return;

@@ -14,12 +14,14 @@ namespace DeathBySeventhsDawn.Knowledge
     public sealed class EvidenceDefinition
     {
         public string id, title, body, source, image;
+        public bool flavor;
     }
 
     [Serializable]
     public sealed class DeductionDefinition
     {
         public string id, left, right, relation, title, body;
+        public int minDay;
     }
 
     [Serializable]
@@ -36,6 +38,7 @@ namespace DeathBySeventhsDawn.Knowledge
     }
 
     // The catalog describes possibilities. Only explicitly collected entries are visible to the player.
+    public enum InvestigationFailure { None, NoRelation, MissingEvidence, LockedByDay, MissingPrerequisite }
     public static class Investigation
     {
         static InvestigationCatalog catalog;
@@ -238,18 +241,28 @@ namespace DeathBySeventhsDawn.Knowledge
             return true;
         }
 
+        static bool RuleAvailable(DeductionDefinition rule)=>TimeManager.Instance.Days>=rule.minDay;
+        public static InvestigationFailure ExplainFailure(string left,string right)
+        {
+            var rule=Array.Find(Catalog.deductions,d=>(d.left==left&&d.right==right)||(d.left==right&&d.right==left));
+            if(rule==null)return InvestigationFailure.NoRelation;
+            if(!Has(left)||!Has(right))return InvestigationFailure.MissingEvidence;
+            if(rule.id=="deduction-warning"&&!State.neighborFlyersSeen)return InvestigationFailure.MissingPrerequisite;
+            if(!RuleAvailable(rule))return InvestigationFailure.LockedByDay;
+            return InvestigationFailure.None;
+        }
         public static DeductionDefinition Match(string left, string right, string relation)
         {
             if (left == right || !Has(left) || !Has(right))
                 return null;
-            return Array.Find(Catalog.deductions, d => (d.id != "deduction-warning" || State.neighborFlyersSeen) && RelationKey(d.relation) == RelationKey(relation) && ((d.left == left && d.right == right) || (d.left == right && d.right == left)));
+            return Array.Find(Catalog.deductions, d => (d.id != "deduction-warning" || State.neighborFlyersSeen) && RuleAvailable(d) && RelationKey(d.relation) == RelationKey(relation) && ((d.left == left && d.right == right) || (d.left == right && d.right == left)));
         }
 
         public static DeductionDefinition Match(string left, string right)
         {
             if (left == right || !Has(left) || !Has(right))
                 return null;
-            return Array.Find(Catalog.deductions, d => (d.id != "deduction-warning" || State.neighborFlyersSeen) && ((d.left == left && d.right == right) || (d.left == right && d.right == left)));
+            return Array.Find(Catalog.deductions, d => (d.id != "deduction-warning" || State.neighborFlyersSeen) && RuleAvailable(d) && ((d.left == left && d.right == right) || (d.left == right && d.right == left)));
         }
 
         static bool SamePair(InvestigationLink link, string a, string b) => (link.left == a && link.right == b) || (link.left == b && link.right == a);

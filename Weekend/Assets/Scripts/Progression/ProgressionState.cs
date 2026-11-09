@@ -10,6 +10,11 @@ namespace DeathBySeventhsDawn.Progression
     {
         public int version = 7, loopCount;
         public int sleeplessDays;
+        public List<string> stageEvents=new List<string>();
+        public int neighborNightBeat,neighborNightCaughtCount,day7LoopCount;
+        public bool neighborNightRuptureSeen,neighborNightResolved,neighborNightLocked,neighborNightControlsSeen,nightSleepRequested;
+        public bool neighborEyeTwitchSeen,neighborBombArmed,day7BombDefused,stageOneComplete;
+        public int stageReturnDay,stageReturnNoticeDay;
         public float savedMinute=-1;
         public bool neighborDeathPending,neighborIntroduced,neighborDoorForced,neighborTrusted,neighborHostile,neighborDefeated,neighborDeathLearned,shoulderEyeUnlocked,serviceRouteIsolated;
         public List<string> neighborTakenItems=new List<string>();
