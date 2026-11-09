@@ -39,12 +39,12 @@
 - Obsidian / Joshua Sawyer 的选择架构公开简介：https://www.gdcvault.com/play/1015758/Do-(Say)-The-Right-Thing （未声称看完付费视频）
 - 《原神》5.2 官方更新说明公开列有特定 Boss 错误脱战/回血的修复：https://genshin.hoyoverse.com/en/news/detail/126992 。本项目据自身机制去掉追逐血量强制刷新；这是设计取舍，不是复用其内部实现。
 
-第三方 unity-csharp-scripting 安装被自动审批拒绝，要求用户确认 gamedev-skills/awesome-gamedev-agent-skills 这个具体来源。确认问题已发出；尚未收到答复，未绕过拒绝安装。游戏修复本身使用现有指导继续完成。
+用户随后明确确认该来源，已安装 unity-csharp-scripting，并运行其经审阅的只读工程检查。发现并清理默认渲染 Profile 的孤立失效/测试子资源；最终严格检查 0 错误、0 警告。详见 unity-project-integrity-2026-11-09.md。
 
 ## 最终构建与交付
 
-Windows 64 位非开发构建成功：neighbor-final-visual-build.log 的 Build Finished, Result: Success，退出码 0。最后的徒手模型接合/形状修正为纯外观调整，已纳入本次构建；未重新跑全部逻辑回归。227 个文件逐项 CRC 校验通过。
+Windows 64 位非开发构建成功：project-integrity-player-build.log 的 Build Finished, Result: Success，退出码 0。最后的徒手模型接合/形状修正为纯外观调整，已纳入本次构建；未重新跑全部逻辑回归。227 个文件逐项 CRC 校验通过。
 
-压缩包 SHA256：D7623EB033B268419DEFBF9292722FF4B7191985ACAB3973AE2F2C42AFDB3C74
+压缩包 SHA256：398D493A689D37581AF6C665499FD4D782C4524223AA51F8EEEE8F1006855B73
 
 构建时只对本次进程临时设置 DOTNET_gcServer=0、DOTNET_gcConcurrent=0，未更改系统环境或游戏运行配置。配置依据：https://learn.microsoft.com/en-us/dotnet/core/runtime-config/garbage-collector 。
